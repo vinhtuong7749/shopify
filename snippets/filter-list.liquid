@@ -1,0 +1,158 @@
+{%- comment -%}
+	------------------------------------------------------------------------------
+	Snippet: Filter list
+	- filter: filter object (required)
+	- id: id (required)
+	- filter_type: filter type (sidebar/top-bar/drawer)
+	- show_swatches: boolean. Set true to show swatches instead of checkbox
+
+	Usage:
+
+	{%- render 'filter-list', filter: filter -%}
+	------------------------------------------------------------------------------
+{%- endcomment -%}
+
+{%- render 'adastra' with '/src/styles/filter-list.scss' -%}
+
+{%- assign sorted_values = filter.values -%}
+{%- assign swatch_option = settings.color_swatches_option | default: 'Color' | downcase -%}
+{%- assign swatches 	 = swatch_option | split: ',' -%}
+{%- assign filter_label  = filter.label | downcase -%}
+
+{%- if filter.operator == "AND" -%}
+	{% comment %} Keep the selected values grouped together when operator is AND {% endcomment %}
+
+	{%- assign active_filter_values = filter.values | where: 'active', true -%}
+	{%- assign inactive_filter_values = filter.values | where: 'active', false -%}
+	{%- assign sorted_values = active_filter_values | concat: inactive_filter_values -%}
+{%- endif -%}
+
+{%- if filter_type == 'top-bar' -%}
+	{%- assign filter_list_class = 'filter-list--top-bar' -%}
+{%- endif -%}
+
+{%- if filter_type == 'sidebar' -%}
+	{%- assign filter_list_class = 'filter-list--sidebar' -%}
+{%- endif -%}
+
+<ul class="filter-list {{ filter_list_class }} js-filter-list">
+	{%- for filter_value in sorted_values -%}
+		<li class="filter-list__item">
+			{%- capture filter_active -%}
+				{%- if filter_value.active -%}
+					checked
+				{%- endif -%}
+			{%- endcapture -%}
+
+			{%- capture filter_disable -%}
+				{%- if filter_value.count == 0 and filter_value.active == false -%}
+					disabled
+				{%- endif -%}
+			{%- endcapture -%}
+
+			<input
+				class="checkbox__input visually-hidden filter-list__checkbox"
+				id="Filter-{{ section.id }}-{{- filter.param_name | escape -}}-{{- forloop.index -}}-{{- id -}}"
+				type="checkbox"
+				name="{{- filter_value.param_name -}}"
+				value="{{- filter_value.value -}}"
+				{{ filter_active | strip_newlines }}
+				{{ filter_disable | strip_newlines }}
+			>
+
+			{%- assign filter_value_label = filter_value.label -%}
+			{%- assign tech_tag = filter_value_label | slice: 0, 7 -%}
+
+			{%- if tech_tag contains 'label__' -%}
+				{%- assign filter_value_label = filter_value_label
+					| remove_first: 'label__'
+					| remove_first: ':primary'
+					| remove_first: ':secondary'
+				-%}
+			{%- endif -%}
+
+			{%- if filter.presentation == "swatch" -%}
+				<label
+					class="checkbox__label checkbox__label--swatch"
+					for="Filter-{{ section.id }}-{{- filter.param_name | escape -}}-{{- forloop.index -}}-{{- id -}}"
+				>
+					{%- if filter_value.swatch.image  -%}
+						<img
+							src="{{- filter_value.swatch.image | image_url: width: 60, height: 60 -}}"
+							class="checkbox__label-image"
+							aria-hidden="true"
+							fetchpriority="low"
+							loading="lazy"
+							decoding="async"
+							width="20"
+							height="20"
+							alt=""
+						/>
+					{%- elsif filter_value.swatch.color -%}
+						<span class="checkbox__label-image" style="--swatch-color: {{filter_value.swatch.color }};"></span>
+					{%- endif -%}
+
+					{{- filter_value_label | escape }} ({{- filter_value.count -}})
+				</label>
+			{%- elsif filter.presentation == "image" -%}
+				<label
+					class="checkbox__label checkbox__label--swatch"
+					for="Filter-{{ section.id }}-{{- filter.param_name | escape -}}-{{- forloop.index -}}-{{- id -}}"
+				>
+					{%- if filter_value.image -%}
+						<img
+							src="{{- filter_value.image | image_url: width: 60 -}}"
+							class="checkbox__label-image"
+							aria-hidden="true"
+							fetchpriority="low"
+							loading="lazy"
+							decoding="async"
+							width="20"
+							height="20"
+							alt=""
+						/>
+					{%- endif -%}
+
+					{{- filter_value_label | escape }} ({{- filter_value.count -}})
+				</label>
+			{%- else -%}
+				{%- assign is_swatch = false -%}
+				{%- assign swatch_image = filter_value.value | handle | prepend: 'swatch-' | append: '.png' -%}
+
+				{%- for swatch in swatches -%}
+					{%- assign trimmed_string = swatch | strip -%}
+
+					{%- if filter_label == trimmed_string -%}
+						{%- assign is_swatch = true -%}
+						{%- break -%}
+					{%- endif -%}
+				{%- endfor -%}
+
+				<label
+					class="checkbox__label {% if is_swatch and show_swatches %}checkbox__label--swatch{% endif %}"
+					for="Filter-{{ section.id }}-{{- filter.param_name | escape -}}-{{- forloop.index -}}-{{- id -}}"
+				>
+					{%- if is_swatch and show_swatches -%}
+						{%- if images[swatch_image] != blank -%}
+							<img
+								src="{{- images[swatch_image] | image_url: width: 34, height: 34 -}}"
+								class="checkbox__label-image"
+								aria-hidden="true"
+								fetchpriority="low"
+								loading="lazy"
+								decoding="async"
+								width="20"
+								height="20"
+								alt=""
+							/>
+						{%- else -%}
+							<span class="checkbox__label-image" style="--swatch-color: {{ filter_value.value | split: ' ' | last | handle }};"></span>
+						{%- endif -%}
+					{%- endif -%}
+
+					{{- filter_value_label | escape }} ({{- filter_value.count -}})
+				</label>
+			{%- endif -%}
+		</li>
+	{%- endfor -%}
+</ul>

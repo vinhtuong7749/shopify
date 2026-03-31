@@ -1,0 +1,273 @@
+{% comment %}
+	------------------------------------------------------------------------------
+	Snippet: Cart footer
+	Render shopping cart footer
+	- section: Section object (required)
+	- cart_button_label: text for "Go to cart" link (optional)
+
+	Usage:
+	{%- render 'cart-footer' -%}
+	------------------------------------------------------------------------------
+{% endcomment %}
+
+{%- assign benefits_blocks = section.blocks | where: 'type', 'benefit' -%}
+
+{%- capture benefits -%}
+	{%- if benefits_blocks.size > 0 -%}
+		{%- for block in benefits_blocks -%}
+			{%- assign benefit_text = block.settings.text -%}
+			{%- assign benefit_icon = block.settings.icon -%}
+
+			{%- if benefit_text != blank -%}
+				<div class="cart-footer__benefit">
+					{%- if benefit_icon != blank -%}
+						<img
+							class="cart-footer__benefit-icon"
+							srcset="{{- benefit_icon | image_url: width: 20, height: 20 }} 1x,
+									{{ benefit_icon | image_url: width: 40, height: 40 }} 2x"
+							src="{{- benefit_icon | image_url: width: 40, height: 40 -}}"
+							alt="{{- benefit_icon.alt | escape -}}"
+							loading="lazy"
+							fetchpriority="low"
+						/>
+					{%- endif -%}
+
+					<div class="cart-footer__benefit-text rte">{{- benefit_text -}}</div>
+				</div>
+			{%- endif -%}
+		{%- endfor -%}
+	{%- endif -%}
+{%- endcapture -%}
+
+{%- capture tax_message  -%}
+	<small class="rte cart-footer__tax">
+		{%- if cart.taxes_included and shop.shipping_policy.body != blank -%}
+			{{ 'cart.general.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url }}
+		{%- elsif cart.taxes_included -%}
+			{{ 'cart.general.taxes_included_but_shipping_at_checkout' | t }}
+		{%- elsif shop.shipping_policy.body != blank -%}
+			{{ 'cart.general.taxes_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}
+		{%- else -%}
+			{{ 'cart.general.taxes_and_shipping_at_checkout' | t }}
+		{%- endif -%}
+	</small>
+{%- endcapture -%}
+
+{%- capture cart_total -%}
+	{%- if cart.cart_level_discount_applications.size > 0 -%}
+		<div class="cart-footer__savings">
+			<ul class="discounts discounts--right cart-footer__discounts" role="list" aria-label="{{- 'customer.order.discount' | t | escape -}}">
+				{%- for discount in cart.cart_level_discount_applications -%}
+					<li class="discounts__item">
+						{% render 'icons', icon: 'discount' %}
+
+						{{ discount.title }}
+						(-{{ discount.total_allocated_amount | money }})
+					</li>
+				{%- endfor -%}
+			</ul>
+		</div>
+	{%- endif -%}
+
+	<p class="cart-footer__subtotal">
+		<span class="cart-footer__subtotal-label">
+			{{- 'cart.general.subtotal' | t | append: ':' -}}
+		</span>
+
+		<span class="cart-footer__subtotal-value">
+			{{- cart.total_price | money -}}
+		</span>
+	</p>
+{%- endcapture -%}
+
+{%- capture checkout_buttons -%}
+	{%- assign cta_class = "cart-footer__ctas" -%}
+
+	{%- if cart_button_label == blank and cart_drawer == true -%}
+		{%- assign cta_class = cta_class | append: " cart-footer__ctas--one" -%}
+	{%- endif -%}
+
+	{%- if cart_drawer == false -%}
+		{%- assign cta_class = "cart-template__ctas" -%}
+	{%- endif -%}
+
+	<div class="{{ cta_class }} js-cart-footer-button">
+		{%- capture default_checkout_button -%}
+			{{- 'cart.general.checkout' | t -}}
+		{%- endcapture -%}
+
+		{%- assign checkout_button = settings.cart_checkout_button | default: default_checkout_button -%}
+
+		{%- if cart_button_label != blank and cart_drawer == true -%}
+			<a href="{{ routes.cart_url }}" class="cart-footer__button button button--primary button--block">
+				{{- cart_button_label -}}
+			</a>
+		{%- endif -%}
+
+		<button
+			type="submit"
+			class="cart-footer__button button button--secondary button--block"
+			name="checkout"
+			form="cart-{{- section.id -}}"
+		>
+			<span data-text="{{- checkout_button -}}">
+				<span>{{- checkout_button -}}</span>
+			</span>
+		</button>
+	</div>
+
+	{%- if settings.show_additional_checkout_buttons and additional_checkout_buttons -%}
+		<div class="cart-footer__ctas-additional js-cart-footer-additional-buttons">
+			{{ content_for_additional_checkout_buttons }}
+		</div>
+	{%- endif -%}
+{%- endcapture -%}
+
+{%- if cart_drawer == false -%}
+	<div class="cart-footer">
+		<div class="cart-template__footer">
+			{%- if settings.show_cart_note or benefits != blank or settings.show_cart_discounts -%}
+				<div class="cart-template__additional-content">
+					{%- if benefits != blank -%}
+						<div class="cart-template__benefits">
+							{{- benefits -}}
+						</div>
+					{%- endif -%}
+
+					{%- if settings.show_cart_discounts -%}
+						{% liquid
+							assign discount_codes = cart.cart_level_discount_applications | where: 'type', 'discount_code' | map: 'title'
+							for item in cart.items
+								for allocation in item.line_level_discount_allocations
+									if allocation.discount_application.type == 'discount_code'
+										assign discount_codes = item.line_level_discount_allocations | slice: forloop.index0 | map: 'discount_application' | map: 'title' | concat: discount_codes
+									endif
+								endfor
+							endfor
+
+							assign discount_codes = discount_codes | uniq
+						%}
+
+						<div class="js-cart-discount-block cart-discount">
+							<form class="cart-discount__discount-form js-cart-discount-form" novalidate>
+								<div class="input-wrapper cart-discount__discount-form-input-wrapper">
+									<label class="visually-hidden" for="cart-discount">
+										{{- "cart.general.discount" | t -}}
+									</label>
+
+									<input
+										class="input cart-discount__discount-form-input"
+										type="text"
+										id="cart-discount"
+										name="discount"
+										placeholder="{{- 'cart.general.discount_placeholder' | t -}}"
+									/>
+								</div>
+
+								<button class="button button--secondary cart-discount__discount-form-button js-cart-discount-apply-button">
+									{{- "cart.general.apply_discount" | t -}}
+								</button>
+							</form>
+
+							<div
+								class="cart-discount__discount-form-error js-cart-discount-error is-hidden"
+								role="alert"
+							>
+								<span class="cart-discount__discount-form-error-icon-wrapper">
+									{% render 'icons', icon: 'error' %}
+								</span>
+
+								<span class="cart-discount__discount-form-error-text js-cart-discount-error-code is-hidden">
+									{{ 'cart.general.discount_code_error' | t }}
+								</span>
+
+								<small class="cart-discount__discount-form-error-text js-cart-discount-error-shipping is-hidden">
+									{{ 'cart.general.shipping_discount_error' | t }}
+								</small>
+							</div>
+
+							{%- if discount_codes.size > 0 -%}
+								<ul class="cart-discount__codes">
+									{% for discount_code in discount_codes %}
+										<li
+											class="cart-discount__pill js-cart-discount-pill"
+											aria-label="{{ 'cart.general.discount_applied' | t: code: discount_code }}"
+											data-discount-code="{{ discount_code }}"
+										>
+											<p class="cart-discount__pill-code">
+												{{ discount_code }}
+											</p>
+
+											<button
+												class="cart-discount__pill-remove focus-visible-outline js-cart-discount-pill-remove"
+												aria-label="{{ 'cart.general.remove_discount' | t: code: discount_code }}"
+												type="button"
+											>
+												{% render 'icons', icon: 'close' %}
+											</button>
+										</li>
+									{% endfor %}
+								</ul>
+							{%- endif -%}
+						</div>
+					{% endif %}
+
+					{%- if settings.show_cart_note -%}
+						<div class="textarea-wrapper">
+							<textarea
+								id="note-cart"
+								name="note"
+								form="cart-{{- section.id -}}"
+								class="textarea cart-template__textarea js-cart-notes-field"
+								aria-label="{{- 'cart.general.note' | t | escape -}}"
+								placeholder="{{- 'cart.general.note_placeholder' | t | escape -}}"
+							>
+								{{- cart.note -}}
+							</textarea>
+
+							<label for="note-cart" class="textarea-label">{{- 'cart.general.note' | t -}}</label>
+						</div>
+					{%- endif -%}
+				</div>
+			{%- endif -%}
+
+			<div class="cart-template__total">
+				<div class="js-cart-subtotal">
+					{{- cart_total -}}
+
+					{%- if settings.show_tax_and_shipping -%}
+						{{- tax_message -}}
+					{%- endif -%}
+				</div>
+
+				{{- checkout_buttons -}}
+			</div>
+		</div>
+	</div>
+{%- else -%}
+	<div class="cart-footer">
+		<div class="cart-footer__summary">
+			{%- render 'cart-discount' -%}
+			{%- render 'cart-notes', id: section.id -%}
+
+			{%- if benefits != blank -%}
+				<div class="cart-footer__benefits">
+					{{- benefits -}}
+				</div>
+			{%- endif -%}
+
+			<div class="cart-footer__subtotal-block js-cart-subtotal">
+				{{- cart_total -}}
+			</div>
+		</div>
+
+		<div class="cart-footer__main">
+			{%- if settings.show_tax_and_shipping -%}
+				{{- tax_message -}}
+			{%- endif -%}
+
+			{{- checkout_buttons -}}
+		</div>
+	</div>
+{% endif %}
+

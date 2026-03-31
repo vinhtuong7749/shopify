@@ -1,0 +1,603 @@
+{%- comment -%}
+------------------------------------------------------------------------------
+	Section: Image with text
+------------------------------------------------------------------------------
+{%- endcomment -%}
+
+{%- assign color_scheme      	           	= section.settings.color_scheme -%}
+{%- assign enable_color_scheme_inheritance 	= section.settings.enable_color_scheme_inheritance -%}
+{%- assign images_layout          			= section.settings.images_layout -%}
+{%- assign enable_images_animation          = section.settings.enable_images_animation -%}
+{%- assign scroll_images_direction        	= section.settings.scroll_images_direction -%}
+{%- assign image_position        	  		= section.settings.image_position -%}
+{%- assign text_alignment        	  		= section.settings.text_alignment -%}
+{%- assign label                 	  		= section.settings.label -%}
+{%- assign heading                 	  		= section.settings.heading -%}
+{%- assign text_content               		= section.settings.text_content -%}
+{%- assign button_label            	  		= section.settings.button_label -%}
+{%- assign button_aria_label       	  		= section.settings.button_aria_label -%}
+{%- assign button_url              	  		= section.settings.button_url -%}
+{%- assign button_style            	  		= section.settings.button_style -%}
+{%- assign container 			           	= section.settings.container_width -%}
+
+{%- assign first_col_image_1 				= section.settings.first_col_image_1 -%}
+{%- assign first_col_image_2 				= section.settings.first_col_image_2 -%}
+{%- assign first_col_image_3 				= section.settings.first_col_image_3 -%}
+{%- assign second_col_image_1 				= section.settings.second_col_image_1 -%}
+{%- assign second_col_image_2 				= section.settings.second_col_image_2 -%}
+{%- assign second_col_image_3 				= section.settings.second_col_image_3 -%}
+
+{%- if container == 'inherit' -%}
+	{%- assign container_width = settings.container_width -%}
+{%- else -%}
+	{%- assign container_width = container -%}
+{%- endif -%}
+
+{%- if enable_color_scheme_inheritance -%}
+	{%- assign color_scheme = settings.main_color_scheme -%}
+{%- endif -%}
+
+{%- assign is_lazy = true -%}
+
+{%- capture section_styles -%}
+	--text-alignment: {{ text_alignment | replace: 'left', 'start' | replace: 'right', 'end' }};
+	--inner-offset-top: {{ section.settings.inner_offset_top }}px; {{-  -}}
+	--inner-offset-bottom: {{ section.settings.inner_offset_bottom }}px; {{-  -}}
+	--inner-offset-top-mobile: {{ section.settings.inner_offset_top_mobile }}px; {{-  -}}
+	--inner-offset-bottom-mobile: {{ section.settings.inner_offset_bottom_mobile }}px; {{-  -}}
+	--container-width: {{ container_width }};
+	--first-col-animation-duration: {{ section.settings.fist_col_movement_speed }}s;
+	--second-col-animation-duration: {{ section.settings.second_col_movement_speed }}s;
+{%- endcapture -%}
+
+{%- render 'adastra' with '/src/styles/image-with-text.scss' -%}
+
+{%- style -%}
+	#shopify-section-{{- section.id -}} {
+		padding-top: {{- section.settings.offset_top_mobile -}}px;
+			padding-bottom: {{- section.settings.offset_bottom_mobile -}}px;
+		}
+
+		@media screen and (min-width: 992px) {
+			#shopify-section-{{- section.id -}} {
+				padding-top: {{- section.settings.offset_top_desktop -}}px;
+				padding-bottom: {{- section.settings.offset_bottom_desktop -}}px;
+			}
+		}
+{%- endstyle -%}
+
+{%- capture content -%}
+	<div class="image-with-text__content-wrapper">
+		<div class="image-with-text__content">
+			{%- if label != blank -%}
+				<p class="image-with-text__label">{{ label }}</p>
+			{%- endif -%}
+
+			{%- if heading != blank -%}
+				<h2 class="image-with-text__heading">
+					{{- heading -}}
+				</h2>
+			{%- endif -%}
+
+			{%- if text_content != blank -%}
+				<div class="image-with-text__text-content rte">
+					{{- text_content -}}
+				</div>
+			{%- endif -%}
+
+			{%- if button_label != blank and button_url != blank -%}
+				<a
+					href="{{- button_url -}}"
+					{%- if button_aria_label != blank -%}aria-label="{{- button_aria_label | escape -}}"{%- endif -%}
+					class="image-with-text__button button button--{{- button_style -}}"
+				>
+					{{- button_label -}}
+				</a>
+			{%- endif -%}
+		</div>
+	</div>
+{%- endcapture -%}
+
+{%- capture first_column_images -%}
+	{%- if section.index == 1 -%}
+		{%- assign is_lazy = false -%}
+	{%- endif -%}
+
+	{%- render 'image-with-text-image',
+		desktop_image: first_col_image_1,
+		lazy: is_lazy,
+		width: 430,
+		width_1600: 350,
+		width_991: 230,
+		width_767: 370,
+		width_420: 191,
+		width_375: 170
+	-%}
+
+	{%- render 'image-with-text-image',
+		desktop_image: first_col_image_2,
+		lazy: true,
+		width: 430,
+		width_1600: 350,
+		width_991: 230,
+		width_767: 370,
+		width_420: 191,
+		width_375: 170
+	-%}
+
+	{%- render 'image-with-text-image',
+		desktop_image: first_col_image_3,
+		lazy: true,
+		width: 430,
+		width_1600: 350,
+		width_991: 230,
+		width_767: 370,
+		width_420: 191,
+		width_375: 170
+	-%}
+{%- endcapture -%}
+
+{%- capture second_column_images -%}
+	{%- render 'image-with-text-image',
+		desktop_image: second_col_image_1,
+		lazy: true,
+		width: 430,
+		width_1600: 350,
+		width_991: 230,
+		width_767: 370,
+		width_420: 191,
+		width_375: 170
+	-%}
+
+	{%- render 'image-with-text-image',
+		desktop_image: second_col_image_2,
+		lazy: true,
+		width: 430,
+		width_1600: 350,
+		width_991: 230,
+		width_767: 370,
+		width_420: 191,
+		width_375: 170
+	-%}
+
+	{%- render 'image-with-text-image',
+		desktop_image: second_col_image_3,
+		lazy: true,
+		width: 430,
+		width_1600: 350,
+		width_991: 230,
+		width_767: 370,
+		width_420: 191,
+		width_375: 170
+	-%}
+{%- endcapture -%}
+
+{%- capture images -%}
+	{%- if images_layout == 'one_image' -%}
+		{%- if section.index == 1 -%}
+			{%- assign is_lazy = false -%}
+		{%- endif -%}
+
+		{%- render 'image-with-text-image',
+			desktop_image: first_col_image_1,
+			lazy: is_lazy,
+			width: 860,
+			width_1600: 700,
+			width_991: 460,
+			width_767: 720,
+			width_420: 372,
+			width_375: 327
+		-%}
+	{%- else -%}
+	{%- capture image_animation_classes -%}
+		{% if scroll_images_direction == 'bottom' %}
+			image-with-text__image-col-inner--animation-reverse
+		{% endif %}
+	{%- endcapture -%}
+
+	<div class="image-with-text__image-col">
+		<div
+			class="image-with-text__image-col-inner {% if enable_images_animation %}image-with-text__image-col-inner--first {{ image_animation_classes }}{% endif %}">
+			{{- first_column_images -}}
+		</div>
+
+		{%- if enable_images_animation -%}
+			<div
+				class="image-with-text__image-col-inner {% if enable_images_animation %}image-with-text__image-col-inner--first {{ image_animation_classes }}{% endif %}">
+				{{- first_column_images -}}
+			</div>
+
+			<div
+				class="image-with-text__image-col-inner {% if enable_images_animation %}image-with-text__image-col-inner--first {{ image_animation_classes }}{% endif %}">
+				{{- first_column_images -}}
+			</div>
+		{%- endif -%}
+	</div>
+
+	<div class="image-with-text__image-col image-with-text__image-col--last">
+		<div
+			class="image-with-text__image-col-inner {% if enable_images_animation %}image-with-text__image-col-inner--last {{ image_animation_classes }}{% endif %}">
+			{{- second_column_images -}}
+		</div>
+
+		{%- if enable_images_animation -%}
+			<div
+				class="image-with-text__image-col-inner {% if enable_images_animation %}image-with-text__image-col-inner--last {{ image_animation_classes }}{% endif %}">
+				{{- second_column_images -}}
+			</div>
+
+			<div
+				class="image-with-text__image-col-inner {% if enable_images_animation %}image-with-text__image-col-inner--last {{ image_animation_classes }}{% endif %}">
+				{{- second_column_images -}}
+			</div>
+		{%- endif -%}
+	</div>
+	{%- endif -%}
+{%- endcapture -%}
+
+{%- if images_layout == 'multiply_images' -%}
+	{%- assign multi_images_class = 'image-with-text__image-container--multi' -%}
+{%- endif -%}
+
+<section class="image-with-text color-{{ color_scheme }} js-animate {% if request.visual_preview_mode or section.index == 1 %}animated{% endif %}" style="{{ section_styles }}">
+	<div class="image-with-text__container section-animate container">
+		{%- if image_position == 'left' -%}
+			<div class="image-with-text__image-container {{ multi_images_class }}">
+				{{- images -}}
+			</div>
+
+			{{- content -}}
+		{%- else -%}
+			<div class="image-with-text__image-container image-with-text__image-container--mobile {{ multi_images_class }}">
+				{{- images -}}
+			</div>
+
+			{{- content -}}
+
+			<div class="image-with-text__image-container image-with-text__image-container--desktop {{ multi_images_class }}">
+				{{- images -}}
+			</div>
+		{%- endif -%}
+	</div>
+</section>
+
+
+{%- schema -%}
+	{
+		"name": "Image with text",
+		"disabled_on": {
+			"groups": ["header", "footer", "custom.popup"]
+		},
+		"settings": [
+			{
+				"type": "header",
+				"content": "Colors"
+			},
+			{
+				"type": "checkbox",
+				"id": "enable_color_scheme_inheritance",
+				"label": "Enable color scheme inheritance",
+				"default": true,
+				"info": "When this setting is enabled, the color scheme is inherited from the theme settings."
+			},
+			{
+				"type": "color_scheme",
+				"id": "color_scheme",
+				"label": "Color scheme",
+				"default": "scheme-1"
+			},
+			{
+				"type": "header",
+				"content": "General"
+			},
+			{
+				"id": "images_layout",
+				"type": "select",
+				"label": "Images layout",
+				"options": [
+					{
+						"value": "one_image",
+						"label": "One image"
+					},
+					{
+						"value": "multiply_images",
+						"label": "Multiply images"
+					}
+				],
+				"default": "multiply_images"
+			},
+			{
+				"type": "checkbox",
+				"id": "enable_images_animation",
+				"label": "Enable images animation",
+				"default": true,
+				"info": "Works with the 'Multiply images' layout."
+			},
+			{
+				"type": "select",
+				"id": "scroll_images_direction",
+				"label": "Scroll images direction",
+				"options": [
+					{
+						"value": "top",
+						"label": "Top"
+					},
+					{
+						"value": "bottom",
+						"label": "Bottom"
+					}
+				],
+				"default": "top",
+				"info": "This setting changes the animation direction for all columns to a reverse direction."
+			},
+			{
+				"id": "image_position",
+				"type": "select",
+				"label": "Image position",
+				"options": [
+					{
+						"value": "left",
+						"label": "Left"
+					},
+					{
+						"value": "right",
+						"label": "Right"
+					}
+				],
+				"default": "left"
+			},
+			{
+				"id": "text_alignment",
+				"type": "select",
+				"label": "Text alignment",
+				"options": [
+					{
+						"value": "left",
+						"label": "Left"
+					},
+					{
+						"value": "center",
+						"label": "Center"
+					},
+					{
+						"value": "right",
+						"label": "Right"
+					}
+				],
+				"default": "center"
+			},
+			{
+				"id": "label",
+				"type": "text",
+				"label": "Label",
+				"default": "Label"
+			},
+			{
+				"id": "heading",
+				"type": "inline_richtext",
+				"label": "Heading",
+				"default": "Text heading"
+			},
+			{
+				"id": "text_content",
+				"type": "richtext",
+				"label": "Text"
+			},
+			{
+				"id": "button_label",
+				"type": "text",
+				"label": "Button label",
+				"default": "Button label"
+			},
+			{
+				"id": "button_aria_label",
+				"type": "text",
+				"label": "Button aria-label",
+				"info": "Need for good accessibility, e.g. 'All news about'."
+			},
+			{
+				"id": "button_url",
+				"type": "url",
+				"label": "Button link"
+			},
+			{
+				"id": "button_style",
+				"type": "select",
+				"label": "Button style",
+				"options": [
+					{
+						"value": "primary",
+						"label": "Primary"
+					},
+					{
+						"value": "secondary",
+						"label": "Secondary"
+					}
+				],
+				"default": "primary"
+			},
+			{
+				"type": "header",
+				"content": "First column images"
+			},
+			{
+				"type": "range",
+				"id": "fist_col_movement_speed",
+				"label": "Movement speed",
+				"min": 10,
+				"max": 30,
+				"unit": "s",
+				"default": 20
+			},
+			{
+				"type": "image_picker",
+				"id": "first_col_image_1",
+				"label": "First image",
+				"info": "Use this image when you want to show one image with 'One image' layout."
+			},
+			{
+				"type": "image_picker",
+				"id": "first_col_image_2",
+				"label": "Second image"
+			},
+			{
+				"type": "image_picker",
+				"id": "first_col_image_3",
+				"label": "Third image"
+			},
+			{
+				"type": "header",
+				"content": "Second column images"
+			},
+			{
+				"type": "range",
+				"id": "second_col_movement_speed",
+				"label": "Movement speed",
+				"min": 10,
+				"max": 30,
+				"unit": "s",
+				"default": 20
+			},
+			{
+				"type": "image_picker",
+				"id": "second_col_image_1",
+				"label": "First image"
+			},
+			{
+				"type": "image_picker",
+				"id": "second_col_image_2",
+				"label": "Second image"
+			},
+			{
+				"type": "image_picker",
+				"id": "second_col_image_3",
+				"label": "Third image"
+			},
+			{
+				"type": "header",
+				"content": "Layout"
+			},
+			{
+				"type": "select",
+				"id": "container_width",
+				"label": "Container width",
+				"options": [
+					{
+						"value": "1808px",
+						"label": "Default - 1680px"
+					},
+					{
+						"value": "2048px",
+						"label": "Large - 1920px"
+					},
+					{
+						"value": "100%",
+						"label": "Full width"
+					},
+					{
+						"value": "inherit",
+						"label": "Inherit of general setting"
+					}
+				],
+				"default": "inherit",
+				"info": "if you select 'Inherit of general setting', then container width will be used from the Theme settings/Layout"
+			},
+			{
+				"type": "paragraph",
+				"content": "External offsets"
+			},
+			{
+				"type": "range",
+				"id": "offset_top_desktop",
+				"min": 0,
+				"max": 100,
+				"step": 1,
+				"unit": "px",
+				"label": "Desktop external offset top",
+				"default": 50
+			},
+			{
+				"type": "range",
+				"id": "offset_bottom_desktop",
+				"min": 0,
+				"max": 100,
+				"step": 1,
+				"unit": "px",
+				"label": "Desktop external offset bottom",
+				"default": 50
+			},
+			{
+				"type": "range",
+				"id": "offset_top_mobile",
+				"min": 0,
+				"max": 100,
+				"step": 1,
+				"unit": "px",
+				"label": "Mobile external offset top",
+				"default": 25
+			},
+			{
+				"type": "range",
+				"id": "offset_bottom_mobile",
+				"min": 0,
+				"max": 100,
+				"step": 1,
+				"unit": "px",
+				"label": "Mobile external offset bottom",
+				"default": 25
+			},
+			{
+				"type": "paragraph",
+				"content": "Internal offsets"
+			},
+			{
+				"type": "range",
+				"id": "inner_offset_top",
+				"min": 0,
+				"max": 100,
+				"step": 1,
+				"unit": "px",
+				"label": "Desktop internal offset top",
+				"default": 30
+			},
+			{
+				"type": "range",
+				"id": "inner_offset_bottom",
+				"min": 0,
+				"max": 100,
+				"step": 1,
+				"unit": "px",
+				"label": "Desktop internal offset bottom",
+				"default": 30
+			},
+			{
+				"type": "range",
+				"id": "inner_offset_top_mobile",
+				"min": 0,
+				"max": 100,
+				"step": 1,
+				"unit": "px",
+				"label": "Mobile internal offset top",
+				"default": 30
+			},
+			{
+				"type": "range",
+				"id": "inner_offset_bottom_mobile",
+				"min": 0,
+				"max": 100,
+				"step": 1,
+				"unit": "px",
+				"label": "Mobile internal offset bottom",
+				"default": 30
+			}
+		],
+		"presets": [
+			{
+				"name": "Image with text",
+				"settings": {
+					"text_content": "<p>Combine an image with text to highlight a specific product, collection, or blog post of your choice. Enhance the content by including information on its availability, style, or possibly a review.</p>"
+				}
+			}
+		]
+	}
+{%- endschema -%}

@@ -1,0 +1,954 @@
+{%- comment -%}
+------------------------------------------------------------------------------
+	Section: Header
+------------------------------------------------------------------------------
+{%- endcomment -%}
+
+{%- assign logo			 			            = section.settings.logo -%}
+{%- assign logo_transparent			            = section.settings.logo_transparent | default: logo -%}
+{%- assign logo_width	 			            = section.settings.logo_width -%}
+{%- assign logo_position 						= section.settings.logo_position -%}
+{%- assign menu					                = section.settings.menu -%}
+{%- assign scroll_images_direction				= section.settings.scroll_images_direction -%}
+{%- assign enable_transparent_header_homepage	= section.settings.enable_transparent_header_homepage -%}
+{%- assign enable_transparent_header_collection = section.settings.enable_transparent_header_collection -%}
+{%- assign enable_transparent_header_mobile 	= section.settings.enable_transparent_header_mobile -%}
+{%- assign is_language_selector	                = section.settings.is_language_selector -%}
+{%- assign is_country_selector		            = section.settings.is_country_selector -%}
+{%- assign header_type 					        = section.settings.header_type -%}
+{%- assign open_menu_type			 	        = section.settings.open_menu_type -%}
+{%- assign make_first_lvl_clickable				= section.settings.make_first_lvl_clickable -%}
+{%- assign is_show_border			            = section.settings.is_show_border -%}
+{%- assign burger_menu                          = section.settings.burger_menu -%}
+{%- assign mobile_top_menu 						= section.settings.mobile_top_menu -%}
+
+{%- assign color_scheme      	           = section.settings.color_scheme -%}
+{%- assign enable_color_scheme_inheritance = section.settings.enable_color_scheme_inheritance -%}
+{%- assign text_color_transparent	       = section.settings.text_color_transparent -%}
+{%- assign count_text_color				   = section.settings.count_text_color -%}
+{%- assign count_text_color_transparent	   = section.settings.count_text_color_transparent -%}
+{%- assign count_text_bg			       = section.settings.count_text_bg -%}
+{%- assign count_text_bg_transparent       = section.settings.count_text_bg_transparent -%}
+
+{%- assign is_enable_search		  = settings.enable_search -%}
+{%- assign cart_type			  = settings.cart_type -%}
+{%- assign show_cart_notification = settings.show_cart_notification -%}
+
+{%- assign enable_sticky_header		 	= true -%}
+{%- assign is_transparent_header    	= false -%}
+{%- assign is_transparent_header_mobile = false -%}
+{%- assign is_language_selector_enabled	= false -%}
+{%- assign is_country_selector_enabled	= false -%}
+
+{%- if enable_color_scheme_inheritance -%}
+	{%- assign color_scheme = settings.main_color_scheme -%}
+{%- endif -%}
+
+{%- if header_type == "static" -%}
+	{%- assign enable_sticky_header = false -%}
+{%- endif -%}
+
+{%- if enable_transparent_header_homepage and template.name == "index" -%}
+	{%- assign is_transparent_header = true -%}
+{%- endif -%}
+
+{%- if enable_transparent_header_mobile and template.name == "index" -%}
+	{%- assign is_transparent_header_mobile = true -%}
+{%- endif -%}
+
+{%- if enable_transparent_header_collection and template.name == "collection" -%}
+	{%- assign is_transparent_header = true -%}
+{%- endif -%}
+
+{%- if enable_transparent_header_mobile and template.name == "collection" -%}
+	{%- assign is_transparent_header_mobile = true -%}
+{%- endif -%}
+
+{%- if is_language_selector and localization.available_languages.size > 1 -%}
+	{%- assign is_language_selector_enabled = true -%}
+{%- endif -%}
+
+{%- if is_country_selector and localization.available_countries.size > 1 -%}
+	{%- assign is_country_selector_enabled = true -%}
+{%- endif -%}
+
+{% assign display_link_on_first_lvl = false %}
+
+{% if make_first_lvl_clickable and open_menu_type == 'mouseenter' %}
+	{% assign display_link_on_first_lvl = true %}
+{% endif %}
+
+<style>
+	:root {
+		--header-position: {%- if enable_sticky_header -%}sticky{%- else -%}static{%- endif -%}; {{- -}}
+		--header-transparent-text-color: {{- text_color_transparent -}}; {{- -}}
+		--header-count-text-color: {{- count_text_color -}}; {{- -}}
+		--header-transparent-count-text-color: {{- count_text_color_transparent -}}; {{- -}}
+		--header-count-text-bg: {{- count_text_bg -}}; {{- -}}
+		--header-transparent-count-text-bg: {{- count_text_bg_transparent -}}; {{- -}}
+		--header-height-sticky: {%- if enable_sticky_header -%}var(--header-height){%- else -%} 0px{%- endif -%}; {{- -}}
+		--header-border-width: {%- if is_show_border -%}1px{%- else -%} 0px{%- endif -%}; {{- -}}
+		--header-animation-image-start: {%- if scroll_images_direction == 'top' -%}0%{%- else -%}-100%{%- endif -%};
+		--header-animation-image-end: {%- if scroll_images_direction == 'top' -%}-100%{%- else -%}0%{%- endif -%};
+	}
+
+	.header-menu__list--main .header-menu__item {
+		text-transform: uppercase !important;
+		font-weight: 900 !important;
+		font-size: 15px !important;
+		letter-spacing: 0.5px !important;
+	}
+
+	.header-menu__list--main .header-menu__item * {
+		font-weight: 900 !important;
+	}
+</style>
+
+{%- capture classes -%}
+	{% if logo_position == 'middle' %} header--menu-left{% elsif logo_position == 'left' %} header--menu-center{% elsif logo_position == 'top' %} header--menu-bottom{% endif %}
+{%- endcapture -%}
+
+{%- capture logo_snippet -%}
+	<div class="header__logo">
+		<span class="visually-hidden">
+			{{ "layout.header.labels.store_logo" | t }}
+		</span>
+
+		{%- if request.page_type == 'index' -%}
+			<h1 class="header__heading">
+		{%- endif -%}
+			<a
+				href="{{ routes.root_url }}"
+				class="header__heading-link focus-visible-outline"
+			>
+				{%- if logo != blank -%}
+					{%- assign logo_alt_transparent = logo_transparent.alt | default: shop.name | escape -%}
+
+					{%- assign logo_height = logo_width | divided_by: logo.aspect_ratio | round: 0 -%}
+					{%- assign logo_width_x2 = logo_width | times: 2 -%}
+
+					{%- capture img_styles -%}
+						--img-desktop-pos: {{ logo.presentation.focal_point }}; {{- -}}
+						--base-logo-width: {{ logo_width -}}px;
+						--base-logo-height: {{ logo_height -}}px;
+					{%- endcapture -%}
+
+					{%- capture img_styles_transparent -%}
+						--img-desktop-pos-transparent: {{ logo_transparent.presentation.focal_point }};
+						--base-logo-width: {{ logo_width -}}px;
+						--base-logo-height: {{ logo_height -}}px;
+					{%- endcapture -%}
+
+					<img
+						srcset="{{ logo | image_url: width: logo_width }} 1x, {{ logo | image_url: width: logo_width_x2 }} 2x"
+						src="{{ logo | image_url: width: logo_width }}"
+						alt="{{ logo.alt }}"
+						class="header__heading-logo"
+						height="{{ logo_height }}"
+						width="{{ logo_width }}"
+						loading="eager"
+						style="{{ img_styles }}"
+					/>
+
+					{%- if is_transparent_header -%}
+						<img
+							srcset="{{ logo_transparent | image_url: width: logo_width }} 1x, {{ logo_transparent | image_url: width: logo_width_x2 }} 2x"
+							src="{{ logo_transparent | image_url: width: logo_width }}"
+							alt="{{ logo_alt_transparent }}"
+							class="header__heading-logo header__heading-logo--transparent"
+							height="{{ logo_height }}"
+							width="{{ logo_width }}"
+							loading="eager"
+							style="{{ img_styles_transparent }}"
+						/>
+					{%- endif -%}
+				{%- else -%}
+					<span class="h3">
+						{{ shop.name }}
+					</span>
+				{%- endif -%}
+			</a>
+		{%- if request.page_type == 'index' -%}
+			</h1>
+		{%- endif -%}
+	</div>
+{%- endcapture -%}
+
+<header
+	class="header {{ classes | strip_newlines }} color-{{ color_scheme }} js-header"
+	data-open-menu-type="{{- open_menu_type -}}"
+	{% if header_type == "sticky_hide" %}
+		data-hide-on-scroll-down
+	{% endif %}
+	{% if header_type == "static" %}
+		data-static-header
+	{% endif %}
+	{% if is_transparent_header %}
+		data-header-transparent
+	{% endif %}
+	{% if is_transparent_header_mobile %}
+		data-header-transparent-mobile
+	{% endif %}
+>
+	<div
+		class="header__container"
+		data-header-container
+		{% if enable_sticky_header %}
+			data-header-sticky
+		{% endif %}
+	>
+		{% if logo_position == "top" %}
+			<div class="header__top-container">
+				<div class="header__top-left-col">
+					{%- if is_language_selector_enabled or is_country_selector_enabled -%}
+						<div class="header__localization">
+							{%- if is_language_selector_enabled -%}
+								{%- render 'language-localization-form', class: 'header', id_prefix: 'header-top', form_id: 'header-top-localization-form' -%}
+							{%- endif -%}
+
+							{%- if is_country_selector_enabled -%}
+								{%- render 'country-localization-form', class: 'header', id_prefix: 'header-top', form_id: 'header-top-country-form' -%}
+							{%- endif -%}
+						</div>
+					{%- endif -%}
+				</div>
+
+				{{- logo_snippet -}}
+
+				<div class="header__utils-top">
+					<div class="header__icons">
+						{%- if is_enable_search -%}
+							<button
+								type="button"
+								class="header__icon header__icon--search focus-visible-outline js-header-drawer-toggler js-header-search-toggler"
+								data-target="headerDrawerSearch"
+								data-js-toggle="searchToggleDrawer"
+								aria-expanded="false"
+								aria-controls="headerDrawerSearch"
+								aria-label="{{- "layout.navigation.search" | t | escape -}}"
+							>
+								{%- render 'icons', icon: 'search' -%}
+							</button>
+
+							<a
+								href="{{- routes.search_url -}}"
+								class="header__icon header__icon--search focus-visible-outline no-js"
+								aria-label="{{- "layout.navigation.search" | t | escape -}}"
+							>
+								{%- render 'icons', icon: 'search' -%}
+							</a>
+						{%- endif -%}
+
+						{%- if shop.customer_accounts_enabled -%}
+							<a
+								href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}"
+								class="header__icon header__icon--account focus-visible-outline"
+								{% if customer %}
+									aria-label="{{- "layout.customer.account" | t | escape -}}"
+								{% else %}
+									aria-label="{{- "layout.customer.log_in" | t | escape -}}"
+								{% endif %}
+							>
+								{%- render 'icons', icon: 'account' -%}
+							</a>
+						{%- endif -%}
+
+						{%- if cart_type == "drawer" and template != "cart"  -%}
+							<button
+								type="button"
+								class="header__icon header__icon--cart focus-visible-outline js-header-cart-toggler"
+								data-target="CartDrawer"
+								data-js-toggle="CartDrawer"
+								aria-expanded="false"
+								aria-controls="CartDrawer"
+							>
+								{%- render 'icons', icon: 'cart' -%}
+
+								<span class="visually-hidden">
+									{{- "layout.header.labels.cart_drawer" | t | escape -}}
+								</span>
+
+								<span
+									class="header__cart-count js-header-cart-item-count-wrapper"
+									data-cart-count="{{- cart.item_count -}}"
+								>
+									<span class="visually-hidden">
+										{{ "layout.header.labels.cart_item_count" | t }}
+									</span>
+
+									<span class="js-header-cart-item-count">
+										{%- if cart.item_count > 99 -%}
+											99+
+										{%- else -%}
+											{{- cart.item_count -}}
+										{%- endif -%}
+									</span>
+								</span>
+							</button>
+
+							<a href="{{- routes.cart_url -}}" class="header__icon header__icon--cart focus-visible-outline no-js">
+								{%- render 'icons', icon: 'cart' -%}
+
+								<span class="visually-hidden">
+									{{- "layout.header.labels.cart_drawer" | t | escape -}}
+								</span>
+
+								<span
+									class="header__cart-count"
+									data-cart-count="{{- cart.item_count -}}"
+								>
+									<span class="visually-hidden">
+										{{ "layout.header.labels.cart_item_count" | t }}
+									</span>
+
+									<span>
+										{%- if cart.item_count > 99 -%}
+											99+
+										{%- else -%}
+											{{- cart.item_count -}}
+										{%- endif -%}
+									</span>
+								</span>
+							</a>
+						{%- else -%}
+							<a href="{{- routes.cart_url -}}" class="header__icon header__icon--cart focus-visible-outline">
+								{%- render 'icons', icon: 'cart' -%}
+
+								<span class="visually-hidden">
+									{{- "layout.header.labels.cart" | t | escape -}}
+								</span>
+
+								<span
+									class="header__cart-count js-header-cart-item-count-wrapper"
+									data-cart-count="{{- cart.item_count -}}"
+								>
+									<span class="visually-hidden">
+										{{ "layout.header.labels.cart_item_count" | t }}
+									</span>
+
+									<span class="js-header-cart-item-count">
+										{%- if cart.item_count > 99 -%}
+											99+
+										{%- else -%}
+											{{- cart.item_count -}}
+										{%- endif -%}
+									</span>
+								</span>
+							</a>
+						{%- endif -%}
+
+						<button
+							class="header__icon header__icon--search-close focus-visible-outline"
+							type="button"
+							aria-label="{{- 'general.predictive_search.close_aria_label' | t | escape -}}"
+							aria-expanded="false"
+							aria-controls="headerDrawerSearch"
+							data-target="headerDrawerSearch"
+							data-js-toggle="searchToggleDrawer"
+							data-toggle-close-only=""
+						>
+							{%- render 'icons', icon: 'menu-close' -%}
+						</button>
+					</div>
+				</div>
+			</div>
+		{% endif %}
+
+		<div class="header__mobile-menu-wrapper">
+			<button
+				class="header__burger-mobile-menu-button focus-visible-outline js-header-drawer-toggler js-mobile-header-main-toggler"
+				type="button"
+				data-target="headerDrawerMenu"
+				data-js-toggle="headerToggleMenuDrawer"
+				aria-expanded="false"
+				aria-controls="headerDrawerMenu"
+				aria-label="{{ "layout.navigation.open_drawer_menu" | t | escape }}"
+			>
+				{%- render 'icons', icon: 'burger-menu' -%}
+			</button>
+
+			{%- if is_enable_search -%}
+				<button
+					type="button"
+					class="header__icon header__icon--search-mobile focus-visible-outline js-header-search-toggler"
+					aria-expanded="false"
+					aria-controls="headerDrawerSearch"
+					data-target="headerDrawerSearch"
+					data-js-toggle="searchToggleDrawer"
+					aria-label="{{- "layout.navigation.search" | t | escape -}}"
+				>
+					{%- render 'icons', icon: 'search' -%}
+				</button>
+
+				<a
+					href="{{- routes.search_url -}}"
+					class="header__icon header__icon--search-mobile focus-visible-outline no-js"
+					aria-label="{{- "layout.navigation.search" | t | escape -}}"
+				>
+					{%- render 'icons', icon: 'search' -%}
+				</a>
+			{%- endif -%}
+		</div>
+
+		{%- if logo_position == 'left' -%}
+			{{- logo_snippet -}}
+		{%- endif -%}
+
+		{%- if menu.links != blank or burger_menu.links != blank -%}
+			{%- render 'header-menu',
+				menu: menu,
+				burger_menu: burger_menu,
+				display_link_on_first_lvl: display_link_on_first_lvl
+			-%}
+		{%- endif -%}
+
+		{%- if logo_position == 'middle' or logo_position == 'top' -%}
+			{{- logo_snippet -}}
+		{%- endif -%}
+
+		<div class="header__utils">
+			{%- if is_language_selector_enabled or is_country_selector_enabled -%}
+				<div class="header__localization">
+					{%- if is_language_selector_enabled -%}
+						{%- render 'language-localization-form', class: 'header', id_prefix: 'header', form_id: 'header-localization-form' -%}
+					{%- endif -%}
+
+					{%- if is_country_selector_enabled -%}
+						{%- render 'country-localization-form', class: 'header', id_prefix: 'header', form_id: 'header-country-form' -%}
+					{%- endif -%}
+				</div>
+			{%- endif -%}
+
+			<div class="header__icons">
+				{%- if is_enable_search -%}
+					<button
+						type="button"
+						class="header__icon header__icon--search focus-visible-outline js-header-drawer-toggler js-header-search-toggler"
+						data-target="headerDrawerSearch"
+						data-js-toggle="searchToggleDrawer"
+						aria-expanded="false"
+						aria-controls="headerDrawerSearch"
+						aria-label="{{- "layout.navigation.search" | t | escape -}}"
+					>
+						{%- render 'icons', icon: 'search' -%}
+					</button>
+
+					<a
+						href="{{- routes.search_url -}}"
+						class="header__icon header__icon--search focus-visible-outline no-js"
+						aria-label="{{- "layout.navigation.search" | t | escape -}}"
+					>
+						{%- render 'icons', icon: 'search' -%}
+					</a>
+				{%- endif -%}
+
+				{%- if shop.customer_accounts_enabled -%}
+					<a
+						href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}"
+						class="header__icon header__icon--account focus-visible-outline"
+						{% if customer %}
+							aria-label="{{- "layout.customer.account" | t | escape -}}"
+						{% else %}
+							aria-label="{{- "layout.customer.log_in" | t | escape -}}"
+						{% endif %}
+					>
+						{%- render 'icons', icon: 'account' -%}
+					</a>
+				{%- endif -%}
+
+				{%- if cart_type == "drawer" and template != "cart"  -%}
+					<button
+						type="button"
+						class="header__icon header__icon--cart focus-visible-outline js-header-cart-toggler"
+						data-target="CartDrawer"
+						data-js-toggle="CartDrawer"
+						aria-expanded="false"
+						aria-controls="CartDrawer"
+					>
+						{%- render 'icons', icon: 'cart' -%}
+
+						<span class="visually-hidden">
+							{{- "layout.header.labels.cart_drawer" | t | escape -}}
+						</span>
+
+						<span
+							class="header__cart-count js-header-cart-item-count-wrapper"
+							data-cart-count="{{- cart.item_count -}}"
+						>
+							<span class="visually-hidden">
+								{{ "layout.header.labels.cart_item_count" | t }}
+							</span>
+
+							<span class="js-header-cart-item-count">
+								{%- if cart.item_count > 99 -%}
+									99+
+								{%- else -%}
+									{{- cart.item_count -}}
+								{%- endif -%}
+							</span>
+						</span>
+					</button>
+
+					<a href="{{- routes.cart_url -}}" class="header__icon header__icon--cart focus-visible-outline no-js">
+						{%- render 'icons', icon: 'cart' -%}
+
+						<span class="visually-hidden">
+							{{- "layout.header.labels.cart_drawer" | t | escape -}}
+						</span>
+
+						<span
+							class="header__cart-count"
+							data-cart-count="{{- cart.item_count -}}"
+						>
+							<span class="visually-hidden">
+								{{ "layout.header.labels.cart_item_count" | t }}
+							</span>
+
+							<span>
+								{%- if cart.item_count > 99 -%}
+									99+
+								{%- else -%}
+									{{- cart.item_count -}}
+								{%- endif -%}
+							</span>
+						</span>
+					</a>
+				{%- else -%}
+					<a href="{{- routes.cart_url -}}" class="header__icon header__icon--cart focus-visible-outline">
+						{%- render 'icons', icon: 'cart' -%}
+
+						<span class="visually-hidden">
+							{{- "layout.header.labels.cart" | t | escape -}}
+						</span>
+
+						<span
+							class="header__cart-count js-header-cart-item-count-wrapper"
+							data-cart-count="{{- cart.item_count -}}"
+						>
+							<span class="visually-hidden">
+								{{ "layout.header.labels.cart_item_count" | t }}
+							</span>
+
+							<span class="js-header-cart-item-count">
+								{%- if cart.item_count > 99 -%}
+									99+
+								{%- else -%}
+									{{- cart.item_count -}}
+								{%- endif -%}
+							</span>
+						</span>
+					</a>
+				{%- endif -%}
+
+				<button
+					class="header__icon header__icon--search-close focus-visible-outline"
+					type="button"
+					aria-label="{{- 'general.predictive_search.close_aria_label' | t | escape -}}"
+					aria-expanded="false"
+					aria-controls="headerDrawerSearch"
+					data-target="headerDrawerSearch"
+					data-js-toggle="searchToggleDrawer"
+					data-toggle-close-only=""
+				>
+					{%- render 'icons', icon: 'menu-close' -%}
+				</button>
+			</div>
+		</div>
+	</div>
+
+	{%- if show_cart_notification -%}
+		{%- render 'cart-notification' -%}
+	{%- endif -%}
+
+	{%- render 'cart-notification-error' -%}
+</header>
+
+{%- if burger_menu.links != blank -%}
+	{%- render 'header-mega-menu',
+		burger_menu: burger_menu,
+		color_scheme: color_scheme
+	-%}
+{%- endif -%}
+
+{%- render 'header-mobile',
+	menu: menu,
+	mobile_top_menu: mobile_top_menu,
+	is_language_selector_enabled: is_language_selector_enabled,
+	is_country_selector_enabled: is_country_selector_enabled,
+	color_scheme: color_scheme
+-%}
+
+<script>
+	(function() {
+		const selectors = {
+			header: ".header-section",
+			headerInner: ".js-header"
+		}
+
+		const cssVariables = {
+			headerHeight: "--header-height",
+			headerHeightStatic: "--header-height-static",
+			headerOffsetTop: "--header-offset-top",
+			headerOffsetTopStatic: "--header-offset-top-static",
+			headerOffsetBottom: "--header-offset-bottom"
+		}
+
+		const header = document.querySelector(selectors.header);
+		const headerInner = document.querySelector(selectors.headerInner);
+		const isHeaderTransparent = headerInner.hasAttribute("data-header-transparent");
+		const isHeaderTransparentMobile = headerInner.hasAttribute("data-header-transparent-mobile");
+
+		const observer = new IntersectionObserver((entries) => {
+			for (const entry of entries) {
+				const bounds = entry.boundingClientRect;
+
+				changeCssVariable(cssVariables.headerHeight, ` ${bounds.height}px`);
+				changeCssVariable(cssVariables.headerHeightStatic, ` ${bounds.height}px`);
+				changeCssVariable(cssVariables.headerOffsetTop, ` ${bounds.top}px`);
+				changeCssVariable(cssVariables.headerOffsetTopStatic, ` ${bounds.top}px`);
+				changeCssVariable(cssVariables.headerOffsetBottom, ` ${bounds.bottom}px`);
+			}
+
+			observer.disconnect();
+		});
+
+		observer.observe(header);
+
+		requestAnimationFrame(() => {
+			if (isHeaderTransparent) {
+				header.classList.add("header-section--transparent", "header-section--top-position");
+
+				if (isHeaderTransparentMobile) {
+					header.classList.add("header-section--transparent-mobile");
+				}
+			}
+		});
+
+		function changeCssVariable(variable, value) {
+			requestAnimationFrame(() => {
+				document.documentElement.style.setProperty(variable, value);
+			});
+		}
+	})();
+</script>
+
+{%- render 'adastra' with '/src/scripts/section-header.js' -%}
+
+{% schema %}
+{
+	"name": "Header",
+	"class": "header-section",
+	"settings": [
+		{
+			"type": "header",
+			"content": "General"
+		},
+		{
+			"type": "select",
+			"id": "header_type",
+			"label": "Type",
+			"options": [
+				{
+					"value": "static",
+					"label": "Static"
+				},
+				{
+					"value": "sticky",
+					"label": "Sticky"
+				},
+				{
+					"value": "sticky_hide",
+					"label": "Sticky (hide on scroll down)"
+				}
+			],
+			"default": "sticky_hide"
+		},
+		{
+			"type": "checkbox",
+			"id": "enable_transparent_header_homepage",
+			"default": false,
+			"label": "Enable a transparent header on the homepage",
+			"info": "Works only for Homepage"
+		},
+		{
+			"type": "checkbox",
+			"id": "enable_transparent_header_collection",
+			"default": false,
+			"label": "Enable a transparent header on the collection page",
+			"info": "Works only for Collection page"
+		},
+		{
+			"type": "checkbox",
+			"id": "enable_transparent_header_mobile",
+			"default": false,
+			"label": "Enable transparent header on Mobile",
+			"info": "Works only for Homepage and Collection page"
+		},
+		{
+			"id": "is_show_border",
+			"type": "checkbox",
+			"label": "Show border",
+			"default": true
+		},
+		{
+			"id": "is_language_selector",
+			"type": "checkbox",
+			"label": "Show language selector",
+			"default": false,
+			"info": "To add a language, go to your [language settings.](/admin/settings/languages)"
+		},
+		{
+			"id": "is_country_selector",
+			"type": "checkbox",
+			"label": "Show country/region selector",
+			"default": false,
+			"info": "To add a currency, go to your [currency settings.](/admin/settings/markets)"
+		},
+		{
+			"type": "header",
+			"content": "Logo"
+		},
+		{
+			"type": "image_picker",
+			"id": "logo",
+			"label": "Image"
+		},
+		{
+			"type": "image_picker",
+			"id": "logo_transparent",
+			"label": "Image (transparent header)",
+			"info": "We recommend using a logo of the same size as the opaque header."
+		},
+		{
+			"type": "range",
+			"id": "logo_width",
+			"min": 20,
+			"max": 250,
+			"step": 5,
+			"default": 140,
+			"unit": "px",
+			"label": "Image width",
+			"info": "Height will be calculated with image aspect ratio. On the mobile, if there is not enough space, the logo will automatically shrink."
+		},
+		{
+			"type": "select",
+			"id": "logo_position",
+			"options": [
+				{
+					"value": "top",
+					"label": "Top"
+				},
+				{
+					"value": "left",
+					"label": "Left"
+				},
+				{
+					"value": "middle",
+					"label": "Middle"
+				}
+			],
+			"default": "middle",
+			"label": "Desktop position",
+			"info": "Logo position will automatically be centered for mobile."
+		},
+		{
+			"type": "header",
+			"content": "Menu"
+		},
+		{
+			"type": "link_list",
+			"id": "menu",
+			"label": "Main menu",
+			"default": "main-menu"
+		},
+		{
+			"id": "mobile_top_menu",
+			"type": "link_list",
+			"label": "Mobile top menu",
+			"info": "Displays only the first 3 menu items"
+		},
+		{
+			"type": "select",
+			"id": "open_menu_type",
+			"options": [
+				{
+					"value": "click",
+					"label": "Click"
+				},
+				{
+					"value": "mouseenter",
+					"label": "Hover"
+				}
+			],
+			"default": "mouseenter",
+			"label": "Open by:",
+			"info": "Affects opening of the 2nd and 3rd level menus."
+		},
+		{
+			"type": "checkbox",
+			"id": "make_first_lvl_clickable",
+			"label": "Make 1st-level menu clickable",
+			"default": false,
+			"info": "Only works with open on hover for desktop, if the menu item has a link."
+		},
+		{
+			"type": "header",
+			"content": "Burger menu"
+		},
+		{
+			"type": "link_list",
+			"id": "burger_menu",
+			"label": "Menu"
+		},
+		{
+			"type": "checkbox",
+			"id": "hide_burger_menu_on_mobile",
+			"label": "Hide on mobile",
+			"default": false
+		},
+		{
+			"type": "link_list",
+			"id": "additional_menu",
+			"label": "Additional menu"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_socials",
+			"label": "Show socials",
+			"default": true
+		},
+		{
+			"type": "select",
+			"id": "scroll_images_direction",
+			"label": "Scroll images direction",
+			"options": [
+				{
+					"value": "top",
+					"label": "Top"
+				},
+				{
+					"value": "bottom",
+					"label": "Bottom"
+				}
+			],
+			"default": "top",
+			"info": "This setting changes the animation direction for all columns to a reverse direction."
+		},
+		{
+			"type": "inline_richtext",
+			"id": "phone_number",
+			"label": "Phone number",
+			"default": "+333-333-333"
+		},
+		{
+			"type": "inline_richtext",
+			"id": "schedule_information",
+			"label": "Schedule information",
+			"default": "Daily: 10:00 – 19:00"
+		},
+		{
+			"type": "paragraph",
+			"content": "If there are at least 2 images, they will automatically scroll around in a kind of infinite loop."
+		},
+		{
+			"type": "image_picker",
+			"id": "media_image_1",
+			"label": "Media image 1"
+		},
+		{
+			"type": "url",
+			"id": "media_url_1",
+			"label": "Media URL 1"
+		},
+		{
+			"type": "image_picker",
+			"id": "media_image_2",
+			"label": "Media image 2"
+		},
+		{
+			"type": "url",
+			"id": "media_url_2",
+			"label": "Media URL 2"
+		},
+		{
+			"type": "image_picker",
+			"id": "media_image_3",
+			"label": "Media image 3"
+		},
+		{
+			"type": "url",
+			"id": "media_url_3",
+			"label": "Media URL 3"
+		},
+		{
+			"type": "paragraph",
+			"content": "The movement speed options allow you to set how fast the images will move."
+		},
+		{
+			"type": "range",
+			"id": "desktop_movement_speed",
+			"label": "Movement speed(desktop)",
+			"min": 10,
+			"max": 30,
+			"unit": "s",
+			"default": 10
+		},
+		{
+			"type": "range",
+			"id": "mobile_movement_speed",
+			"label": "Movement speed(mobile)",
+			"min": 10,
+			"max": 30,
+			"unit": "s",
+			"default": 20
+		},
+		{
+			"type": "header",
+			"content": "Colors"
+		},
+		{
+			"type": "checkbox",
+			"id": "enable_color_scheme_inheritance",
+			"label": "Enable color scheme inheritance",
+			"default": true,
+			"info": "When this setting is enabled, the color scheme is inherited from the theme settings."
+		},
+		{
+			"type": "color_scheme",
+			"id": "color_scheme",
+			"label": "Color scheme",
+			"default": "scheme-1"
+		},
+		{
+			"type": "color",
+			"id": "text_color_transparent",
+			"label": "Text (header transparent)",
+			"default": "#fff"
+		},
+		{
+			"type": "color",
+			"id": "count_text_color",
+			"label": "Cart count text",
+			"default": "#000"
+		},
+		{
+			"type": "color",
+			"id": "count_text_color_transparent",
+			"label": "Cart count text (header transparent)",
+			"default": "#000"
+		},
+		{
+			"type": "color",
+			"id": "count_text_bg",
+			"label": "Cart count background",
+			"default": "#ECECEC"
+		},
+		{
+			"type": "color",
+			"id": "count_text_bg_transparent",
+			"label": "Cart count background (header transparent)",
+			"default": "#ECECEC"
+		}
+	]
+}
+{% endschema %}

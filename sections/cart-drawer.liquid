@@ -1,0 +1,346 @@
+{%- comment -%}
+------------------------------------------------------------------------------
+	Section: Cart drawer
+------------------------------------------------------------------------------
+{%- endcomment -%}
+{%- if settings.cart_type == "drawer" and template != "cart" -%}
+	{%- render 'adastra' with '/src/styles/cart.scss' -%}
+
+	{%- capture default_heading -%}
+		{{- "cart.general.title" | t -}}
+	{%- endcapture -%}
+
+	{%- capture default_upsell_heading -%}
+		{{- "cart.general.upsell" | t -}}
+	{%- endcapture -%}
+
+	{%- assign color_scheme      	           	= section.settings.color_scheme -%}
+	{%- assign enable_color_scheme_inheritance 	= section.settings.enable_color_scheme_inheritance -%}
+	{%- assign show_cart_items_count 			= section.settings.show_cart_items_count -%}
+	{%- assign heading 							= section.settings.heading | default: default_heading -%}
+	{%- assign cart_button_label 				= section.settings.cart_button_label -%}
+	{%- assign upsell_heading 					= section.settings.upsell_heading | default: default_upsell_heading -%}
+	{%- assign upsell_products 					= section.settings.upsell_products -%}
+
+	{%- if enable_color_scheme_inheritance -%}
+		{%- assign color_scheme = settings.main_color_scheme -%}
+	{%- endif -%}
+
+	{%- if show_cart_items_count -%}
+		{%- capture heading -%}
+			{{- heading }} ({{- cart.item_count -}})
+		{%- endcapture -%}
+	{%- endif -%}
+
+	{%- assign shipping_included = false -%}
+
+	{%- capture content -%}
+		{%- for block in section.blocks -%}
+			{%- case block.type -%}
+				{%- when '@app' -%}
+					{%- render block -%}
+				{%- when 'items' -%}
+					<div class="cart-drawer__section cart-drawer__section--items">
+						<div class="cart-items">
+							<form action="{{- routes.cart_url -}}" id="cart-{{- section.id -}}" class="cart-items__form" method="post">
+								<div class="cart-items__body">
+									{%- render 'cart-items', cart_drawer: true -%}
+								</div>
+							</form>
+						</div>
+					</div>
+				{%- when 'shipping' -%}
+					{%- assign amount  = block.settings.amount -%}
+					{%- assign message = block.settings.message -%}
+					{%- assign congratulatory_message = block.settings.congratulatory_message -%}
+					{%- assign congratulatory_image = block.settings.icon -%}
+					{%- assign bar_color = block.settings.bar_color -%}
+					{%- assign fill_color = block.settings.fill_color -%}
+
+					{%- capture shipping_content -%}
+						{%- render 'cart-shipping',
+							amount: amount,
+							message: message,
+							congratulatory_message: congratulatory_message,
+							congratulatory_image: congratulatory_image,
+							bar_color: bar_color,
+							fill_color: fill_color
+						-%}
+					{%- endcapture -%}
+
+					{%- if shipping_content != '' -%}
+						<div class="cart-drawer__section cart-drawer__section--shipping">
+							{%- assign shipping_included = true -%}
+
+							{{- shipping_content -}}
+						</div>
+					{%- endif -%}
+			{%- endcase -%}
+		{%- endfor -%}
+	{%- endcapture -%}
+
+	{%- capture upsell -%}
+		{%- assign upsell_content = '' -%}
+
+		{%- assign title 	= upsell_heading -%}
+		{%- assign products = upsell_products -%}
+
+		{%- capture upsell_item -%}
+			{%- render 'cart-upsell',
+				products: products,
+				heading: title
+			-%}
+		{%- endcapture -%}
+
+		{%- if upsell_item != '' -%}
+			{%- capture upsell_content -%}
+				{{- upsell_content -}}
+
+				{{- upsell_item -}}
+			{%- endcapture -%}
+		{%- endif -%}
+
+		{%- if upsell_content != '' -%}
+			<div
+				id="CartUpsellDrawer"
+				class="cart-drawer__upsell cart-drawer__tab-content js-cart-drawer-tab-content is-hidden"
+			>
+				{{- upsell_content -}}
+			</div>
+		{%- endif -%}
+	{%- endcapture -%}
+
+	{%- capture footer -%}
+		{%- render 'cart-footer',
+			section: section,
+			cart_button_label: cart_button_label,
+			cart_drawer: true
+		-%}
+	{%- endcapture -%}
+
+<section
+	id="CartDrawer"
+	class="drawer cart-drawer color-{{ color_scheme }} {% if cart.empty? %} is-empty{% endif %} js-cart-drawer"
+	data-section-type="cart-template"
+	data-section-modification="drawer"
+	data-section-id="{{- section.id -}}"
+	data-shadow-root
+	role="dialog"
+	aria-labelledby="CartDrawer-{{- heading | handle -}}"
+>
+	<div class="drawer__header js-cart-header">
+		{% if upsell_products != blank and upsell != blank %}
+			<div class="cart-drawer__header-tabs">
+				<h2 class="h4" id="CartDrawer-{{- heading | handle -}}">
+					<button class="cart-drawer__header-tab-button button-link h4 is-active focus-visible-outline js-cart-drawer-tab-button" data-tab-content="cart-drawer-main-content">
+						<span data-text="{{- heading -}}">
+							<span>{{- heading -}}</span>
+						</span>
+						</button>
+					</h2>
+
+					<button class="cart-drawer__header-tab-button button-link h4 focus-visible-outline js-cart-drawer-tab-button" data-tab-content="CartUpsellDrawer">
+						<span data-text="{{- upsell_heading -}}">
+							<span>{{- upsell_heading -}}</span>
+						</span>
+					</button>
+				</div>
+			{% else %}
+				<h2 class="drawer__title cart-drawer__title-empty h4" id="CartDrawer-{{- heading | handle -}}">
+					{{- heading -}}
+				</h2>
+			{% endif %}
+
+			<button
+				class="drawer__close focus-visible-outline js-cart-close-button"
+				data-target="CartDrawer"
+				data-js-toggle="CartDrawer"
+				aria-label="{{- 'general.accessibility.close_modal' | t | escape -}}"
+			>
+				{% render 'icons', icon: 'menu-close' %}
+			</button>
+		</div>
+
+	<div class="drawer__body cart-drawer__container js-cart-container js-scroll-lock-container" data-scrollable>
+		<div class="cart-drawer__content js-cart-content">
+			{%- if cart.empty? -%}
+				{%- render 'cart-empty' -%}
+			{%- else -%}
+				{%- if content != '' -%}
+					<div id="cart-drawer-main-content" class="cart-drawer__tab-content js-cart-drawer-tab-content">
+						{{- content -}}
+					</div>
+
+						{{ upsell }}
+					{%- endif -%}
+				{%- endif -%}
+			</div>
+
+			{%- if footer != '' -%}
+				<div class="drawer__footer cart-drawer__footer js-cart-footer">
+					{{- footer -}}
+				</div>
+			{%- endif -%}
+		</div>
+
+		{%- render 'preloader' -%}
+	</section>
+
+	{%- if upsell_products != blank -%}
+		{%- render 'adastra' with '/src/scripts/component-product-card-with-form.js' -%}
+	{%- endif -%}
+
+	{%- render 'adastra' with '/src/scripts/cart-drawer.js' -%}
+{%- endif -%}
+
+{% schema %}
+{
+	"name": "Cart drawer",
+	"class": "cart-drawer-section",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Colors"
+		},
+		{
+			"type": "checkbox",
+			"id": "enable_color_scheme_inheritance",
+			"label": "Enable color scheme inheritance",
+			"default": true,
+			"info": "When this setting is enabled, the color scheme is inherited from the theme settings."
+		},
+		{
+			"type": "color_scheme",
+			"id": "color_scheme",
+			"label": "Color scheme",
+			"default": "scheme-1"
+		},
+		{
+			"type": "header",
+			"content": "Cart drawer settings"
+		},
+		{
+			"type": "text",
+			"id": "heading",
+			"label": "Heading",
+			"default": "Cart"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_cart_items_count",
+			"label": "Show items count in the cart",
+			"default": true
+		},
+		{
+			"type": "text",
+			"id": "cart_button_label",
+			"label": "View cart label",
+			"default": "View cart"
+		},
+		{
+			"type": "header",
+			"content": "Upsell settings"
+		},
+		{
+			"type": "text",
+			"id": "upsell_heading",
+			"label": "Heading",
+			"default": "Recommended products"
+		},
+		{
+			"type": "product_list",
+			"id": "upsell_products",
+			"label": "Products",
+			"limit": 14
+		}
+	],
+	"blocks": [
+		{
+			"type": "@app"
+		},
+		{
+			"name": "Items",
+			"type": "items",
+			"limit": 1,
+			"settings": []
+		},
+		{
+			"name": "Shipping bar",
+			"type": "shipping",
+			"limit": 1,
+			"settings": [
+				{
+					"type": "number",
+					"id": "amount",
+					"label": "Free shipping amount",
+					"default": 100
+				},
+				{
+					"type": "textarea",
+					"id": "message",
+					"label": "Shipping message",
+					"default": "You are only {amount} away from free shipping",
+					"info": "The pattern {amount} will be replaced with the remaining amount"
+				},
+				{
+					"type": "textarea",
+					"id": "congratulatory_message",
+					"label": "Shipping congratulatory message",
+					"default": "You got free shipping"
+				},
+				{
+					"type": "image_picker",
+					"id": "icon",
+					"label": "Congratulatory icon",
+					"info": "40 x 40px recommended"
+				},
+				{
+					"type": "header",
+					"content": "Colors"
+				},
+				{
+					"type": "color",
+					"id": "bar_color",
+					"label": "Progress bar background color",
+					"default": "#E9E9E9"
+				},
+				{
+					"type": "color",
+					"id": "fill_color",
+					"label": "Progress bar fill color",
+					"default": "#FFD875"
+				}
+			]
+		},
+		{
+			"name": "Benefit",
+			"type": "benefit",
+			"limit": 6,
+			"settings": [
+				{
+					"type": "inline_richtext",
+					"id": "text",
+					"label": "Text",
+					"default": "Short text content."
+				},
+				{
+					"type": "image_picker",
+					"id": "icon",
+					"label": "Icon",
+					"info": "20 x 20px .svg recommended"
+				}
+			]
+		}
+	],
+	"default": {
+		"blocks": [
+			{
+				"type": "items"
+			},
+			{
+				"type": "shipping"
+			}
+		]
+	}
+}
+{% endschema %}

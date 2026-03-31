@@ -1,0 +1,183 @@
+{%- comment -%}
+	------------------------------------------------------------------------------
+	Snippet: Product filters drawer
+	- product_list: Collection or Search object (required)
+	- filter_type: filter type (sidebar/top-bar/drawer) (required)
+	- show_swatches: boolean. Set true to show swatches instead of checkbox
+
+	Usage:
+
+	{%- render 'product-filters-and-sort', product_list: product_list, filter_type: 'drawer'  -%}
+	or
+	{%- render 'product-filters-and-sort', product_list: product_list, filter_type: 'drawer' -%}
+	------------------------------------------------------------------------------
+{%- endcomment -%}
+
+{%- if template.name == 'collection' -%}
+	{%- assign count = product_list.products_count -%}
+{%- elsif template.name == 'search' -%}
+	{%- assign count = product_list.results_count -%}
+{%- endif -%}
+
+{%- assign id = filter_type -%}
+
+{%- assign active_filters_size = 0 -%}
+
+{%- for filter in product_list.filters -%}
+	{%- case filter.type -%}
+		{%- when 'list' or 'boolean' -%}
+			{%- assign active_filters_size = active_filters_size | plus: filter.active_values.size -%}
+		{%- when 'price_range' -%}
+			{%- if filter.min_value.value > 0 or filter.max_value.value < filter.range_max -%}
+				{%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
+					{%- assign active_filters_size = active_filters_size | plus: 1 -%}
+				{%- endif -%}
+			{%- endif -%}
+	{%- endcase -%}
+{%- endfor -%}
+
+{%- if product_list != blank -%}
+	<div class="product-filters">
+		<div
+			class="drawer drawer--left product-filters__drawer js-filter-menu-drawer"
+			id="filterMenuDrawer"
+			data-toggle-target="filterMenuToggler"
+			role="dialog"
+			aria-labelledby="filterMenuDrawerTitle"
+		>
+			<div class="product-filters__drawer-container">
+				<form class="product-filters__form js-form">
+					<div class="drawer__header product-filters__form-header">
+						<h2 class="drawer__title h4" id="filterMenuDrawerTitle">
+							{{- 'general.filters.title' | t -}}
+						</h2>
+
+						<button
+							class="drawer__close"
+							data-target="filterMenuDrawer"
+							data-js-toggle="filterMenuToggler"
+							type="button"
+							aria-label="{{- 'general.filters.close_filter_menu_aria' | t | escape -}}"
+						>
+							{%- render 'icons', icon: 'menu-close' -%}
+						</button>
+					</div>
+
+					<div class="drawer__body product-filters__form-body js-scroll-lock-container">
+						{%- render 'product-filters-selected', product_list: product_list, filter_type: 'drawer' -%}
+
+							<div
+								class="accordion product-filters__form-accordion js-accordion-container js-filters-container"
+								id="filters-container-{{ section.id }}-{{ filter.param_name | escape }}-{{- id -}}"
+							>
+								{%- assign filterListIndex = 1 -%}
+
+								<div
+									id="sort-item-{{ section.id }}-{{- id -}}"
+									class="accordion__item product-filters__form-item js-accordion-item js-filter-item"
+								>
+									<h3 class="accordion__title">
+										<button
+											class="focus-visible-outline accordion__control product-filters__form-item-toggle-button js-accordion-control"
+											type="button"
+											id="Filter-accordion-{{ section.id }}-{{- filterListIndex -}}-{{- id -}}"
+											aria-controls="filter-list-{{ section.id }}-{{- filterListIndex -}}-{{- id -}}"
+											aria-expanded="false"
+										>
+											<span class="product-filters__form-item-toggle-title">
+												{{- 'collections.sorting.title' | t -}}
+											</span>
+											{%- render 'icons', icon: 'arrow-down' -%}
+										</button>
+									</h3>
+
+									<div
+										class="accordion__content accordion__content--animate js-accordion-content"
+										id="filter-list-{{ section.id }}-{{- filterListIndex -}}-{{- id -}}"
+										aria-labelledby="Filter-accordion-{{ section.id }}-{{- filterListIndex -}}-{{- id -}}"
+										role="region"
+										style="height: 0;"
+									>
+										<div class="js-accordion-inner product-filters__form-item-content">
+											{%- render 'sort', product_list: product_list, sort_type: "secondary", id: id -%}
+										</div>
+									</div>
+								</div>
+
+								{%- assign filterListIndex = filterListIndex | plus: 1 -%}
+
+								{%- for filter in product_list.filters -%}
+									{%- if filter.type == 'list' and filter.values.size == 0 or filter.type == 'boolean' and filter.values.size == 0 -%}
+										{%- continue -%}
+									{%- endif -%}
+
+									<div
+										id="filter-{{ section.id }}-{{ filter.param_name | escape }}-{{ section.id }}-{{- id -}}"
+										class="accordion__item product-filters__form-item js-accordion-item js-filter-item"
+									>
+										<h3 class="accordion__title">
+											<button
+												class="focus-visible-outline accordion__control product-filters__form-item-toggle-button js-accordion-control"
+												type="button"
+												id="Filter-accordion-{{ section.id }}-{{- filterListIndex -}}-{{- id -}}"
+												aria-controls="filter-list-{{ section.id }}-{{- filterListIndex -}}-{{- id -}}"
+												aria-expanded="false"
+											>
+												<span typeof="product-filters__form-item-toggle-title">
+													{{- filter.label -}}
+
+													<span class="js-filter-item-counter">
+														{%- if filter.active_values.size > 0 and filter.type != 'price_range' -%}
+															&nbsp;({{- filter.active_values.size -}})
+														{%- endif -%}
+													</span>
+												</span>
+												{%- render 'icons', icon: 'arrow-down' -%}
+											</button>
+										</h3>
+
+										<div
+											class="accordion__content accordion__content--animate js-accordion-content"
+											id="filter-list-{{ section.id }}-{{- filterListIndex -}}-{{- id -}}"
+											aria-labelledby="Filter-accordion-{{ section.id }}-{{- filterListIndex -}}-{{- id -}}"
+											role="region"
+											style="height: 0;"
+										>
+											<div class="js-accordion-inner product-filters__form-item-content">
+												{%- case filter.type -%}
+													{%- when 'list' or 'boolean' -%}
+														{% if filter.operator == "AND" %}
+															<span class="product-filters__form-helptext">
+																{{- 'general.filters.filter_and_operator_subtitle' | t -}}
+															</span>
+														{% endif %}
+
+														{%- render 'filter-list', filter: filter, show_swatches: show_swatches, id: id -%}
+													{%- when 'price_range' -%}
+														{%- render 'filter-price', filter: filter, id: id -%}
+												{%- endcase -%}
+											</div>
+										</div>
+
+										{%- assign filterListIndex = filterListIndex | plus: 1 -%}
+									</div>
+								{%- endfor -%}
+							</div>
+					</div>
+
+					<div class="drawer__footer product-filters__form-footer js-filters-footer">
+						<button
+							class="button button--primary product-filters__form-footer-button js-reset-filters"
+							type="button"
+							{%- if active_filters_size < 1 -%}disabled{% endif %}
+						>
+							{{- 'general.filters.clear_all' | t -}}
+						</button>
+					</div>
+				</form>
+			</div>
+
+			{%- render "preloader" -%}
+		</div>
+	</div>
+{%- endif -%}

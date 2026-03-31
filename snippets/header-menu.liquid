@@ -1,0 +1,191 @@
+{%- comment -%}
+	------------------------------------------------------------------------------
+	Snippet: Header menu
+	Render header menu
+	- menu: Menu object (required)
+	- burger_menu: Burger menu object
+
+	Usage:
+	{%- render 'header-menu', menu: menu, burger_menu: burger_menu -%}
+	------------------------------------------------------------------------------
+{%- endcomment -%}
+
+<nav class="header-menu" aria-label="{{- "layout.navigation.main_menu" | t | escape -}}">
+	<ul class="header-menu__list header-menu__list--main">
+		{%- if burger_menu.links != blank -%}
+			<li class="header-menu__item-wrapper-mega-menu" style="display: none !important;">
+				<button
+					class="header-menu__item header-menu__item--mega-menu focus-visible-outline"
+					aria-label="{{ "layout.navigation.open_drawer_menu" | t | escape }}"
+					data-multi-drawer-toggle="HeaderMegaMenu"
+					data-drawer-level="1"
+					aria-expanded="false"
+					aria-controls="HeaderMegaMenuMain:{{- burger_menu.title | handleize -}}"
+				>
+					{%- render 'icons', icon: 'burger-menu' -%}
+				</button>
+			</li>
+		{%- endif -%}
+
+		{%- for first_level_link in menu.links -%}
+			{%- assign first_level_index = forloop.index -%}
+			{%- assign animation_delay = 0 -%}
+
+			<li class="header-menu__item-wrapper">
+				{%- if first_level_link.links != blank -%}
+					<a
+						class="button-link header-menu__item{% if first_level_link.active %} header-menu__item--active{% endif %} no-js"
+						href="{{- first_level_link.url -}}"
+						{% if first_level_link.current %}
+							aria-current="page"
+						{% endif %}
+					>
+						<span data-text="{{- first_level_link.title | escape -}}">
+							<span>
+								{{- first_level_link.title | escape -}}
+							</span>
+						</span>
+					</a>
+
+					{%- if display_link_on_first_lvl and first_level_link.url != '#' -%}
+						<a
+							href="{{ first_level_link.url }}"
+							class="button-link header-menu__item{% if first_level_link.child_active %} header-menu__item--active{% endif %} js-header-dropdown-menu-toggler"
+							type="button"
+							data-target="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
+							aria-controls="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
+							aria-expanded="false"
+						>
+							<span data-text="{{- first_level_link.title | escape -}}">
+								<span>
+									{{- first_level_link.title | escape -}}
+								</span>
+							</span>
+
+							{%- render 'icons', icon: 'arrow-down' -%}
+						</a>
+					{%- else -%}
+						<button
+							class="button-link 1 header-menu__item{% if first_level_link.child_active %} header-menu__item--active{% endif %} js-header-dropdown-menu-toggler"
+							type="button"
+							data-target="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
+							aria-controls="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
+							aria-expanded="false"
+						>
+							<span data-text="{{- first_level_link.title | escape -}}">
+								<span>
+									{{- first_level_link.title | escape -}}
+								</span>
+							</span>
+
+							{%- render 'icons', icon: 'arrow-down' -%}
+						</button>
+					{%- endif -%}
+
+					<div class="header-menu__list-nested-wrapper js-header-dropdown-menu-wrapper" data-target-nested-wrapper="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}">
+						<ul
+							id="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
+							class="header-menu__list header-menu__list--nested js-header-dropdown-menu"
+						>
+							{%- for second_level_link in first_level_link.links -%}
+								{%- assign animation_delay = animation_delay | plus: 0.05 -%}
+
+								<li
+									class="header-menu__item-wrapper"
+									style="--animation-delay: {{ animation_delay }}s"
+								>
+									{%- if second_level_link.links != blank -%}
+										<span
+											class="header-menu__item js-header-menu-item-nested{%- if second_level_link.child_active %} header-menu__item--active{% endif %}"
+										>
+											<a href="{{ second_level_link.url }}" class="button-link">
+												<span data-text="{{- second_level_link.title | escape -}}">
+													<span>
+														{{- second_level_link.title | escape -}}
+													</span>
+												</span>
+											</a>
+
+											<button class="header-menu__item-nested-toggle js-header-dropdown-menu-nested-toggler focus-visible-outline"
+													type="button"
+													data-target="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}:{{- second_level_link.title | handleize -}}-{{- forloop.index -}}"
+													aria-controls="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}:{{- second_level_link.title | handleize -}}-{{- forloop.index -}}"
+													aria-expanded="false"
+											>
+												{%- render 'icons', icon: 'arrow-right' -%}
+											</button>
+										</span>
+									{%- else -%}
+										<span class="header-menu__item">
+											<a
+												class="button-link"
+												href="{{- second_level_link.url -}}"
+												{% if second_level_link.current %}
+													aria-current="page"
+												{% endif %}
+											>
+												<span data-text="{{- second_level_link.title | escape -}}">
+													<span>
+														{{- second_level_link.title | escape -}}
+													</span>
+												</span>
+											</a>
+										</span>
+									{%- endif -%}
+								</li>
+							{%- endfor -%}
+						</ul>
+
+						{%- for second_level_link in first_level_link.links -%}
+							{% if second_level_link.links != blank %}
+								{%- assign animation_delay = 0 -%}
+
+								<ul
+									id="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}:{{- second_level_link.title | handleize -}}-{{- forloop.index -}}"
+									class="header-menu__list header-menu__list--nested header-menu__list--deep-nested js-header-dropdown-menu-nested"
+								>
+									{%- for third_level_link in second_level_link.links -%}
+										{%- assign animation_delay = animation_delay | plus: 0.05 -%}
+
+										<li
+											class="header-menu__item-wrapper"
+											style="--animation-delay: {{ animation_delay }}s"
+										>
+											<a
+												class="button button--secondary header-menu__item"
+												href="{{- third_level_link.url -}}"
+												{% if third_level_link.current %}
+													aria-current="page"
+												{% endif %}
+											>
+												<span data-text="{{- third_level_link.title | escape -}}">
+													<span>
+														{{- third_level_link.title | escape -}}
+													</span>
+												</span>
+											</a>
+										</li>
+									{%- endfor -%}
+								</ul>
+							{%- endif -%}
+						{%- endfor -%}
+					</div>
+				{%- else -%}
+					<a
+						class="button-link header-menu__item{% if first_level_link.active %} header-menu__item--active{% endif %}"
+						href="{{- first_level_link.url -}}"
+						{% if first_level_link.current %}
+							aria-current="page"
+						{% endif %}
+					>
+						<span data-text="{{- first_level_link.title | escape -}}">
+							<span>
+								{{- first_level_link.title | escape -}}
+							</span>
+						</span>
+					</a>
+				{%- endif -%}
+			</li>
+		{%- endfor -%}
+	</ul>
+</nav>

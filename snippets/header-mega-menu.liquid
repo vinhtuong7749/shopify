@@ -1,0 +1,37 @@
+{%- comment -%}
+	------------------------------------------------------------------------------
+	Snippet: Header mega-menu
+	Render header mega-menu
+	- burger_menu: Menu object (required)
+
+	Usage:
+	{%- render 'header-mega-menu', burger_menu: burger_menu -%}
+	------------------------------------------------------------------------------
+{%- endcomment -%}
+
+<div class="header-mega-menu color-{{- color_scheme }}" id="HeaderMegaMenu">
+	<div
+		id="HeaderMegaMenuMain:{{- burger_menu.title | handleize -}}"
+		class="drawer drawer--left header-mega-menu__inner header-mega-menu__inner--main js-multi-drawer"
+		data-drawer-level="1"
+		role="dialog"
+		aria-modal="true"
+		aria-labelledby="HeaderMegaMenuTitle"
+	>
+		<p class="visually-hidden" id="HeaderMegaMenuTitle">
+			{{- "layout.navigation.drawer_menu" | t | escape -}}
+		</p>
+
+		{%- render "header-mega-menu-content", menu: burger_menu, level: 1 -%}
+	</div>
+
+	{%- if burger_menu.levels > 1 -%}
+		<div
+			id="HeaderMegaMenuNested:{{- burger_menu.title | handleize -}}"
+			class="drawer drawer--left header-mega-menu__inner header-mega-menu__inner--nested js-multi-drawer"
+			data-drawer-level="2"
+		>
+			{%- render "header-mega-menu-content", menu: burger_menu, level: 2 -%}
+		</div>
+	{%- endif -%}
+</div>

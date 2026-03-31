@@ -1,0 +1,325 @@
+{% comment %}
+------------------------------------------------------------------------------
+  Snippet: Product add to cart
+------------------------------------------------------------------------------
+{% endcomment %}
+{% render 'product-options-minimum',
+	block: block,
+	blocks: blocks,
+	product: product
+%}
+
+{% assign button_type 			= block.settings.button_type %}
+{% assign button_buy_it_type 	= block.settings.button_buy_it_type %}
+
+{%- capture button_buy_it_type_styles -%}
+	{%- case button_buy_it_type -%}
+		{%- when 'primary' -%}
+			--button-color: var(--button-text-color-primary); {{-  -}}
+			--button-background: var(--button-background-color-primary); {{-  -}}
+			--button-border-color: var(--button-border-color-primary); {{-  -}}
+			--button-color-hover: var(--button-text-color-primary-hover); {{-  -}}
+			--button-background-color-hover: var(--button-background-color-primary-hover); {{-  -}}
+			--button-border-color-hover: var(--button-border-color-primary-hover); {{-  -}}
+		{%- when 'secondary' -%}
+			--button-color: var(--button-text-color-secondary); {{-  -}}
+			--button-background: var(--button-background-color-secondary); {{-  -}}
+			--button-border-color: var(--button-border-color-secondary); {{-  -}}
+			--button-color-hover: var(--button-text-color-secondary-hover); {{-  -}}
+			--button-background-color-hover: var(--button-background-color-secondary-hover); {{-  -}}
+			--button-border-color-hover: var(--button-border-color-secondary-hover); {{-  -}}
+	{%- endcase -%}
+{%- endcapture -%}
+
+{% liquid
+	assign section_contains_quantity_block = false
+	assign gift_card_recipient_feature_active = false
+
+	if product.gift_card? and block.settings.show_gift_card_recipient
+		assign gift_card_recipient_feature_active = true
+	endif
+
+	for block in blocks
+		if block.type == "quantity"
+			assign section_contains_quantity_block = true
+			break
+		endif
+	endfor
+%}
+
+{%- if product.selected_or_first_available_variant == null -%}
+	{%- assign button_add_to_cart_text = 'products.product.unavailable' | t -%}
+{%- elsif product.selected_or_first_available_variant.available  -%}
+	{% if product.template_suffix == 'pre-order' %}
+		{%- assign button_add_to_cart_text = 'products.product.pre_order' | t -%}
+	{% else %}
+		{%- assign button_add_to_cart_text = 'products.product.add_to_cart' | t -%}
+	{% endif %}
+{%- else -%}
+	{%- assign button_add_to_cart_text = 'products.product.sold_out' | t -%}
+{%- endif -%}
+
+{%- capture styles -%}
+	{{- button_buy_it_type_styles -}} {{-  -}}
+	--offset-top-desktop: {{ block.settings.offset_top_desktop }}px; {{-  -}}
+	--offset-bottom-desktop: {{ block.settings.offset_bottom_desktop }}px; {{-  -}}
+	--offset-top-mobile: {{ block.settings.offset_top_mobile }}px; {{-  -}}
+	--offset-bottom-mobile: {{ block.settings.offset_bottom_mobile }}px;
+{%- endcapture -%}
+
+<div class="product-add-to-cart" style="{{- styles -}}">
+	{% unless section_contains_quantity_block %}
+		<div class="product-add-to-cart__error" id="ProductQuantityError-{{- product.id -}}" role="alert">
+			<small class="js-product-quantity-error"></small>
+		</div>
+	{% endunless %}
+
+	{% if gift_card_recipient_feature_active %}
+		{%- assign gift_card_recipient_control_flag = 'properties[__shopify_send_gift_card_to_recipient]' -%}
+
+		<div class="recipient-form">
+			<div class="recipient-form__checkbox-field">
+				<input
+					id="Recipient-checkbox-{{ section.id }}"
+					class="visually-hidden checkbox__input js-recipient-form-checkbox"
+					type="checkbox"
+					name="{{ gift_card_recipient_control_flag }}"
+					disabled
+				>
+
+				<label for="Recipient-checkbox-{{ section.id }}" class="checkbox__label">
+					{{ 'products.product.recipient.form.checkbox' | t }}
+				</label>
+			</div>
+
+			<div class="recipient-form__fields is-hidden js-recipient-form-fields">
+				<div class="input-wrapper recipient-form__field">
+					<input
+						class="input{% if form.errors contains 'email' %} error{% endif %} js-recipient-form-field"
+						id="Recipient-email-{{ section.id }}"
+						type="email"
+						placeholder="{{ 'products.product.recipient.form.email' | t }}"
+						name="properties[Recipient email]"
+						value="{{ form.email }}"
+						{% if form.errors contains 'email' %}
+							aria-invalid="true"
+							aria-describedby="RecipientForm-email-error-{{ section.id }}"
+						{% endif %}
+					>
+
+					<label class="input-label" for="Recipient-email-{{ section.id }}">
+						{{ 'products.product.recipient.form.email_label' | t }}
+					</label>
+
+					<div
+						id="RecipientForm-email-error-{{ section.id }}"
+						class="error js-form-error{% unless form.errors contains 'email' %} is-hidden{% endunless %}"
+					>
+						{%- if form.errors contains 'email' -%}
+							{{ form.errors.messages.email }}.
+						{%- endif -%}
+					</div>
+				</div>
+
+				<div class="input-wrapper recipient-form__field">
+					<input
+						class="input{% if form.errors contains 'name' %} error{% endif %} js-recipient-form-field"
+						autocomplete="name"
+						type="text"
+						id="Recipient-name-{{ section.id }}"
+						name="properties[Recipient name]"
+						placeholder="{{ 'products.product.recipient.form.name' | t }}"
+						value="{{ form.name }}"
+						{% if form.errors contains 'name' %}
+							aria-invalid="true"
+							aria-describedby="RecipientForm-name-error-{{ section.id }}"
+						{% endif %}
+					>
+
+					<label class="input-label" for="Recipient-name-{{ section.id }}">
+						{{- 'products.product.recipient.form.name_label' | t -}}
+					</label>
+
+					<div
+						id="RecipientForm-name-error-{{ section.id }}"
+						class="error js-form-error {% unless form.errors contains 'name' %} is-hidden{% endunless %}"
+					>
+						{%- if form.errors contains 'name' -%}
+							{{ form.errors.messages.name }}.
+						{%- endif -%}
+					</div>
+				</div>
+
+				<div class="textarea-wrapper recipient-form__field">
+					<textarea
+						rows="10"
+						id="Recipient-message-{{ section.id }}"
+						class="recipient-form__textarea textarea{% if form.errors contains 'message' %} error{% endif %} js-recipient-form-field"
+						name="properties[Message]"
+						placeholder="{{ 'products.product.recipient.form.message' | t }}"
+						{% if form.errors contains 'message' %}
+							aria-invalid="true"
+							aria-describedby="RecipientForm-message-error-{{ section.id }}"
+						{% endif %}
+					>
+						{{- form.message -}}
+					</textarea>
+
+					<label class="textarea-label" for="Recipient-message-{{ section.id }}">
+						{{- 'products.product.recipient.form.message_label' | t -}}
+					</label>
+
+					<div
+						id="RecipientForm-message-error-{{ section.id }}"
+						class="error js-form-error{% unless form.errors contains 'message' %} is-hidden{% endunless %}"
+					>
+						{%- if form.errors contains 'message' -%}
+							{{ form.errors.messages.message }}.
+						{%- endif -%}
+					</div>
+				</div>
+
+				<div class="input-wrapper recipient-form__field recipient-form__field--date">
+					<input
+						class="input{% if form.errors contains 'send_on' %} error{% endif %} js-recipient-form-field"
+						autocomplete="off"
+						type="date"
+						id="Recipient-send_on-{{ section.id }}"
+						name="properties[Send on]"
+						pattern="\d{4}-\d{2}-\d{2}"
+						value="{{ form.send_on }}"
+						{% if form.errors contains 'send_on' %}
+							aria-invalid="true"
+							aria-describedby="RecipientForm-send_on-error-{{ section.id }}"
+						{% endif %}
+					>
+
+					<label class="input-label" for="Recipient-send_on-{{ section.id }}">
+						{{ 'products.product.recipient.form.send_on_label' | t }}
+					</label>
+
+					<div
+						id="RecipientForm-send_on-error-{{ section.id }}"
+						class="error js-form-error {% unless form.errors contains 'send_on' %} is-hidden{% endunless %}"
+					>
+						{%- if form.errors contains 'send_on' -%}
+							{{ form.errors.messages.send_on }}.
+						{%- endif -%}
+					</div>
+
+					{%- render 'icons', icon: 'calendar' -%}
+				</div>
+			</div>
+
+			<input
+				type="hidden"
+				name="{{ gift_card_recipient_control_flag }}"
+				value="if_present"
+				id="Recipient-control-{{ section.id }}"
+				class="js-recipient-form-no-js-control"
+			>
+
+			<input
+				type="hidden"
+				name="properties[__shopify_offset]"
+				value=""
+				id="Recipient-timezone-offset-{{ section.id }}"
+				class="js-recipient-form-timezone-offset"
+			>
+		</div>
+	{% endif %}
+
+	<button
+		type="submit"
+		class="add-to-cart button button--block button--{{- button_type }} {% unless product.first_available_variant.available %}disabled{% endunless %}"
+		{% if product.template_suffix == 'pre-order' %}
+			data-preorder
+		{% endif %}
+		{% unless product.first_available_variant.available %}
+			disabled
+		{% endunless %}
+		data-type="{{- button_type -}}"
+	>
+		{%- if button_type == 'primary' -%}
+			<span data-loading>{{- button_add_to_cart_text -}}</span>
+		{%- else -%}
+			<span data-text="{{- button_add_to_cart_text -}}">
+				<span>{{- button_add_to_cart_text -}}</span>
+			</span>
+		{%- endif -%}
+
+		{%- render 'icons', icon: 'loader' -%}
+	</button>
+
+	{% if block.settings.show_additional_buttons %}
+		<div class="product-add-to-cart__additional-buttons product-add-to-cart__additional-buttons--{{ button_buy_it_type }}">
+			{{ form | payment_button }}
+		</div>
+	{% endif %}
+</div>
+
+{%- if show_sticky_add_to_cart -%}
+	{%- assign image = product.featured_image | default: settings.product_default_image -%}
+
+	<div class="product-sticky-add-to-cart js-sticky-add-to-cart">
+		<div class="product-sticky-add-to-cart__image-wrapper">
+			{%- if image != blank -%}
+				<picture>
+					<source srcset="{{ image | image_url: width: 40, height: 54 }} 1x, {{ image | image_url: width: 80, height: 108 }} 2x" media="(max-width: 575px)" />
+
+					<img
+						class="product-sticky-add-to-cart__image"
+						src="{{ image | image_url: width: 69, height: 94 }}"
+						srcset="{{ image | image_url: width: 69, height: 94  }} 1x, {{ image | image_url: width: 138, height: 188 }} 2x"
+						width="69"
+						height="94"
+						alt="{{- image.alt | escape -}}"
+						loading="lazy"
+						fetchpriority="low"
+						{% if img_focal != blank %}
+							style="{{ img_focal }}"
+						{% endif %}
+					/>
+				</picture>
+			{%- else -%}
+				{{- 'product-1' | placeholder_svg_tag: 'product-sticky-add-to-cart__image product-sticky-add-to-cart__image--placeholder' -}}
+			{%- endif -%}
+		</div>
+
+		<div class="product-sticky-add-to-cart__content">
+			<div class="focus-visible-outline product-sticky-add-to-cart__title">
+				{%- if product != blank -%}
+					{{- product.title -}}
+				{%- else -%}
+					{{- 'products.product_card.product_title' | t -}}
+				{%- endif -%}
+			</div>
+
+			{%- render 'price', product: product -%}
+		</div>
+
+		<button
+			type="submit"
+			class="button button--secondary product-sticky-add-to-cart__button js-sticky-add-to-cart-button
+				{% unless product.first_available_variant.available %}
+					disabled
+				{% endunless %}
+			"
+			{% if product.template_suffix == 'pre-order' %}
+				data-preorder
+			{% endif %}
+			{% unless product.first_available_variant.available %}
+				disabled
+			{% endunless %}
+		>
+			{%- render 'icons', icon: 'cart' -%}
+			{%- render 'icons', icon: 'loader' -%}
+		</button>
+	</div>
+
+	<style>
+		html .footer {
+			padding-bottom: 80px;
+		}
+	</style>
+{%- endif -%}

@@ -1,0 +1,594 @@
+{%- comment -%}
+	------------------------------------------------------------------------------
+	Snippet: Header mobile
+	Render header mobile
+	- menu: Menu object (required)
+	- is_language_selector_enabled: condition for render language localization snippet
+	- is_country_selector_enabled: condition for render country localization snippet
+	- color_scheme: color scheme
+
+	Usage:
+	{%- render 'header-mobile', menu: menu, is_show_language_selector: is_show_language_selector, is_show_country_selector: is_show_country_selector, color_scheme: color_scheme -%}
+	------------------------------------------------------------------------------
+{%- endcomment -%}
+
+{%- assign burger_menu          = section.settings.burger_menu -%}
+{%- assign hide_burger_menu_on_mobile = section.settings.hide_burger_menu_on_mobile -%}
+{%- assign additional_menu      = section.settings.additional_menu -%}
+{%- assign show_socials         = section.settings.show_socials -%}
+{%- assign phone_number         = section.settings.phone_number -%}
+{%- assign schedule_information = section.settings.schedule_information -%}
+{%- assign animation_delay      = 0 -%}
+
+{%- for i in (1..3) -%}
+	{%- assign image_key   = 'media_image_' | append: i -%}
+	{%- assign media_image = section.settings[image_key] -%}
+
+	{%- if media_image != blank -%}
+		{%- assign mega_menu_images_count = mega_menu_images_count | plus: 1 -%}
+	{%- endif -%}
+{%- endfor -%}
+
+<div
+	id="headerDrawerMenu"
+	class="drawer drawer--left header-mobile color-{{ color_scheme }}"
+	data-menu-type="main"
+	role="dialog"
+	aria-labelledby="headerDrawerMenuTitle"
+>
+	<p class="visually-hidden" id="headerDrawerMenuTitle">
+		{{- "layout.navigation.drawer_menu" | t | escape -}}
+	</p>
+
+	<div class="drawer__body header-mobile__body js-mobile-header-main-menu js-scroll-lock-container">
+		{%- if menu.links != blank or burger_menu.links != blank or additional_menu.links != blank -%}
+			<nav
+				class="header-mobile__menu-wrapper"
+				aria-label="{{ "layout.navigation.drawer_menu" | t | escape }}"
+			>
+				{%- if mobile_top_menu.links != blank -%}
+					<ul class="header-mobile__menu-top">
+						{%- for link in mobile_top_menu.links limit: 3 -%}
+							<li class="header-mobile__menu-top-item">
+								<a href="{{ link.url }}" class="button-link">
+									<span data-text="{{ link.title }}">
+										<span>{{ link.title }}</span>
+									</span>
+								</a>
+							</li>
+						{%- endfor -%}
+					</ul>
+				{%- endif -%}
+
+				<ul class="header-mobile__menu">
+					{%- if menu.links != blank -%}
+						{%- for first_level_link in menu.links -%}
+							{%- assign first_level_index = forloop.index -%}
+
+							{%- if forloop.first -%}
+								{%- assign animation_delay_start = 0.2 -%}
+							{%- else -%}
+								{%- assign animation_delay_start = 0 -%}
+							{%- endif -%}
+
+							{%- assign animation_delay = animation_delay | plus: animation_delay_start | plus: 0.05 -%}
+
+							<li class="header-mobile__menu-item-wrapper" style="--animation-delay: {{ animation_delay }}s">
+								{%- if first_level_link.links != blank -%}
+									<button
+										class="button-link header-mobile__menu-item header-mobile__menu-item--main js-mobile-header-menu-toggler"
+										type="button"
+										data-target="headerMobileMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
+										aria-controls="headerMobileMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
+										aria-expanded="false"
+									>
+										<span data-text="{{- first_level_link.title | escape -}}">
+											<span>
+												{{- first_level_link.title | escape -}}
+											</span>
+										</span>
+
+										{%- render 'icons', icon: 'arrow-right' -%}
+									</button>
+
+									{%- assign animation_delay_nested = 0 -%}
+
+									<ul
+										class="header-mobile__menu header-mobile__menu--nested js-mobile-header-menu js-scroll-lock-ignore"
+										id="headerMobileMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
+										data-menu-type="nested"
+									>
+										{%- assign animation_delay_nested = animation_delay_nested | plus: 0.25 -%}
+
+										<li
+											class="header-mobile__menu-item-wrapper"
+											style="--animation-delay: {{ animation_delay_nested }}s"
+										>
+											<button
+												class="button button--secondary button--with-icon header-mobile__menu-item header-mobile__menu-item--back js-mobile-header-menu-toggler"
+												type="button"
+												data-target="headerMobileMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
+												aria-controls="headerMobileMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
+												aria-expanded="false"
+											>
+												{%- render 'icons', icon: 'arrow-left' -%}
+
+												<span data-text="{{- first_level_link.title | escape -}}">
+													<span>
+														{{- first_level_link.title | escape -}}
+													</span>
+												</span>
+											</button>
+										</li>
+
+										{%- for second_level_link in first_level_link.links -%}
+											{%- assign animation_delay_nested = animation_delay_nested | plus: 0.05 -%}
+
+											<li
+												class="header-mobile__menu-item-wrapper"
+												style="--animation-delay: {{ animation_delay_nested }}s"
+											>
+												{%- if second_level_link.links != blank -%}
+													<button
+														class="button-link header-mobile__menu-item js-mobile-header-menu-toggler"
+														type="button"
+														data-target="headerMobileMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}:{{- second_level_link.title | handleize -}}-{{- forloop.index -}}"
+														aria-controls="headerMobileMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}:{{- second_level_link.title | handleize -}}-{{- forloop.index -}}"
+														aria-expanded="false"
+													>
+														<span data-text="{{ second_level_link.title | escape }}">
+															<span>
+																{{ second_level_link.title | escape }}
+															</span>
+														</span>
+
+														{%- render 'icons', icon: 'arrow-right' -%}
+													</button>
+
+													{%- assign animation_delay_deep_nested = 0 -%}
+
+													<ul
+														class="header-mobile__menu header-mobile__menu--nested header-mobile__menu--deep-nested js-mobile-header-menu js-scroll-lock-ignore"
+														id="headerMobileMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}:{{- second_level_link.title | handleize -}}-{{- forloop.index -}}"
+														data-menu-type="deep-nested"
+													>
+														{%- assign animation_delay_deep_nested = animation_delay_deep_nested | plus: 0.25 -%}
+
+														<li class="header-mobile__menu-item-wrapper" style="--animation-delay: {{ animation_delay_deep_nested }}s">
+															<button
+																class="button button--secondary button--with-icon header-mobile__menu-item header-mobile__menu-item--back js-mobile-header-menu-toggler"
+																type="button"
+																data-target="headerMobileMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}:{{- second_level_link.title | handleize -}}-{{- forloop.index -}}"
+																aria-controls="headerMobileMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}:{{- second_level_link.title | handleize -}}-{{- forloop.index -}}"
+																aria-expanded="false"
+															>
+																{%- render 'icons', icon: 'arrow-left' -%}
+
+																<span data-text="{{- second_level_link.title | escape -}}">
+																	<span>
+																		{{- second_level_link.title | escape -}}
+																	</span>
+																</span>
+															</button>
+														</li>
+
+														{%- for third_level_link in second_level_link.links -%}
+															{%- assign animation_delay_deep_nested = animation_delay_deep_nested | plus: 0.05 -%}
+
+															<li
+																class="header-mobile__menu-item-wrapper"
+																style="--animation-delay: {{ animation_delay_deep_nested }}s"
+															>
+																<a
+																	class="button-link header-mobile__menu-item"
+																	href="{{- third_level_link.url -}}"
+																	{% if third_level_link.current %}
+																		aria-current="page"
+																	{% endif %}
+																>
+																	<span data-text="{{- third_level_link.title | escape -}}">
+																		<span>
+																			{{- third_level_link.title | escape -}}
+																		</span>
+																	</span>
+																</a>
+															</li>
+														{%- endfor -%}
+													</ul>
+												{%- else -%}
+													<a
+														class="button-link header-mobile__menu-item"
+														href="{{- second_level_link.url -}}"
+														{% if second_level_link.current %}
+															aria-current="page"
+														{% endif %}
+													>
+														<span data-text="{{- second_level_link.title | escape -}}">
+															<span>
+																{{- second_level_link.title | escape -}}
+															</span>
+														</span>
+													</a>
+												{%- endif -%}
+											</li>
+										{%- endfor -%}
+									</ul>
+								{%- else -%}
+									<a
+										class="button-link header-mobile__menu-item header-mobile__menu-item--main"
+										href="{{- first_level_link.url -}}"
+										{% if first_level_link.current %}
+											aria-current="page"
+										{% endif %}
+									>
+										<span data-text="{{- first_level_link.title | escape -}}">
+											<span>
+												{{- first_level_link.title | escape -}}
+											</span>
+										</span>
+									</a>
+								{%- endif -%}
+							</li>
+						{%- endfor -%}
+					{%- endif -%}
+
+					{%- if burger_menu.links != blank and hide_burger_menu_on_mobile != true -%}
+						{%- for first_level_link in burger_menu.links -%}
+							{%- assign first_level_index = forloop.index -%}
+							{%- assign animation_delay = animation_delay | plus: 0.05 -%}
+
+							<li class="header-mobile__menu-item-wrapper" style="--animation-delay: {{ animation_delay }}s">
+								{%- if first_level_link.links != blank -%}
+									<button
+										class="button-link header-mobile__menu-item header-mobile__menu-item--main js-mobile-header-menu-toggler"
+										type="button"
+										data-target="headerMobileMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
+										aria-controls="headerMobileMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
+										aria-expanded="false"
+									>
+										<span data-text="{{- first_level_link.title | escape -}}">
+											<span>
+												{{- first_level_link.title | escape -}}
+											</span>
+										</span>
+
+										{%- render 'icons', icon: 'arrow-right' -%}
+									</button>
+
+									{%- assign animation_delay_nested = 0 -%}
+
+									<ul
+										class="header-mobile__menu header-mobile__menu--nested js-mobile-header-menu js-scroll-lock-ignore"
+										id="headerMobileMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
+										data-menu-type="nested"
+									>
+										{%- assign animation_delay_nested = 0.25 -%}
+
+										<li
+											class="header-mobile__menu-item-wrapper"
+											style="--animation-delay: {{ animation_delay_nested }}s"
+										>
+											<button
+												class="button button--secondary button--with-icon header-mobile__menu-item header-mobile__menu-item--back js-mobile-header-menu-toggler"
+												type="button"
+												data-target="headerMobileMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
+												aria-controls="headerMobileMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
+												aria-expanded="false"
+											>
+												{%- render 'icons', icon: 'arrow-left' -%}
+
+												<span data-text="{{- first_level_link.title | escape -}}">
+													<span>
+														{{- first_level_link.title | escape -}}
+													</span>
+												</span>
+											</button>
+										</li>
+
+										{%- for second_level_link in first_level_link.links -%}
+											{%- assign animation_delay_nested = animation_delay_nested | plus: 0.05 -%}
+
+											<li
+												class="header-mobile__menu-item-wrapper"
+												style="--animation-delay: {{ animation_delay_nested }}s"
+											>
+												{%- if second_level_link.links != blank -%}
+													<button
+														class="button-link header-mobile__menu-item js-mobile-header-menu-toggler"
+														type="button"
+														data-target="headerMobileMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}:{{- second_level_link.title | handleize -}}-{{- forloop.index -}}"
+														aria-controls="headerMobileMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}:{{- second_level_link.title | handleize -}}-{{- forloop.index -}}"
+														aria-expanded="false"
+													>
+														<span data-text="{{ second_level_link.title | escape }}">
+															<span>
+																{{ second_level_link.title | escape }}
+															</span>
+														</span>
+
+														{%- render 'icons', icon: 'arrow-right' -%}
+													</button>
+
+													{%- assign animation_delay_deep_nested = 0 -%}
+
+													<ul
+														class="header-mobile__menu header-mobile__menu--nested header-mobile__menu--deep-nested js-mobile-header-menu js-scroll-lock-ignore"
+														id="headerMobileMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}:{{- second_level_link.title | handleize -}}-{{- forloop.index -}}"
+														data-menu-type="deep-nested"
+													>
+														{%- assign animation_delay_deep_nested = 0.25 -%}
+
+														<li class="header-mobile__menu-item-wrapper" style="--animation-delay: {{ animation_delay_deep_nested }}s">
+															<button
+																class="button button--secondary button--with-icon header-mobile__menu-item header-mobile__menu-item--back js-mobile-header-menu-toggler"
+																type="button"
+																data-target="headerMobileMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}:{{- second_level_link.title | handleize -}}-{{- forloop.index -}}"
+																aria-controls="headerMobileMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}:{{- second_level_link.title | handleize -}}-{{- forloop.index -}}"
+																aria-expanded="false"
+															>
+																{%- render 'icons', icon: 'arrow-left' -%}
+
+																<span data-text="{{- second_level_link.title | escape -}}">
+																	<span>
+																		{{- second_level_link.title | escape -}}
+																	</span>
+																</span>
+															</button>
+														</li>
+
+														{%- for third_level_link in second_level_link.links -%}
+															{%- assign animation_delay_deep_nested = animation_delay_deep_nested | plus: 0.05 -%}
+
+															<li
+																class="header-mobile__menu-item-wrapper"
+																style="--animation-delay: {{ animation_delay_deep_nested }}s"
+															>
+																<a
+																	class="button-link header-mobile__menu-item"
+																	href="{{- third_level_link.url -}}"
+																	{% if third_level_link.current %}
+																		aria-current="page"
+																	{% endif %}
+																>
+																	<span data-text="{{- third_level_link.title | escape -}}">
+																		<span>
+																			{{- third_level_link.title | escape -}}
+																		</span>
+																	</span>
+																</a>
+															</li>
+														{%- endfor -%}
+													</ul>
+												{%- else -%}
+													<a
+														class="button-link header-mobile__menu-item"
+														href="{{- second_level_link.url -}}"
+														{% if second_level_link.current %}
+															aria-current="page"
+														{% endif %}
+													>
+														<span data-text="{{- second_level_link.title | escape -}}">
+															<span>
+																{{- second_level_link.title | escape -}}
+															</span>
+														</span>
+													</a>
+												{%- endif -%}
+											</li>
+										{%- endfor -%}
+
+										{%- capture mega_menu_images -%}
+											{%- for i in (1..3) -%}
+												{%- assign image_key   = 'media_image_' | append: i -%}
+												{%- assign url_key     = 'media_url_' | append: i -%}
+												{%- assign media_image = section.settings[image_key] -%}
+												{%- assign media_url   = section.settings[url_key] -%}
+
+												{%- if mega_menu_images_count > 1 -%}
+													{%- assign w_default = 228 -%}
+													{%- assign w_default_x2 = 456 -%}
+													{%- assign w991 = 198 -%}
+													{%- assign w991_x2 = 396 -%}
+													{%- assign w375 = 176 -%}
+													{%- assign w375_x2 = 352 -%}
+												{%- else -%}
+													{%- assign w_default = 448 -%}
+													{%- assign w_default_x2 = 896 -%}
+													{%- assign w991 = 388 -%}
+													{%- assign w991_x2 = 776 -%}
+													{%- assign w375 = 343 -%}
+													{%- assign w375_x2 = 686 -%}
+												{%- endif -%}
+
+												{%- if media_image != blank -%}
+													{%- capture img_focal -%}
+														--img-pos: {{ media_image.presentation.focal_point }};
+													{%- endcapture -%}
+
+													{%- if media_url != blank -%}
+														<a class="header-mobile__menu-image-wrapper header-mobile__menu-image-wrapper--link focus-visible-outline" href="{{- media_url -}}">
+													{%- else -%}
+														<div class="header-mobile__menu-image-wrapper">
+													{%- endif -%}
+														<picture>
+															<source
+																srcset="{{ media_image | image_url: width: w375 }} 1x, {{ media_image | image_url: width: w375_x2 }} 2x"
+																media="(max-width: 375px)"
+															/>
+
+															<source
+																srcset="{{ media_image | image_url: width: w991 }} 1x, {{ media_image | image_url: width: w991_x2 }} 2x"
+																media="(max-width: 991px)"
+															/>
+
+															<img
+																class="header-mobile__menu-image js-mobile-header-menu-image"
+																src="{{- media_image | image_url: width: w_default -}}"
+																srcset="{{ media_image | image_url: width: w_default }} 1x, {{ media_image | image_url: width: w_default_x2 }} 2x"
+																alt="{{- media_image.alt | escape -}}"
+																loading="lazy"
+																fetchpriority="low"
+																style="{{- img_focal -}}"
+															/>
+														</picture>
+													{%- if media_url == blank -%}
+														</div>
+													{%- else -%}
+														</a>
+													{%- endif -%}
+												{%- endif -%}
+											{%- endfor -%}
+										{%- endcapture -%}
+
+										{%- capture mega_menu_images_with_tabindex -%}
+											{{ mega_menu_images | replace: '<a ', '<a tabindex="-1" ' }}
+										{%- endcapture -%}
+
+										{%- if mega_menu_images != blank -%}
+											{%- assign animation_delay_nested = animation_delay_nested | plus: 0.05 -%}
+											{%- assign mobile_movement_speed  = section.settings.mobile_movement_speed -%}
+
+											<li
+												class="header-mobile__menu-item header-mobile__menu-item--images-wrapper{% if mega_menu_images_count > 1 %} header-mobile__menu-item--images-wrapper-animation{% endif %}"
+												style="--animation-delay: {{ animation_delay_nested }}s;--mobile-movement-speed: {{- mobile_movement_speed -}}s;"
+											>
+												<div class="header-mobile__menu-item-images header-mobile__menu-item-images-{{ mega_menu_images_count }}">
+													{{- mega_menu_images -}}
+												</div>
+
+												{%- if mega_menu_images_count > 1 -%}
+													<div
+														class="header-mobile__menu-item-images header-mobile__menu-item-images-{{ mega_menu_images_count }}"
+														aria-hidden="true"
+													>
+														{{- mega_menu_images_with_tabindex -}}
+													</div>
+												{%- endif -%}
+											</li>
+										{%- endif -%}
+									</ul>
+								{%- else -%}
+									<a
+										class="button-link header-mobile__menu-item header-mobile__menu-item--main"
+										href="{{- first_level_link.url -}}"
+										{% if first_level_link.current %}
+											aria-current="page"
+										{% endif %}
+									>
+										<span data-text="{{- first_level_link.title | escape -}}">
+											<span>
+												{{- first_level_link.title | escape -}}
+											</span>
+										</span>
+									</a>
+								{%- endif -%}
+							</li>
+						{%- endfor -%}
+					{%- endif -%}
+
+					{%- if additional_menu.links != blank -%}
+						{%- for main_link in additional_menu.links -%}
+							{%- assign animation_delay = animation_delay | plus: 0.05 -%}
+
+							<li class="header-mobile__menu-item-wrapper" style="--animation-delay: {{ animation_delay }}s">
+								<a
+									class="button-link header-mobile__menu-item header-mobile__menu-item--additional"
+									href="{{- main_link.url -}}"
+									{% if main_link.current %}
+										aria-current="page"
+									{% endif %}
+								>
+									<span data-text="{{- main_link.title | escape -}}">
+										<span>
+											{{- main_link.title | escape -}}
+										</span>
+									</span>
+								</a>
+							</li>
+						{%- endfor -%}
+					{%- endif -%}
+				</ul>
+			</nav>
+		{%- endif -%}
+
+		<div class="header-mobile__info">
+			{%- if phone_number != blank -%}
+				{%- assign animation_delay = animation_delay | plus: 0.05 -%}
+
+				<div class="rte header-mobile__store-info" style="--animation-delay: {{ animation_delay }}s">
+					{{- phone_number -}}
+				</div>
+			{%- endif -%}
+
+			{%- if schedule_information != blank -%}
+				{%- assign animation_delay = animation_delay | plus: 0.05 -%}
+
+				<div class="rte header-mobile__store-info" style="--animation-delay: {{ animation_delay }}s">
+					{{- schedule_information -}}
+				</div>
+			{%- endif -%}
+
+			{%- if show_socials -%}
+				{%- render 'social-links', animation_delay: animation_delay -%}
+			{%- endif -%}
+
+			{%- if is_language_selector_enabled or is_country_selector_enabled -%}
+				{%- assign animation_delay = animation_delay | plus: 0.05 -%}
+
+				<div class="header-mobile__localization-wrapper" style="--animation-delay: {{ animation_delay }}s">
+					{%- if is_language_selector_enabled -%}
+						{%- render 'language-localization-form', class: 'header-mobile', list_class: 'js-scroll-lock-ignore', id_prefix: 'header-mobile', form_id: 'header-mobile-localization-form' -%}
+					{%- endif -%}
+
+					{%- if is_country_selector_enabled -%}
+						{%- render 'country-localization-form', class: 'header-mobile', list_class: 'js-scroll-lock-ignore', id_prefix: 'header-mobile', form_id: 'header-mobile-county-form' -%}
+					{%- endif -%}
+				</div>
+			{%- endif -%}
+
+			{%- if shop.customer_accounts_enabled -%}
+				{%- assign animation_delay = animation_delay | plus: 0.05 -%}
+
+				<div class="header-mobile__account" style="--animation-delay: {{ animation_delay }}s">
+					{%- if customer -%}
+						{%- assign customer_label = 'customer.account.title' | t -%}
+					{%- else -%}
+						{%- assign customer_label = 'customer.login.title' | t -%}
+					{%- endif -%}
+
+					<a
+						href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}"
+						class="button button--secondary button--with-icon header-mobile__login-link"
+					>
+						{%- render 'icons', icon: 'account' -%}
+
+						<span data-text="{{- customer_label -}}">
+							<span>
+								{{- customer_label -}}
+							</span>
+						</span>
+					</a>
+
+					{%- unless customer -%}
+						<div class="header-mobile__signup">
+							<span class="header-mobile__new-customer">
+								{{- "customer.login.new_customer" | t -}}
+							</span>
+
+							<a
+								href="{{- routes.account_register_url -}}"
+								class="button-link header-mobile__signup-link"
+							>
+								<span data-text="{{- "customer.login.signup" | t -}}">
+									<span>
+										{{- "customer.login.signup" | t -}}
+									</span>
+								</span>
+							</a>
+						</div>
+					{%- endunless -%}
+				</div>
+			{%- endif -%}
+		</div>
+	</div>
+</div>

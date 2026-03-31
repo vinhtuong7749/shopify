@@ -1,0 +1,379 @@
+{%- comment -%}
+------------------------------------------------------------------------------
+	Section: Cart template
+------------------------------------------------------------------------------
+{%- endcomment -%}
+
+{%- render 'adastra' with '/src/styles/cart.scss' -%}
+
+{%- style -%}
+	#shopify-section-{{- section.id -}} {
+		padding-top: {{- section.settings.offset_top_mobile -}}px;
+		padding-bottom: {{- section.settings.offset_bottom_mobile -}}px;
+	}
+
+	@media screen and (min-width: 768px) {
+		#shopify-section-{{- section.id -}} {
+			padding-top: {{- section.settings.offset_top_desktop -}}px;
+			padding-bottom: {{- section.settings.offset_bottom_desktop -}}px;
+		}
+	}
+{%- endstyle -%}
+
+{%- capture styles -%}
+	--inner-offset-top: {{- section.settings.inner_offset_top -}}px; {{-  -}}
+	--inner-offset-bottom: {{- section.settings.inner_offset_bottom -}}px; {{-  -}}
+	--inner-offset-top-mobile: {{- section.settings.inner_offset_top_mobile -}}px; {{-  -}}
+	--inner-offset-bottom-mobile: {{- section.settings.inner_offset_bottom_mobile -}}px; {{-  -}}
+{%- endcapture -%}
+
+{%- capture default_heading -%}
+	{{- "cart.general.title" | t -}}
+{%- endcapture -%}
+
+{%- assign heading 							= section.settings.heading | default: default_heading -%}
+{%- assign color_scheme      	           	= section.settings.color_scheme -%}
+{%- assign enable_color_scheme_inheritance 	= section.settings.enable_color_scheme_inheritance -%}
+
+{%- if enable_color_scheme_inheritance -%}
+	{%- assign color_scheme = settings.main_color_scheme -%}
+{%- endif -%}
+
+{%- capture footer -%}
+	{%- render 'cart-footer', section: section, cart_drawer: false -%}
+{%- endcapture -%}
+
+{%- for block in section.blocks -%}
+	{%- case block.type -%}
+		{%- when 'shipping' -%}
+			{%- assign is_shipping_enabled = 'true' -%}
+	{%- endcase -%}
+{%- endfor -%}
+
+{%- capture blocks -%}
+	{%- for block in section.blocks -%}
+		{%- if block.type == "@app" -%}
+			{%- render block -%}
+		{%- endif -%}
+	{%- endfor -%}
+{%- endcapture -%}
+
+{%- capture custom_liquid_block  -%}
+	{%- for block in section.blocks -%}
+		{%- case block.type -%}
+			{%- when 'custom_liquid' -%}
+				{{ block.settings.custom_liquid }}
+		{%- endcase -%}
+	{%- endfor -%}
+{%- endcapture -%}
+
+<section
+	class="cart-template{% if cart.empty? %} is-empty{% endif %} color-{{ color_scheme }}"
+	style="{{- styles -}}"
+	data-section-id="{{- section.id -}}"
+	data-section-type="cart-template"
+>
+	<div class="cart-template__container js-cart-container">
+		<div class="cart-template__content js-cart-content">
+			{%- if cart.empty? -%}
+				{%- render 'cart-empty' -%}
+			{%- else -%}
+				<h1 class="h1 cart-template__title">
+					{{- heading -}}
+				</h1>
+
+				<div class="cart-template__items">
+					<div class="cart-items">
+						<form action="{{- routes.cart_url -}}" id="cart-{{- section.id -}}" class="cart-items__form" method="post">
+							<div class="cart-items__head">
+								<div class="cart-items__col cart-items__col--main">
+									{{- 'cart.label.product' | t -}}
+								</div>
+
+								<div class="cart-items__col cart-items__col--price">
+									{{- 'cart.label.price' | t -}}
+								</div>
+
+								<div class="cart-items__col cart-items__col--quantity">
+									{{- 'cart.label.quantity' | t -}}
+								</div>
+
+								<div class="cart-items__col cart-items__col--summary">
+									{{- 'cart.label.total' | t -}}
+								</div>
+
+								<div class="cart-items__col cart-items__col--actions"></div>
+							</div>
+
+							<div class="cart-items__body">
+								{%- render 'cart-items' -%}
+							</div>
+						</form>
+					</div>
+				</div>
+
+				{%- if is_shipping_enabled -%}
+					<div class="cart-template__shipping">
+						{%- for block in section.blocks -%}
+							{%- case block.type -%}
+								{%- when 'shipping' -%}
+									{%- assign amount  = block.settings.amount -%}
+									{%- assign message = block.settings.message -%}
+									{%- assign congratulatory_message = block.settings.congratulatory_message -%}
+									{%- assign congratulatory_image = block.settings.icon -%}
+									{%- assign bar_color = block.settings.bar_color -%}
+									{%- assign fill_color = block.settings.fill_color -%}
+
+									{%- capture shipping_content -%}
+										{%- render 'cart-shipping',
+											amount: amount,
+											message: message,
+											congratulatory_message: congratulatory_message,
+											congratulatory_image: congratulatory_image,
+											bar_color: bar_color,
+											fill_color: fill_color
+										-%}
+									{%- endcapture -%}
+
+									{%- if shipping_content != '' -%}
+										{{- shipping_content -}}
+									{%- endif -%}
+							{%- endcase -%}
+						{%- endfor -%}
+					</div>
+				{%- endif -%}
+			{%- endif -%}
+		</div>
+
+		{%- if blocks != '' or custom_liquid_block != blank -%}
+			<div class="cart-template__blocks">
+				{%- if blocks != '' -%}
+					{{- blocks -}}
+				{%- endif -%}
+
+				{%- if custom_liquid_block != blank -%}
+					{{- custom_liquid_block -}}
+				{%- endif -%}
+			</div>
+		{%- endif -%}
+
+		{%- if footer != '' -%}
+			{{- footer -}}
+		{%- endif -%}
+	</div>
+
+	{%- render "preloader" -%}
+</section>
+
+{%- render 'adastra' with '/src/scripts/cart-template.js' -%}
+
+{% schema %}
+{
+	"name": "Cart",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Colors"
+		},
+		{
+			"type": "checkbox",
+			"id": "enable_color_scheme_inheritance",
+			"label": "Enable color scheme inheritance",
+			"default": true,
+			"info": "When this setting is enabled, the color scheme is inherited from the theme settings."
+		},
+		{
+			"type": "color_scheme",
+			"id": "color_scheme",
+			"label": "Color scheme",
+			"default": "scheme-1"
+		},
+		{
+			"type": "header",
+			"content": "Cart settings"
+		},
+		{
+			"type": "inline_richtext",
+			"id": "heading",
+			"label": "Heading",
+			"default": "Shopping cart"
+		},
+		{
+			"type": "header",
+			"content": "Layout"
+		},
+		{
+			"type": "paragraph",
+			"content": "External offsets"
+		},
+		{
+			"type": "range",
+			"id": "offset_top_desktop",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"label": "Desktop external offset top",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "offset_bottom_desktop",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"label": "Desktop external offset bottom",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "offset_top_mobile",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"label": "Mobile external offset top",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "offset_bottom_mobile",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"label": "Mobile external offset bottom",
+			"default": 0
+		},
+		{
+			"type": "paragraph",
+			"content": "Internal offsets"
+		},
+		{
+			"type": "range",
+			"id": "inner_offset_top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"label": "Desktop internal offset top",
+			"default": 64
+		},
+		{
+			"type": "range",
+			"id": "inner_offset_bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"label": "Desktop internal offset bottom",
+			"default": 64
+		},
+		{
+			"type": "range",
+			"id": "inner_offset_top_mobile",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"label": "Mobile internal offset top",
+			"default": 32
+		},
+		{
+			"type": "range",
+			"id": "inner_offset_bottom_mobile",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"label": "Mobile internal offset bottom",
+			"default": 32
+		}
+	],
+	"blocks": [
+		{
+			"type": "@app"
+		},
+		{
+			"name": "Custom liquid",
+			"type": "custom_liquid",
+			"settings": [
+				{
+					"type": "liquid",
+					"id": "custom_liquid",
+					"label": "Custom liquid",
+					"info": "Simple custom liquid"
+				}
+			]
+		},
+		{
+			"name": "Shipping bar",
+			"type": "shipping",
+			"limit": 1,
+			"settings": [
+				{
+					"type": "number",
+					"id": "amount",
+					"label": "Free shipping amount",
+					"default": 100
+				},
+				{
+					"type": "textarea",
+					"id": "message",
+					"label": "Shipping message",
+					"default": "You are only {amount} away from free shipping",
+					"info": "The pattern {amount} will be replaced with the remaining amount"
+				},
+				{
+					"type": "textarea",
+					"id": "congratulatory_message",
+					"label": "Shipping congratulatory message",
+					"default": "You got free shipping"
+				},
+				{
+					"type": "image_picker",
+					"id": "icon",
+					"label": "Congratulatory icon",
+					"info": "40 x 40px recommended"
+				},
+				{
+					"type": "header",
+					"content": "Colors"
+				},
+				{
+					"type": "color",
+					"id": "bar_color",
+					"label": "Progress bar background color",
+					"default": "#E9E9E9"
+				},
+				{
+					"type": "color",
+					"id": "fill_color",
+					"label": "Progress bar fill color",
+					"default": "#FFD875"
+				}
+			]
+		},
+		{
+			"name": "Benefit",
+			"type": "benefit",
+			"limit": 6,
+			"settings": [
+				{
+					"type": "inline_richtext",
+					"id": "text",
+					"label": "Text",
+					"default": "Short text content."
+				},
+				{
+					"type": "image_picker",
+					"id": "icon",
+					"label": "Icon",
+					"info": "20 x 20px .svg recommended"
+				}
+			]
+		}
+	]
+}
+{% endschema %}

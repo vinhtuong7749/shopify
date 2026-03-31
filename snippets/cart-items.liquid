@@ -1,0 +1,20 @@
+{%- comment -%}
+	------------------------------------------------------------------------------
+	Snippet: Cart items
+	Render items in the shopping cart
+	- cart_drawer: Boolean (optional)
+
+	Usage:
+	{%- render 'cart-items', cart_drawer: true -%}
+	------------------------------------------------------------------------------
+{%- endcomment -%}
+
+{%- unless cart.empty? -%}
+	{%- for item in cart.items -%}
+		{%- if cart_drawer -%}
+			{%- render 'cart-item-drawer', item: item, cart_drawer: cart_drawer -%}
+		{%- else -%}
+			{%- render 'cart-item', item: item -%}
+		{%- endif -%}
+	{%- endfor -%}
+{%- endunless -%}

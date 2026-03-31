@@ -1,0 +1,65 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "custom.popup",
+  "name": "Popups group",
+  "sections": {
+    "age_check_popup": {
+      "type": "age-check-popup",
+      "disabled": true,
+      "settings": {
+        "enable_color_scheme_inheritance": true,
+        "age_check_time": "1"
+      }
+    },
+    "newsletter_popup": {
+      "type": "newsletter-popup",
+      "blocks": {
+        "block_NLBBgK": {
+          "type": "block",
+          "settings": {
+            "newsletter_popup_desktop_movement_speed": 6,
+            "newsletter_popup_mobile_movement_speed": 6
+          }
+        },
+        "block_C3Jg7R": {
+          "type": "block",
+          "settings": {}
+        },
+        "block_aKXp7y": {
+          "type": "block",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "block_NLBBgK",
+        "block_C3Jg7R",
+        "block_aKXp7y"
+      ],
+      "disabled": true,
+      "settings": {
+        "enable_color_scheme_inheritance": true,
+        "color_scheme": "",
+        "newsletter_popup_cookie_time": "1",
+        "newsletter_popup_heading": "Subscribe to our newsletter",
+        "newsletter_popup_text": "Be the first to know about sales, exclusive offers and promotions.",
+        "newsletter_popup_input_placeholder": "john.smith@example.com *",
+        "newsletter_popup_input_button_submit_text": "Sign Up",
+        "newsletter_popup_button_close_label": "No Thanks",
+        "is_newsletter_popup_show_socials": true,
+        "newsletter_popup_enable_animation": true
+      }
+    }
+  },
+  "order": [
+    "age_check_popup",
+    "newsletter_popup"
+  ]
+}

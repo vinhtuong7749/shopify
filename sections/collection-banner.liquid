@@ -1,0 +1,305 @@
+{%- assign title						= collection.title -%}
+{%- assign description					= collection.description -%}
+{%- assign image 						= section.settings.custom_image | default: collection.image -%}
+{%- assign show_section_breadcrumbs 	= section.settings.show_breadcrumbs -%}
+{%- assign show_description 			= section.settings.show_description -%}
+{%- assign inner_offset_bottom 			= section.settings.inner_offset_bottom -%}
+{%- assign inner_offset_top 			= section.settings.inner_offset_top -%}
+{%- assign inner_offset_top_mobile 		= section.settings.inner_offset_top_mobile -%}
+{%- assign inner_offset_bottom_mobile 	= section.settings.inner_offset_bottom_mobile -%}
+{%- assign overlay_color 				= section.settings.overlay_color | default: "transparent" -%}
+{%- assign text_color					= section.settings.text_color -%}
+{%- assign is_lazy 						= false -%}
+
+{%- if section.index > 1 -%}
+	{%- assign is_lazy = true -%}
+{%- endif -%}
+
+{%- style -%}
+	#shopify-section-{{- section.id -}} {
+		padding-top: {{- section.settings.offset_top_mobile -}}px;
+		padding-bottom: {{- section.settings.offset_bottom_mobile -}}px;
+	}
+
+	@media screen and (min-width: 768px) {
+		#shopify-section-{{- section.id -}} {
+			padding-top: {{- section.settings.offset_top_desktop -}}px;
+			padding-bottom: {{- section.settings.offset_bottom_desktop -}}px;
+		}
+	}
+{%- endstyle -%}
+
+{%- capture section_styles -%}
+	--inner-offset-top: {{- inner_offset_top -}}px; {{-  -}}
+	--inner-offset-bottom: {{- inner_offset_bottom -}}px; {{-  -}}
+	--inner-offset-top-mobile: {{- inner_offset_top_mobile -}}px; {{-  -}}
+	--inner-offset-bottom-mobile: {{- inner_offset_bottom_mobile -}}px; {{-  -}}
+	--overlay-color: {{- overlay_color -}}; {{-  -}}
+	--text-color: {{- text_color -}}; {{-  -}}
+	--background-color-translucent: {{- text_color | color_modify: 'alpha', 0.2 -}}; {{-  -}}
+{%- endcapture -%}
+
+{%- if show_section_breadcrumbs -%}
+	{% style %}
+		.breadcrumb {
+			display: none;
+		}
+	{% endstyle %}
+{%- endif -%}
+
+{%- render 'adastra' with '/src/styles/collection-banner.scss' -%}
+
+<section
+	class="collection-banner"
+	style="{{- section_styles -}}"
+>
+	<div class="collection-banner__wrapper">
+		<div class="collection-banner__media-wrapper">
+			<div class="collection-banner__media-wrapper">
+				{%- if image != blank -%}
+					{%- capture img_focal -%}
+						--img-desktop-pos: {{ image.presentation.focal_point }};
+					{%- endcapture -%}
+
+					<picture>
+						<source
+							srcset="{{ image | image_url: width: 380 }} 1x, {{ image | image_url: width: 760 }} 2x"
+							media="(max-width: 380px)"
+							width="380"
+							height="380"
+						>
+
+						<source
+							srcset="{{ image | image_url: width: 420 }} 1x, {{ image | image_url: width: 840 }} 2x"
+							media="(max-width: 420px)"
+							width="420"
+							height="380"
+						>
+
+						<source
+							srcset="{{ image | image_url: width: 480 }} 1x, {{ image | image_url: width: 960 }} 2x"
+							media="(max-width: 480px)"
+							width="480"
+							height="380"
+						>
+
+						<source
+							srcset="{{ image | image_url: width: 575 }} 1x, {{ image | image_url: width: 1150 }} 2x"
+							media="(max-width: 575px)"
+							width="575"
+							height="380"
+						>
+
+						<source
+							srcset="{{ image | image_url: width: 767 }} 1x, {{ image | image_url: width: 1534 }} 2x"
+							media="(max-width: 767px)"
+							width="767"
+							height="380"
+						>
+
+						<source
+							srcset="{{ image | image_url: width: 991 }} 1x, {{ image | image_url: width: 1982 }} 2x"
+							media="(max-width: 991px)"
+							width="991"
+							height="380"
+						>
+
+						<source
+							srcset="{{ image | image_url: width: 1199 }} 1x, {{ image | image_url: width: 2398 }} 2x"
+							media="(max-width: 1199px)"
+							width="1199"
+							height="380"
+						>
+
+						<source
+							srcset="{{ image | image_url: width: 1500 }} 1x, {{ image | image_url: width: 3000 }} 2x"
+							media="(max-width: 1500px)"
+							width="1500"
+							height="429"
+						>
+
+						<source
+							srcset="{{ image | image_url: width: 1680 }} 1x, {{ image | image_url: width: 3360 }} 2x"
+							media="(max-width: 1680px)"
+							width="1680"
+							height="480"
+						>
+
+						<img
+							class="collection-banner__media"
+							srcset="{{ image | image_url: width: 1920 }} 1x, {{ image | image_url: width: 3840 }} 2x"
+							src="{{- image | image_url: width: 1920 -}}"
+							alt="{{- image.alt | escape -}}"
+							width="1920"
+							height="549"
+							{% if is_lazy %}
+								fetchpriority="low"
+								loading="lazy"
+							{% else %}
+								fetchpriority="high"
+								loading="eager"
+							{% endif %}
+							style="{{ img_focal }}"
+						>
+					</picture>
+				{%- else -%}
+					{{- 'collection-apparel-2' | placeholder_svg_tag: 'collection-banner__media' -}}
+				{%- endif -%}
+			</div>
+		</div>
+
+		<div class="collection-banner__content">
+			{%- if show_section_breadcrumbs -%}
+				{%- render 'breadcrumbs', class: 'breadcrumb--banner' -%}
+			{%- endif -%}
+
+			<h1 class="collection-banner__title">
+				{{- title -}}
+			</h1>
+
+			{%- if show_description and description != blank -%}
+				<div class="rte collection-banner__description">
+					{{- description -}}
+				</div>
+			{%- endif -%}
+		</div>
+	</div>
+</section>
+
+{%- schema -%}
+{
+	"name": "Collection banner",
+	"settings": [
+		{
+			"type": "checkbox",
+			"id": "show_breadcrumbs",
+			"label": "Show breadcrumbs",
+			"default": true,
+			"info": "This setting only concerns the display of breadcrumbs on the banner. To disable the breadcrumbs site-wide, please go to Theme Settings → Breadcrumbs."
+		},
+		{
+			"type": "checkbox",
+			"id": "show_description",
+			"label": "Show collection description",
+			"default": false
+		},
+		{
+			"type": "image_picker",
+			"id": "custom_image",
+			"label": "Collection custom image",
+			"info": "You can add alternate image with metafields (use dynamic source for this)"
+		},
+		{
+			"type": "header",
+			"content": "Colors"
+		},
+		{
+			"type": "color_background",
+			"id": "overlay_color",
+			"label": "Banner overlay",
+			"default": "rgba(0, 0, 0, 0.40)"
+		},
+		{
+			"type": "color",
+			"id": "text_color",
+			"label": "Banner text",
+			"default": "#fff"
+		},
+		{
+			"type": "header",
+			"content": "Layout"
+		},
+		{
+			"type": "paragraph",
+			"content": "External offsets"
+		},
+		{
+			"type": "range",
+			"id": "offset_top_desktop",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"label": "Desktop external offset top",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "offset_bottom_desktop",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"label": "Desktop external offset bottom",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "offset_top_mobile",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"label": "Mobile external offset top",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "offset_bottom_mobile",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"label": "Mobile external offset bottom",
+			"default": 0
+		},
+		{
+			"type": "paragraph",
+			"content": "Internal offsets"
+		},
+		{
+			"type": "range",
+			"id": "inner_offset_top",
+			"min": 0,
+			"max": 300,
+			"step": 3,
+			"unit": "px",
+			"label": "Desktop internal offset top",
+			"default": 60
+		},
+		{
+			"type": "range",
+			"id": "inner_offset_bottom",
+			"min": 0,
+			"max": 300,
+			"step": 3,
+			"unit": "px",
+			"label": "Desktop internal offset bottom",
+			"default": 60
+		},
+		{
+			"type": "range",
+			"id": "inner_offset_top_mobile",
+			"min": 50,
+			"max": 200,
+			"step": 2,
+			"unit": "px",
+			"label": "Mobile internal offset top",
+			"default": 64
+		},
+		{
+			"type": "range",
+			"id": "inner_offset_bottom_mobile",
+			"min": 50,
+			"max": 200,
+			"step": 2,
+			"unit": "px",
+			"label": "Mobile internal offset bottom",
+			"default": 64
+		}
+	],
+	"enabled_on": {
+		"templates": ["collection"]
+	}
+}
+{%- endschema -%}

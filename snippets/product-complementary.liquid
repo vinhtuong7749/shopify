@@ -1,0 +1,178 @@
+{% comment %}
+------------------------------------------------------------------------------
+  Snippet: Product Complementary
+------------------------------------------------------------------------------
+{% endcomment %}
+{% comment %}
+	Description variables
+{% endcomment %}
+
+{%- assign heading = block.settings.heading -%}
+
+{%- assign min  = 1 -%}
+{%- assign max  = 6 -%}
+{%- assign diff = max | minus: min -%}
+
+{%- capture styles -%}
+	--offset-top-desktop: {{ block.settings.offset_top_desktop }}px; {{-  -}}
+	--offset-bottom-desktop: {{ block.settings.offset_bottom_desktop }}px; {{-  -}}
+	--offset-top-mobile: {{ block.settings.offset_top_mobile }}px; {{-  -}}
+	--offset-bottom-mobile: {{ block.settings.offset_bottom_mobile }}px;
+{%- endcapture -%}
+
+<div class="complementary-products no-js-hidden js-complementary-products"
+	 style="{{ styles }}"
+	 data-url="{{- routes.product_recommendations_url -}}?section_id={{- section_id -}}&product_id={{- product.id -}}&intent=complementary"
+>
+	{%- if recommendations.performed and recommendations.products_count > 0 -%}
+		<div class="complementary-products-content js-complementary-products-content">
+			{%- if heading != blank or recommendations.products_count > 1  -%}
+				<div class="complementary-products__header">
+					{%- if heading != blank -%}
+						<h2 class="h5">
+							{{- heading -}}
+						</h2>
+					{%- endif -%}
+
+					{%- if recommendations.products_count > 1 -%}
+						<div class="complementary-products__controls">
+							<button
+								class="swiper-button-prev-new complementary-products__control js-complementary-products-slider-prev"
+								type="button"
+								aria-label="{{- 'general.accessibility.slider.prev_slide_message' | t | escape -}}"
+							>
+								{% render 'icons', icon: 'arrow-left' %}
+							</button>
+
+							<button
+								class="swiper-button-next-new complementary-products__control js-complementary-products-slider-next"
+								type="button"
+								aria-label="{{- 'general.accessibility.slider.next_slide_message' | t | escape -}}"
+							>
+								{% render 'icons', icon: 'arrow-right' %}
+							</button>
+						</div>
+					{%- endif -%}
+				</div>
+			{%- endif -%}
+
+			<div class="complementary-products-content-slider {% if recommendations.products_count > 1 -%}swiper{% endif %}">
+				<div class="complementary-products__slider-wrapper {% if recommendations.products_count > 1 -%}swiper-wrapper{% endif %}">
+					{%- for product in recommendations.products -%}
+						{%- assign product_image = product.featured_image | default: settings.product_default_image -%}
+
+						<div class="complementary-products__slider-slide js-complementary-item {% if recommendations.products_count > 1 -%}swiper-slide{%- endif -%}">
+							<div class="complementary-products__product-card">
+								<a
+									class="complementary-products__product-card-image-container focus-visible-outline"
+									href="{{- product.url -}}"
+									{% unless product_image.alt != blank %}
+										aria-label="{{- product.title -}}"
+									{% endunless %}
+								>
+									{%- if product_image != blank -%}
+										{%- capture img_focal -%}
+											--img-pos: {{ product_image.presentation.focal_point }};
+										{%- endcapture -%}
+
+										<img
+											class="complementary-products__product-card-image"
+											src="{{- product_image | image_url: height: 150 -}}"
+											srcset="{{ product_image | image_url: height: 150 }} 1x,
+														 {{ product_image | image_url: height: 300 }} 2x"
+											width="110"
+											height="150"
+											loading="lazy"
+											fetchpriority="low"
+											alt="{{- product_image.alt | escape -}}"
+											style="{{ img_focal }}"
+										/>
+									{%- else -%}
+										{%- assign random_number        = "now" | date: "%N" | modulo: diff | plus: min -%}
+										{%- assign placeholder_svg_name = 'product-' | append: random_number -%}
+
+										{{- placeholder_svg_name | placeholder_svg_tag: 'complementary-products__product-card-image complementary-products__product-card-image--placeholder' -}}
+									{%- endif -%}
+								</a>
+
+								<div class="complementary-products__product-card-info">
+									<div class="complementary-products__product-card-header">
+										<a
+											class="complementary-products__product-card-heading focus-visible-outline"
+											href="{{- product.url -}}"
+										>
+											{%- if product != blank -%}
+												{{- product.title -}}
+											{%- else -%}
+												{{- 'products.product_card.product_title' | t -}}
+											{%- endif -%}
+										</a>
+
+										{%- if settings.is_show_vendor -%}
+											<div class="complementary-products__product-card-vendor">
+												{%- if product != blank -%}
+													<span class="visually-hidden">
+														{{- 'products.product_card.product_vendor' | t -}}
+													</span>
+
+													{{- product.vendor -}}
+												{%- else -%}
+													{{- 'products.product_card.product_vendor_placeholder' | t -}}
+												{%- endif -%}
+											</div>
+										{%- endif -%}
+
+										{% render 'price', product: product %}
+									</div>
+
+									{%- if settings.is_quick_view_enabled -%}
+										<button
+											class="button-link focus-visible-outline js-add-to-cart"
+											type="button"
+											data-product-handle="{{- product.handle -}}"
+											data-min-quantity="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+											{% if product.has_only_default_variant or product.variants.size == 1 %}
+												data-variant-id="{{- product.variants[0].id -}}"
+											{% endif %}
+											{% unless product.available %}
+												disabled
+											{% endunless %}
+										>
+											{%- assign button_add_to_cart_text = '' -%}
+
+											{% if product.available %}
+												{%- if product.has_only_default_variant or product.variants.size == 1 -%}
+													{% if product.template_suffix == 'pre-order' %}
+														{%- assign button_add_to_cart_text = 'products.product.pre_order' | t -%}
+													{% else %}
+														{%- assign button_add_to_cart_text = 'products.product.add_to_cart' | t -%}
+													{% endif %}
+												{%- else -%}
+													{%- assign button_add_to_cart_text = 'products.product_card.open_quick_view' | t -%}
+												{%- endif -%}
+											{% else %}
+												{%- assign button_add_to_cart_text = 'products.product.sold_out' | t -%}
+											{% endif %}
+
+											{% render 'icons', icon: 'plus' %}
+
+											<span data-text="{{- button_add_to_cart_text -}}">
+												<span>{{- button_add_to_cart_text -}}</span>
+											</span>
+										</button>
+									{%- endif -%}
+								</div>
+							</div>
+						</div>
+					{%- endfor -%}
+				</div>
+			</div>
+		</div>
+	{% else %}
+		{%- render 'adastra' with '/src/styles/product-complementary.scss' -%}
+
+		<div class="complementary-products-content js-complementary-products-content"></div>
+
+		{%- render 'adastra' with '/src/scripts/component-product-complementary.js' -%}
+	{%- endif -%}
+</div>
