@@ -1,0 +1,228 @@
+<div
+	id="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
+	class="header-mega-desktop js-header-dropdown-menu"
+>
+	<div class="header-mega-desktop__inner">
+		{%- assign mega_links = first_level_link.links -%}
+		{%- assign mega_collections = blank -%}
+		
+		{%- if mega_links != blank -%}
+			{%- for second_level_link in mega_links limit: 5 -%}
+				{%- assign col = second_level_link.object -%}
+				{%- assign target_image = col.image | default: col.products.first.featured_image -%}
+
+				<div class="header-mega-desktop__card">
+                    <a href="{{ second_level_link.url }}" class="header-mega-desktop__image-link">
+					    <div class="header-mega-desktop__image-wrapper">
+						    {%- if target_image != blank -%}
+							    <img src="{{ target_image | img_url: '400x' }}" alt="{{ second_level_link.title | escape }}" loading="lazy" class="header-mega-desktop__image">
+						    {%- else -%}
+							    <div class="header-mega-desktop__placeholder"></div>
+						    {%- endif -%}
+					    </div>
+                    </a>
+                    <a href="{{ second_level_link.url }}" class="header-mega-desktop__title-link">
+					    <h3 class="header-mega-desktop__title">{{ second_level_link.title }}</h3>
+                    </a>
+                    
+                    {%- if second_level_link.links != blank -%}
+                        <ul class="header-mega-desktop__sub-links">
+                            {%- for third_level_link in second_level_link.links -%}
+                                <li>
+                                    <a href="{{ third_level_link.url }}" class="header-mega-desktop__sub-link">{{ third_level_link.title }}</a>
+                                </li>
+                            {%- endfor -%}
+                        </ul>
+                    {%- elsif col.products.size > 0 -%}
+                        <ul class="header-mega-desktop__sub-links">
+                            {%- for product in col.products limit: 4 -%}
+                                <li>
+                                    <a href="{{ product.url }}" class="header-mega-desktop__sub-link">{{ product.title | truncate: 35 }}</a>
+                                </li>
+                            {%- endfor -%}
+                        </ul>
+                    {%- endif -%}
+				</div>
+			{%- endfor -%}
+		{%- else -%}
+			{%- for col in collections limit: 5 -%}
+				{%- assign target_image = col.image | default: col.products.first.featured_image -%}
+				<div class="header-mega-desktop__card">
+                    <a href="{{ col.url }}" class="header-mega-desktop__image-link">
+					    <div class="header-mega-desktop__image-wrapper">
+						    {%- if target_image != blank -%}
+							    <img src="{{ target_image | img_url: '400x' }}" alt="{{ col.title | escape }}" loading="lazy" class="header-mega-desktop__image">
+						    {%- else -%}
+							    <div class="header-mega-desktop__placeholder"></div>
+						    {%- endif -%}
+					    </div>
+                    </a>
+                    <a href="{{ col.url }}" class="header-mega-desktop__title-link">
+					    <h3 class="header-mega-desktop__title">{{ col.title }}</h3>
+                    </a>
+
+                    {%- if col.products.size > 0 -%}
+                        <ul class="header-mega-desktop__sub-links">
+                            {%- for product in col.products limit: 4 -%}
+                                <li>
+                                    <a href="{{ product.url }}" class="header-mega-desktop__sub-link">{{ product.title | truncate: 35 }}</a>
+                                </li>
+                            {%- endfor -%}
+                        </ul>
+                    {%- endif -%}
+				</div>
+			{%- endfor -%}
+		{%- endif -%}
+	</div>
+</div>
+
+<style>
+.header-mega-desktop {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	width: 100vw;
+	max-width: 100vw;
+	background: #faf6ee;
+	border-top: none;
+	box-shadow: 0px 15px 30px rgba(0,0,0,0.08); /* Soft shadow */
+	padding: 40px;
+	opacity: 0;
+	visibility: hidden;
+	transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+	z-index: 100;
+	transform: translateY(10px);
+}
+
+.header-mega-desktop.is-active,
+.header-menu__item.is-active + .header-menu__list-nested-wrapper .header-mega-desktop,
+.header-menu__item.header-menu__item--active + .header-menu__list-nested-wrapper .header-mega-desktop {
+	opacity: 1;
+	visibility: visible;
+	transform: translateY(0);
+}
+
+.header-mega-desktop__inner {
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+	gap: 30px;
+	width: 100%;
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+.header-mega-desktop__card {
+	flex: 1;
+	max-width: calc(25% - 22.5px); /* Ensure exactly 4 columns */
+	display: flex;
+    flex-direction: column;
+}
+
+.header-mega-desktop__image-link {
+    display: block;
+    margin-bottom: 20px;
+}
+
+.header-mega-desktop__image-wrapper {
+	width: 100%;
+	aspect-ratio: 16/9; /* Landscape like the reference image */
+	overflow: hidden;
+	background: #f4f4f4;
+	position: relative;
+}
+
+.header-mega-desktop__image {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform 0.4s ease;
+}
+
+.header-mega-desktop__card:hover .header-mega-desktop__image {
+	transform: scale(1.03); /* Gentle zoom */
+}
+
+.header-mega-desktop__placeholder {
+	width: 100%;
+	height: 100%;
+	background: #eaeaea;
+}
+
+.header-mega-desktop__title-link {
+    text-decoration: none;
+    display: block;
+    margin-bottom: 20px;
+}
+
+.header-mega-desktop__title {
+	font-family: 'Oswald', sans-serif;
+	font-weight: 700;
+	font-size: 14px;
+	color: #2c3d33;
+	text-transform: uppercase;
+	letter-spacing: 2px; /* Spread out lettering */
+	margin: 0;
+	transition: color 0.2s ease;
+	text-align: left;
+}
+
+.header-mega-desktop__title-link:hover .header-mega-desktop__title {
+    color: #000;
+}
+
+.header-mega-desktop__sub-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.header-mega-desktop__sub-link {
+    font-family: 'Oswald', sans-serif;
+    font-size: 15px;
+    color: #666;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.header-mega-desktop__sub-link:hover {
+    color: #2c3d33;
+    font-weight: 500;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const alignMegaMenus = () => {
+        document.querySelectorAll('.header-mega-desktop').forEach(menu => {
+            const offsetParent = menu.offsetParent;
+            if (!offsetParent) return;
+            
+            const offsetParentRect = offsetParent.getBoundingClientRect();
+            const viewportWidth = window.innerWidth;
+            const menuWidth = viewportWidth; // Full width
+            
+            // The left edge of the menu should be exactly at the left edge of the screen
+            const idealLeftOnScreen = 0;
+            
+            // The menu's 'left' CSS property is relative to its offsetParent's left edge.
+            const shiftOffset = idealLeftOnScreen - offsetParentRect.left;
+            
+            menu.style.left = `${shiftOffset}px`;
+            menu.style.width = `${menuWidth}px`;
+        });
+    };
+
+    // Align after a short delay to ensure fonts/layout are loaded
+    setTimeout(alignMegaMenus, 100);
+    window.addEventListener('resize', alignMegaMenus);
+
+    // Also align exactly when hovered
+    document.querySelectorAll('.js-header-dropdown-menu-wrapper, .button-link, .header-menu__item').forEach(el => {
+        el.addEventListener('mouseenter', alignMegaMenus);
+    });
+});
+</script>

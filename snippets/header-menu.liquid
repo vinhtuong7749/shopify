@@ -32,7 +32,13 @@
 			{%- assign animation_delay = 0 -%}
 
 			<li class="header-menu__item-wrapper">
-				{%- if first_level_link.links != blank -%}
+				{%- assign link_title_down = first_level_link.title | downcase -%}
+				{%- assign is_mega_menu = false -%}
+				{%- if link_title_down contains 'collection' or link_title_down contains 'shop' -%}
+					{%- assign is_mega_menu = true -%}
+				{%- endif -%}
+
+				{%- if first_level_link.links != blank or is_mega_menu -%}
 					<a
 						class="button-link header-menu__item{% if first_level_link.active %} header-menu__item--active{% endif %} no-js"
 						href="{{- first_level_link.url -}}"
@@ -83,6 +89,9 @@
 					{%- endif -%}
 
 					<div class="header-menu__list-nested-wrapper js-header-dropdown-menu-wrapper" data-target-nested-wrapper="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}">
+						{%- if is_mega_menu -%}
+							{%- render 'header-mega-menu-collection', first_level_link: first_level_link, first_level_index: first_level_index -%}
+						{%- else -%}
 						<ul
 							id="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
 							class="header-menu__list header-menu__list--nested js-header-dropdown-menu"
@@ -169,6 +178,7 @@
 								</ul>
 							{%- endif -%}
 						{%- endfor -%}
+						{%- endif -%}
 					</div>
 				{%- else -%}
 					<a
