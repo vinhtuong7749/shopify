@@ -34,6 +34,22 @@
 			padding-top: {{- section.settings.offset_top_desktop -}}px;
 			padding-bottom: {{- section.settings.offset_bottom_desktop -}}px;
 		}
+		
+		/* Giới hạn chiều cao hiển thị ảnh sản phẩm trên Desktop để vừa màn hình */
+		#shopify-section-{{- section.id -}} .product-media__aspect-ratio {
+			padding-top: 0 !important;
+			height: 70vh !important;
+			min-height: 400px;
+		}
+		#shopify-section-{{- section.id -}} .product-media__aspect-ratio .product-media__image,
+		#shopify-section-{{- section.id -}} .product-media__aspect-ratio img {
+			object-fit: contain !important;
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+		}
 	}
 
 	{% if breadcrumbs_block != blank -%}

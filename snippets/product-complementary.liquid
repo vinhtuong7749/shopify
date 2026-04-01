@@ -20,6 +20,131 @@
 	--offset-bottom-mobile: {{ block.settings.offset_bottom_mobile }}px;
 {%- endcapture -%}
 
+<style>
+	/* Cross-sell "Complete the Loadout" - matching reference design */
+	.complementary-products.is-active {
+		background: #f7f7f7;
+		border: none;
+		padding: 24px !important;
+		margin-top: 16px;
+		font-family: 'Oswald', sans-serif !important;
+	}
+	.complementary-products .complementary-products__header {
+		margin-bottom: 16px;
+		padding-bottom: 0;
+		border: none;
+	}
+	.complementary-products .complementary-products__header .h5 {
+		font-family: 'Oswald', sans-serif !important;
+		font-size: 15px;
+		font-weight: 700;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: #000;
+		margin: 0;
+	}
+	.complementary-products .complementary-products__controls {
+		display: none;
+	}
+	.complementary-products .complementary-products__product-card {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+		border: none;
+		border-top: 1px solid #e5e5e5;
+		padding: 14px 0;
+		margin: 0;
+		background: transparent;
+	}
+	.complementary-products .complementary-products__slider-slide:last-child .complementary-products__product-card {
+		border-bottom: none;
+		padding-bottom: 0;
+	}
+	.complementary-products .complementary-products__product-card-image-container {
+		width: 60px;
+		min-width: 60px;
+		max-width: 60px;
+		height: 60px;
+		border: 1px solid #e0e0e0;
+		background: #fff;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		overflow: hidden;
+		flex-shrink: 0;
+	}
+	.complementary-products .complementary-products__product-card-image {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+	.complementary-products .complementary-products__product-card-info {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		flex: 1;
+		padding: 0;
+		gap: 10px;
+	}
+	.complementary-products .complementary-products__product-card-header {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+	.complementary-products .complementary-products__product-card-heading {
+		font-family: 'Oswald', sans-serif !important;
+		font-size: 13px;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: #000;
+		text-decoration: none;
+		line-height: 1.3;
+	}
+	.complementary-products .complementary-products__product-card-header .price {
+		font-family: 'Oswald', sans-serif !important;
+		font-size: 13px;
+		font-weight: 400;
+		color: #000;
+	}
+	.complementary-products .complementary-products__product-card-vendor {
+		display: none;
+	}
+	.complementary-products .button-link.js-add-to-cart {
+		padding: 8px 18px;
+		background: #000;
+		color: #fff;
+		border: none;
+		font-family: 'Oswald', sans-serif !important;
+		font-size: 12px;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		white-space: nowrap;
+		cursor: pointer;
+		transition: opacity 0.2s;
+		line-height: 1;
+		flex-shrink: 0;
+	}
+	.complementary-products .button-link.js-add-to-cart:hover {
+		opacity: 0.8;
+	}
+	.complementary-products .button-link.js-add-to-cart .icon {
+		display: none;
+	}
+	@media (max-width: 767.98px) {
+		.complementary-products.is-active {
+			padding: 18px !important;
+		}
+		.complementary-products .complementary-products__product-card-info {
+			flex-direction: row;
+			align-items: center;
+		}
+	}
+</style>
+
 <div class="complementary-products no-js-hidden js-complementary-products"
 	 style="{{ styles }}"
 	 data-url="{{- routes.product_recommendations_url -}}?section_id={{- section_id -}}&product_id={{- product.id -}}&intent=complementary"
@@ -169,10 +294,130 @@
 			</div>
 		</div>
 	{% else %}
-		{%- render 'adastra' with '/src/styles/product-complementary.scss' -%}
+		{%- comment -%} Fallback: show products from same collection (no app needed) {%- endcomment -%}
+		{%- assign fallback_collection = product.collections | first -%}
+		{%- assign fallback_count = 0 -%}
+		{%- assign fallback_max = 2 -%}
 
-		<div class="complementary-products-content js-complementary-products-content"></div>
+		{%- if fallback_collection != blank -%}
+			{%- comment -%} Check if there are other products in this collection {%- endcomment -%}
+			{%- assign has_other_products = false -%}
+			{%- for p in fallback_collection.products -%}
+				{%- if p.id != product.id -%}
+					{%- assign has_other_products = true -%}
+					{%- break -%}
+				{%- endif -%}
+			{%- endfor -%}
 
-		{%- render 'adastra' with '/src/scripts/component-product-complementary.js' -%}
+			{%- if has_other_products -%}
+				<div class="complementary-products-content js-complementary-products-content">
+					{%- if heading != blank -%}
+						<div class="complementary-products__header">
+							<h2 class="h5">
+								{{- heading -}}
+							</h2>
+						</div>
+					{%- endif -%}
+
+					<div class="complementary-products-content-slider">
+						<div class="complementary-products__slider-wrapper">
+							{%- for p in fallback_collection.products -%}
+								{%- if p.id == product.id -%}{%- continue -%}{%- endif -%}
+								{%- if fallback_count >= fallback_max -%}{%- break -%}{%- endif -%}
+								{%- assign fallback_count = fallback_count | plus: 1 -%}
+								{%- assign p_image = p.featured_image | default: settings.product_default_image -%}
+
+								<div class="complementary-products__slider-slide js-complementary-item">
+									<div class="complementary-products__product-card">
+										<a
+											class="complementary-products__product-card-image-container focus-visible-outline"
+											href="{{- p.url -}}"
+											{% unless p_image.alt != blank %}
+												aria-label="{{- p.title -}}"
+											{% endunless %}
+										>
+											{%- if p_image != blank -%}
+												{%- capture img_focal -%}
+													--img-pos: {{ p_image.presentation.focal_point }};
+												{%- endcapture -%}
+
+												<img
+													class="complementary-products__product-card-image"
+													src="{{- p_image | image_url: height: 150 -}}"
+													srcset="{{ p_image | image_url: height: 150 }} 1x,
+															 {{ p_image | image_url: height: 300 }} 2x"
+													width="110"
+													height="150"
+													loading="lazy"
+													fetchpriority="low"
+													alt="{{- p_image.alt | escape -}}"
+													style="{{ img_focal }}"
+												/>
+											{%- else -%}
+												{%- assign random_number = "now" | date: "%N" | modulo: diff | plus: min -%}
+												{%- assign placeholder_svg_name = 'product-' | append: random_number -%}
+												{{- placeholder_svg_name | placeholder_svg_tag: 'complementary-products__product-card-image complementary-products__product-card-image--placeholder' -}}
+											{%- endif -%}
+										</a>
+
+										<div class="complementary-products__product-card-info">
+											<div class="complementary-products__product-card-header">
+												<a
+													class="complementary-products__product-card-heading focus-visible-outline"
+													href="{{- p.url -}}"
+												>
+													{{- p.title -}}
+												</a>
+												{% render 'price', product: p %}
+											</div>
+
+											<button
+												class="button-link focus-visible-outline js-add-to-cart"
+												type="button"
+												data-product-handle="{{- p.handle -}}"
+												data-min-quantity="{{- p.selected_or_first_available_variant.quantity_rule.min -}}"
+												{% if p.has_only_default_variant or p.variants.size == 1 %}
+													data-variant-id="{{- p.variants[0].id -}}"
+												{% endif %}
+												{% unless p.available %}
+													disabled
+												{% endunless %}
+											>
+												{%- if p.available -%}
+													{%- if p.has_only_default_variant or p.variants.size == 1 -%}
+														{% render 'icons', icon: 'plus' %}
+														<span data-text="{{ 'products.product.add_to_cart' | t }}">
+															<span>{{ 'products.product.add_to_cart' | t }}</span>
+														</span>
+													{%- else -%}
+														{% render 'icons', icon: 'plus' %}
+														<span data-text="{{ 'products.product_card.open_quick_view' | t }}">
+															<span>{{ 'products.product_card.open_quick_view' | t }}</span>
+														</span>
+													{%- endif -%}
+												{%- else -%}
+													{% render 'icons', icon: 'plus' %}
+													<span data-text="{{ 'products.product.sold_out' | t }}">
+														<span>{{ 'products.product.sold_out' | t }}</span>
+													</span>
+												{%- endif -%}
+											</button>
+										</div>
+									</div>
+								</div>
+							{%- endfor -%}
+						</div>
+					</div>
+				</div>
+
+				<script>
+					/* Auto-activate complementary products fallback */
+					(function() {
+						var el = document.querySelector('.js-complementary-products');
+						if (el) el.classList.add('is-active');
+					})();
+				</script>
+			{%- endif -%}
+		{%- endif -%}
 	{%- endif -%}
 </div>

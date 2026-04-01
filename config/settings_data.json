@@ -10,7 +10,8 @@
 {
   "current": {
     "base_font": "oswald_n4",
-    "heading_font": "oswald_n4",
+    "heading_font": "anton_n4",
+    "base_font_size": 130,
     "content_for_index": [],
     "color_schemes": {
       "scheme-1": {

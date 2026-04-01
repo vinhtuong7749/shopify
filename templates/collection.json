@@ -9,11 +9,65 @@
  */
 {
   "sections": {
+    "banner_LxJDDG": {
+      "type": "banner",
+      "name": "Banner",
+      "settings": {
+        "desktop_image_height": "600px",
+        "mobile_image_height": "350px",
+        "media_type": "image",
+        "title": "",
+        "text": "",
+        "button_label_1": "Button label",
+        "button_link_1": "",
+        "button_aria_label_1": "",
+        "button_label_2": "Button label",
+        "button_link_2": "",
+        "button_aria_label_2": "",
+        "image_desktop": "shopify://shop_images/Gemini_Generated_Image_3qu3c23qu3c23qu3.jpg",
+        "image_mobile": "shopify://shop_images/Gemini_Generated_Image_e1t5o1e1t5o1e1t5.jpg",
+        "show_breadcrumbs": false,
+        "enable_timer": false,
+        "timer_month": "0",
+        "timer_day": "1",
+        "timer_hour": "0",
+        "timer_timezone": "+0",
+        "timer_background": "rgba(255,255,255, 0.12)",
+        "timer_color": "#fff",
+        "content_alignment": "center",
+        "content_alignment_mobile": "center",
+        "block_alignment": "center",
+        "block_alignment_vertical": "center",
+        "block_alignment_vertical_mob": "center",
+        "section_background": "#E7E7E7",
+        "overlay": "rgba(0,0,0, 0.3)",
+        "text_color": "#FFFFFF",
+        "button_background_1": "#FFFFFF",
+        "button_color_1": "#000000",
+        "button_border_1": "#FFFFFF",
+        "button_background_hover_1": "#000000",
+        "button_color_hover_1": "#FFFFFF",
+        "button_border_hover_1": "#FFFFFF",
+        "button_background_2": "#FFFFFF",
+        "button_color_2": "#000000",
+        "button_border_2": "#FFFFFF",
+        "button_background_hover_2": "#000000",
+        "button_color_hover_2": "#FFFFFF",
+        "button_border_hover_2": "#FFFFFF",
+        "container_width": "100%",
+        "offset_top_desktop": 25,
+        "offset_bottom_desktop": 25,
+        "offset_top_mobile": 25,
+        "offset_bottom_mobile": 25
+      }
+    },
     "plp-banner": {
       "type": "collection-banner",
+      "disabled": true,
       "settings": {
         "show_breadcrumbs": true,
         "show_description": false,
+        "custom_image": "shopify://shop_images/Gemini_Generated_Image_g784aug784aug784.jpg",
         "overlay_color": "rgba(0, 0, 0, 0.10)",
         "text_color": "#ffffff",
         "offset_top_desktop": 0,
@@ -130,6 +184,7 @@
     }
   },
   "order": [
+    "banner_LxJDDG",
     "plp-banner",
     "collection_list",
     "plp-template"
