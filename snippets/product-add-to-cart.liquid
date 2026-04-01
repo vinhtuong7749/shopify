@@ -259,67 +259,111 @@
 </div>
 
 {%- if show_sticky_add_to_cart -%}
-	{%- assign image = product.featured_image | default: settings.product_default_image -%}
-
-	<div class="product-sticky-add-to-cart js-sticky-add-to-cart">
-		<div class="product-sticky-add-to-cart__image-wrapper">
-			{%- if image != blank -%}
-				<picture>
-					<source srcset="{{ image | image_url: width: 40, height: 54 }} 1x, {{ image | image_url: width: 80, height: 108 }} 2x" media="(max-width: 575px)" />
-
-					<img
-						class="product-sticky-add-to-cart__image"
-						src="{{ image | image_url: width: 69, height: 94 }}"
-						srcset="{{ image | image_url: width: 69, height: 94  }} 1x, {{ image | image_url: width: 138, height: 188 }} 2x"
-						width="69"
-						height="94"
-						alt="{{- image.alt | escape -}}"
-						loading="lazy"
-						fetchpriority="low"
-						{% if img_focal != blank %}
-							style="{{ img_focal }}"
-						{% endif %}
-					/>
-				</picture>
-			{%- else -%}
-				{{- 'product-1' | placeholder_svg_tag: 'product-sticky-add-to-cart__image product-sticky-add-to-cart__image--placeholder' -}}
-			{%- endif -%}
-		</div>
-
-		<div class="product-sticky-add-to-cart__content">
-			<div class="focus-visible-outline product-sticky-add-to-cart__title">
-				{%- if product != blank -%}
-					{{- product.title -}}
-				{%- else -%}
-					{{- 'products.product_card.product_title' | t -}}
-				{%- endif -%}
-			</div>
-
-			{%- render 'price', product: product -%}
-		</div>
-
+	<div class="mobile-sticky-atc js-mobile-sticky-atc" id="mobile-sticky-atc">
 		<button
-			type="submit"
-			class="button button--secondary product-sticky-add-to-cart__button js-sticky-add-to-cart-button
-				{% unless product.first_available_variant.available %}
-					disabled
-				{% endunless %}
-			"
-			{% if product.template_suffix == 'pre-order' %}
-				data-preorder
-			{% endif %}
-			{% unless product.first_available_variant.available %}
-				disabled
-			{% endunless %}
+			type="button"
+			class="mobile-sticky-atc__btn js-mobile-sticky-atc-btn"
+			{% unless product.first_available_variant.available %}disabled{% endunless %}
 		>
-			{%- render 'icons', icon: 'cart' -%}
-			{%- render 'icons', icon: 'loader' -%}
+			{{- button_add_to_cart_text -}}
 		</button>
 	</div>
 
 	<style>
-		html .footer {
-			padding-bottom: 80px;
+		.mobile-sticky-atc {
+			display: none !important;
+		}
+		@media (max-width: 767.98px) {
+			.mobile-sticky-atc {
+				display: block !important;
+				position: fixed !important;
+				bottom: 0 !important;
+				left: 0 !important;
+				right: 0 !important;
+				z-index: 9999 !important;
+				background: #fff !important;
+				padding: 12px 16px !important;
+				padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+				box-shadow: 0 -2px 10px rgba(0,0,0,0.08) !important;
+				transform: translateY(0) !important;
+				transition: transform 0.3s ease !important;
+				border: none !important;
+				margin: 0 !important;
+			}
+			.mobile-sticky-atc.is-hidden {
+				transform: translateY(100%) !important;
+			}
+			.mobile-sticky-atc__btn {
+				display: block !important;
+				width: 100% !important;
+				background: #000 !important;
+				color: #fff !important;
+				border: none !important;
+				padding: 15px 20px !important;
+				font-family: 'Oswald', sans-serif !important;
+				font-size: 14px !important;
+				font-weight: 600 !important;
+				text-transform: uppercase !important;
+				letter-spacing: 0.08em !important;
+				text-align: center !important;
+				cursor: pointer !important;
+				transition: opacity 0.2s !important;
+				line-height: 1.2 !important;
+				border-radius: 0 !important;
+				-webkit-appearance: none !important;
+				appearance: none !important;
+			}
+			.mobile-sticky-atc__btn:hover {
+				opacity: 0.85 !important;
+			}
+			.mobile-sticky-atc__btn:disabled {
+				opacity: 0.5 !important;
+				cursor: not-allowed !important;
+			}
+			html .footer {
+				padding-bottom: 70px;
+			}
 		}
 	</style>
+
+	<script>
+		(function() {
+			function initMobileStickyATC() {
+				var bar = document.getElementById('mobile-sticky-atc');
+				var realBtn = document.querySelector('.product-add-to-cart .add-to-cart');
+				if (!bar || !realBtn) return;
+
+				if (window.innerWidth > 767) {
+					bar.classList.add('is-hidden');
+					return;
+				}
+
+				bar.classList.remove('is-hidden');
+
+				var observer = new IntersectionObserver(function(entries) {
+					entries.forEach(function(entry) {
+						if (entry.isIntersecting) {
+							bar.classList.add('is-hidden');
+						} else {
+							bar.classList.remove('is-hidden');
+						}
+					});
+				}, { threshold: 0.1 });
+
+				observer.observe(realBtn);
+
+				bar.querySelector('.js-mobile-sticky-atc-btn').addEventListener('click', function(e) {
+					e.preventDefault();
+					realBtn.click();
+				});
+			}
+
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', initMobileStickyATC);
+			} else {
+				initMobileStickyATC();
+			}
+			document.addEventListener('shopify:section:load', initMobileStickyATC);
+		})();
+	</script>
 {%- endif -%}

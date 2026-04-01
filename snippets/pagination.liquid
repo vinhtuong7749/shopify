@@ -15,11 +15,11 @@
 						href="{{- paginate.previous.url -}}{{ anchor }}"
 						aria-label="{{- 'general.pagination.previous' | t | escape -}}"
 					>
-						&lt; PREV
+						&lt;
 					</a>
 				{%- else -%}
 					<span class="pagination__link pagination__link--no-active" aria-hidden="true">
-						&lt; PREV
+						&lt;
 					</span>
 				{%- endif -%}
 			</span>
@@ -67,11 +67,11 @@
 						href="{{- paginate.next.url -}}{{ anchor }}"
 						aria-label="{{- 'general.pagination.next' | t | escape -}}"
 					>
-						NEXT &gt;
+						&gt;
 					</a>
 				{%- else -%}
 					<span class="pagination__link pagination__link--no-active" aria-hidden="true">
-						NEXT &gt;
+						&gt;
 					</span>
 				{%- endif -%}
 			</span>
@@ -80,55 +80,73 @@
 {%- endif -%}
 
 <style>
+.pagination {
+	padding: 40px 0 60px;
+}
 .pagination__list {
 	display: flex;
-	justify-content: center; /* Center the numbers wrapper */
+	justify-content: center;
 	align-items: center;
-	margin-top: 60px;
-	position: relative;
-	font-size: 10px;
-	letter-spacing: 1.5px;
-	font-weight: 800;
-	text-transform: uppercase;
-	padding: 0;
-	color: #000;
+	gap: 6px;
+	font-family: 'Oswald', sans-serif;
+	font-size: 14px;
+	letter-spacing: 1px;
+	font-weight: 700;
 }
 .pagination__numbers {
 	display: flex;
 	align-items: center;
-	gap: 20px;
-}
-.pagination__item--prev {
-	position: absolute;
-	left: 0;
-	color: #999;
-}
-.pagination__item--prev .pagination__link:hover {
-	color: #000;
-}
-.pagination__item--next {
-	position: absolute;
-	right: 0;
-	color: #000;
+	gap: 6px;
 }
 .pagination__item {
-	display: inline-block;
+	display: inline-flex;
 }
 .pagination__link {
-	text-decoration: none;
-	color: inherit;
-	transition: color 0.3s ease;
-	cursor: pointer;
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	min-width: 42px !important;
+	height: 42px !important;
+	padding: 0 12px !important;
+	text-decoration: none !important;
+	color: #2c3d33 !important;
+	border: 1.5px solid rgba(44, 61, 51, 0.3) !important;
+	background: transparent !important;
+	transition: all 0.25s ease !important;
+	cursor: pointer !important;
 }
-.pagination__link.is-active {
-	border-bottom: 1.5px solid #000;
-	padding-bottom: 2px;
+.pagination__link:hover {
+	background: #2c3d33 !important;
+	color: #faf6ee !important;
+	border-color: #2c3d33 !important;
+}
+.pagination__link.is-active,
+.pagination__link[aria-current="page"] {
+	background: #2c3d33 !important;
+	color: #faf6ee !important;
+	border-color: #2c3d33 !important;
+	pointer-events: none !important;
 }
 .pagination__link--no-active {
-	opacity: 0.3;
-	pointer-events: none;
+	opacity: 0.25 !important;
+	pointer-events: none !important;
+	border-color: rgba(44, 61, 51, 0.15) !important;
 }
-.pagination {
-	padding-bottom: 40px;
+.pagination__item--prev,
+.pagination__item--next {
+	position: static;
+}
+.pagination__item--prev .pagination__link,
+.pagination__item--next .pagination__link {
+	border-color: transparent;
+	font-size: 16px;
+	min-width: 36px;
+}
+.pagination__item--prev .pagination__link:hover,
+.pagination__item--next .pagination__link:hover {
+	background: #2c3d33;
+	color: #faf6ee;
+	border-color: #2c3d33;
 }
 </style>
+

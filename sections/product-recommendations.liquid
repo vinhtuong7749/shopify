@@ -16,6 +16,17 @@
 			padding-bottom: {{- section.settings.offset_bottom_desktop -}}px;
 		}
 	}
+
+	/* Mobile: show 2 products per view with slide */
+	@media screen and (max-width: 767.98px) {
+		#shopify-section-{{- section.id -}} .product-recommendations__col.swiper-slide {
+			width: calc(50% - 6px) !important;
+			flex-shrink: 0;
+		}
+		#shopify-section-{{- section.id -}} .product-recommendations__row {
+			gap: 0;
+		}
+	}
 {%- endstyle -%}
 
 {%- assign enable_color_scheme_inheritance = section.settings.enable_color_scheme_inheritance -%}
@@ -164,6 +175,51 @@
 
 {%- render 'adastra' with '/src/scripts/component-featured-content-slider.js' -%}
 {%- render 'adastra' with '/src/scripts/section-product-recommendations.js' -%}
+
+<script>
+	/* Override Swiper to show 2 products on mobile */
+	(function() {
+		function fixMobileSlider() {
+			if (window.innerWidth > 767) return;
+
+			var sectionEl = document.getElementById('{{ section.id }}');
+			if (!sectionEl) return;
+
+			var swiperEl = sectionEl.querySelector('.js-product-recommendations-row-wrapper');
+			if (!swiperEl || !swiperEl.swiper) return;
+
+			var prevBtn = sectionEl.querySelector('.js-product-recommendations-slider-button-prev');
+			var nextBtn = sectionEl.querySelector('.js-product-recommendations-slider-button-next');
+
+			swiperEl.swiper.destroy(true, true);
+
+			new window.themeCore.utils.Swiper(swiperEl, {
+				grabCursor: true,
+				slidesPerView: 2,
+				spaceBetween: 12,
+				navigation: {
+					prevEl: prevBtn,
+					nextEl: nextBtn
+				}
+			});
+		}
+
+		/* Wait for theme to fully load and init Swiper, then override */
+		var checkInterval = setInterval(function() {
+			var sectionEl = document.getElementById('{{ section.id }}');
+			if (!sectionEl) return;
+
+			var swiperEl = sectionEl.querySelector('.js-product-recommendations-row-wrapper');
+			if (swiperEl && swiperEl.swiper) {
+				clearInterval(checkInterval);
+				setTimeout(fixMobileSlider, 100);
+			}
+		}, 300);
+
+		/* Cleanup after 10 seconds */
+		setTimeout(function() { clearInterval(checkInterval); }, 10000);
+	})();
+</script>
 
 {%- schema -%}
 {

@@ -224,7 +224,7 @@
         "image_object_fit": "cover",
         "show_taxes_included": true,
         "show_pay_installments": true,
-        "show_sticky_add_to_cart": false,
+        "show_sticky_add_to_cart": true,
         "show_size_guide": true,
         "size_guide_button_placement": "under-options",
         "size_guide_page": "",
@@ -298,9 +298,59 @@
         "inner_offset_bottom_mobile": 30
       }
     },
+    "17750062752dbc4a4a": {
+      "type": "apps",
+      "blocks": {
+        "judge_me_reviews_review_widget_4K7azG": {
+          "type": "shopify://apps/judge-me-reviews/blocks/review_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {
+            "review_data": "sample_data",
+            "max_width": 1200,
+            "show_shop_reviews": false,
+            "empty_state": "empty_widget"
+          }
+        }
+      },
+      "block_order": [
+        "judge_me_reviews_review_widget_4K7azG"
+      ],
+      "settings": {
+        "container_width": "inherit",
+        "offset_top_desktop": 25,
+        "offset_bottom_desktop": 25,
+        "offset_top_mobile": 25,
+        "offset_bottom_mobile": 25
+      }
+    },
     "product_features": {
       "type": "product-features",
       "blocks": {
+        "product_feature_n8pJaq": {
+          "type": "product_feature",
+          "settings": {
+            "heading": "Feature heading",
+            "description": "Feature description",
+            "hotspot_vertical_position": 35,
+            "hotspot_horizontal_position": 30,
+            "feature_text_1": "Feature text 1",
+            "feature_text_2": "Feature text 2",
+            "feature_text_3": "Feature text 3",
+            "feature_text_4": "Feature text 4"
+          }
+        },
+        "product_feature_7ppDNG": {
+          "type": "product_feature",
+          "settings": {
+            "heading": "Feature heading",
+            "description": "Feature description",
+            "hotspot_vertical_position": 35,
+            "hotspot_horizontal_position": 30,
+            "feature_text_1": "Feature text 1",
+            "feature_text_2": "Feature text 2",
+            "feature_text_3": "Feature text 3",
+            "feature_text_4": "Feature text 4"
+          }
+        },
         "product_feature_DKMakk": {
           "type": "product_feature",
           "settings": {
@@ -311,6 +361,19 @@
             "feature_text_1": "Natural fiber PROVEN to draw moisture away from you - fast.",
             "feature_text_2": "All season versatility that keeps you warm when it’s cold and cool when it’s hot.",
             "feature_text_3": "Eco-friendly natural fiber.",
+            "feature_text_4": "Feature text 4"
+          }
+        },
+        "product_feature_Jk79kN": {
+          "type": "product_feature",
+          "settings": {
+            "heading": "Feature heading",
+            "description": "Feature description",
+            "hotspot_vertical_position": 35,
+            "hotspot_horizontal_position": 30,
+            "feature_text_1": "Feature text 1",
+            "feature_text_2": "Feature text 2",
+            "feature_text_3": "Feature text 3",
             "feature_text_4": "Feature text 4"
           }
         },
@@ -329,7 +392,10 @@
         }
       },
       "block_order": [
+        "product_feature_n8pJaq",
+        "product_feature_7ppDNG",
         "product_feature_DKMakk",
+        "product_feature_Jk79kN",
         "product_feature_N8e3my"
       ],
       "disabled": true,
@@ -397,22 +463,24 @@
         "inner_offset_bottom_mobile": 30
       }
     },
-    "17750062752dbc4a4a": {
+    "1775012941bcfca0c9": {
       "type": "apps",
       "blocks": {
-        "judge_me_reviews_review_widget_4K7azG": {
+        "judge_me_reviews_review_widget_AMjG8k": {
           "type": "shopify://apps/judge-me-reviews/blocks/review_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "disabled": true,
           "settings": {
-            "review_data": "sample_data",
+            "review_data": "real_data",
             "max_width": 1200,
-            "show_shop_reviews": false,
+            "show_shop_reviews": true,
             "empty_state": "empty_widget"
           }
         }
       },
       "block_order": [
-        "judge_me_reviews_review_widget_4K7azG"
+        "judge_me_reviews_review_widget_AMjG8k"
       ],
+      "disabled": true,
       "settings": {
         "container_width": "inherit",
         "offset_top_desktop": 25,
@@ -426,9 +494,10 @@
     "product-template",
     "richtext",
     "image_with_text",
+    "17750062752dbc4a4a",
     "product_features",
     "product-recommendations",
     "recently-viewed",
-    "17750062752dbc4a4a"
+    "1775012941bcfca0c9"
   ]
 }

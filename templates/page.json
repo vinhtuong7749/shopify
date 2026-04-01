@@ -8,14 +8,100 @@
  * ------------------------------------------------------------
  */
 {
-	"sections": {
-		"default-page": {
-			"type": "page-template",
-			"settings": {
-			}
-		}
-	},
-	"order": [
-		"default-page"
-	]
+  "sections": {
+    "default-page": {
+      "type": "page-template",
+      "disabled": true,
+      "settings": {
+        "enable_color_scheme_inheritance": true,
+        "color_scheme": "",
+        "offset_top_desktop": 0,
+        "offset_bottom_desktop": 0,
+        "offset_top_mobile": 0,
+        "offset_bottom_mobile": 0,
+        "inner_offset_top": 64,
+        "inner_offset_bottom": 64,
+        "inner_offset_top_mobile": 32,
+        "inner_offset_bottom_mobile": 32
+      }
+    },
+    "banner_Q7Ki3C": {
+      "type": "banner",
+      "name": "Banner",
+      "settings": {
+        "desktop_image_height": "600px",
+        "mobile_image_height": "350px",
+        "media_type": "image",
+        "title": "Heading",
+        "text": "Give customers details about the banner image or content on the banner.",
+        "button_label_1": "Button label",
+        "button_link_1": "",
+        "button_aria_label_1": "",
+        "button_label_2": "Button label",
+        "button_link_2": "",
+        "button_aria_label_2": "",
+        "show_breadcrumbs": false,
+        "enable_timer": false,
+        "timer_month": "0",
+        "timer_day": "1",
+        "timer_hour": "0",
+        "timer_timezone": "+0",
+        "timer_background": "rgba(255,255,255, 0.12)",
+        "timer_color": "#fff",
+        "content_alignment": "center",
+        "content_alignment_mobile": "center",
+        "block_alignment": "center",
+        "block_alignment_vertical": "center",
+        "block_alignment_vertical_mob": "center",
+        "section_background": "#E7E7E7",
+        "overlay": "rgba(0,0,0, 0.3)",
+        "text_color": "#FFFFFF",
+        "button_background_1": "#FFFFFF",
+        "button_color_1": "#000000",
+        "button_border_1": "#FFFFFF",
+        "button_background_hover_1": "#000000",
+        "button_color_hover_1": "#FFFFFF",
+        "button_border_hover_1": "#FFFFFF",
+        "button_background_2": "#FFFFFF",
+        "button_color_2": "#000000",
+        "button_border_2": "#FFFFFF",
+        "button_background_hover_2": "#000000",
+        "button_color_hover_2": "#FFFFFF",
+        "button_border_hover_2": "#FFFFFF",
+        "container_width": "100%",
+        "offset_top_desktop": 25,
+        "offset_bottom_desktop": 25,
+        "offset_top_mobile": 25,
+        "offset_bottom_mobile": 25
+      }
+    },
+    "featured_products_DexYEk": {
+      "type": "featured-products",
+      "name": "Featured products",
+      "settings": {
+        "enable_color_scheme_inheritance": true,
+        "color_scheme": "",
+        "heading": "Featured products",
+        "link_label": "See all products",
+        "link_url": "",
+        "product_list": [],
+        "layout": "4",
+        "show_arrows": true,
+        "container_width": "inherit",
+        "offset_top_desktop": 30,
+        "offset_bottom_desktop": 30,
+        "offset_top_mobile": 30,
+        "offset_bottom_mobile": 30,
+        "inner_offset_top": 30,
+        "inner_offset_bottom": 30,
+        "inner_offset_top_mobile": 30,
+        "inner_offset_bottom_mobile": 30
+      }
+    }
+  },
+  "order": [
+    "default-page",
+    "banner_Q7Ki3C",
+    "featured_products_DexYEk"
+  ]
 }

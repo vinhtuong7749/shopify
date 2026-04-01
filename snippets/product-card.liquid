@@ -379,7 +379,7 @@
 	</div>
 
 	<div class="product-card__footer" style="text-align: left; padding: 15px 0;">
-		<a class="product-card__title" href="{{ product.url }}" style="display: block; font-weight: 800; text-transform: uppercase; font-size: 11px; color: #000; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+	<a class="product-card__title" href="{{ product.url }}" style="display: block; font-family: 'Oswald', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 11px; color: #2c3d33; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
 			{%- if product != blank -%}
 				{{- product.title -}}
 			{%- else -%}
@@ -388,7 +388,7 @@
 		</a>
 
 		{%- if show_vendor -%}
-			<div class="product-card__vendor" style="margin-bottom: 5px; font-size: 11px; color: #666;">
+			<div class="product-card__vendor" style="margin-bottom: 5px; font-family: 'Oswald', sans-serif; font-size: 11px; color: #5a6e5f;">
 				{%- if product != blank -%}
 					<span class="visually-hidden">
 						{{- 'products.product_card.product_vendor' | t -}}
@@ -401,12 +401,12 @@
 			</div>
 		{%- endif -%}
 
-		<div class="product-card__price" style="font-size: 11px; color: #888; margin-bottom: 12px;">
+		<div class="product-card__price" style="font-family: 'Oswald', sans-serif; font-size: 11px; color: #2c3d33; margin-bottom: 12px;">
 			{%- render 'price', product: product, show_unit_price: show_unit_price, currency_code_enabled: currency_code_enabled -%}
 		</div>
 
 		{%- if product.quantity_price_breaks_configured? -%}
-			<div class="product-card__volume-pricing-note" style="margin-bottom: 12px; font-size: 11px; color: #888;">
+			<div class="product-card__volume-pricing-note" style="margin-bottom: 12px; font-family: 'Oswald', sans-serif; font-size: 11px; color: #5a6e5f;">
 				<span>{{ 'products.product.volume_pricing.note' | t }}</span>
 			</div>
 		{%- endif -%}
@@ -443,11 +443,12 @@
 		justify-content: center;
 		align-items: center;
 		width: 100%;
-		background: #000;
-		color: #fff;
+		background: #2c3d33;
+		color: #faf6ee;
 		border: none;
 		text-transform: uppercase;
-		font-weight: 800;
+		font-family: 'Oswald', sans-serif;
+		font-weight: 600;
 		font-size: 10px;
 		letter-spacing: 1.5px;
 		padding: 14px 15px;
@@ -456,7 +457,7 @@
 		transition: background 0.3s ease;
 	}
 	.product-card__custom-quick-add:hover {
-		background: #333;
+		background: #3a4e42;
 	}
 	.product-card__custom-quick-add.is-loading {
 		color: transparent;
@@ -467,7 +468,7 @@
 		position: absolute;
 		width: 16px;
 		height: 16px;
-		border: 2px solid #fff;
+		border: 2px solid #faf6ee;
 		border-radius: 50%;
 		border-top-color: transparent;
 		animation: spin 1s linear infinite;
