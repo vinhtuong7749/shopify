@@ -382,6 +382,13 @@
 	{%- render 'adastra' with '/src/scripts/collection-template.js' -%}
 
 	<style>
+		/* Hide Availability filter aggressively */
+		.js-filter-item[id*="availability"],
+		.js-filter-item[id*="Availability"],
+		.product-filters__form-item[id*="filter.v.availability"] {
+			display: none !important;
+		}
+
 		/* Mobile: center the last product if it's alone in its row (odd count in 2-col grid) */
 		@media screen and (max-width: 767px) {
 			.collection__grid-wrapper {

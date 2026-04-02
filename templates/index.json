@@ -220,6 +220,7 @@
           "camo-signal-pig-bear-graphic-t-shirt",
           "camo-signal-turkey-bear-graphic-t-shirt"
         ],
+        "collection": "",
         "layout": "4",
         "show_arrows": true,
         "container_width": "2048px",
@@ -250,6 +251,7 @@
           "camo-signal-cat-graphic-t-shirt",
           "camo-signal-dog-graphic-t-shirt"
         ],
+        "collection": "",
         "layout": "4",
         "show_arrows": true,
         "container_width": "2048px",
@@ -920,6 +922,7 @@
     },
     "featured_blog": {
       "type": "featured-blog",
+      "disabled": true,
       "settings": {
         "enable_color_scheme_inheritance": true,
         "color_scheme": "",

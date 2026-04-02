@@ -39,6 +39,11 @@
 							{%- continue -%}
 						{%- endif -%}
 
+						{%- assign downcased_label = filter.label | downcase -%}
+						{%- if filter.param_name contains 'availab' or downcased_label contains 'availab' or downcased_label contains 'tình trạng' or filter.type == 'boolean' -%}
+							{%- continue -%}
+						{%- endif -%}
+
 						<div
 							id="filter-{{ section.id }}-{{ filter.param_name | escape }}-{{- id -}}"
 							class="collapse__item product-filters__form-collapse-item js-collapse-item  js-filter-item"
