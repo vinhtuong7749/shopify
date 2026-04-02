@@ -208,17 +208,14 @@
       "settings": {
         "enable_color_scheme_inheritance": true,
         "color_scheme": "",
-        "heading": "Popular Product",
+        "heading": "Popular Products",
         "link_label": "See all products",
         "link_url": "shopify://collections",
         "product_list": [
-          "camo-signal-bear-graphic-t-shirt",
-          "camo-signal-black-bear-graphic-t-shirt",
-          "camo-signal-brown-bear-graphic-t-shirt",
-          "camo-signal-bunny-bear-graphic-t-shirt",
           "camo-signal-bunny-tiger-graphic-t-shirt",
-          "camo-signal-pig-bear-graphic-t-shirt",
-          "camo-signal-turkey-bear-graphic-t-shirt"
+          "black-bear-wildlife-hunting-t-shirt",
+          "wild-boar-wildlife-hunting-t-shirt",
+          "wolf-wildlife-hunting-t-shirt"
         ],
         "collection": "",
         "layout": "4",
@@ -232,118 +229,6 @@
         "inner_offset_bottom": 30,
         "inner_offset_top_mobile": 30,
         "inner_offset_bottom_mobile": 30
-      }
-    },
-    "featured_products_ENKafe": {
-      "type": "featured-products",
-      "settings": {
-        "enable_color_scheme_inheritance": true,
-        "color_scheme": "",
-        "heading": "",
-        "link_label": "See all products",
-        "link_url": "/",
-        "product_list": [
-          "camo-signal-brown-bear-graphic-t-shirt",
-          "camo-signal-bunny-otto-graphic-t-shirt",
-          "camo-signal-deer-graphic-t-shirt",
-          "camo-signal-bunny-bear-graphic-t-shirt",
-          "camo-signal-bunny-tiger-graphic-t-shirt",
-          "camo-signal-cat-graphic-t-shirt",
-          "camo-signal-dog-graphic-t-shirt"
-        ],
-        "collection": "",
-        "layout": "4",
-        "show_arrows": true,
-        "container_width": "2048px",
-        "offset_top_desktop": 30,
-        "offset_bottom_desktop": 30,
-        "offset_top_mobile": 30,
-        "offset_bottom_mobile": 30,
-        "inner_offset_top": 30,
-        "inner_offset_bottom": 30,
-        "inner_offset_top_mobile": 30,
-        "inner_offset_bottom_mobile": 30
-      }
-    },
-    "our_story": {
-      "type": "our-story",
-      "blocks": {
-        "image_JFcCPh": {
-          "type": "image",
-          "settings": {
-            "image": "shopify://shop_images/camo_1.jpg"
-          }
-        },
-        "image_VqJFLq": {
-          "type": "image",
-          "settings": {
-            "image": "shopify://shop_images/camo_2.jpg"
-          }
-        },
-        "image_VN9dpV": {
-          "type": "image",
-          "settings": {
-            "image": "shopify://shop_images/camo_3.jpg"
-          }
-        },
-        "image_VRmw98": {
-          "type": "image",
-          "settings": {
-            "image": "shopify://shop_images/camo_4.jpg"
-          }
-        },
-        "image_KdBE8a": {
-          "type": "image",
-          "disabled": true,
-          "settings": {}
-        },
-        "image_g4aKPB": {
-          "type": "image",
-          "disabled": true,
-          "settings": {}
-        },
-        "image_EKikt6": {
-          "type": "image",
-          "disabled": true,
-          "settings": {}
-        },
-        "image_7wrHH9": {
-          "type": "image",
-          "disabled": true,
-          "settings": {}
-        }
-      },
-      "block_order": [
-        "image_JFcCPh",
-        "image_VqJFLq",
-        "image_VN9dpV",
-        "image_VRmw98",
-        "image_KdBE8a",
-        "image_g4aKPB",
-        "image_EKikt6",
-        "image_7wrHH9"
-      ],
-      "disabled": true,
-      "settings": {
-        "enable_color_scheme_inheritance": false,
-        "color_scheme": "scheme-5",
-        "heading": "<em>Raised Here. Stood Here.</em>",
-        "subheading": "<em>Built for those who hunt, protect, and live by their values — quietly, proudly.</em>",
-        "text": "<em>Camo Signal was born in small towns where hunting season is family tradition and camo means patience, not performance. We make apparel for the ones who carry responsibility without asking for recognition. Wear who you are</em>",
-        "button_label": "Read More",
-        "button_aria_label": "Read more...",
-        "button_url": "shopify://pages/about-us",
-        "button_style": "secondary",
-        "text_alignment": "center",
-        "container_width": "inherit",
-        "offset_top_desktop": 100,
-        "offset_bottom_desktop": 100,
-        "offset_top_mobile": 100,
-        "offset_bottom_mobile": 100,
-        "inner_offset_top": 100,
-        "inner_offset_bottom": 100,
-        "inner_offset_top_mobile": 100,
-        "inner_offset_bottom_mobile": 100
       }
     },
     "trends_products": {
@@ -570,6 +455,85 @@
         "inner_offset_bottom_mobile": 32
       }
     },
+    "product_banner_A3ERjK": {
+      "type": "product-banner",
+      "blocks": {
+        "product_UcNwWA": {
+          "type": "product",
+          "settings": {
+            "enable_color_scheme_inheritance": true,
+            "color_scheme": "",
+            "label": "Camo Signal Stories",
+            "heading": "Built On The Ground",
+            "text": "<p>Inspired by real American terrain, this piece reflects a connection to land shaped by seasons, weather, and work. It’s designed with a grounded feel—quiet, steady, and familiar, like places that don’t need to introduce themselves.<br/><br/></p>",
+            "button_label": "Shop All",
+            "button_link": "/",
+            "button_style": "secondary",
+            "product": "black-bear-wildlife-hunting-t-shirt",
+            "image": "shopify://shop_images/USA_Flag_With_Deer_T_shirt_4.jpg"
+          }
+        },
+        "product_RFGtnJ": {
+          "type": "product",
+          "settings": {
+            "enable_color_scheme_inheritance": true,
+            "color_scheme": "",
+            "label": "Built for the Wild",
+            "heading": "Naturally Worn In",
+            "text": "<p>Made on Comfort Colors®, this tee carries a garment‑dyed, vintage character that feels aged by nature, not design. The soft, broken‑in texture and muted tones echo sun, soil, and time—meant to wear naturally, season after season.</p>",
+            "button_label": "Shop All",
+            "button_link": "/",
+            "button_style": "secondary",
+            "product": "usa-flag-with-waterfowl-t-shirt",
+            "image": "shopify://shop_images/camo_signal_about_us.jpg"
+          }
+        },
+        "product_rJJjt3": {
+          "type": "product",
+          "disabled": true,
+          "settings": {
+            "enable_color_scheme_inheritance": true,
+            "color_scheme": "",
+            "label": "Label",
+            "heading": "Product banner",
+            "text": "<p>Text</p>",
+            "button_label": "Shop All",
+            "button_link": "/",
+            "button_style": "secondary",
+            "product": ""
+          }
+        },
+        "product_inPrrX": {
+          "type": "product",
+          "disabled": true,
+          "settings": {
+            "enable_color_scheme_inheritance": true,
+            "color_scheme": "",
+            "label": "Label",
+            "heading": "Product banner",
+            "text": "<p>Text</p>",
+            "button_label": "Shop All",
+            "button_link": "/",
+            "button_style": "secondary",
+            "product": ""
+          }
+        }
+      },
+      "block_order": [
+        "product_UcNwWA",
+        "product_RFGtnJ",
+        "product_rJJjt3",
+        "product_inPrrX"
+      ],
+      "name": "Product banner",
+      "settings": {
+        "container_width": "1808px",
+        "offset_top_desktop": 25,
+        "offset_bottom_desktop": 25,
+        "offset_top_mobile": 25,
+        "offset_bottom_mobile": 25
+      }
+    },
     "video": {
       "type": "video",
       "blocks": {
@@ -590,13 +554,28 @@
           "settings": {
             "block_text": "<em>Get free</em> shipping on purchases over $100"
           }
+        },
+        "ticker_content_waadnk": {
+          "type": "ticker_content",
+          "settings": {
+            "block_text": "Ticker text"
+          }
+        },
+        "ticker_content_FWpjny": {
+          "type": "ticker_content",
+          "settings": {
+            "block_text": "Ticker text"
+          }
         }
       },
       "block_order": [
         "ticker_content_jVk8PL",
         "ticker_content_Mc3hjb",
-        "ticker_content_TWEiBz"
+        "ticker_content_TWEiBz",
+        "ticker_content_waadnk",
+        "ticker_content_FWpjny"
       ],
+      "disabled": true,
       "settings": {
         "image": "shopify://shop_images/Gemini_Generated_Image_g784aug784aug784.jpg",
         "video_type": "html",
@@ -614,58 +593,60 @@
         "offset_bottom_mobile": 32
       }
     },
-    "banner_hhCdRy": {
-      "type": "banner",
-      "disabled": true,
-      "name": "Banner Mid-page",
+    "featured_products_ENKafe": {
+      "type": "featured-products",
       "settings": {
-        "desktop_image_height": "600px",
-        "mobile_image_height": "350px",
-        "media_type": "image",
-        "title": "",
-        "text": "Give customers details about the banner image or content on the banner.",
-        "button_label_1": "Button label",
-        "button_link_1": "",
-        "button_aria_label_1": "",
-        "button_label_2": "Button label",
-        "button_link_2": "",
-        "button_aria_label_2": "",
-        "image_desktop": "shopify://shop_images/Gemini_Generated_Image_xyjmiqxyjmiqxyjm.jpg",
-        "show_breadcrumbs": false,
-        "enable_timer": false,
-        "timer_month": "0",
-        "timer_day": "1",
-        "timer_hour": "0",
-        "timer_timezone": "+0",
-        "timer_background": "rgba(255,255,255, 0.12)",
-        "timer_color": "#ffffff",
-        "external_video_url_desktop": "",
-        "external_video_url_mobile": "",
-        "content_alignment": "center",
-        "content_alignment_mobile": "center",
-        "block_alignment": "center",
-        "block_alignment_vertical": "center",
-        "block_alignment_vertical_mob": "center",
-        "section_background": "#e7e7e7",
-        "overlay": "rgba(0,0,0, 0.3)",
-        "text_color": "#ffffff",
-        "button_background_1": "#ffffff",
-        "button_color_1": "#000000",
-        "button_border_1": "#ffffff",
-        "button_background_hover_1": "#000000",
-        "button_color_hover_1": "#ffffff",
-        "button_border_hover_1": "#ffffff",
-        "button_background_2": "#ffffff",
-        "button_color_2": "#000000",
-        "button_border_2": "#ffffff",
-        "button_background_hover_2": "#000000",
-        "button_color_hover_2": "#ffffff",
-        "button_border_hover_2": "#ffffff",
-        "container_width": "100%",
-        "offset_top_desktop": 0,
-        "offset_bottom_desktop": 25,
-        "offset_top_mobile": 0,
-        "offset_bottom_mobile": 25
+        "enable_color_scheme_inheritance": true,
+        "color_scheme": "",
+        "heading": "<em>4th of July</em>",
+        "link_label": "See all products",
+        "link_url": "/",
+        "product_list": [
+          "camo-signal-bunny-tiger-graphic-t-shirt",
+          "usa-flag-with-black-bear-t-shirt",
+          "usa-flag-with-deer-t-shirt",
+          "usa-flag-with-waterfowl-t-shirt"
+        ],
+        "collection": "",
+        "layout": "4",
+        "show_arrows": true,
+        "container_width": "2048px",
+        "offset_top_desktop": 30,
+        "offset_bottom_desktop": 30,
+        "offset_top_mobile": 30,
+        "offset_bottom_mobile": 30,
+        "inner_offset_top": 30,
+        "inner_offset_bottom": 30,
+        "inner_offset_top_mobile": 30,
+        "inner_offset_bottom_mobile": 30
+      }
+    },
+    "featured_products_EbHnaf": {
+      "type": "featured-products",
+      "settings": {
+        "enable_color_scheme_inheritance": true,
+        "color_scheme": "",
+        "heading": "<em>Hunting</em>",
+        "link_label": "See all products",
+        "link_url": "/",
+        "product_list": [
+          "camo-signal-bunny-tiger-graphic-t-shirt",
+          "usa-flag-with-black-bear-t-shirt",
+          "usa-flag-with-deer-t-shirt",
+          "usa-flag-with-waterfowl-t-shirt"
+        ],
+        "collection": "",
+        "layout": "4",
+        "show_arrows": true,
+        "container_width": "2048px",
+        "offset_top_desktop": 30,
+        "offset_bottom_desktop": 30,
+        "offset_top_mobile": 30,
+        "offset_bottom_mobile": 30,
+        "inner_offset_top": 30,
+        "inner_offset_bottom": 30,
+        "inner_offset_top_mobile": 30,
+        "inner_offset_bottom_mobile": 30
       }
     },
     "featured_product": {
@@ -1172,12 +1153,12 @@
     "177503541480b98d44",
     "177493990334c4d3df",
     "featured_products",
-    "featured_products_ENKafe",
-    "our_story",
     "trends_products",
     "collections_carousel",
+    "product_banner_A3ERjK",
     "video",
-    "banner_hhCdRy",
+    "featured_products_ENKafe",
+    "featured_products_EbHnaf",
     "featured_product",
     "product_features",
     "ticker",

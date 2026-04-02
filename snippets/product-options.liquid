@@ -264,3 +264,18 @@
 		{%- endif -%}
 	</div>
 {%- endunless -%}
+
+<style>
+	/* Make color swatches round on product page */
+	.product-options .radio-option-swatch__label,
+	.product-options .radio-option-swatch__label::before,
+	.product-options .radio-option-swatch__label::after,
+	.product-options .radio-option-swatch__image {
+		border-radius: 50% !important;
+	}
+
+	/* Round corners for Size and other standard variant blocks */
+	.product-options .radio-option__label {
+		border-radius: 8px !important;
+	}
+</style>

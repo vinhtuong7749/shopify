@@ -270,6 +270,22 @@
 	</div>
 
 	<style>
+		.product-add-to-cart .add-to-cart,
+		.product-add-to-cart__additional-buttons .shopify-payment-button__button,
+		.product-add-to-cart__additional-buttons .shopify-payment-button__button--branded,
+		.product-add-to-cart__additional-buttons .shopify-payment-button__button--unbranded {
+			border-radius: 8px !important;
+			background-color: var(--color-text-primary, #203224) !important;
+			color: #faf6ee !important;
+		}
+
+		/* Apply standard border-radius where possible without breaking iframes */
+		.product-add-to-cart__additional-buttons,
+		.product-add-to-cart__additional-buttons .shopify-payment-button__button,
+		.product-add-to-cart__additional-buttons .shopify-payment-button__button--unbranded {
+			border-radius: 8px !important;
+		}
+
 		.mobile-sticky-atc {
 			display: none !important;
 		}
@@ -309,7 +325,7 @@
 				cursor: pointer !important;
 				transition: opacity 0.2s !important;
 				line-height: 1.2 !important;
-				border-radius: 0 !important;
+				border-radius: 8px !important;
 				-webkit-appearance: none !important;
 				appearance: none !important;
 			}

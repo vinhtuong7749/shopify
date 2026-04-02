@@ -12,6 +12,7 @@
     "base_font": "oswald_n4",
     "heading_font": "anton_n4",
     "base_font_size": 130,
+    "favicon": "shopify://shop_images/LOGO_FINAL_WEBSITE.png",
     "show_breadcrumbs": false,
     "content_for_index": [],
     "blocks": {

@@ -180,23 +180,33 @@
 		.product-accordion__content-inner p:last-child {
 			margin-bottom: 0;
 		}
-		.product-accordion__content-inner table {
+		.product-accordion__table-wrapper {
 			width: 100%;
+			overflow-x: auto;
+			-webkit-overflow-scrolling: touch;
+			margin: 16px auto;
+		}
+		.product-accordion__table {
+			width: 100% !important;
+			max-width: 600px !important;
+			margin: 0 auto !important;
 			border-collapse: collapse;
-			margin: 10px 0;
+			text-align: center;
+			font-size: 14px;
 		}
-		.product-accordion__content-inner table th,
-		.product-accordion__content-inner table td {
-			padding: 8px 12px;
+		.product-accordion__table th,
+		.product-accordion__table td {
+			padding: 14px 16px;
 			border: 1px solid var(--color-border-thirdly, #e5e5e5);
-			text-align: left;
+			white-space: nowrap !important;
+			text-align: center !important;
+			color: var(--color-text-primary, #203224) !important;
 		}
-		.product-accordion__content-inner table th {
-			background-color: var(--color-text-primary, #000);
-			color: var(--color-background, #fff);
-			font-weight: 600;
-			text-transform: uppercase;
-			font-size: calc(var(--body-font-size, 14px) * 0.8);
+		.product-accordion__table th {
+			background-color: var(--color-text-primary, #203224) !important;
+			color: #faf6ee !important;
+			font-weight: 600 !important;
+			text-transform: uppercase !important;
 		}
 		.product-accordion__content-inner img {
 			max-width: 100%;
@@ -207,10 +217,15 @@
 		@media (max-width: 767.98px) {
 			.product-accordion__trigger {
 				padding: 14px 0;
-				font-size: calc(var(--body-font-size, 14px) * 0.8);
+				font-size: calc(var(--body-font-size, 14px) * 0.85);
 			}
 			.product-accordion__content-inner {
-				font-size: calc(var(--body-font-size, 14px) * 0.8);
+				font-size: calc(var(--body-font-size, 14px) * 0.9);
+			}
+			.product-accordion__table th,
+			.product-accordion__table td {
+				padding: 12px 10px;
+				font-size: 14px; /* Fix "too small text" */
 			}
 		}
 	</style>
@@ -229,23 +244,23 @@
 		{%- endif -%}
 
 		{% capture sizeguide_content %}
-		<div style="overflow-x:auto;">
-		  <table style="width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14px; text-align: left;">
+		<div class="product-accordion__table-wrapper">
+		  <table class="product-accordion__table">
 			<thead>
-			  <tr style="background-color: #f6f6f6;">
-				<th style="padding: 12px; border: 1px solid #e9e9e9; font-weight: 600;">Size</th>
-				<th style="padding: 12px; border: 1px solid #e9e9e9; font-weight: 600;">Chest (in)</th>
-				<th style="padding: 12px; border: 1px solid #e9e9e9; font-weight: 600;">Waist (in)</th>
-				<th style="padding: 12px; border: 1px solid #e9e9e9; font-weight: 600;">Length (in)</th>
+			  <tr>
+				<th>Size</th>
+				<th>Chest (in)</th>
+				<th>Length (in)</th>
+				<th>Sleeve (in)</th>
 			  </tr>
 			</thead>
 			<tbody>
-			  <tr><td style="padding: 12px; border: 1px solid #e9e9e9;">S</td><td style="padding: 12px; border: 1px solid #e9e9e9;">18</td><td style="padding: 12px; border: 1px solid #e9e9e9;">28</td><td style="padding: 12px; border: 1px solid #e9e9e9;">15.1</td></tr>
-			  <tr><td style="padding: 12px; border: 1px solid #e9e9e9;">M</td><td style="padding: 12px; border: 1px solid #e9e9e9;">20</td><td style="padding: 12px; border: 1px solid #e9e9e9;">29</td><td style="padding: 12px; border: 1px solid #e9e9e9;">16.5</td></tr>
-			  <tr><td style="padding: 12px; border: 1px solid #e9e9e9;">L</td><td style="padding: 12px; border: 1px solid #e9e9e9;">22</td><td style="padding: 12px; border: 1px solid #e9e9e9;">30</td><td style="padding: 12px; border: 1px solid #e9e9e9;">18</td></tr>
-			  <tr><td style="padding: 12px; border: 1px solid #e9e9e9;">XL</td><td style="padding: 12px; border: 1px solid #e9e9e9;">24</td><td style="padding: 12px; border: 1px solid #e9e9e9;">31</td><td style="padding: 12px; border: 1px solid #e9e9e9;">19.5</td></tr>
-			  <tr><td style="padding: 12px; border: 1px solid #e9e9e9;">XXL</td><td style="padding: 12px; border: 1px solid #e9e9e9;">26</td><td style="padding: 12px; border: 1px solid #e9e9e9;">32</td><td style="padding: 12px; border: 1px solid #e9e9e9;">21</td></tr>
-			  <tr><td style="padding: 12px; border: 1px solid #e9e9e9;">3XL</td><td style="padding: 12px; border: 1px solid #e9e9e9;">28</td><td style="padding: 12px; border: 1px solid #e9e9e9;">33</td><td style="padding: 12px; border: 1px solid #e9e9e9;">22.4</td></tr>
+			  <tr><td>S</td><td>18</td><td>28</td><td>15.1</td></tr>
+			  <tr><td>M</td><td>20</td><td>29</td><td>16.5</td></tr>
+			  <tr><td>L</td><td>22</td><td>30</td><td>18</td></tr>
+			  <tr><td>XL</td><td>24</td><td>31</td><td>19.5</td></tr>
+			  <tr><td>XXL</td><td>26</td><td>32</td><td>21</td></tr>
+			  <tr><td>3XL</td><td>28</td><td>33</td><td>22.4</td></tr>
 			</tbody>
 		  </table>
 		</div>
