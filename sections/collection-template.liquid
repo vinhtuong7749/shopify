@@ -382,6 +382,12 @@
 	{%- render 'adastra' with '/src/scripts/collection-template.js' -%}
 
 	<style>
+		/* Mobile: center the last product if it's alone in its row (odd count in 2-col grid) */
+		@media screen and (max-width: 767px) {
+			.collection__grid-wrapper {
+				justify-content: center;
+			}
+		}
 		/* Grid column overrides - placed at end of section to win CSS cascade */
 		@media screen and (min-width: 576px) {
 			.collection .collection__grid-wrapper[data-grid-col-desktop="1"] .collection__item {

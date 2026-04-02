@@ -61,13 +61,14 @@
 							style="height: auto;"
 						>
 							<div class="js-accordion-inner product-filters__form-item-content">
-								<ul class="filter-list filter-list--sidebar filter-list--collection-custom">
+								<ul class="filter-list filter-list--sidebar filter-list--collection-custom js-collection-filter-list">
 									{%- for col in collections -%}
 										{%- if col.all_products_count > 0 -%}
 											<li class="filter-list__item">
 												<a
 													href="{{ col.url }}"
-													class="filter-list__collection-link {% if collection.handle == col.handle %}filter-list__collection-link--active{% endif %}"
+													class="filter-list__collection-link js-collection-ajax-link {% if collection.handle == col.handle %}filter-list__collection-link--active{% endif %}"
+													data-collection-handle="{{ col.handle }}"
 												>
 													{%- if collection.handle == col.handle -%}
 														<span class="filter-list__collection-icon">■</span>
@@ -168,6 +169,7 @@
 	font-weight: 700;
 	text-transform: uppercase;
 	transition: opacity 0.2s ease;
+	cursor: pointer;
 }
 .filter-list__collection-link:hover {
 	opacity: 0.7;
@@ -181,4 +183,220 @@
 	width: 16px;
 	text-align: center;
 }
+
+/* Loading state for grid during collection switch */
+.collection__grid-wrapper.is-ajax-loading {
+	opacity: 0.35;
+	pointer-events: none;
+	transition: opacity 0.25s ease;
+}
+.collection__grid-wrapper {
+	transition: opacity 0.3s ease;
+}
+
+/* Loading spinner overlay */
+.collection-ajax-loader {
+	display: none;
+	position: absolute;
+	top: 120px;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 10;
+}
+.collection-ajax-loader.is-active {
+	display: block;
+}
+.collection-ajax-loader__spinner {
+	width: 36px;
+	height: 36px;
+	border: 3px solid #e0e0e0;
+	border-top-color: #2c3d33;
+	border-radius: 50%;
+	animation: collectionSpinner 0.7s linear infinite;
+}
+@keyframes collectionSpinner {
+	to { transform: rotate(360deg); }
+}
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+	const collectionSection = document.querySelector('.js-collection');
+	if (!collectionSection) return;
+
+	const gridWrapper = collectionSection.querySelector('.js-grid-wrapper');
+	if (!gridWrapper) return;
+
+	/* Add spinner overlay to the grid's parent */
+	const gridParent = gridWrapper.parentElement;
+	if (gridParent) {
+		gridParent.style.position = 'relative';
+		const loader = document.createElement('div');
+		loader.className = 'collection-ajax-loader';
+		loader.innerHTML = '<div class="collection-ajax-loader__spinner"></div>';
+		gridParent.appendChild(loader);
+	}
+
+	/* Get the section_id from the collection section */
+	const sectionId = collectionSection.id;
+
+	document.addEventListener('click', async (e) => {
+		const link = e.target.closest('.js-collection-ajax-link');
+		if (!link) return;
+		e.preventDefault();
+
+		const targetUrl = link.getAttribute('href');
+		if (!targetUrl) return;
+
+		/* Show loading state */
+		const currentGrid = collectionSection.querySelector('.js-grid-wrapper');
+		const loaderEl = collectionSection.querySelector('.collection-ajax-loader');
+		if (currentGrid) currentGrid.classList.add('is-ajax-loading');
+		if (loaderEl) loaderEl.classList.add('is-active');
+
+		/* Scroll to top of collection */
+		const headerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-height-static')) || 0;
+		const headerOT = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-offset-top')) || 0;
+		const scrollTarget = collectionSection.querySelector('.js-element-to-scroll');
+		if (scrollTarget) {
+			const rect = scrollTarget.getBoundingClientRect();
+			if (rect.top < 0) {
+				window.scrollTo({ top: scrollTarget.offsetTop - headerH - headerOT, behavior: 'smooth' });
+			}
+		}
+
+		try {
+			/* Fetch new collection page with section_id */
+			const fetchUrl = new URL(targetUrl, window.location.origin);
+			fetchUrl.searchParams.set('section_id', sectionId);
+
+			const response = await fetch(fetchUrl.toString());
+			const html = await response.text();
+			const doc = new DOMParser().parseFromString(html, 'text/html');
+
+			/* Swap the product grid */
+			const newGrid = doc.querySelector('.js-grid-wrapper');
+			if (newGrid && currentGrid) {
+				currentGrid.innerHTML = newGrid.innerHTML;
+			}
+
+			/* Swap pagination */
+			const newPag = doc.querySelector('.js-pagination');
+			const oldPag = collectionSection.querySelector('.js-pagination');
+			if (oldPag && newPag) oldPag.innerHTML = newPag.innerHTML;
+
+			/* Swap infinite scroll / load more */
+			const newInf = doc.querySelector('.js-infinite-scroll');
+			const oldInf = collectionSection.querySelector('.js-infinite-scroll');
+			if (oldInf && newInf) oldInf.outerHTML = newInf.outerHTML;
+
+			const newLM = doc.querySelector('.js-lazy-load');
+			const oldLM = collectionSection.querySelector('.js-lazy-load');
+			if (oldLM && newLM) oldLM.outerHTML = newLM.outerHTML;
+
+			/* Swap empty title state */
+			const newEmpty = doc.querySelector('.js-template-empty-title');
+			const oldEmpty = collectionSection.querySelector('.js-template-empty-title');
+			if (oldEmpty && newEmpty) {
+				oldEmpty.className = newEmpty.className;
+				oldEmpty.innerHTML = newEmpty.innerHTML;
+			}
+
+			/* Update sidebar collection links active state */
+			const newLinks = doc.querySelectorAll('.js-collection-ajax-link');
+			const oldLinks = collectionSection.querySelectorAll('.js-collection-ajax-link');
+			newLinks.forEach((nLink, i) => {
+				if (oldLinks[i]) {
+					oldLinks[i].className = nLink.className;
+					const nIcon = nLink.querySelector('.filter-list__collection-icon');
+					const oIcon = oldLinks[i].querySelector('.filter-list__collection-icon');
+					if (nIcon && oIcon) oIcon.innerHTML = nIcon.innerHTML;
+				}
+			});
+
+			/* Update sidebar filters (Availability, Price, etc.) */
+			const newFilters = doc.querySelectorAll('.js-filter-item');
+			const oldFilters = collectionSection.querySelectorAll('.js-filter-item');
+			newFilters.forEach((nf, i) => {
+				if (oldFilters[i]) {
+					const nInner = nf.querySelector('.js-accordion-inner');
+					const oInner = oldFilters[i].querySelector('.js-accordion-inner');
+					if (nInner && oInner) oInner.innerHTML = nInner.innerHTML;
+					const nCnt = nf.querySelector('.js-filter-item-counter');
+					const oCnt = oldFilters[i].querySelector('.js-filter-item-counter');
+					if (nCnt && oCnt) oCnt.innerHTML = nCnt.innerHTML;
+				}
+			});
+
+			/* Update sort dropdown */
+			const newSort = doc.querySelector('.js-sort-select-external');
+			const oldSort = collectionSection.querySelector('.js-sort-select-external');
+			if (oldSort && newSort) oldSort.innerHTML = newSort.innerHTML;
+
+			/* Update browser URL */
+			window.history.pushState({}, '', targetUrl);
+
+			/* Re-init theme JS */
+			if (window.themeCore && window.themeCore.Accordion) {
+				window.themeCore.Accordion.init();
+			}
+			if (window.themeCore && window.themeCore.EventBus) {
+				window.themeCore.EventBus.emit('search-types:init');
+			}
+
+		} catch (err) {
+			console.error('Collection AJAX error:', err);
+			window.location.href = targetUrl;
+		} finally {
+			const grid = collectionSection.querySelector('.js-grid-wrapper');
+			const loader = collectionSection.querySelector('.collection-ajax-loader');
+			if (grid) grid.classList.remove('is-ajax-loading');
+			if (loader) loader.classList.remove('is-active');
+		}
+	});
+
+	/* Handle browser back/forward */
+	window.addEventListener('popstate', async () => {
+		const url = window.location.href;
+		const cGrid = collectionSection.querySelector('.js-grid-wrapper');
+		const cLoader = collectionSection.querySelector('.collection-ajax-loader');
+		if (cGrid) cGrid.classList.add('is-ajax-loading');
+		if (cLoader) cLoader.classList.add('is-active');
+
+		try {
+			const fetchUrl = new URL(url);
+			fetchUrl.searchParams.set('section_id', sectionId);
+			const response = await fetch(fetchUrl.toString());
+			const html = await response.text();
+			const doc = new DOMParser().parseFromString(html, 'text/html');
+
+			const newGrid = doc.querySelector('.js-grid-wrapper');
+			if (newGrid && cGrid) cGrid.innerHTML = newGrid.innerHTML;
+
+			const newLinks = doc.querySelectorAll('.js-collection-ajax-link');
+			const oldLinks = collectionSection.querySelectorAll('.js-collection-ajax-link');
+			newLinks.forEach((nLink, i) => {
+				if (oldLinks[i]) {
+					oldLinks[i].className = nLink.className;
+					const nIcon = nLink.querySelector('.filter-list__collection-icon');
+					const oIcon = oldLinks[i].querySelector('.filter-list__collection-icon');
+					if (nIcon && oIcon) oIcon.innerHTML = nIcon.innerHTML;
+				}
+			});
+
+			const newPag = doc.querySelector('.js-pagination');
+			const oldPag = collectionSection.querySelector('.js-pagination');
+			if (oldPag && newPag) oldPag.innerHTML = newPag.innerHTML;
+
+		} catch (err) {
+			console.error('Popstate AJAX error:', err);
+			window.location.reload();
+		} finally {
+			const grid = collectionSection.querySelector('.js-grid-wrapper');
+			const loader = collectionSection.querySelector('.collection-ajax-loader');
+			if (grid) grid.classList.remove('is-ajax-loading');
+			if (loader) loader.classList.remove('is-active');
+		}
+	});
+});
+</script>
