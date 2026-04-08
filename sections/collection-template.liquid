@@ -18,13 +18,36 @@
 			padding-bottom: {{- section.settings.offset_bottom_desktop -}}px;
 		}
 	}
+
+	@media (min-width: 1200px) {
+		.collection.collection--with-sidebar:not(.filters-hidden) .collection__sidebar {
+			grid-row: 2 !important;
+			padding-top: 32px !important;
+		}
+		.collection.collection--with-sidebar:not(.filters-hidden) .collection__body {
+			grid-row: 2 !important;
+			padding-top: 32px !important;
+		}
+		.collection.collection--with-sidebar:not(.filters-hidden) .collection__header {
+			grid-column: 1 / 3 !important;
+			border-bottom: none !important;
+			padding-bottom: 0 !important;
+			margin-bottom: 0 !important;
+		}
+		.collection.collection--with-sidebar:not(.filters-hidden) .collection__sidebar-wrapper {
+			top: calc(var(--header-height) + 64px) !important;
+		}
+	}
+	.collection__header-product-count {
+		display: none !important;
+	}
 {%- endstyle -%}
 
 {%- assign show_grid_selector			= false -%}
 {%- assign mobile_grid					= '2' -%}
 {%- assign pagination_type 		  		= section.settings.pagination_type -%}
 {%- assign load_more_style 				= section.settings.load_more_style -%}
-{%- assign paginate_by 			  		= 9 -%}
+{%- assign paginate_by = section.settings.paginate_by | default: 12 -%}
 {%- assign show_color_swatch_in_filters	= section.settings.show_color_swatch_in_filters -%}
 {%- assign filters_type 				= 'sidebar' -%}
 {%- assign container 					= section.settings.container_width -%}
@@ -158,7 +181,7 @@
 							</div>
 						{%- endif -%}
 
-						<div class="collection__header-controls-wrapper">
+						<div class="collection__header-controls-wrapper" style="width: 100%; display: flex; justify-content: flex-end; align-items: center;">
 							<div class="collection__header-filter-button product-filters">
 								{%- render 'product-filter-button', active_filters_size: active_filters_size -%}
 							</div>
@@ -174,6 +197,14 @@
 									{%- render 'product-grid-controls', mobile_grid: mobile_grid -%}
 								</div>
 							{%- endif -%}
+
+							<div class="collection__header-product-count js-product-count" style="font-style: italic; margin-left: auto; color: #2c3d33; font-size: 18px; font-weight: 600;">
+								{%- if template.name == 'search' -%}
+									{{ product_list.results_count }} products
+								{%- else -%}
+									{{ product_list.products_count }} products
+								{%- endif -%}
+							</div>
 						</div>
 					</div>
 				</div>
@@ -193,11 +224,15 @@
 				<div
 					class="collection__grid-wrapper js-grid-wrapper"
 					aria-busy="false"
-					data-grid-col-desktop="3"
+					data-grid-col-desktop="4"
 					data-grid-col-tablet="2"
 					data-grid-col-mobile="{{- mobile_grid -}}"
 				>
 					{%- for product in collection.products -%}
+						{%- unless product.selected_or_first_available_variant.requires_shipping -%}
+							{%- continue -%}
+						{%- endunless -%}
+
 						{%- assign index = forloop.index -%}
 						{%- assign index_next = index | plus: 1 -%}
 
@@ -408,6 +443,9 @@
 			.collection .collection__grid-wrapper[data-grid-col-desktop="3"] .collection__item {
 				width: calc(33.33333% - 8px) !important;
 			}
+			.collection .collection__grid-wrapper[data-grid-col-desktop="4"] .collection__item {
+				width: calc(25% - 9px) !important;
+			}
 		}
 		@media screen and (min-width: 768px) {
 			/* Limit card size for 1 and 2 column views so images don't get freakishly large */
@@ -454,6 +492,10 @@
 		.product-filters--sidebar input[type="number"] {
 			font-family: 'Oswald', sans-serif !important;
 			color: #2c3d33 !important;
+		}
+		/* Sort By: now in custom title row, hide from controls area */
+		.collection--with-sidebar .collection__header-sort {
+			display: none !important;
 		}
 	</style>
 </section>

@@ -14,21 +14,12 @@
       "blocks": {
         "breadcrumbs": {
           "type": "breadcrumbs",
+          "disabled": true,
           "settings": {
-            "offset_top_desktop": 8,
-            "offset_bottom_desktop": 8,
-            "offset_top_mobile": 8,
-            "offset_bottom_mobile": 8
-          }
-        },
-        "vendor": {
-          "type": "vendor",
-          "settings": {
-            "make_vendor_link": true,
-            "offset_top_desktop": 8,
-            "offset_bottom_desktop": 8,
-            "offset_top_mobile": 8,
-            "offset_bottom_mobile": 8
+            "offset_top_desktop": 0,
+            "offset_bottom_desktop": 0,
+            "offset_top_mobile": 0,
+            "offset_bottom_mobile": 0
           }
         },
         "title": {
@@ -40,6 +31,10 @@
             "offset_bottom_mobile": 8
           }
         },
+        "judgme_preview_badge": {
+          "type": "shopify://apps/judge-me-reviews/blocks/preview_badge/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {}
+        },
         "price": {
           "type": "price",
           "settings": {
@@ -49,10 +44,9 @@
             "offset_bottom_mobile": 8
           }
         },
-        "text_cAcfwh": {
-          "type": "text",
+        "short_description": {
+          "type": "short_description",
           "settings": {
-            "text": "",
             "offset_top_desktop": 8,
             "offset_bottom_desktop": 8,
             "offset_top_mobile": 8,
@@ -87,6 +81,18 @@
             "offset_bottom_mobile": 8
           }
         },
+        "upsell": {
+          "type": "upsell_product_block",
+          "settings": {
+            "upsell_product": "shipping-protection-apparel",
+            "upsell_subtitle": "Protect your order from loss/damage.",
+            "checked_by_default": false,
+            "offset_top_desktop": 16,
+            "offset_bottom_desktop": 16,
+            "offset_top_mobile": 12,
+            "offset_bottom_mobile": 12
+          }
+        },
         "add_to_cart": {
           "type": "add_to_cart",
           "settings": {
@@ -115,16 +121,6 @@
             "drawer_page_3": "",
             "drawer_toggle_text_3": "Drawer 3",
             "drawer_title_3": "Drawer 3",
-            "offset_top_desktop": 8,
-            "offset_bottom_desktop": 8,
-            "offset_top_mobile": 8,
-            "offset_bottom_mobile": 8
-          }
-        },
-        "complementary": {
-          "type": "complementary",
-          "settings": {
-            "heading": "Complete the Loadout",
             "offset_top_desktop": 8,
             "offset_bottom_desktop": 8,
             "offset_top_mobile": 8,
@@ -163,7 +159,7 @@
         "sales_point_qQppAg": {
           "type": "sales_point",
           "settings": {
-            "sales_point_text": "FREE SHIPPING OVER $100",
+            "sales_point_text": "FREE SHIPPING OVER $70",
             "offset_top_desktop": 8,
             "offset_bottom_desktop": 8,
             "offset_top_mobile": 8,
@@ -195,16 +191,16 @@
       },
       "block_order": [
         "breadcrumbs",
-        "vendor",
         "title",
+        "judgme_preview_badge",
         "price",
-        "text_cAcfwh",
+        "short_description",
         "options",
         "inventory_status",
         "quantity",
+        "upsell",
         "add_to_cart",
         "drawers",
-        "complementary",
         "pickup_availability",
         "sales_point_cDLqCC",
         "sales_point_zx6rLq",
@@ -237,8 +233,37 @@
         "offset_bottom_mobile": 0,
         "inner_offset_top": 64,
         "inner_offset_bottom": 0,
-        "inner_offset_top_mobile": 32,
-        "inner_offset_bottom_mobile": 24
+        "inner_offset_top_mobile": 16,
+        "inner_offset_bottom_mobile": 0
+      }
+    },
+    "17750062752dbc4a4a": {
+      "type": "apps",
+      "blocks": {
+        "judge_me_reviews_preview_badge_keMgwT": {
+          "type": "shopify://apps/judge-me-reviews/blocks/preview_badge/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {}
+        },
+        "judge_me_reviews_review_widget_4K7azG": {
+          "type": "shopify://apps/judge-me-reviews/blocks/review_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {
+            "review_data": "real_data",
+            "max_width": 1200,
+            "show_shop_reviews": false,
+            "empty_state": "empty_widget"
+          }
+        }
+      },
+      "block_order": [
+        "judge_me_reviews_preview_badge_keMgwT",
+        "judge_me_reviews_review_widget_4K7azG"
+      ],
+      "settings": {
+        "container_width": "inherit",
+        "offset_top_desktop": 0,
+        "offset_bottom_desktop": 0,
+        "offset_top_mobile": 0,
+        "offset_bottom_mobile": 0
       }
     },
     "richtext": {
@@ -296,30 +321,6 @@
         "inner_offset_bottom": 30,
         "inner_offset_top_mobile": 30,
         "inner_offset_bottom_mobile": 30
-      }
-    },
-    "17750062752dbc4a4a": {
-      "type": "apps",
-      "blocks": {
-        "judge_me_reviews_review_widget_4K7azG": {
-          "type": "shopify://apps/judge-me-reviews/blocks/review_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
-          "settings": {
-            "review_data": "sample_data",
-            "max_width": 1200,
-            "show_shop_reviews": false,
-            "empty_state": "empty_widget"
-          }
-        }
-      },
-      "block_order": [
-        "judge_me_reviews_review_widget_4K7azG"
-      ],
-      "settings": {
-        "container_width": "inherit",
-        "offset_top_desktop": 25,
-        "offset_bottom_desktop": 25,
-        "offset_top_mobile": 25,
-        "offset_bottom_mobile": 25
       }
     },
     "product_features": {
@@ -432,14 +433,14 @@
         "enable_shopify_recommendations": true,
         "collection": "",
         "container_width": "inherit",
-        "offset_top_desktop": 50,
-        "offset_bottom_desktop": 50,
-        "offset_top_mobile": 25,
-        "offset_bottom_mobile": 25,
-        "inner_offset_top": 25,
-        "inner_offset_bottom": 25,
-        "inner_offset_top_mobile": 25,
-        "inner_offset_bottom_mobile": 25
+        "offset_top_desktop": 25,
+        "offset_bottom_desktop": 15,
+        "offset_top_mobile": 15,
+        "offset_bottom_mobile": 10,
+        "inner_offset_top": 15,
+        "inner_offset_bottom": 10,
+        "inner_offset_top_mobile": 15,
+        "inner_offset_bottom_mobile": 10
       }
     },
     "recently-viewed": {
@@ -453,14 +454,14 @@
         "enable_color_scheme_inheritance": true,
         "color_scheme": "",
         "container_width": "inherit",
-        "offset_top_desktop": 25,
-        "offset_bottom_desktop": 25,
-        "offset_top_mobile": 25,
-        "offset_bottom_mobile": 25,
-        "inner_offset_top": 30,
-        "inner_offset_bottom": 30,
-        "inner_offset_top_mobile": 30,
-        "inner_offset_bottom_mobile": 30
+        "offset_top_desktop": 0,
+        "offset_bottom_desktop": 0,
+        "offset_top_mobile": 0,
+        "offset_bottom_mobile": 0,
+        "inner_offset_top": 0,
+        "inner_offset_bottom": 0,
+        "inner_offset_top_mobile": 0,
+        "inner_offset_bottom_mobile": 0
       }
     },
     "1775012941bcfca0c9": {
@@ -483,21 +484,32 @@
       "disabled": true,
       "settings": {
         "container_width": "inherit",
-        "offset_top_desktop": 25,
-        "offset_bottom_desktop": 25,
-        "offset_top_mobile": 25,
-        "offset_bottom_mobile": 25
+        "offset_top_desktop": 0,
+        "offset_bottom_desktop": 0,
+        "offset_top_mobile": 0,
+        "offset_bottom_mobile": 0
+      }
+    },
+    "1775502196d186dc61": {
+      "type": "apps",
+      "settings": {
+        "container_width": "inherit",
+        "offset_top_desktop": 0,
+        "offset_bottom_desktop": 0,
+        "offset_top_mobile": 0,
+        "offset_bottom_mobile": 0
       }
     }
   },
   "order": [
     "product-template",
+    "17750062752dbc4a4a",
     "richtext",
     "image_with_text",
-    "17750062752dbc4a4a",
     "product_features",
     "product-recommendations",
     "recently-viewed",
-    "1775012941bcfca0c9"
+    "1775012941bcfca0c9",
+    "1775502196d186dc61"
   ]
 }

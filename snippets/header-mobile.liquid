@@ -31,6 +31,45 @@
 		{{- "layout.navigation.drawer_menu" | t | escape -}}
 	</p>
 
+	{%- comment -%} Close button for mobile nav drawer {%- endcomment -%}
+	<button
+		class="header-mobile__close focus-visible-outline"
+		type="button"
+		aria-label="Close menu"
+		onclick="document.querySelector('.js-mobile-header-main-toggler').click();"
+	>
+		{% render 'icons', icon: 'menu-close' %}
+	</button>
+
+	<style>
+		.header-mobile__close {
+			position: absolute;
+			top: 12px;
+			right: 12px;
+			z-index: 100;
+			background: none;
+			border: none;
+			padding: 8px;
+			cursor: pointer;
+			color: inherit;
+			opacity: 0.7;
+			transition: opacity 0.2s ease;
+			width: 40px !important;
+			height: 40px !important;
+			min-width: 0 !important;
+			min-height: 0 !important;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.header-mobile__close:hover { opacity: 1; }
+		.header-mobile__close::before { display: none !important; }
+		.header-mobile__close svg {
+			width: 20px;
+			height: 20px;
+		}
+	</style>
+
 	<div class="drawer__body header-mobile__body js-mobile-header-main-menu js-scroll-lock-container">
 		{%- if menu.links != blank or burger_menu.links != blank or additional_menu.links != blank -%}
 			<nav
@@ -64,90 +103,185 @@
 
 							{%- assign animation_delay = animation_delay | plus: animation_delay_start | plus: 0.05 -%}
 
-							{%- comment -%} === Detect collection URLs for accordion behavior === {%- endcomment -%}
-							{%- assign is_all_collections = false -%}
-							{%- assign is_single_collection = false -%}
-							{%- assign detected_col = null -%}
-							{%- if first_level_link.url contains '/collections/' -%}
-								{%- assign _col_parts = first_level_link.url | split: '/collections/' -%}
-								{%- assign _col_handle = _col_parts[1] | split: '?' | first | split: '/' | first -%}
-								{%- if _col_handle == 'all' -%}
-									{%- assign is_all_collections = true -%}
-								{%- elsif _col_handle != blank -%}
-									{%- assign detected_col = collections[_col_handle] -%}
-									{%- if detected_col != blank and detected_col.products_count > 0 -%}
-										{%- assign is_single_collection = true -%}
-									{%- endif -%}
-								{%- endif -%}
-							{%- endif -%}
-
 							<li class="header-mobile__menu-item-wrapper" style="--animation-delay: {{ animation_delay }}s">
 
-								{%- if is_all_collections -%}
+								{%- assign link_title_down = first_level_link.title | downcase -%}
+								{%- assign dest_url = first_level_link.url -%}
+								{%- if link_title_down == 'new arrivals' -%}
+									{%- assign dest_url = '/collections/new-arrivals' -%}
+								{%- endif -%}
+
+								{%- assign is_collection_link = false -%}
+								{%- if link_title_down contains 'collection' or link_title_down contains 'shop' -%}
+									{%- assign is_collection_link = true -%}
+								{%- endif -%}
+								{%- assign is_support_link = false -%}
+								{%- if link_title_down == 'support' -%}
+									{%- assign is_support_link = true -%}
+								{%- endif -%}
+
+								{%- if first_level_link.links != blank or is_collection_link or is_support_link -%}
 									{%- comment -%} ==========================================
-									   BỘ SƯU TẬP (/collections/all) → dropdown showing all collections → products
+									   Menu nesting → accordion (split link and toggle)
 									========================================== {%- endcomment -%}
-									<button
-										class="button-link header-mobile__menu-item header-mobile__menu-item--main js-mobile-dropdown-toggle"
-										type="button"
-										aria-expanded="false"
-									>
-										<span data-text="{{- first_level_link.title | escape -}}">
-											<span>{{- first_level_link.title | escape -}}</span>
-										</span>
-										<svg class="icon header-mobile__dropdown-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-									</button>
+									{%- if is_collection_link and dest_url == '/collections' -%}
+										{%- assign dest_url = '/collections/all' -%}
+									{%- endif -%}
+
+									<div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+										<a
+											class="button-link header-mobile__menu-item header-mobile__menu-item--main"
+											href="{{- dest_url -}}"
+											style="white-space: nowrap; flex: 1 0 auto; text-align: left;"
+											{% if first_level_link.current %}aria-current="page"{% endif %}
+										>
+											<span data-text="{{- first_level_link.title | escape -}}">
+												<span>{{- first_level_link.title | escape -}}</span>
+											</span>
+										</a>
+										<button
+											class="button-link header-mobile__menu-item header-mobile__menu-item--main js-mobile-dropdown-toggle"
+											type="button"
+											aria-expanded="false"
+											aria-label="Toggle dropdown"
+											style="width: auto !important; flex-shrink: 0; align-items: center; justify-content: center; padding-left: 20px; padding-right: 0;"
+											onclick="event.preventDefault(); event.stopPropagation(); var content = this.parentElement.nextElementSibling; if (content &amp;&amp; content.classList.contains('header-mobile__dropdown-content')) { var isOpen = this.getAttribute('aria-expanded') === 'true'; this.setAttribute('aria-expanded', !isOpen); content.classList.toggle('is-open', !isOpen); }"
+										>
+											<svg class="icon header-mobile__dropdown-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+										</button>
+									</div>
 
 									<div class="header-mobile__dropdown-content">
 										<ul class="header-mobile__dropdown-list">
-											{%- assign collection_handles = 'camo,mens,usa' | split: ',' -%}
-											{%- for col_handle in collection_handles -%}
-												{%- assign sub_col = collections[col_handle] -%}
-												{%- if sub_col != blank -%}
+											{%- if is_collection_link -%}
+												{%- comment -%} ── CLOTHING ── {%- endcomment -%}
+												<li class="header-mobile__mega-heading">Clothing</li>
+												<li class="header-mobile__dropdown-item"><a class="header-mobile__dropdown-link" href="/collections/all?filter.p.product_type=Type1&filter.p.product_type=3D+Tshirt&filter.p.product_type=T-Shirt"><span>T-Shirts</span></a></li>
+								<li class="header-mobile__dropdown-item"><a class="header-mobile__dropdown-link" href="/collections/all?filter.p.product_type=Sweatshirt"><span>Sweatshirts</span></a></li>
+								<li class="header-mobile__dropdown-item"><a class="header-mobile__dropdown-link" href="/collections/all?filter.p.product_type=Hoodie"><span>Hoodies</span></a></li>
+								<li class="header-mobile__dropdown-item"><a class="header-mobile__dropdown-link" href="/collections/all?filter.p.product_type=Hat"><span>Hats</span></a></li>
+
+												{%- comment -%} ── HUNTING ── {%- endcomment -%}
+												<li class="header-mobile__mega-heading">Hunting</li>
+												{%- assign mob_hunt_handles = "deer,turkey,waterfowl,fishing" | split: "," -%}
+												{%- assign mob_hunt_labels = "Deer,Turkey,Waterfowl,Fishing" | split: "," -%}
+												{%- for mh in mob_hunt_handles -%}
+													{%- assign mh_col = collections[mh] -%}
+													{%- assign mh_label = mob_hunt_labels[forloop.index0] -%}
 													<li class="header-mobile__dropdown-item">
-														<a class="header-mobile__dropdown-link" href="{{ sub_col.url }}">
-															<span>{{ sub_col.title }}</span>
+														<a class="header-mobile__dropdown-link header-mobile__hunt-link" href="/collections/{{ mh }}">
+															{%- if mh_col.image != blank -%}
+																<img src="{{ mh_col.image | img_url: '80x80', crop: 'center' }}" alt="{{ mh_label }}" loading="lazy" class="header-mobile__hunt-icon">
+															{%- endif -%}
+															<span>{{ mh_label }}</span>
 														</a>
 													</li>
-												{%- endif -%}
-											{%- endfor -%}
-										</ul>
-									</div>
+												{%- endfor -%}
 
-								{%- elsif first_level_link.links != blank -%}
-									{%- comment -%} ==========================================
-									   Admin menu nesting (if exists) → accordion
-									========================================== {%- endcomment -%}
-									<button
-										class="button-link header-mobile__menu-item header-mobile__menu-item--main js-mobile-dropdown-toggle"
-										type="button"
-										aria-expanded="false"
-									>
-										<span data-text="{{- first_level_link.title | escape -}}">
-											<span>{{- first_level_link.title | escape -}}</span>
-										</span>
-										<svg class="icon header-mobile__dropdown-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-									</button>
+												{%- comment -%} ── TERRAIN (image + name, vertical) ── {%- endcomment -%}
+								<li class="header-mobile__mega-heading">Terrain</li>
+								{%- assign mob_terrain_handles = "grassland-prairie-copy,forest-hardwood-copy,marsh-wetland-copy,mountainous-terrain-copy,pacific-northwest-copy" | split: "," -%}
+								{%- assign mob_terrain_labels = "Forest & Hardwood,Desert & Brush Country,Grassland & Prairie,Marsh & Wetland,Mountainous Terrain" | split: "," -%}
+								{%- for mth in mob_terrain_handles -%}
+									{%- assign mt_c = collections[mth] -%}
+									{%- assign mt_label = mob_terrain_labels[forloop.index0] -%}
+									<li class="header-mobile__dropdown-item">
+										<a class="header-mobile__dropdown-link header-mobile__hunt-link" href="{%- if mt_c != blank -%}{{ mt_c.url }}{%- else -%}/collections/{{ mth }}{%- endif -%}">
+											{%- if mt_c.image != blank -%}
+												<img src="{{ mt_c.image | img_url: '80x80', crop: 'center' }}" alt="{{ mt_label }}" loading="lazy" class="header-mobile__hunt-icon" style="border-radius:4px;">
+											{%- elsif mt_c.products.first.featured_image != blank -%}
+												<img src="{{ mt_c.products.first.featured_image | img_url: '80x80', crop: 'center' }}" alt="{{ mt_label }}" loading="lazy" class="header-mobile__hunt-icon" style="border-radius:4px;">
+											{%- endif -%}
+											<span>{{ mt_label }}</span>
+										</a>
+									</li>
+								{%- endfor -%}
 
-									<div class="header-mobile__dropdown-content">
-										<ul class="header-mobile__dropdown-list">
-											{%- for second_level_link in first_level_link.links -%}
+								{%- comment -%} ── SEASONAL ── {%- endcomment -%}
+								<li class="header-mobile__mega-heading">Seasonal</li>
+								{%- assign mob_has_seasonal = false -%}
+								{%- for link in first_level_link.links -%}
+									{%- assign ms_lower = link.title | downcase -%}
+									{%- if ms_lower contains 'independence' or ms_lower contains 'signature' -%}
+										{%- assign mob_has_seasonal = true -%}
+										<li class="header-mobile__dropdown-item">
+											<a class="header-mobile__dropdown-link" href="{{ link.url }}"><span>{{ link.title }}</span></a>
+										</li>
+									{%- endif -%}
+								{%- endfor -%}
+								{%- unless mob_has_seasonal -%}
+									{%- assign m_ind_col = collections['usa'] -%}
+									{%- assign m_sig_col = collections['camo'] -%}
+									{%- if m_ind_col != blank -%}
+										<li class="header-mobile__dropdown-item">
+											<a class="header-mobile__dropdown-link" href="{{ m_ind_col.url }}"><span>Independence Day</span></a>
+										</li>
+									{%- endif -%}
+									{%- if m_sig_col != blank -%}
+										<li class="header-mobile__dropdown-item">
+											<a class="header-mobile__dropdown-link" href="{{ m_sig_col.url }}"><span>Signature</span></a>
+										</li>
+									{%- endif -%}
+								{%- endunless -%}
+
+											{%- elsif is_support_link -%}
+												{%- comment -%} Custom order: Contact, Shipping, Refund, Privacy, Terms {%- endcomment -%}
+												{%- for policy in shop.policies -%}
+													{%- if policy.url contains 'contact-information' -%}
+														{%- assign m_contact = policy -%}
+													{%- elsif policy.url contains 'shipping-policy' -%}
+														{%- assign m_shipping = policy -%}
+													{%- elsif policy.url contains 'refund-policy' -%}
+														{%- assign m_refund = policy -%}
+													{%- elsif policy.url contains 'privacy-policy' -%}
+														{%- assign m_privacy = policy -%}
+													{%- elsif policy.url contains 'terms-of-service' -%}
+														{%- assign m_terms = policy -%}
+													{%- endif -%}
+												{%- endfor -%}
+												{%- if m_contact -%}
 												<li class="header-mobile__dropdown-item">
-													<a class="header-mobile__dropdown-link" href="{{- second_level_link.url -}}">
-														<span>{{ second_level_link.title | escape }}</span>
-													</a>
+													<a class="header-mobile__dropdown-link" href="/pages/contact"><span>Contact Information</span></a>
 												</li>
-											{%- endfor -%}
+												{%- endif -%}
+												{%- if m_shipping -%}
+												<li class="header-mobile__dropdown-item">
+													<a class="header-mobile__dropdown-link" href="{{ m_shipping.url }}"><span>{{ m_shipping.title | escape }}</span></a>
+												</li>
+												{%- endif -%}
+												{%- if m_refund -%}
+												<li class="header-mobile__dropdown-item">
+													<a class="header-mobile__dropdown-link" href="{{ m_refund.url }}"><span>{{ m_refund.title | escape }}</span></a>
+												</li>
+												{%- endif -%}
+												{%- if m_privacy -%}
+												<li class="header-mobile__dropdown-item">
+													<a class="header-mobile__dropdown-link" href="{{ m_privacy.url }}"><span>{{ m_privacy.title | escape }}</span></a>
+												</li>
+												{%- endif -%}
+												{%- if m_terms -%}
+												<li class="header-mobile__dropdown-item">
+													<a class="header-mobile__dropdown-link" href="{{ m_terms.url }}"><span>{{ m_terms.title | escape }}</span></a>
+												</li>
+												{%- endif -%}
+											{%- elsif first_level_link.links != blank -%}
+												{%- for second_level_link in first_level_link.links -%}
+													<li class="header-mobile__dropdown-item">
+														<a class="header-mobile__dropdown-link" href="{{- second_level_link.url -}}">
+															<span>{{ second_level_link.title | escape }}</span>
+														</a>
+													</li>
+												{%- endfor -%}
+											{%- endif -%}
 										</ul>
 									</div>
-
 								{%- else -%}
 									{%- comment -%} ==========================================
 									   Simple link (no children, not a collection)
 									========================================== {%- endcomment -%}
 									<a
 										class="button-link header-mobile__menu-item header-mobile__menu-item--main"
-										href="{{- first_level_link.url -}}"
+										href="{{- dest_url -}}"
 										{% if first_level_link.current %}aria-current="page"{% endif %}
 									>
 										<span data-text="{{- first_level_link.title | escape -}}">
@@ -180,19 +314,6 @@
 		{%- endif -%}
 
 		<div class="header-mobile__info">
-			{%- if phone_number != blank -%}
-				{%- assign animation_delay = animation_delay | plus: 0.05 -%}
-				<div class="rte header-mobile__store-info" style="--animation-delay: {{ animation_delay }}s">
-					{{- phone_number -}}
-				</div>
-			{%- endif -%}
-
-			{%- if schedule_information != blank -%}
-				{%- assign animation_delay = animation_delay | plus: 0.05 -%}
-				<div class="rte header-mobile__store-info" style="--animation-delay: {{ animation_delay }}s">
-					{{- schedule_information -}}
-				</div>
-			{%- endif -%}
 
 			{%- if show_socials -%}
 				{%- render 'social-links', animation_delay: animation_delay -%}
@@ -248,6 +369,45 @@
 </div>
 
 <style>
+/* Override default spacing to push info section up closer to menu */
+.header-mobile__body {
+	justify-content: flex-start !important;
+}
+
+/* Adjust spacing between menu and bottom info */
+.header-mobile__info {
+	margin-top: 40px !important;
+}
+
+/* Style store info (phone, schedule) */
+.header-mobile__store-info,
+.header-mobile__store-info a {
+	font-family: 'Oswald', sans-serif !important;
+	font-size: 16px !important;
+	font-weight: 500 !important;
+	color: #2C3D33 !important;
+	text-decoration: none !important;
+	letter-spacing: 0.05em;
+	margin-bottom: 8px;
+}
+
+/* Redesign Login Button from black block to clean outline */
+.header-mobile__login-link {
+	background-color: transparent !important;
+	color: #2C3D33 !important;
+	border: 1.5px solid #2C3D33 !important;
+	font-family: 'Oswald', sans-serif !important;
+	font-size: 16px !important;
+	font-weight: 600 !important;
+	text-transform: uppercase !important;
+	border-radius: 4px !important;
+	margin-top: 16px;
+}
+.header-mobile__login-link:hover {
+	background-color: #2C3D33 !important;
+	color: #faf6ee !important;
+}
+
 /* Mobile menu: reduce font size and weight */
 .header-mobile .header-mobile__menu-item.header-mobile__menu-item--main {
 	font-size: calc(var(--body-font-size) * 1.35) !important;
@@ -365,28 +525,132 @@
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 }
+
+/* Mobile Collection Items */
+.header-mobile__col-link {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 0;
+	text-decoration: none;
+}
+.header-mobile__col-img {
+	width: 50px;
+	height: 50px;
+	object-fit: cover;
+	border-radius: 4px;
+	flex-shrink: 0;
+	background: #f4f4f4;
+}
+.header-mobile__col-info {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+.header-mobile__col-title {
+	font-family: 'Oswald', sans-serif;
+	font-size: 14px;
+	color: #2c3d33;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-weight: 700;
+}
+.header-mobile__col-description {
+	font-family: var(--base-font-family);
+	font-size: 12px;
+	color: #666;
+	line-height: 1.3;
+}
+
+/* ── Mobile Mega Menu: 4-Block Structure ── */
+.header-mobile__mega-heading {
+	list-style: none;
+	font-family: 'Oswald', sans-serif !important;
+	font-weight: 600 !important;
+	font-size: 20px !important;
+	text-transform: uppercase !important;
+	letter-spacing: 0.05em !important;
+	color: #2C3D33 !important;
+	padding: 10px 0 !important;
+	margin-top: 8px !important;
+	border-bottom: 1.5px solid #2C3D33 !important;
+}
+.header-mobile__mega-heading:first-child {
+	margin-top: 0;
+	padding-top: 8px;
+}
+.header-mobile__dropdown-list::-webkit-scrollbar { display: none; }
+.header-mobile__dropdown-item .header-mobile__dropdown-link,
+.header-mobile__dropdown-item .header-mobile__dropdown-link span {
+	font-family: 'Oswald', sans-serif !important;
+	font-size: 16px !important;
+	font-weight: 400 !important;
+	text-transform: none !important;
+	letter-spacing: 0.02em !important;
+	color: #2C3D33 !important;
+}
+.header-mobile__dropdown-link.is-active,
+.header-mobile__dropdown-link.is-active span {
+	font-weight: 600 !important;
+}
+.header-mobile__dropdown-link--disabled {
+	opacity: 0.45;
+	cursor: default;
+	pointer-events: none;
+}
+.header-mobile__coming-soon {
+	font-size: 10px;
+	font-style: italic;
+	font-weight: 400;
+	color: #8a9a8e;
+	margin-left: 4px;
+}
+
+/* Hunting links with icons */
+.header-mobile__hunt-link {
+	display: flex !important;
+	align-items: center;
+	gap: 12px;
+}
+.header-mobile__hunt-icon {
+	width: 36px;
+	height: 36px;
+	object-fit: contain;
+	flex-shrink: 0;
+}
+
+/* Terrain row: horizontal image grid */
+.header-mobile__terrain-row {
+	display: flex !important;
+	flex-wrap: wrap;
+	gap: 8px;
+	padding: 10px 0 !important;
+	border-bottom: none !important;
+}
+.header-mobile__terrain-thumb {
+	display: block;
+	width: 56px;
+	height: 56px;
+	overflow: hidden;
+	border-radius: 6px;
+	flex-shrink: 0;
+}
+.header-mobile__terrain-thumb img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+.header-mobile__terrain-ph {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #e8e4dc;
+	font-family: 'Oswald', sans-serif;
+	font-size: 11px;
+	font-weight: 700;
+	color: #999;
+	text-transform: uppercase;
+}
 </style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-	document.addEventListener('click', function(e) {
-		var btn = e.target.closest('.js-mobile-dropdown-toggle');
-		if (!btn) return;
-		e.preventDefault();
-		e.stopPropagation();
-
-		var content = btn.nextElementSibling;
-		if (!content || !content.classList.contains('header-mobile__dropdown-content')) return;
-
-		var isOpen = btn.getAttribute('aria-expanded') === 'true';
-
-		if (isOpen) {
-			btn.setAttribute('aria-expanded', 'false');
-			content.classList.remove('is-open');
-		} else {
-			btn.setAttribute('aria-expanded', 'true');
-			content.classList.add('is-open');
-		}
-	});
-});
-</script>

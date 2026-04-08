@@ -13,6 +13,8 @@
 
 		<link rel="canonical" href="{{- canonical_url -}}">
 		<link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+		<link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+		<link rel="preconnect" href="https://monorail-edge.shopifysvc.com" crossorigin>
 
 		{%- if settings.favicon != blank -%}
 			<link rel="icon" href="{{ settings.favicon | img_url: '32x32' }}" type="image/png">
@@ -135,5 +137,8 @@
 		{%- endif -%}
 
 		{%- render 'adastra' with '/src/scripts/component-ar-model.js' -%}
+
+		{%- render 'mobile-floating-cart' -%}
+		{%- section 'smart-popup' -%}
 	</body>
 </html>

@@ -17,14 +17,15 @@
         "mobile_image_height": "350px",
         "media_type": "image",
         "title": "",
-        "text": "",
-        "button_label_1": "Button label",
-        "button_link_1": "",
+        "text": "Camo Signal is inspired by hunting culture across America",
+        "button_label_1": "EXPLORE THE ROOTS",
+        "button_link_1": "https://camosignal.com/collections/all",
         "button_aria_label_1": "",
         "button_label_2": "Button label",
         "button_link_2": "",
         "button_aria_label_2": "",
-        "image_desktop": "shopify://shop_images/Gemini_Generated_Image_3qu3c23qu3c23qu3.jpg",
+        "image_desktop": "shopify://shop_images/banner_fix_2.png",
+        "image_mobile": "shopify://shop_images/banner_molbie.png",
         "show_breadcrumbs": false,
         "enable_timer": false,
         "timer_month": "0",
@@ -35,31 +36,35 @@
         "timer_color": "#ffffff",
         "external_video_url_desktop": "",
         "external_video_url_mobile": "",
-        "content_alignment": "center",
-        "content_alignment_mobile": "center",
-        "block_alignment": "center",
-        "block_alignment_vertical": "center",
-        "block_alignment_vertical_mob": "center",
+        "content_alignment": "right",
+        "content_alignment_mobile": "left",
+        "block_alignment": "flex-end",
+        "block_alignment_vertical": "flex-end",
+        "block_alignment_vertical_mob": "flex-end",
+        "custom_margin_left": 50,
+        "custom_margin_right": 5,
+        "custom_width": 45,
+        "custom_font_size": 22,
         "section_background": "#e7e7e7",
         "overlay": "rgba(0,0,0, 0.3)",
-        "text_color": "#ffffff",
-        "button_background_1": "#ffffff",
-        "button_color_1": "#000000",
-        "button_border_1": "#ffffff",
-        "button_background_hover_1": "#000000",
-        "button_color_hover_1": "#ffffff",
-        "button_border_hover_1": "#ffffff",
-        "button_background_2": "#ffffff",
-        "button_color_2": "#000000",
-        "button_border_2": "#ffffff",
-        "button_background_hover_2": "#000000",
-        "button_color_hover_2": "#ffffff",
-        "button_border_hover_2": "#ffffff",
+        "text_color": "#faf6ee",
+        "button_background_1": "#faf6ee",
+        "button_color_1": "#2c3d33",
+        "button_border_1": "#faf6ee",
+        "button_background_hover_1": "#2c3d33",
+        "button_color_hover_1": "#faf6ee",
+        "button_border_hover_1": "#faf6ee",
+        "button_background_2": "#faf6ee",
+        "button_color_2": "#2c3d33",
+        "button_border_2": "#faf6ee",
+        "button_background_hover_2": "#2c3d33",
+        "button_color_hover_2": "#faf6ee",
+        "button_border_hover_2": "#faf6ee",
         "container_width": "100%",
         "offset_top_desktop": 0,
         "offset_bottom_desktop": 25,
         "offset_top_mobile": 0,
-        "offset_bottom_mobile": 25
+        "offset_bottom_mobile": 15
       }
     },
     "177503541480b98d44": {
@@ -68,11 +73,11 @@
         "ai_gen_block_ac030ae_GBFG9z": {
           "type": "ai_gen_block_ac030ae",
           "settings": {
-            "heading": "<em>Raised Here. Stood Here.</em>",
-            "subheading": "<em>Built for those who hunt, protect, and live by their values — quietly, proudly.</em>",
+            "heading": "Raised Here. Stood Here.",
+            "subheading": "Built for those who hunt, protect, and live by their values — quietly, proudly.",
             "text": "<p><em>Camo Signal was born in small towns where hunting season is family tradition and camo means patience, not performance. We make apparel for the ones who carry responsibility without asking for recognition. Wear who you are</em></p>",
             "button_text": "Read more",
-            "button_link": "",
+            "button_link": "shopify://pages/about-us1",
             "desktop_width_percent": 100,
             "content_max_width": 800,
             "text_alignment": "center",
@@ -132,7 +137,7 @@
             "text_spacing": 24,
             "paragraph_spacing": 12,
             "button_text": "Read more",
-            "button_link": "",
+            "button_link": "shopify://pages/about",
             "button_padding_vertical": 14,
             "button_padding_horizontal": 40,
             "button_border_radius": 4,
@@ -203,256 +208,157 @@
       ],
       "settings": {}
     },
+    "custom_liquid_divider": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "<div style=\"width: 100%; display: flex; justify-content: center;\"><hr style=\"border: none; height: 1px; background-color: #2c3d33; opacity: 0.3; width: 800px; max-width: 80%; margin: 0;\" /></div>",
+        "offset_top_desktop": 30,
+        "offset_bottom_desktop": 30,
+        "offset_top_mobile": 15,
+        "offset_bottom_mobile": 15
+      }
+    },
+    "custom_liquid_divider_2": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "<div style=\"width: 100%; display: flex; justify-content: center;\"><hr style=\"border: none; height: 1px; background-color: #2c3d33; opacity: 0.3; width: 800px; max-width: 80%; margin: 0;\" /></div>",
+        "offset_top_desktop": 30,
+        "offset_bottom_desktop": 30,
+        "offset_top_mobile": 15,
+        "offset_bottom_mobile": 15
+      }
+    },
     "featured_products": {
       "type": "featured-products",
       "settings": {
         "enable_color_scheme_inheritance": true,
         "color_scheme": "",
         "heading": "Popular Products",
-        "link_label": "See all products",
+        "link_label": "",
         "link_url": "shopify://collections",
         "product_list": [
-          "camo-signal-bunny-tiger-graphic-t-shirt",
-          "black-bear-wildlife-hunting-t-shirt",
-          "wild-boar-wildlife-hunting-t-shirt",
-          "wolf-wildlife-hunting-t-shirt"
+          "hardwood-camo-hunting-t-shirt-ver-2",
+          "hardwood-camo-hunting-t-shirt-ver-1",
+          "marsh-camo-hunting-t-shirt-ver-1",
+          "hardwood-camo-hunting-t-shirt-ver-2-copy"
         ],
         "collection": "",
         "layout": "4",
         "show_arrows": true,
         "container_width": "2048px",
         "offset_top_desktop": 30,
-        "offset_bottom_desktop": 30,
-        "offset_top_mobile": 30,
+        "offset_bottom_desktop": 0,
+        "offset_top_mobile": 15,
+        "offset_bottom_mobile": 0,
+        "inner_offset_top": 30,
+        "inner_offset_bottom": 0,
+        "inner_offset_top_mobile": 15,
+        "inner_offset_bottom_mobile": 0
+      }
+    },
+    "featured_products_jAK3WU": {
+      "type": "featured-products",
+      "name": "Featured products",
+      "settings": {
+        "enable_color_scheme_inheritance": true,
+        "color_scheme": "",
+        "heading": "",
+        "link_label": "See all products",
+        "link_url": "shopify://collections/all",
+        "product_list": [
+          "midwest-wildlife-nature-hoodie",
+          "wolf-wildlife-hunting-hoodie",
+          "usa-flag-deer-camouflage-hoodie",
+          "deer-wildlife-hunting-hoodie"
+        ],
+        "collection": "",
+        "layout": "4",
+        "show_arrows": true,
+        "container_width": "100%",
+        "offset_top_desktop": 0,
+        "offset_bottom_desktop": 0,
+        "offset_top_mobile": 0,
         "offset_bottom_mobile": 30,
+        "inner_offset_top": 0,
+        "inner_offset_bottom": 30,
+        "inner_offset_top_mobile": 0,
+        "inner_offset_bottom_mobile": 30
+      }
+    },
+    "hunting_collections": {
+      "type": "hunting-collections",
+      "settings": {
+        "heading": "",
+        "button_label": "",
+        "button_url": "",
+        "offset_top_desktop": 0,
+        "offset_bottom_desktop": 20,
+        "offset_top_mobile": 0,
+        "offset_bottom_mobile": 15
+      }
+    },
+    "image_with_text_URwaUB": {
+      "type": "image-with-text",
+      "name": "Image with text",
+      "settings": {
+        "enable_color_scheme_inheritance": true,
+        "color_scheme": "",
+        "images_layout": "one_image",
+        "enable_images_animation": true,
+        "scroll_images_direction": "top",
+        "image_position": "left",
+        "text_alignment": "left",
+        "label": "Camo Signal Story",
+        "heading": "Built on the ground",
+        "text_content": "<p>Inspired by real American terrain, this piece reflects a connection to land shaped by seasons, weather, and work. It’s designed with a grounded feel - quiet, steady, and familiar, like places that don’t need to introduce themselves.</p>",
+        "button_label": "Button label",
+        "button_aria_label": "",
+        "button_url": "",
+        "button_style": "primary",
+        "fist_col_movement_speed": 20,
+        "first_col_image_1": "shopify://shop_images/duck_hunting_image.jpg",
+        "second_col_movement_speed": 20,
+        "container_width": "inherit",
+        "offset_top_desktop": 25,
+        "offset_bottom_desktop": 0,
+        "offset_top_mobile": 25,
+        "offset_bottom_mobile": 25,
         "inner_offset_top": 30,
         "inner_offset_bottom": 30,
         "inner_offset_top_mobile": 30,
         "inner_offset_bottom_mobile": 30
       }
     },
-    "trends_products": {
-      "type": "trend-products",
-      "blocks": {
-        "product_MCChEm": {
-          "type": "product",
-          "settings": {
-            "product": "",
-            "horizontal_position_desktop": 47,
-            "vertical_position_desktop": 55,
-            "horizontal_position_mobile": 57,
-            "vertical_position_mobile": 57
-          }
-        },
-        "product_PrGdKD": {
-          "type": "product",
-          "settings": {
-            "product": "",
-            "horizontal_position_desktop": 46,
-            "vertical_position_desktop": 74,
-            "horizontal_position_mobile": 43,
-            "vertical_position_mobile": 74
-          }
-        },
-        "product_6dmKeT": {
-          "type": "product",
-          "settings": {
-            "product": "",
-            "horizontal_position_desktop": 51,
-            "vertical_position_desktop": 86,
-            "horizontal_position_mobile": 53,
-            "vertical_position_mobile": 91
-          }
-        }
-      },
-      "block_order": [
-        "product_MCChEm",
-        "product_PrGdKD",
-        "product_6dmKeT"
-      ],
-      "disabled": true,
+    "image_with_text_gRLEPG": {
+      "type": "image-with-text",
+      "name": "Image with text",
       "settings": {
         "enable_color_scheme_inheritance": true,
         "color_scheme": "",
-        "title": "NEW LOOK",
-        "text": "Discover our new arrivals.",
-        "button_label": "See all",
-        "button_aria-label": "",
-        "button_link": "/",
-        "show_one_open": true,
-        "enable_hotspot_animation": false,
-        "text_color": "#000000",
-        "link_color": "#000000",
-        "spot_background": "#ffffff",
-        "spot_color": "#000000",
-        "spot_border_color": "#ffffff",
-        "spot_background_active": "#000000",
-        "spot_color_active": "#ffffff",
-        "spot_border_color_active": "#393939",
+        "images_layout": "one_image",
+        "enable_images_animation": true,
+        "scroll_images_direction": "top",
+        "image_position": "right",
+        "text_alignment": "right",
+        "label": "Camo Signal Story",
+        "heading": "Naturally worn in",
+        "text_content": "<p>Inspired by real American terrain, this piece reflects a connection to land shaped by seasons, weather, and work. It’s designed with a grounded feel - quiet, steady, and familiar, like places that don’t need to introduce themselves.</p>",
+        "button_label": "Button label",
+        "button_aria_label": "",
+        "button_url": "",
+        "button_style": "primary",
+        "fist_col_movement_speed": 20,
+        "first_col_image_1": "shopify://shop_images/deer_hunting_image.jpg",
+        "second_col_movement_speed": 20,
         "container_width": "inherit",
-        "offset_top_desktop": 40,
-        "offset_bottom_desktop": 40,
-        "offset_top_mobile": 25,
-        "offset_bottom_mobile": 25
-      }
-    },
-    "collections_carousel": {
-      "type": "collections-carousel",
-      "blocks": {
-        "collection_EyxjXW": {
-          "type": "collection",
-          "settings": {
-            "collection": "",
-            "custom_title": "",
-            "button_label": "View Collections",
-            "button_style": "primary",
-            "heading_active_color": "#ffffff",
-            "button_color": "#000000",
-            "button_background": "#ffffff",
-            "button_border_color": "#e9e9e9",
-            "button_color_hover": "#ffffff",
-            "button_background_hover": "#000000",
-            "button_border_color_hover": "#000000"
-          }
-        },
-        "collection_gBGUAd": {
-          "type": "collection",
-          "settings": {
-            "collection": "",
-            "custom_title": "",
-            "button_label": "View Collections",
-            "button_style": "primary",
-            "heading_active_color": "#ffffff",
-            "button_color": "#000000",
-            "button_background": "#ffffff",
-            "button_border_color": "#e9e9e9",
-            "button_color_hover": "#ffffff",
-            "button_background_hover": "#000000",
-            "button_border_color_hover": "#000000"
-          }
-        },
-        "collection_kUnJQF": {
-          "type": "collection",
-          "settings": {
-            "collection": "",
-            "custom_title": "",
-            "button_label": "View Collections",
-            "button_style": "primary",
-            "heading_active_color": "#ffffff",
-            "button_color": "#000000",
-            "button_background": "#ffffff",
-            "button_border_color": "#e9e9e9",
-            "button_color_hover": "#ffffff",
-            "button_background_hover": "#000000",
-            "button_border_color_hover": "#000000"
-          }
-        },
-        "collection_ykmk6p": {
-          "type": "collection",
-          "settings": {
-            "collection": "",
-            "custom_title": "",
-            "button_label": "View Collections",
-            "button_style": "primary",
-            "heading_active_color": "#ffffff",
-            "button_color": "#000000",
-            "button_background": "#ffffff",
-            "button_border_color": "#e9e9e9",
-            "button_color_hover": "#ffffff",
-            "button_background_hover": "#000000",
-            "button_border_color_hover": "#000000"
-          }
-        },
-        "collection_ANRNNx": {
-          "type": "collection",
-          "settings": {
-            "collection": "",
-            "custom_title": "",
-            "button_label": "View Collections",
-            "button_style": "primary",
-            "heading_active_color": "#ffffff",
-            "button_color": "#000000",
-            "button_background": "#ffffff",
-            "button_border_color": "#e9e9e9",
-            "button_color_hover": "#ffffff",
-            "button_background_hover": "#000000",
-            "button_border_color_hover": "#000000"
-          }
-        },
-        "collection_fCeKgF": {
-          "type": "collection",
-          "settings": {
-            "collection": "",
-            "custom_title": "",
-            "button_label": "View Collections",
-            "button_style": "primary",
-            "heading_active_color": "#ffffff",
-            "button_color": "#000000",
-            "button_background": "#ffffff",
-            "button_border_color": "#e9e9e9",
-            "button_color_hover": "#ffffff",
-            "button_background_hover": "#000000",
-            "button_border_color_hover": "#000000"
-          }
-        },
-        "collection_MNyCAq": {
-          "type": "collection",
-          "settings": {
-            "collection": "",
-            "custom_title": "",
-            "button_label": "View Collections",
-            "button_style": "primary",
-            "heading_active_color": "#ffffff",
-            "button_color": "#000000",
-            "button_background": "#ffffff",
-            "button_border_color": "#e9e9e9",
-            "button_color_hover": "#ffffff",
-            "button_background_hover": "#000000",
-            "button_border_color_hover": "#000000"
-          }
-        },
-        "collection_VfXTWt": {
-          "type": "collection",
-          "settings": {
-            "collection": "",
-            "custom_title": "",
-            "button_label": "View Collections",
-            "button_style": "primary",
-            "heading_active_color": "#ffffff",
-            "button_color": "#000000",
-            "button_background": "#ffffff",
-            "button_border_color": "#e9e9e9",
-            "button_color_hover": "#ffffff",
-            "button_background_hover": "#000000",
-            "button_border_color_hover": "#000000"
-          }
-        }
-      },
-      "block_order": [
-        "collection_EyxjXW",
-        "collection_gBGUAd",
-        "collection_kUnJQF",
-        "collection_ykmk6p",
-        "collection_ANRNNx",
-        "collection_fCeKgF",
-        "collection_MNyCAq",
-        "collection_VfXTWt"
-      ],
-      "disabled": true,
-      "settings": {
-        "enable_color_scheme_inheritance": true,
-        "color_scheme": "",
-        "enable_autoplay": true,
-        "autoplay_speed": 3,
-        "container_width": "100%",
         "offset_top_desktop": 0,
         "offset_bottom_desktop": 0,
-        "offset_top_mobile": 0,
-        "offset_bottom_mobile": 0,
-        "inner_offset_top": 32,
-        "inner_offset_bottom": 32,
-        "inner_offset_top_mobile": 32,
-        "inner_offset_bottom_mobile": 32
+        "offset_top_mobile": 25,
+        "offset_bottom_mobile": 25,
+        "inner_offset_top": 30,
+        "inner_offset_bottom": 30,
+        "inner_offset_top_mobile": 30,
+        "inner_offset_bottom_mobile": 30
       }
     },
     "product_banner_A3ERjK": {
@@ -467,10 +373,10 @@
             "heading": "Built On The Ground",
             "text": "<p>Inspired by real American terrain, this piece reflects a connection to land shaped by seasons, weather, and work. It’s designed with a grounded feel—quiet, steady, and familiar, like places that don’t need to introduce themselves.<br/><br/></p>",
             "button_label": "Shop All",
-            "button_link": "/",
-            "button_style": "secondary",
-            "product": "black-bear-wildlife-hunting-t-shirt",
-            "image": "shopify://shop_images/USA_Flag_With_Deer_T_shirt_4.jpg"
+            "button_link": "shopify://collections",
+            "button_style": "primary",
+            "product": "black-bear-wildlife-hunting-t-shirt-1",
+            "image": "shopify://shop_images/Black_Bear_Wildlife_Hunting_T_shirt_6.jpg"
           }
         },
         "product_RFGtnJ": {
@@ -484,8 +390,8 @@
             "button_label": "Shop All",
             "button_link": "/",
             "button_style": "secondary",
-            "product": "usa-flag-with-waterfowl-t-shirt",
-            "image": "shopify://shop_images/camo_signal_about_us.jpg"
+            "product": "camouflage-from-1776-t-shirt",
+            "image": "shopify://shop_images/CRIMSON_1.jpg"
           }
         },
         "product_rJJjt3": {
@@ -500,7 +406,7 @@
             "button_label": "Shop All",
             "button_link": "/",
             "button_style": "secondary",
-            "product": ""
+            "product": "northeast-wildlife-nature-t-shirt-1"
           }
         },
         "product_inPrrX": {
@@ -515,7 +421,7 @@
             "button_label": "Shop All",
             "button_link": "/",
             "button_style": "secondary",
-            "product": ""
+            "product": "deer-wildlife-hunting-hoodie"
           }
         }
       },
@@ -525,13 +431,14 @@
         "product_rJJjt3",
         "product_inPrrX"
       ],
+      "disabled": true,
       "name": "Product banner",
       "settings": {
         "container_width": "1808px",
         "offset_top_desktop": 25,
         "offset_bottom_desktop": 25,
-        "offset_top_mobile": 25,
-        "offset_bottom_mobile": 25
+        "offset_top_mobile": 15,
+        "offset_bottom_mobile": 15
       }
     },
     "video": {
@@ -589,8 +496,8 @@
         "container_width": "inherit",
         "offset_top_desktop": 32,
         "offset_bottom_desktop": 32,
-        "offset_top_mobile": 32,
-        "offset_bottom_mobile": 32
+        "offset_top_mobile": 15,
+        "offset_bottom_mobile": 15
       }
     },
     "featured_products_ENKafe": {
@@ -598,505 +505,138 @@
       "settings": {
         "enable_color_scheme_inheritance": true,
         "color_scheme": "",
-        "heading": "<em>4th of July</em>",
-        "link_label": "See all products",
-        "link_url": "/",
+        "heading": "Independence Day",
+        "link_label": "",
+        "link_url": "",
         "product_list": [
-          "camo-signal-bunny-tiger-graphic-t-shirt",
-          "usa-flag-with-black-bear-t-shirt",
-          "usa-flag-with-deer-t-shirt",
-          "usa-flag-with-waterfowl-t-shirt"
+          "camouflage-usa-t-shirt",
+          "camouflage-patriot-t-shirt",
+          "camouflage-from-1776-t-shirt",
+          "camouflage-freedom-t-shirt"
         ],
         "collection": "",
         "layout": "4",
         "show_arrows": true,
         "container_width": "2048px",
         "offset_top_desktop": 30,
-        "offset_bottom_desktop": 30,
-        "offset_top_mobile": 30,
-        "offset_bottom_mobile": 30,
+        "offset_bottom_desktop": 0,
+        "offset_top_mobile": 15,
+        "offset_bottom_mobile": 0,
         "inner_offset_top": 30,
-        "inner_offset_bottom": 30,
-        "inner_offset_top_mobile": 30,
-        "inner_offset_bottom_mobile": 30
+        "inner_offset_bottom": 0,
+        "inner_offset_top_mobile": 15,
+        "inner_offset_bottom_mobile": 0
       }
     },
-    "featured_products_EbHnaf": {
+    "featured_products_g7L8kB": {
       "type": "featured-products",
       "settings": {
         "enable_color_scheme_inheritance": true,
         "color_scheme": "",
-        "heading": "<em>Hunting</em>",
+        "heading": "",
         "link_label": "See all products",
-        "link_url": "/",
+        "link_url": "shopify://collections/all",
         "product_list": [
-          "camo-signal-bunny-tiger-graphic-t-shirt",
-          "usa-flag-with-black-bear-t-shirt",
-          "usa-flag-with-deer-t-shirt",
-          "usa-flag-with-waterfowl-t-shirt"
+          "usa-flag-dog-camouflage-t-shirt-1",
+          "usa-flag-freedom-camouflage-sweatshirt",
+          "usa-flag-deer-camouflage-t-shirt",
+          "usa-flag-eagle-camouflage-sweatshirt"
         ],
         "collection": "",
         "layout": "4",
         "show_arrows": true,
         "container_width": "2048px",
-        "offset_top_desktop": 30,
-        "offset_bottom_desktop": 30,
-        "offset_top_mobile": 30,
-        "offset_bottom_mobile": 30,
-        "inner_offset_top": 30,
-        "inner_offset_bottom": 30,
-        "inner_offset_top_mobile": 30,
-        "inner_offset_bottom_mobile": 30
-      }
-    },
-    "featured_product": {
-      "type": "featured-product",
-      "blocks": {
-        "vendor": {
-          "type": "vendor",
-          "settings": {
-            "make_vendor_link": true,
-            "offset_top_desktop": 8,
-            "offset_bottom_desktop": 8,
-            "offset_top_mobile": 8,
-            "offset_bottom_mobile": 8
-          }
-        },
-        "title": {
-          "type": "title",
-          "settings": {
-            "offset_top_desktop": 8,
-            "offset_bottom_desktop": 8,
-            "offset_top_mobile": 8,
-            "offset_bottom_mobile": 8
-          }
-        },
-        "sku": {
-          "type": "sku",
-          "settings": {
-            "sku_text": "SKU: {SKU}",
-            "offset_top_desktop": 8,
-            "offset_bottom_desktop": 8,
-            "offset_top_mobile": 8,
-            "offset_bottom_mobile": 8
-          }
-        },
-        "description": {
-          "type": "description",
-          "settings": {
-            "offset_top_desktop": 8,
-            "offset_bottom_desktop": 8,
-            "offset_top_mobile": 8,
-            "offset_bottom_mobile": 8
-          }
-        },
-        "options": {
-          "type": "options",
-          "settings": {
-            "variant_picker": "radio",
-            "offset_top_desktop": 8,
-            "offset_bottom_desktop": 8,
-            "offset_top_mobile": 8,
-            "offset_bottom_mobile": 8
-          }
-        },
-        "price": {
-          "type": "price",
-          "settings": {
-            "offset_top_desktop": 8,
-            "offset_bottom_desktop": 8,
-            "offset_top_mobile": 8,
-            "offset_bottom_mobile": 8
-          }
-        },
-        "quantity": {
-          "type": "quantity",
-          "settings": {
-            "offset_top_desktop": 8,
-            "offset_bottom_desktop": 8,
-            "offset_top_mobile": 8,
-            "offset_bottom_mobile": 8
-          }
-        },
-        "add_to_cart": {
-          "type": "add_to_cart",
-          "settings": {
-            "button_type": "secondary",
-            "button_buy_it_type": "primary",
-            "show_additional_buttons": true,
-            "show_gift_card_recipient": true,
-            "offset_top_desktop": 8,
-            "offset_bottom_desktop": 8,
-            "offset_top_mobile": 8,
-            "offset_bottom_mobile": 8
-          }
-        },
-        "pickup_availability": {
-          "type": "pickup_availability",
-          "settings": {
-            "offset_top_desktop": 8,
-            "offset_bottom_desktop": 8,
-            "offset_top_mobile": 8,
-            "offset_bottom_mobile": 8
-          }
-        },
-        "drawers": {
-          "type": "drawers",
-          "settings": {
-            "show_description": false,
-            "description_toggle_text": "Description",
-            "description_drawer_title": "Description",
-            "drawer_page_1": "",
-            "drawer_toggle_text_1": "Drawer 1",
-            "drawer_title_1": "Drawer 1",
-            "drawer_page_2": "",
-            "drawer_toggle_text_2": "Drawer 2",
-            "drawer_title_2": "Drawer 2",
-            "drawer_page_3": "",
-            "drawer_toggle_text_3": "Drawer 3",
-            "drawer_title_3": "Drawer 3",
-            "offset_top_desktop": 8,
-            "offset_bottom_desktop": 8,
-            "offset_top_mobile": 8,
-            "offset_bottom_mobile": 8
-          }
-        },
-        "complementary": {
-          "type": "complementary",
-          "settings": {
-            "heading": "You May Also Like",
-            "offset_top_desktop": 8,
-            "offset_bottom_desktop": 8,
-            "offset_top_mobile": 8,
-            "offset_bottom_mobile": 8
-          }
-        }
-      },
-      "block_order": [
-        "vendor",
-        "title",
-        "sku",
-        "description",
-        "options",
-        "price",
-        "quantity",
-        "add_to_cart",
-        "pickup_availability",
-        "drawers",
-        "complementary"
-      ],
-      "disabled": true,
-      "settings": {
-        "enable_color_scheme_inheritance": true,
-        "color_scheme": "",
-        "product": "",
-        "media_layout": "stacked_2_col",
-        "thumbnails_position": "bottom",
-        "show_thumbnails_mobile": false,
-        "media_height": "full_size",
-        "image_object_fit": "cover",
-        "show_taxes_included": true,
-        "show_pay_installments": true,
-        "show_size_guide": true,
-        "size_guide_button_placement": "under-options",
-        "size_guide_page": "",
-        "size_guide_button_text": "Size guide",
-        "size_guide_drawer_title": "Size guide",
-        "container_width": "inherit",
-        "offset_top_desktop": 32,
-        "offset_bottom_desktop": 32,
-        "offset_top_mobile": 16,
-        "offset_bottom_mobile": 16,
-        "inner_offset_top": 32,
-        "inner_offset_bottom": 32,
-        "inner_offset_top_mobile": 16,
-        "inner_offset_bottom_mobile": 16
-      }
-    },
-    "product_features": {
-      "type": "product-features",
-      "blocks": {
-        "product_feature_ynTYHf": {
-          "type": "product_feature",
-          "settings": {
-            "heading": "Features",
-            "description": "Introducing our signature MatchlessMerino, made of Merino wool, this crewneck is thinner, softer and finer than regular wool, allowing breathability, comfort and warmth all in one. Dismissing the classic rough and itchy characteristics of wool, premium Merino wool offers an undeniable luxe feeling and classic look, with all-season versatility.",
-            "hotspot_vertical_position": 42,
-            "hotspot_horizontal_position": 54,
-            "feature_text_1": "Natural fiber PROVEN to draw moisture away from you - fast.",
-            "feature_text_2": "All season versatility that keeps you warm when it’s cold and cool when it’s hot.",
-            "feature_text_3": "Eco-friendly natural fiber.",
-            "feature_text_4": "Feature text 4"
-          }
-        },
-        "product_feature_zFPMYe": {
-          "type": "product_feature",
-          "settings": {
-            "heading": "Benefits",
-            "description": "Introducing our signature MatchlessMerino",
-            "hotspot_vertical_position": 62,
-            "hotspot_horizontal_position": 45,
-            "feature_text_1": "All season versatility that keeps you warm when it’s cold and cool when it’s hot.",
-            "feature_text_2": "Eco-friendly natural fiber.",
-            "feature_text_3": "Natural fiber PROVEN to draw moisture away from you - fast.",
-            "feature_text_4": "Feature text 4"
-          }
-        },
-        "product_feature_RLDMRj": {
-          "type": "product_feature",
-          "settings": {
-            "heading": "Sustainability",
-            "description": "Ethically sourced materials with a commitment to eco-friendly production. Designed to minimize environmental impact without compromising on quality or style.",
-            "hotspot_vertical_position": 81,
-            "hotspot_horizontal_position": 58,
-            "feature_text_1": "Eco-friendly natural fiber.",
-            "feature_text_2": "Natural fiber PROVEN to draw moisture away from you - fast.",
-            "feature_text_3": "All season versatility that keeps you warm when it’s cold and cool when it’s hot.",
-            "feature_text_4": "Feature text 4"
-          }
-        }
-      },
-      "block_order": [
-        "product_feature_ynTYHf",
-        "product_feature_zFPMYe",
-        "product_feature_RLDMRj"
-      ],
-      "disabled": true,
-      "settings": {
-        "enable_color_scheme_inheritance": true,
-        "color_scheme": "",
-        "is_hotspot_animated": true,
-        "hotspot_color": "#000000",
-        "hotspot_border_color": "#000000",
-        "hotspot_background": "rgba(255, 255, 255, 0.90)",
-        "hotspot_active_color": "#ffffff",
-        "hotspot_active_border_color": "#ffffff",
-        "hotspot_active_background": "rgba(0, 0, 0, 0.72)",
-        "heading": "POLLHEIM features",
-        "description": "<p>Crafted from high-quality wool and cotton blends, ensuring durability, breathability, and all-day comfort. Designed for a luxurious feel with a refined finish.</p>",
-        "container_width": "inherit",
         "offset_top_desktop": 0,
         "offset_bottom_desktop": 0,
         "offset_top_mobile": 0,
-        "offset_bottom_mobile": 0,
+        "offset_bottom_mobile": 15,
         "inner_offset_top": 0,
-        "inner_offset_bottom": 0,
+        "inner_offset_bottom": 30,
         "inner_offset_top_mobile": 0,
-        "inner_offset_bottom_mobile": 0
+        "inner_offset_bottom_mobile": 15
       }
     },
-    "ticker": {
-      "type": "ticker",
-      "disabled": true,
-      "settings": {
-        "hide_divider": false,
-        "text": "<p>New Spring <em>Collections</em></p>",
-        "desktop_movement_speed": 20,
-        "mobile_movement_speed": 35,
-        "text_color": "#ffffff",
-        "container_width": "inherit",
-        "offset_top_desktop_external": 70,
-        "offset_bottom_desktop_external": 0,
-        "offset_top_mobile_external": 0,
-        "offset_bottom_mobile_external": 0
-      }
-    },
-    "featured_blog": {
-      "type": "featured-blog",
-      "disabled": true,
-      "settings": {
-        "enable_color_scheme_inheritance": true,
-        "color_scheme": "",
-        "heading": "The Passion <em>Blogpost</em>",
-        "blog": "",
-        "link_text": "All News",
-        "link_aria_label_text": "Link to blog",
-        "button_style": "primary",
-        "container_width": "inherit",
-        "offset_top_desktop": 60,
-        "offset_bottom_desktop": 60,
-        "offset_top_mobile": 30,
-        "offset_bottom_mobile": 30,
-        "inner_offset_top": 30,
-        "inner_offset_bottom": 30,
-        "inner_offset_top_mobile": 30,
-        "inner_offset_bottom_mobile": 30
-      }
-    },
-    "image_with_text": {
-      "type": "image-with-text",
-      "disabled": true,
-      "settings": {
-        "enable_color_scheme_inheritance": true,
-        "color_scheme": "",
-        "images_layout": "multiply_images",
-        "enable_images_animation": true,
-        "scroll_images_direction": "top",
-        "image_position": "right",
-        "text_alignment": "center",
-        "label": "Pollheim suits",
-        "heading": "For Mens and Womens",
-        "text_content": "<p>Welcome to our distinguished Men's and Woman's Wear Collection at Pollheim, where craftsmanship meets contemporary style. Our expertly tailored garments are designed to elevate your wardrobe, offering a perfect blend of classic elegance and modern sophistication.</p>",
-        "button_label": "Button label",
-        "button_aria_label": "",
-        "button_url": "",
-        "button_style": "primary",
-        "fist_col_movement_speed": 20,
-        "second_col_movement_speed": 20,
-        "container_width": "inherit",
-        "offset_top_desktop": 50,
-        "offset_bottom_desktop": 50,
-        "offset_top_mobile": 25,
-        "offset_bottom_mobile": 25,
-        "inner_offset_top": 30,
-        "inner_offset_bottom": 30,
-        "inner_offset_top_mobile": 30,
-        "inner_offset_bottom_mobile": 30
-      }
-    },
-    "banner": {
-      "type": "banner",
-      "disabled": true,
-      "settings": {
-        "desktop_image_height": "600px",
-        "mobile_image_height": "350px",
-        "media_type": "image",
-        "title": "New Spring Collections",
-        "text": "<p>Ready-to-wear bespoke items</p>",
-        "button_label_1": "Shop New",
-        "button_link_1": "/",
-        "button_aria_label_1": "",
-        "button_label_2": "Shop All",
-        "button_link_2": "/",
-        "button_aria_label_2": "",
-        "show_breadcrumbs": false,
-        "enable_timer": false,
-        "timer_month": "0",
-        "timer_day": "1",
-        "timer_hour": "0",
-        "timer_timezone": "+0",
-        "timer_background": "rgba(255,255,255, 0.12)",
-        "timer_color": "#ffffff",
-        "external_video_url_desktop": "",
-        "external_video_url_mobile": "",
-        "content_alignment": "center",
-        "content_alignment_mobile": "center",
-        "block_alignment": "center",
-        "block_alignment_vertical": "center",
-        "block_alignment_vertical_mob": "center",
-        "section_background": "#e7e7e7",
-        "overlay": "rgba(0,0,0, 0.1)",
-        "text_color": "#ffffff",
-        "button_background_1": "#ffffff",
-        "button_color_1": "#000000",
-        "button_border_1": "#ffffff",
-        "button_background_hover_1": "#000000",
-        "button_color_hover_1": "#ffffff",
-        "button_border_hover_1": "#ffffff",
-        "button_background_2": "#ffffff",
-        "button_color_2": "#000000",
-        "button_border_2": "#ffffff",
-        "button_background_hover_2": "#000000",
-        "button_color_hover_2": "#ffffff",
-        "button_border_hover_2": "#ffffff",
-        "container_width": "100%",
-        "offset_top_desktop": 80,
-        "offset_bottom_desktop": 25,
-        "offset_top_mobile": 25,
-        "offset_bottom_mobile": 25
-      }
-    },
-    "featured-collection": {
-      "type": "featured-collection",
-      "disabled": true,
-      "settings": {
-        "enable_color_scheme_inheritance": true,
-        "color_scheme": "",
-        "heading": "Your Perfect-Fit Blazer",
-        "collection": "",
-        "link_label": "See all products",
-        "container_width": "inherit",
-        "offset_top_desktop": 60,
-        "offset_bottom_desktop": 60,
-        "offset_top_mobile": 40,
-        "offset_bottom_mobile": 40,
-        "inner_offset_top": 64,
-        "inner_offset_bottom": 64,
-        "inner_offset_top_mobile": 32,
-        "inner_offset_bottom_mobile": 32
-      }
-    },
-    "social_gallery": {
-      "type": "social-gallery",
+    "17755869487c283f8c": {
+      "type": "apps",
       "blocks": {
-        "image_GRA6hE": {
-          "type": "image",
+        "judge_me_reviews_cards_carousel_eYQzDQ": {
+          "type": "shopify://apps/judge-me-reviews/blocks/cards_carousel/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
           "settings": {
-            "image_link": "",
-            "open_link_in_new_tab": false
+            "show_sample_reviews": false,
+            "reviews_selection": "all",
+            "products": [],
+            "star_rating": "all",
+            "show_review_media": true,
+            "display_order": "media_first",
+            "no_image_fallback": "review_text_only",
+            "max_reviews": 20,
+            "review_length": "medium",
+            "text_size": "medium",
+            "image_ratio": "1",
+            "reviews_shown": 4,
+            "show_reviewer_name": true,
+            "show_product_name": true,
+            "hide_arrows_mobile": true,
+            "arrows_position": "sides",
+            "max_width": 1100,
+            "corner_styling": "soft",
+            "header_text_color": "#000000",
+            "text_color": "#000000",
+            "card_color": "#f9f9f9",
+            "stars_color": "",
+            "arrows_color": "#000000",
+            "transition_speed": 5,
+            "header_text": "Customers are saying",
+            "show_average_rating": true
           }
         },
-        "image_AKtAfW": {
-          "type": "image",
+        "judge_me_reviews_reviews_grid_widget_dAze8h": {
+          "type": "shopify://apps/judge-me-reviews/blocks/reviews_grid_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "disabled": true,
           "settings": {
-            "image_link": "",
-            "open_link_in_new_tab": false
+            "show_sample_reviews": false,
+            "review_selection": "all",
+            "products": [],
+            "show_media_only": true,
+            "display_order": "media_first",
+            "columns_desktop": 3,
+            "rows_desktop": 2,
+            "columns_mobile": "2",
+            "rows_mobile": 2,
+            "show_stars": true,
+            "show_reviewer_name": true,
+            "show_review_title_on_hover_desktop": true,
+            "max_width": 1100,
+            "corner_styling": "soft",
+            "card_spacing": "medium",
+            "header_text_color": "#2c3d33",
+            "star_and_reviewer_name_color": "#faf6ee",
+            "drop_shadow_color": "#000000",
+            "overlay_and_background_color": "#000000",
+            "content_color": "#f9f9f9",
+            "header_text": "From our customers",
+            "show_average_rating": true
           }
         },
-        "image_TU37a6": {
-          "type": "image",
+        "judge_me_reviews_featured_carousel_YAEkW9": {
+          "type": "shopify://apps/judge-me-reviews/blocks/featured_carousel/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "disabled": true,
           "settings": {
-            "image_link": "",
-            "open_link_in_new_tab": false
-          }
-        },
-        "image_bR4Yrp": {
-          "type": "image",
-          "settings": {
-            "image_link": "",
-            "open_link_in_new_tab": false
-          }
-        },
-        "image_iAq4ga": {
-          "type": "image",
-          "settings": {
-            "image_link": "",
-            "open_link_in_new_tab": false
-          }
-        },
-        "image_87xRz8": {
-          "type": "image",
-          "settings": {
-            "image_link": "",
-            "open_link_in_new_tab": false
+            "maxwidth": 1080
           }
         }
       },
       "block_order": [
-        "image_GRA6hE",
-        "image_AKtAfW",
-        "image_TU37a6",
-        "image_bR4Yrp",
-        "image_iAq4ga",
-        "image_87xRz8"
+        "judge_me_reviews_cards_carousel_eYQzDQ",
+        "judge_me_reviews_reviews_grid_widget_dAze8h",
+        "judge_me_reviews_featured_carousel_YAEkW9"
       ],
-      "disabled": true,
       "settings": {
-        "enable_color_scheme_inheritance": true,
-        "color_scheme": "",
-        "title": "POLLHEIM",
-        "link_label": "@pollheim",
-        "link_url": "/",
-        "animation_movement_speed": 30,
         "container_width": "inherit",
-        "offset_top_desktop": 0,
-        "offset_bottom_desktop": 30,
-        "offset_top_mobile": 0,
-        "offset_bottom_mobile": 30,
-        "inner_offset_top": 0,
-        "inner_offset_bottom": 30,
-        "inner_offset_top_mobile": 0,
-        "inner_offset_bottom_mobile": 30
+        "offset_top_desktop": 25,
+        "offset_bottom_desktop": 25,
+        "offset_top_mobile": 25,
+        "offset_bottom_mobile": 25
       }
     },
     "17750267326e0f0e2a": {
@@ -1152,21 +692,18 @@
     "banner_HXA8gf",
     "177503541480b98d44",
     "177493990334c4d3df",
+    "custom_liquid_divider",
     "featured_products",
-    "trends_products",
-    "collections_carousel",
+    "featured_products_jAK3WU",
+    "custom_liquid_divider_2",
+    "hunting_collections",
+    "image_with_text_URwaUB",
+    "image_with_text_gRLEPG",
     "product_banner_A3ERjK",
     "video",
     "featured_products_ENKafe",
-    "featured_products_EbHnaf",
-    "featured_product",
-    "product_features",
-    "ticker",
-    "featured_blog",
-    "image_with_text",
-    "banner",
-    "featured-collection",
-    "social_gallery",
+    "featured_products_g7L8kB",
+    "17755869487c283f8c",
     "17750267326e0f0e2a",
     "1775032435c9d00d32",
     "17750326895aaa024b",

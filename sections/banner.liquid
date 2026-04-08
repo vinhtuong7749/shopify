@@ -467,6 +467,59 @@
 		{{- banner -}}
 	</section>
 
+	<style>
+		@media (min-width: 992px) {
+			#shopify-section-{{ section.id }} .banner__content {
+				/* Use schema alignment settings */
+				padding-right: 0 !important; 
+				padding-bottom: 0px !important;
+				align-items: var(--banner-inner-content-alignment) !important;
+				text-align: var(--banner-inner-content-alignment) !important;
+				margin-right: 2%; 
+				width: 37%; 
+				transform: translate(15px, 20px); 
+			}
+			#shopify-section-{{ section.id }} .banner__text {
+				font-size: {{ section.settings.custom_font_size }}px; 
+				font-weight: 500;
+				letter-spacing: 0.5px;
+			}
+			#shopify-section-{{ section.id }} .banner__buttons {
+				justify-content: var(--banner-buttons-alignment-desktop, flex-start) !important;
+				width: 100%;
+			}
+			#shopify-section-{{ section.id }} .banner__button {
+				font-size: 14px; 
+				padding: 16px 40px;
+				margin-top: 20px;
+			}
+		}
+		/* Mobile: 4:5 aspect ratio and alignment overrides */
+		@media (max-width: 767px) {
+			#shopify-section-{{ section.id }} .banner__content {
+				align-items: var(--banner-inner-content-alignment-mobile) !important;
+				text-align: var(--banner-inner-content-alignment-mobile) !important;
+			}
+			#shopify-section-{{ section.id }} .banner__buttons {
+				justify-content: var(--banner-buttons-alignment-mobile, flex-start) !important;
+				width: 100%;
+			}
+			#shopify-section-{{ section.id }} .banner__wrapper {
+				aspect-ratio: 4 / 5;
+				min-height: unset !important;
+			}
+			#shopify-section-{{ section.id }} .banner__wrapper .banner__media,
+			#shopify-section-{{ section.id }} .banner__wrapper .banner__media-wrapper {
+				position: absolute;
+				top: 0; left: 0; width: 100%; height: 100%;
+			}
+			#shopify-section-{{ section.id }} .banner__wrapper {
+				position: relative;
+				overflow: hidden;
+			}
+		}
+	</style>
+
 	{%- if is_script_needed == true -%}
 		{%- render 'adastra' with '/src/scripts/section-banner.js' -%}
 	{%- endif -%}
@@ -1176,19 +1229,19 @@
 		{
 			"type": "select",
 			"id": "content_alignment",
-			"label": "Text alignment desktop",
+			"label": "Căn lề nội dung (Desktop)",
 			"options": [
 				{
 					"value": "left",
-					"label": "Left"
+					"label": "Trái"
 				},
 				{
 					"value": "center",
-					"label": "Center"
+					"label": "Giữa"
 				},
 				{
 					"value": "right",
-					"label": "Right"
+					"label": "Phải"
 				}
 			],
 			"default": "center"
@@ -1196,19 +1249,19 @@
 		{
 			"type": "select",
 			"id": "content_alignment_mobile",
-			"label": "Text alignment mobile",
+			"label": "Căn lề nội dung (Mobile)",
 			"options": [
 				{
 					"value": "left",
-					"label": "Left"
+					"label": "Trái"
 				},
 				{
 					"value": "center",
-					"label": "Center"
+					"label": "Giữa"
 				},
 				{
 					"value": "right",
-					"label": "Right"
+					"label": "Phải"
 				}
 			],
 			"default": "center"
@@ -1272,6 +1325,50 @@
 				}
 			],
 			"default": "center"
+		},
+		{
+			"type": "header",
+			"content": "Advanced Custom Positioning (Desktop)"
+		},
+		{
+			"type": "range",
+			"id": "custom_margin_left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "%",
+			"label": "Content Margin Left",
+			"default": 50
+		},
+		{
+			"type": "range",
+			"id": "custom_margin_right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "%",
+			"label": "Content Margin Right",
+			"default": 5
+		},
+		{
+			"type": "range",
+			"id": "custom_width",
+			"min": 10,
+			"max": 100,
+			"step": 1,
+			"unit": "%",
+			"label": "Content Width",
+			"default": 45
+		},
+		{
+			"type": "range",
+			"id": "custom_font_size",
+			"min": 12,
+			"max": 40,
+			"step": 1,
+			"unit": "px",
+			"label": "Custom Text Font Size",
+			"default": 22
 		},
 		{
 			"type": "header",

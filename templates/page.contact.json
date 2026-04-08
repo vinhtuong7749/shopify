@@ -8,268 +8,89 @@
  * ------------------------------------------------------------
  */
 {
-	"sections": {
-		"banner": {
-			"type": "banner",
-			"settings": {
-				"desktop_image_height": "500px",
-				"mobile_image_height": "400px",
-				"media_type": "image",
-				"title": "Contact us",
-				"text": "",
-				"button_label_1": "Button label",
-				"button_label_2": "Button label",
-				"show_breadcrumbs": true,
-				"enable_timer": false,
-				"timer_month": "0",
-				"timer_day": "1",
-				"timer_hour": "0",
-				"timer_timezone": "+0",
-				"timer_background": "rgba(255,255,255, 0.12)",
-				"timer_color": "#ffffff",
-				"content_alignment": "center",
-				"content_alignment_mobile": "center",
-				"block_alignment": "center",
-				"block_alignment_vertical": "center",
-				"block_alignment_vertical_mob": "center",
-				"section_background": "#e7e7e7",
-				"overlay": "rgba(0,0,0, 0.3)",
-				"text_color": "#ffffff",
-				"button_background_1": "#ffffff",
-				"button_color_1": "#000000",
-				"button_border_1": "#ffffff",
-				"button_background_hover_1": "#000000",
-				"button_color_hover_1": "#ffffff",
-				"button_border_hover_1": "#ffffff",
-				"button_background_2": "#ffffff",
-				"button_color_2": "#000000",
-				"button_border_2": "#ffffff",
-				"button_background_hover_2": "#000000",
-				"button_color_hover_2": "#ffffff",
-				"button_border_hover_2": "#ffffff",
-				"container_width": "100%",
-				"offset_top_desktop": 0,
-				"offset_bottom_desktop": 25,
-				"offset_top_mobile": 0,
-				"offset_bottom_mobile": 25
-			}
-		},
-		"store-location": {
-			"type": "store-location",
-			"blocks": {
-				"location_1": {
-					"type": "contact_info",
-					"settings": {
-						"item_heading": "Address:",
-						"item_text": "<a href=\"https://www.google.com/maps\" title=\"https://www.google.com/maps\">2205 Rosewood Lane</a>"
-					}
-				},
-				"location_2": {
-					"type": "contact_info",
-					"settings": {
-						"item_heading": "Phone:",
-						"item_text": "<a href=\"tel:(212) 555-7823\" title=\"tel:(212) 555-7823\">(212) 555-7823</a>"
-					}
-				},
-				"location_3": {
-					"type": "contact_info",
-					"settings": {
-						"item_heading": "Email:",
-						"item_text": "<a href=\"mailto:justin@pollheim.au\" title=\"mailto:justin@pollheim.au\">justin@pollheim.au</a>"
-					}
-				},
-				"location_4": {
-					"type": "contact_info",
-					"settings": {
-						"item_heading": "Work schedule:",
-						"item_text": "Mn - Fr. 8:00-17:00"
-					}
-				}
-			},
-			"block_order": [
-				"location_1",
-				"location_2",
-				"location_3",
-				"location_4"
-			],
-			"settings": {
-				"enable_color_scheme_inheritance": true,
-				"color_scheme": "",
-				"heading": "Still need help?",
-				"description": "<p>To live inspired, is to live a life true to your values, a life that’s meaningful, and a life of purpose. </p>",
-				"container_width": "inherit",
-				"offset_top_desktop": 25,
-				"offset_bottom_desktop": 25,
-				"offset_top_mobile": 25,
-				"offset_bottom_mobile": 25,
-				"inner_offset_top": 25,
-				"inner_offset_bottom": 25,
-				"inner_offset_top_mobile": 25,
-				"inner_offset_bottom_mobile": 25
-			}
-		},
-		"stores-locator": {
-			"type": "stores-locator",
-			"blocks": {
-				"store_1": {
-					"type": "store",
-					"settings": {
-						"block_title": "Sharp Threads Menswear",
-						"block_text": "1845 Lexington AveChicago, IL 60614",
-						"phone_text": "<a href=\"tel:(213) 443 6364\" title=\"tel:(213) 443 6364\">(213) 443 6364</a>",
-						"schedule_text": "Monday - Friday, 8am - 5pm Eastern",
-						"google_map_api_key": "",
-						"map_query": "Eiffel+Tower,Paris+France"
-					}
-				},
-				"store_2": {
-					"type": "store",
-					"settings": {
-						"block_title": "Dapper & Co. Suits",
-						"block_text": "7205 Main StreetDallas, TX 75201",
-						"phone_text": "<a href=\"tel:(213) 443 6364\" title=\"tel:(213) 443 6364\">(213) 443 6364</a>",
-						"schedule_text": "Monday - Friday, 6am - 3pm Eastern",
-						"map_query": "Eiffel+Tower,Paris+France"
-					}
-				},
-				"store_3": {
-					"type": "store",
-					"settings": {
-						"block_title": "Elite Tailors & Suits",
-						"block_text": "3120 Sunset BlvdLos Angeles, CA 90026",
-						"phone_text": "<a href=\"tel:(213) 443 6364\" title=\"tel:(213) 443 6364\">(213) 443 6364</a>",
-						"schedule_text": "Monday - Friday, 10am - 6pm Eastern",
-						"map_query": "Eiffel+Tower,Paris+France"
-					}
-				},
-				"store_4": {
-					"type": "store",
-					"settings": {
-						"block_title": "Prestige Men's Suits",
-						"block_text": "2587 Broadway AveNew York, NY 10025",
-						"phone_text": "<a href=\"tel:(213) 443 6364\" title=\"tel:(213) 443 6364\">(213) 443 6364</a>",
-						"schedule_text": "Monday - Friday, 10am - 6pm Eastern",
-						"map_query": "Eiffel+Tower,Paris+France"
-					}
-				},
-				"store_bz3mep": {
-					"type": "store",
-					"settings": {
-						"block_title": "Gentleman's Choice Suits",
-						"block_text": "1460 Oakwood Blvd Miami, FL 33139",
-						"phone_text": "<a href=\"tel:(305) 555-9234\" title=\"tel:(305) 555-9234\">(305) 555-9234</a>",
-						"schedule_text": "Monday - Friday, 10am - 6pm Eastern",
-						"map_query": "Eiffel+Tower,Paris+France"
-					}
-				}
-			},
-			"block_order": [
-				"store_1",
-				"store_2",
-				"store_3",
-				"store_4",
-				"store_bz3mep"
-			],
-			"settings": {
-				"enable_color_scheme_inheritance": true,
-				"color_scheme": "",
-				"title": "Our Stores",
-				"container_width": "inherit",
-				"offset_top_desktop": 40,
-				"offset_bottom_desktop": 0,
-				"offset_top_mobile": 25,
-				"offset_bottom_mobile": 25,
-				"inner_offset_top": 30,
-				"inner_offset_bottom": 60,
-				"inner_offset_top_mobile": 30,
-				"inner_offset_bottom_mobile": 30
-			}
-		},
-		"contact-form": {
-			"type": "contact-form",
-			"settings": {
-				"enable_color_scheme_inheritance": true,
-				"color_scheme": "",
-				"heading": "Feel Free to Contact Us",
-				"text": "<p>Get the help you need, when you need it. Contact our support team now!</p>",
-				"terms_text": "By pressing the button <em>\"Send Request\"</em>, you confirm that you have read and are agreeing to our <strong>Terms of Use</strong> regarding the storage of the data submitted through this form.",
-				"name_placeholder": "Enter your name",
-				"email_placeholder": "Enter your Email *",
-				"phone_placeholder": "Enter your phone number",
-				"message_placeholder": "Enter your message",
-				"submit_label": "Send request",
-				"success_message": "Thanks for contacting us. We'll get back to you as soon as possible!",
-				"container_width": "inherit",
-				"offset_top_desktop": 0,
-				"offset_bottom_desktop": 0,
-				"offset_top_mobile": 30,
-				"offset_bottom_mobile": 30,
-				"inner_offset_top": 30,
-				"inner_offset_bottom": 60,
-				"inner_offset_top_mobile": 30,
-				"inner_offset_bottom_mobile": 30
-			}
-		},
-		"social_gallery_dNwTd4": {
-			"type": "social-gallery",
-			"blocks": {
-				"image_LU4KnE": {
-					"type": "image",
-					"settings": {}
-				},
-				"image_rbPRf3": {
-					"type": "image",
-					"settings": {}
-				},
-				"image_fUU7ea": {
-					"type": "image",
-					"settings": {}
-				},
-				"image_kVKx73": {
-					"type": "image",
-					"settings": {}
-				},
-				"image_mDyKNM": {
-					"type": "image",
-					"settings": {}
-				},
-				"image_Eq7QNA": {
-					"type": "image",
-					"settings": {}
-				}
-			},
-			"block_order": [
-				"image_LU4KnE",
-				"image_rbPRf3",
-				"image_fUU7ea",
-				"image_kVKx73",
-				"image_mDyKNM",
-				"image_Eq7QNA"
-			],
-			"settings": {
-				"enable_color_scheme_inheritance": true,
-				"color_scheme": "",
-				"title": "POLLHEIM",
-				"link_label": "@pollheim",
-				"link_url": "/",
-				"animation_movement_speed": 20,
-				"container_width": "inherit",
-				"offset_top_desktop": 30,
-				"offset_bottom_desktop": 60,
-				"offset_top_mobile": 30,
-				"offset_bottom_mobile": 30,
-				"inner_offset_top": 30,
-				"inner_offset_bottom": 30,
-				"inner_offset_top_mobile": 30,
-				"inner_offset_bottom_mobile": 30
-			}
-		}
-	},
-	"order": [
-		"banner",
-		"store-location",
-		"stores-locator",
-		"contact-form",
-		"social_gallery_dNwTd4"
-	]
+  "sections": {
+    "tactical_contact": {
+      "type": "page-contact-tactical",
+      "blocks": {
+        "chat": {
+          "type": "info_card",
+          "settings": {
+            "icon": "chat_bubble",
+            "title": "CHAT",
+            "subtitle": "MON - FRI: 9AM - 5PM CST",
+            "action_text": "CHAT N/A",
+            "action_url": "",
+            "is_button": false,
+            "bg_color": "#1a1a1a",
+            "text_color": "#ffffff"
+          }
+        },
+        "email": {
+          "type": "info_card",
+          "settings": {
+            "icon": "mail",
+            "title": "EMAIL",
+            "subtitle": "HQ@IRONGARRISON.COM",
+            "action_text": "EMAIL US",
+            "action_url": "mailto:hq@irongarrison.com",
+            "is_button": true,
+            "bg_color": "#000000",
+            "text_color": "#ffffff"
+          }
+        },
+        "call": {
+          "type": "info_card",
+          "settings": {
+            "icon": "phone",
+            "title": "CALL US",
+            "subtitle": "MON - FRI: 9AM - 5PM CST",
+            "action_text": "877-554-7868",
+            "action_url": "tel:877-554-7868",
+            "is_button": false,
+            "bg_color": "#121212",
+            "text_color": "#ffffff"
+          }
+        },
+        "location_1": {
+          "type": "location",
+          "settings": {
+            "label": "HQ COORDINATES",
+            "address": "123 TACTICAL WAY, SECTOR 7G,\nINDUSTRIAL DISTRICT, TX 78701"
+          }
+        },
+        "location_2": {
+          "type": "location",
+          "settings": {
+            "label": "REGIONAL OUTPOST",
+            "address": "99 LOGISTIC HUB, BAY 14,\nWEST COAST SECTOR"
+          }
+        }
+      },
+      "block_order": [
+        "chat",
+        "email",
+        "call",
+        "location_1",
+        "location_2"
+      ],
+      "settings": {
+        "title": "CONTACT US",
+        "protocol_id": "PROTOCOL ID: IG-B824-XT",
+        "header_bg_color": "#000000",
+        "header_text_color": "#ffffff",
+        "locations_heading": "OFFICE LOCATIONS",
+        "show_map": true,
+        "form_subtitle": "DIRECT LINE",
+        "form_heading": "FIELD REPORT",
+        "label_name": "OPERATOR NAME",
+        "label_email": "EMAIL ADDRESS",
+        "label_subject": "SUBJECT \/ PROTOCOL",
+        "label_message": "MESSAGE LOG",
+        "label_submit": "SEND MESSAGE"
+      }
+    }
+  },
+  "order": [
+    "tactical_contact"
+  ]
 }

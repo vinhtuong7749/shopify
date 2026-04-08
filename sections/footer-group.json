@@ -49,7 +49,7 @@
             "show_socials": true,
             "heading": "Contact",
             "email_text": "<a href=\"mailto:support@store.com\" title=\"mailto:support@store.com\">support@store.com</a>",
-            "phone_text": "<a href=\"tel:+12345678910\" title=\"tel:+12345678910\">+12345678910</a>",
+            "phone_text": "<a href=\"tel:+13072273117\" title=\"tel:+1 307-227-3117\">+1 307-227-3117</a>",
             "additional_text": "Monday - Friday, 9 am - 9 pm"
           }
         }
@@ -61,6 +61,7 @@
         "contact_6cUjxD"
       ],
       "settings": {
+        "logo_image": "shopify://shop_images/LOGO_FINAL_WEBSITE.png",
         "logo_image_width": 150,
         "copyright_text": "Copyright © %date%.",
         "is_show_payment_methods": true,

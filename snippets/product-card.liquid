@@ -11,6 +11,21 @@
 	------------------------------------------------------------------------------
 {%- endcomment -%}
 
+{%- if product.handle == 'shipping-protection-apparel' -%}
+  <script>
+    (function(){
+      var el = document.currentScript;
+      if (el) {
+        var wrapper = el.closest('.collection__item, .swiper-slide, .grid__item, .product-card-container, li');
+        if (wrapper) {
+          wrapper.remove();
+        } else if (el.parentElement) {
+          el.parentElement.style.display = 'none';
+        }
+      }
+    })();
+  </script>
+{%- else -%}
 {%- render 'adastra' with '/src/styles/product-card.scss' -%}
 
 {%- assign is_show_first_media_image = settings.is_show_first_media_image -%}
@@ -352,6 +367,8 @@
 			</a>
 		{%- endif -%}
 
+		{%- comment -%} 
+			Native quick view removed.
 		{%- if quick_view_enabled and product.available -%}
 			{%- if product.has_only_default_variant or product.variants.size == 1 -%}
 				{%- assign button_label = add_to_cart_label -%}
@@ -376,6 +393,7 @@
 				{%- render 'icons', icon: 'loader' -%}
 			</button>
 		{%- endif -%}
+		{%- endcomment -%}
 	</div>
 
 	<div class="product-card__footer" style="text-align: left; padding: 15px 0;">
@@ -401,7 +419,7 @@
 			</div>
 		{%- endif -%}
 
-		<div class="product-card__price" style="font-family: 'Oswald', sans-serif; font-size: 11px; color: #2c3d33; margin-bottom: 12px;">
+		<div class="product-card__price" style="font-family: 'Oswald', sans-serif; font-size: 13px; color: #2c3d33; margin-bottom: 12px;">
 			{%- render 'price', product: product, show_unit_price: show_unit_price, currency_code_enabled: currency_code_enabled -%}
 		</div>
 
@@ -423,7 +441,6 @@
 		{%- endif -%}
 
 		<input type="hidden" class="js-product-card-min-value" value="{{- product.selected_or_first_available_variant.quantity_rule.min -}}">
-
 		{%- if product != blank -%}
 			<button
 				class="product-card__custom-quick-add js-product-card-quick-view-button"
@@ -519,7 +536,57 @@
 	.product-card .product-card__swatch-button:nth-child(1n+3) {
 		display: inline-flex !important;
 	}
+
+	/* ============================================
+	   PRODUCT CARD: force price text to be sharp
+	   ============================================ */
+	.product-card__price,
+	.product-card__price *,
+	.product-card__price .price,
+	.product-card__price .price *,
+	.product-card__price .price__container,
+	.product-card__price .price__sale,
+	.product-card__price .price__regular,
+	.product-card__price .price-item,
+	.product-card__price .price-item--sale,
+	.product-card__price .price-item--regular {
+		opacity: 1 !important;
+		visibility: visible !important;
+		color: inherit !important;
+	}
+
+	/* Sale price RED */
+	.product-card__price .price--on-sale .price-item--sale,
+	.product-card__price .price-item--sale {
+		color: #c0392b !important;
+		font-weight: 700 !important;
+	}
+
+	/* Compare-at price — dark gray, readable */
+	.product-card__price .price--on-sale .price-item--regular {
+		color: #777777 !important;
+		font-weight: 400 !important;
+	}
+
+	/* Regular price — dark */
+	.product-card__price .price-item--regular {
+		color: #2c3d33 !important;
+	}
+
+	/* Enforce rounded product images everywhere (desktop & mobile) */
+	.product-card__image-wrapper {
+		border-radius: 8px !important;
+		overflow: hidden !important;
+	}
+	.product-card__image-picture {
+		border-radius: 8px !important;
+		overflow: hidden !important;
+	}
+	.product-card__image {
+		border-radius: 8px !important;
+	}
 </style>
+{%- endif -%}
 
 
 

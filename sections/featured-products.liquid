@@ -87,14 +87,11 @@
 					<div class="featured-products__header-inner">
 						{%- if is_link -%}
 							<a
-								class="button-link"
-								href="{{- link_url -}}"
+								href="{{- routes.all_products_collection_url -}}"
+								class="featured-products__see-all-custom"
 							>
-								<span data-text="{{- link_label -}}">
-									<span>
-										{{- link_label -}}
-									</span>
-								</span>
+								{{- link_label -}}
+								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 4px; position: relative; top: 1px;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
 							</a>
 						{%- endif -%}
 
@@ -137,6 +134,9 @@
 
 					{%- assign _counter = 0 -%}
 					{%- for product in items -%}
+						{%- unless product.selected_or_first_available_variant.requires_shipping -%}
+							{%- continue -%}
+						{%- endunless -%}
 						{%- assign _counter = _counter | plus: 1 -%}
 						{%- if _counter == 1 -%}
 							<div class="featured-products__col {% if is_swiper %}swiper-slide js-featured-products-slide{% else %}featured-grid-page{% endif %}">
@@ -191,8 +191,121 @@
 				{%- endif -%}
 			</div>
 		</div>
+
+		{%- comment -%} Bottom See All button {%- endcomment -%}
+		{%- if is_link -%}
+		<div class="featured-products__bottom-see-all">
+			<a class="featured-products__see-all-custom" href="{{- routes.all_products_collection_url -}}">
+				{{- link_label -}}
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 4px; position: relative; top: 1px;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+			</a>
+		</div>
+		{%- endif -%}
+
 	</div>
 </section>
+
+<style>
+.featured-products__header-inner {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+.featured-products__see-all-custom {
+	display: inline-flex;
+	align-items: center;
+	font-family: 'Oswald', sans-serif;
+	font-size: 16px;
+	font-weight: 500;
+	color: #2c3d33;
+	text-decoration: none;
+	transition: opacity 0.2s ease;
+}
+.featured-products__see-all-custom:hover {
+	opacity: 0.7;
+}
+
+/* Bottom See all button */
+.featured-products__bottom-see-all {
+	display: flex;
+	justify-content: center;
+	margin-top: 20px;
+}
+</style>
+
+{%- comment -%} Mobile-only: Featured products grid layout {%- endcomment -%}
+{%- if is_swiper -%}
+{%- capture heading_text -%}{{ heading | strip_html | strip }}{%- endcapture -%}
+{%- if heading_text contains 'Popular Products' -%}
+	{%- assign mobile_product_limit = 7 -%}
+{%- else -%}
+	{%- assign mobile_product_limit = 5 -%}
+{%- endif -%}
+<style>
+	@media screen and (max-width: 767px) {
+		#shopify-section-{{ section.id }} .featured-products__slider {
+			overflow: visible !important;
+			cursor: default !important;
+		}
+		#shopify-section-{{ section.id }} .featured-products__row {
+			display: grid !important;
+			grid-template-columns: 1fr 1fr !important;
+			gap: 16px 12px !important;
+			transform: none !important;
+			transition: none !important;
+			flex-wrap: unset !important;
+			overflow: visible !important;
+		}
+		#shopify-section-{{ section.id }} .featured-products__col {
+			width: 100% !important;
+			margin: 0 !important;
+			flex-shrink: unset !important;
+		}
+		/* Hide products beyond limit */
+		#shopify-section-{{ section.id }} .featured-products__col:nth-child(n+{{ mobile_product_limit }}) {
+			display: none !important;
+		}
+		/* Hide swiper arrows on mobile */
+		#shopify-section-{{ section.id }} .featured-products__buttons-wrapper {
+			display: none !important;
+		}
+		/* Truncate product title for grid cards */
+		#shopify-section-{{ section.id }} .product-card__title {
+			display: -webkit-box !important;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			white-space: normal !important;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+		/* Override any swiper pagination/scrollbar */
+		#shopify-section-{{ section.id }} .swiper-pagination,
+		#shopify-section-{{ section.id }} .swiper-scrollbar {
+			display: none !important;
+		}
+		/* Soften product card images on mobile */
+		#shopify-section-{{ section.id }} .product-card__image img {
+			filter: brightness(1.03) contrast(0.95) saturate(0.92);
+		}
+		#shopify-section-{{ section.id }} .product-card__image {
+			border-radius: 10px;
+			overflow: hidden;
+		}
+	}
+	}
+</style>
+<script>
+	/* On mobile: prevent swiper from initializing by removing trigger class */
+	(function() {
+		if (window.matchMedia('(max-width: 767px)').matches) {
+			var section = document.getElementById('{{ section.id }}');
+			if (section) {
+				section.classList.remove('js-featured-products');
+			}
+		}
+	})();
+</script>
+{%- endif -%}
 
 {%- if items_count > 1 or items == blank -%}
 	{%- render 'adastra' with '/src/scripts/section-featured-products.js' -%}

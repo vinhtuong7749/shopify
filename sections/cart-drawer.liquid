@@ -34,6 +34,29 @@
 
 	{%- assign shipping_included = false -%}
 
+	{%- comment -%} Extract shipping bar to render at top {%- endcomment -%}
+	{%- capture shipping_bar_content -%}
+		{%- for block in section.blocks -%}
+			{%- if block.type == 'shipping' -%}
+				{%- assign amount = 70 -%} {%- comment -%} Forced to 70 to fix $1000 issue {%- endcomment -%}
+				{%- assign message = block.settings.message -%}
+				{%- assign congratulatory_message = block.settings.congratulatory_message -%}
+				{%- assign congratulatory_image = block.settings.icon -%}
+				{%- assign bar_color = block.settings.bar_color -%}
+				{%- assign fill_color = block.settings.fill_color -%}
+				{%- render 'cart-shipping',
+					amount: amount,
+					message: message,
+					congratulatory_message: congratulatory_message,
+					congratulatory_image: congratulatory_image,
+					bar_color: bar_color,
+					fill_color: fill_color
+				-%}
+				{%- assign shipping_included = true -%}
+			{%- endif -%}
+		{%- endfor -%}
+	{%- endcapture -%}
+
 	{%- capture content -%}
 		{%- for block in section.blocks -%}
 			{%- case block.type -%}
@@ -49,32 +72,6 @@
 							</form>
 						</div>
 					</div>
-				{%- when 'shipping' -%}
-					{%- assign amount  = block.settings.amount -%}
-					{%- assign message = block.settings.message -%}
-					{%- assign congratulatory_message = block.settings.congratulatory_message -%}
-					{%- assign congratulatory_image = block.settings.icon -%}
-					{%- assign bar_color = block.settings.bar_color -%}
-					{%- assign fill_color = block.settings.fill_color -%}
-
-					{%- capture shipping_content -%}
-						{%- render 'cart-shipping',
-							amount: amount,
-							message: message,
-							congratulatory_message: congratulatory_message,
-							congratulatory_image: congratulatory_image,
-							bar_color: bar_color,
-							fill_color: fill_color
-						-%}
-					{%- endcapture -%}
-
-					{%- if shipping_content != '' -%}
-						<div class="cart-drawer__section cart-drawer__section--shipping">
-							{%- assign shipping_included = true -%}
-
-							{{- shipping_content -}}
-						</div>
-					{%- endif -%}
 			{%- endcase -%}
 		{%- endfor -%}
 	{%- endcapture -%}
@@ -129,27 +126,9 @@
 	aria-labelledby="CartDrawer-{{- heading | handle -}}"
 >
 	<div class="drawer__header js-cart-header">
-		{% if upsell_products != blank and upsell != blank %}
-			<div class="cart-drawer__header-tabs">
-				<h2 class="h4" id="CartDrawer-{{- heading | handle -}}">
-					<button class="cart-drawer__header-tab-button button-link h4 is-active focus-visible-outline js-cart-drawer-tab-button" data-tab-content="cart-drawer-main-content">
-						<span data-text="{{- heading -}}">
-							<span>{{- heading -}}</span>
-						</span>
-						</button>
-					</h2>
-
-					<button class="cart-drawer__header-tab-button button-link h4 focus-visible-outline js-cart-drawer-tab-button" data-tab-content="CartUpsellDrawer">
-						<span data-text="{{- upsell_heading -}}">
-							<span>{{- upsell_heading -}}</span>
-						</span>
-					</button>
-				</div>
-			{% else %}
-				<h2 class="drawer__title cart-drawer__title-empty h4" id="CartDrawer-{{- heading | handle -}}">
-					{{- heading -}}
-				</h2>
-			{% endif %}
+		<h2 class="drawer__title cart-drawer__title-empty h4" id="CartDrawer-{{- heading | handle -}}">
+			{{- heading -}}
+		</h2>
 
 			<button
 				class="drawer__close focus-visible-outline js-cart-close-button"
@@ -167,11 +146,24 @@
 				{%- render 'cart-empty' -%}
 			{%- else -%}
 				{%- if content != '' -%}
-					<div id="cart-drawer-main-content" class="cart-drawer__tab-content js-cart-drawer-tab-content">
-						{{- content -}}
-					</div>
+					<div id="cart-drawer-main-content">
+						{%- comment -%} Shipping bar at top {%- endcomment -%}
+						{%- if shipping_bar_content != '' -%}
+							<div class="cart-drawer__section cart-drawer__section--shipping" style="padding: 12px 16px; margin: 8px 16px 12px; background: #f5f3ef; border-radius: 10px;">
+								{{- shipping_bar_content -}}
+							</div>
+						{%- endif -%}
 
-						{{ upsell }}
+						{{- content -}}
+
+						{%- comment -%} Inline upsell after items {%- endcomment -%}
+						{%- if upsell_products != blank -%}
+							<div class="cart-drawer__section cart-drawer__section--upsell" style="padding: 16px; margin: 12px 16px 8px; background: #f5f3ef; border-radius: 10px;">
+								<h3 style="font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 700; text-transform: uppercase; color: #2c3d33; letter-spacing: 0.5px; margin: 0 0 12px 0;">{{ upsell_heading }}</h3>
+								{%- render 'cart-upsell', products: upsell_products, heading: '' -%}
+							</div>
+						{%- endif -%}
+					</div>
 					{%- endif -%}
 				{%- endif -%}
 			</div>
@@ -273,7 +265,7 @@
 					"type": "number",
 					"id": "amount",
 					"label": "Free shipping amount",
-					"default": 100
+					"default": 70
 				},
 				{
 					"type": "textarea",

@@ -15,6 +15,11 @@
 	<span aria-hidden="true" class="product-breadcrumbs__separator">·</span>
 {% endcapture %}
 
+<style>
+	@media (max-width: 767.98px) {
+		.product-breadcrumbs { display: none !important; }
+	}
+</style>
 <nav
 	class="product-breadcrumbs"
 	aria-label="{{ 'general.breadcrumbs.title' | t | escape }}"

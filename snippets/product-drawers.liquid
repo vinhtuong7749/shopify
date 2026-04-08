@@ -235,6 +235,45 @@
 		{%- if product.description != blank -%}
 			{%- assign desc_id = 'desc-' | append: section.id -%}
 			{%- assign desc_content = product.description | replace: '<img', '<img loading="lazy"' -%}
+
+			{%- comment -%} Remove product title from description {%- endcomment -%}
+			{%- assign title_strong = '<strong>' | append: product.title | append: '</strong>' -%}
+			{%- assign title_b = '<b>' | append: product.title | append: '</b>' -%}
+			{%- assign title_em = '<em>' | append: product.title | append: '</em>' -%}
+			{%- assign desc_content = desc_content | replace: title_strong, '' -%}
+			{%- assign desc_content = desc_content | replace: title_b, '' -%}
+			{%- assign desc_content = desc_content | replace: title_em, '' -%}
+			{%- assign desc_content = desc_content | replace: product.title, '' -%}
+
+			{%- comment -%} Remove the first meaningful paragraph (already shown as short description) {%- endcomment -%}
+			{%- if desc_content contains '</p>' -%}
+				{%- assign desc_paragraphs = desc_content | split: '</p>' -%}
+				{%- assign first_real_para_index = -1 -%}
+				{%- for para in desc_paragraphs -%}
+					{%- assign para_check = para | strip_html | strip -%}
+					{%- assign para_check_size = para_check | size -%}
+					{%- if first_real_para_index == -1 and para_check_size > 10 -%}
+						{%- assign first_real_para_index = forloop.index0 -%}
+					{%- endif -%}
+				{%- endfor -%}
+
+				{%- capture desc_without_intro -%}
+					{%- for para in desc_paragraphs -%}
+						{%- if forloop.index0 != first_real_para_index -%}
+							{%- assign para_text = para | strip_html | strip -%}
+							{%- assign para_text_size = para_text | size -%}
+							{%- if para_text_size > 0 -%}
+								{{ para | append: '</p>' }}
+							{%- endif -%}
+						{%- endif -%}
+					{%- endfor -%}
+				{%- endcapture -%}
+				{%- assign desc_content = desc_without_intro | strip -%}
+			{%- endif -%}
+
+			{%- comment -%} Clean up empty tags {%- endcomment -%}
+			{%- assign desc_content = desc_content | replace: '<p></p>', '' | replace: '<p> </p>', '' | strip -%}
+
 			{%- render 'product-accordion',
 				title: 'DESCRIPTION',
 				content: desc_content,
@@ -243,39 +282,340 @@
 			-%}
 		{%- endif -%}
 
-		{% capture sizeguide_content %}
-		<div class="product-accordion__table-wrapper">
-		  <table class="product-accordion__table">
-			<thead>
-			  <tr>
-				<th>Size</th>
-				<th>Chest (in)</th>
-				<th>Length (in)</th>
-				<th>Sleeve (in)</th>
-			  </tr>
-			</thead>
-			<tbody>
-			  <tr><td>S</td><td>18</td><td>28</td><td>15.1</td></tr>
-			  <tr><td>M</td><td>20</td><td>29</td><td>16.5</td></tr>
-			  <tr><td>L</td><td>22</td><td>30</td><td>18</td></tr>
-			  <tr><td>XL</td><td>24</td><td>31</td><td>19.5</td></tr>
-			  <tr><td>XXL</td><td>26</td><td>32</td><td>21</td></tr>
-			  <tr><td>3XL</td><td>28</td><td>33</td><td>22.4</td></tr>
-			</tbody>
-		  </table>
+		{%- comment -%} SIZE GUIDE - Full Page Overlay Trigger {%- endcomment -%}
+		<div class="product-accordion__item">
+			<button
+				class="product-accordion__trigger"
+				type="button"
+				aria-expanded="false"
+				onclick="document.getElementById('size-chart-overlay').classList.add('is-active'); document.body.style.overflow='hidden';"
+			>
+				<span>SIZE GUIDE</span>
+				<span class="product-accordion__trigger-icon">
+					<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<line x1="0" y1="6" x2="12" y2="6" stroke="currentColor" stroke-width="1.5"/>
+						<line class="product-accordion__icon-vertical" x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5"/>
+					</svg>
+				</span>
+			</button>
 		</div>
-		{% endcapture %}
 
-		{%- render 'product-accordion',
-			title: 'SIZE GUILD',
-			content: sizeguide_content,
-			accordion_id: 'sg-hardcoded',
-			open: false
-		-%}
+		{%- comment -%} SIZE CHART OVERLAY {%- endcomment -%}
+		<div id="size-chart-overlay" class="size-chart-overlay">
+			<div class="size-chart-overlay__backdrop" onclick="document.getElementById('size-chart-overlay').classList.remove('is-active'); document.body.style.overflow='';"></div>
+			<div class="size-chart-overlay__panel">
+				<div class="size-chart-overlay__header">
+					<h2 class="size-chart-overlay__title">SIZE GUIDE</h2>
+					<button class="size-chart-overlay__close" type="button" onclick="document.getElementById('size-chart-overlay').classList.remove('is-active'); document.body.style.overflow='';" aria-label="Close">
+						<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<line x1="2" y1="2" x2="18" y2="18" stroke="currentColor" stroke-width="2"/>
+							<line x1="18" y1="2" x2="2" y2="18" stroke="currentColor" stroke-width="2"/>
+						</svg>
+					</button>
+				</div>
 
+				{%- comment -%} Tabs {%- endcomment -%}
+				<div class="size-chart-overlay__tabs">
+					<button class="size-chart-overlay__tab is-active" data-tab="tshirt" type="button" onclick="switchSizeTab(this, 'tshirt')">T-Shirt</button>
+					<button class="size-chart-overlay__tab" data-tab="hoodie" type="button" onclick="switchSizeTab(this, 'hoodie')">Hoodie & Sweatshirt</button>
+				</div>
+
+				{%- comment -%} T-Shirt Size Chart {%- endcomment -%}
+				<div class="size-chart-overlay__content" id="size-tab-tshirt">
+					<h3 class="size-chart-overlay__subtitle">T-Shirt Size Chart</h3>
+					<p class="size-chart-overlay__note">All measurements are in <strong>inches</strong>. Sizes may vary slightly (±0.5") due to the manufacturing process.</p>
+					<div class="size-chart-overlay__table-wrap">
+						<table class="size-chart-overlay__table">
+							<thead>
+								<tr>
+									<th>Size</th>
+									<th>Width (in)</th>
+									<th>Length (in)</th>
+									<th>Sleeve (in)</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr><td>S</td><td>18</td><td>28</td><td>15.125</td></tr>
+								<tr><td>M</td><td>20</td><td>29</td><td>16.5</td></tr>
+								<tr><td>L</td><td>22</td><td>30</td><td>18</td></tr>
+								<tr><td>XL</td><td>24</td><td>31</td><td>19.5</td></tr>
+								<tr><td>2XL</td><td>26</td><td>32</td><td>21</td></tr>
+								<tr><td>3XL</td><td>28</td><td>33</td><td>22.375</td></tr>
+								<tr><td>4XL</td><td>30</td><td>34</td><td>23.675</td></tr>
+								<tr><td>5XL</td><td>32</td><td>35</td><td>25</td></tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				{%- comment -%} Hoodie & Sweatshirt Size Chart {%- endcomment -%}
+				<div class="size-chart-overlay__content" id="size-tab-hoodie" style="display:none;">
+					<h3 class="size-chart-overlay__subtitle">Sweatshirt & Hoodie Size Chart</h3>
+					<p class="size-chart-overlay__note">All measurements are in <strong>inches</strong>. Sizes may vary slightly (±0.5") due to the manufacturing process.</p>
+					<div class="size-chart-overlay__table-wrap">
+						<table class="size-chart-overlay__table">
+							<thead>
+								<tr>
+									<th>Size</th>
+									<th>Width (in)</th>
+									<th>Length (in)</th>
+									<th>Sleeve (in)</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr><td>S</td><td>20</td><td>27</td><td>33.5</td></tr>
+								<tr><td>M</td><td>22</td><td>28</td><td>34.5</td></tr>
+								<tr><td>L</td><td>24</td><td>29</td><td>35.5</td></tr>
+								<tr><td>XL</td><td>26</td><td>30</td><td>36.5</td></tr>
+								<tr><td>2XL</td><td>28</td><td>31</td><td>37.5</td></tr>
+								<tr><td>3XL</td><td>30</td><td>32</td><td>38.5</td></tr>
+								<tr><td>4XL</td><td>32</td><td>33</td><td>39.5</td></tr>
+								<tr><td>5XL</td><td>34</td><td>34</td><td>40.5</td></tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<p class="size-chart-overlay__disclaimer">
+					<em>* Measurements are taken from the garment laid flat. Actual fit may vary slightly depending on body shape and personal preference. We recommend measuring a similar garment you already own for the best fit.</em>
+				</p>
+			</div>
+		</div>
+
+		<style>
+			/* ============================================
+			   Size Chart Overlay Styles
+			   ============================================ */
+			.size-chart-overlay {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				z-index: 9999;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				pointer-events: none;
+				opacity: 0;
+				transition: opacity 0.3s ease;
+			}
+			.size-chart-overlay.is-active {
+				pointer-events: auto;
+				opacity: 1;
+			}
+			.size-chart-overlay__backdrop {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: rgba(0, 0, 0, 0.6);
+				backdrop-filter: blur(4px);
+				-webkit-backdrop-filter: blur(4px);
+			}
+			.size-chart-overlay__panel {
+				position: relative;
+				z-index: 1;
+				background: var(--color-bg-primary, #faf6ee);
+				width: 94%;
+				max-width: 560px;
+				max-height: 90vh;
+				overflow-y: auto;
+				border-radius: 0;
+				padding: 32px 28px;
+				transform: translateY(20px);
+				transition: transform 0.3s ease;
+			}
+			.size-chart-overlay.is-active .size-chart-overlay__panel {
+				transform: translateY(0);
+			}
+			.size-chart-overlay__header {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				margin-bottom: 24px;
+				padding-bottom: 16px;
+				border-bottom: 2px solid var(--color-text-primary, #203224);
+			}
+			.size-chart-overlay__title {
+				font-family: 'Oswald', sans-serif;
+				font-size: 22px;
+				font-weight: 700;
+				letter-spacing: 0.1em;
+				text-transform: uppercase;
+				color: var(--color-text-primary, #203224);
+				margin: 0;
+			}
+			.size-chart-overlay__close {
+				background: none;
+				border: none;
+				cursor: pointer;
+				padding: 4px;
+				color: var(--color-text-primary, #203224);
+				transition: opacity 0.2s;
+			}
+			.size-chart-overlay__close:hover { opacity: 0.6; }
+
+			/* Tabs */
+			.size-chart-overlay__tabs {
+				display: flex;
+				gap: 0;
+				margin-bottom: 24px;
+				border-bottom: 2px solid #e5e5e5;
+			}
+			.size-chart-overlay__tab {
+				flex: 1;
+				background: none;
+				border: none;
+				padding: 12px 16px;
+				font-family: 'Oswald', sans-serif;
+				font-size: 14px;
+				font-weight: 600;
+				letter-spacing: 0.06em;
+				text-transform: uppercase;
+				color: var(--color-text-secondary, #888);
+				cursor: pointer;
+				position: relative;
+				transition: color 0.2s;
+			}
+			.size-chart-overlay__tab::after {
+				content: '';
+				position: absolute;
+				bottom: -2px;
+				left: 0;
+				width: 100%;
+				height: 2px;
+				background: transparent;
+				transition: background 0.2s;
+			}
+			.size-chart-overlay__tab.is-active {
+				color: var(--color-text-primary, #203224);
+			}
+			.size-chart-overlay__tab.is-active::after {
+				background: var(--color-text-primary, #203224);
+			}
+			.size-chart-overlay__tab:hover { color: var(--color-text-primary, #203224); }
+
+			/* Content */
+			.size-chart-overlay__subtitle {
+				font-family: 'Oswald', sans-serif;
+				font-size: 18px;
+				font-weight: 600;
+				letter-spacing: 0.05em;
+				color: var(--color-text-primary, #203224);
+				margin: 0 0 8px;
+			}
+			.size-chart-overlay__note {
+				font-size: 13px;
+				color: var(--color-text-secondary, #666);
+				margin: 0 0 16px;
+				line-height: 1.5;
+			}
+			.size-chart-overlay__table-wrap {
+				width: 100%;
+				overflow-x: auto;
+				-webkit-overflow-scrolling: touch;
+			}
+			.size-chart-overlay__table {
+				width: 100%;
+				border-collapse: collapse;
+				font-size: 14px;
+				text-align: center;
+			}
+			.size-chart-overlay__table th,
+			.size-chart-overlay__table td {
+				padding: 12px 14px;
+				border: 1px solid #e0ddd5;
+				white-space: nowrap;
+				color: var(--color-text-primary, #203224);
+			}
+			.size-chart-overlay__table th {
+				background: var(--color-text-primary, #203224);
+				color: #faf6ee;
+				font-family: 'Oswald', sans-serif;
+				font-weight: 600;
+				text-transform: uppercase;
+				font-size: 13px;
+				letter-spacing: 0.06em;
+			}
+			.size-chart-overlay__table tbody tr:nth-child(even) {
+				background: rgba(0,0,0,0.03);
+			}
+			.size-chart-overlay__table tbody tr:hover {
+				background: rgba(32, 50, 36, 0.07);
+			}
+			.size-chart-overlay__disclaimer {
+				font-size: 12px;
+				color: var(--color-text-secondary, #888);
+				line-height: 1.6;
+				margin-top: 20px;
+				padding-top: 16px;
+				border-top: 1px solid #e5e5e5;
+			}
+
+			/* Mobile */
+			@media (max-width: 767.98px) {
+				.size-chart-overlay__panel {
+					width: 100%;
+					max-width: 100%;
+					height: 100%;
+					max-height: 100%;
+					padding: 20px 16px;
+					overflow-y: auto;
+				}
+				.size-chart-overlay__title { font-size: 18px; }
+				.size-chart-overlay__tab { font-size: 13px; padding: 10px 12px; }
+				.size-chart-overlay__table th,
+				.size-chart-overlay__table td { padding: 10px 10px; font-size: 13px; }
+			}
+		</style>
+
+		<script>
+			function switchSizeTab(btn, tab) {
+				/* Deactivate all tabs & hide all content */
+				var allTabs = btn.parentElement.querySelectorAll('.size-chart-overlay__tab');
+				allTabs.forEach(function(t) { t.classList.remove('is-active'); });
+				btn.classList.add('is-active');
+
+				var overlay = document.getElementById('size-chart-overlay');
+				var allContent = overlay.querySelectorAll('.size-chart-overlay__content');
+				allContent.forEach(function(c) { c.style.display = 'none'; });
+
+				document.getElementById('size-tab-' + tab).style.display = 'block';
+			}
+
+			/* Close on ESC key */
+			document.addEventListener('keydown', function(e) {
+				if (e.key === 'Escape') {
+					var overlay = document.getElementById('size-chart-overlay');
+					if (overlay && overlay.classList.contains('is-active')) {
+						overlay.classList.remove('is-active');
+						document.body.style.overflow = '';
+					}
+				}
+			});
+		</script>
+
+		{% if product.type == 'Type1' %}
 		{% capture shipping_content %}
-		<p>We want you to receive your order as quickly as possible.</p><h3>Shipping Policy</h3><h4>Processing Time</h4><p>Orders are processed within 1-3 business days (excluding weekends and holidays). You will receive a confirmation email with tracking information once your order ships.</p><h4>Shipping Rates & Delivery Estimates</h4><p><strong>Standard Shipping:</strong> 5-7 business days - Free on orders over $100, otherwise $7.99 flat rate</p><p><strong>Expedited Shipping:</strong> 2-3 business days - $14.99</p>
+		<h3><strong>Shipping Policy</strong></h3>
+		<h4><strong>Processing Time</strong></h4>
+		<p>Orders are processed within <strong>5-13 business days</strong> (excluding weekends and holidays). You will receive a confirmation email with tracking information once your order ships.</p>
+		<h4><strong>Shipping Rates &amp; Delivery Estimates</strong></h4>
+		<p><strong>Standard Shipping:</strong> 3-5 business days - Free on orders over <strong>$70</strong>, otherwise <strong>$5.45</strong> flat rate</p>
+		<p>Orders containing items made with different printing methods or fulfilled from different locations may arrive in <strong>separate packages</strong> and include <strong>multiple tracking numbers</strong>.</p>
 		{% endcapture %}
+		{% else %}
+		{% capture shipping_content %}
+		<h3><strong>Shipping Policy</strong></h3>
+		<h4><strong>Processing Time</strong></h4>
+		<p>Orders are processed within <strong>1-3 business days</strong> (excluding weekends and holidays). You will receive a confirmation email with tracking information once your order ships.</p>
+		<h4><strong>Shipping Rates &amp; Delivery Estimates</strong></h4>
+		<p><strong>Standard Shipping:</strong> 3-5 business days - Free on orders over <strong>$70</strong>, otherwise <strong>$5.45</strong> flat rate</p>
+		<p>Orders containing items made with different printing methods or fulfilled from different locations may arrive in <strong>separate packages</strong> and include <strong>multiple tracking numbers</strong>.</p>
+		{% endcapture %}
+		{% endif %}
 
 		{%- render 'product-accordion',
 			title: 'SHIPPING POLICY',

@@ -1,0 +1,160 @@
+<style>
+.custom-coll-wrap {
+  max-width: 1680px;
+  margin: 0 auto;
+  padding: 0 64px 0 80px;
+  margin-top: 15px; /* offset top */
+}
+.custom-coll-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 1px solid rgba(44,61,51,0.15);
+  padding-bottom: 16px;
+  gap: 16px;
+}
+.custom-coll-title {
+  text-align: left;
+  font-size: clamp(32px, 3.5vw, 52px);
+  font-weight: 900;
+  font-style: italic;
+  color: #2c3d33;
+  margin: 0;
+  font-family: 'Oswald', sans-serif;
+  text-transform: uppercase;
+  line-height: 1;
+}
+.custom-coll-meta {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.custom-coll-count {
+  font-style: italic;
+  color: #2c3d33;
+  font-size: 18px;
+  font-weight: 600;
+}
+.custom-sort-inline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #2c3d33;
+  font-size: 18px;
+  white-space: nowrap;
+}
+.custom-sort-inline span {
+  font-style: italic;
+  font-weight: 400;
+}
+.custom-sort-inline select {
+  border: none;
+  background: transparent;
+  font-style: normal;
+  font-size: 18px;
+  font-weight: 400;
+  color: rgba(44, 61, 51, 0.7);
+  cursor: pointer;
+  outline: none;
+  padding: 2px 24px 2px 4px;
+  font-family: inherit;
+  -webkit-appearance: auto;
+}
+@media (max-width: 989px) {
+  .custom-coll-wrap {
+    padding: 0 20px;
+  }
+}
+@media (max-width: 767px) {
+  .custom-coll-wrap {
+    padding: 0 16px;
+    margin-top: 10px;
+  }
+  .custom-coll-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding-bottom: 12px;
+  }
+  .custom-coll-meta {
+    width: 100%;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .custom-sort-inline {
+    font-size: 16px;
+  }
+  .custom-sort-inline select {
+    font-size: 16px;
+  }
+  .custom-coll-count {
+    font-size: 16px;
+  }
+}
+</style>
+
+<div class="custom-coll-wrap">
+  <div class="custom-coll-inner">
+    <h1 class="custom-coll-title">
+      {%- if collection.handle == 'all' or collection.handle == blank -%}
+        SHOP ALL
+      {%- elsif collection.handle == 'new-arrivals' -%}
+        NEW ARRIVALS
+      {%- else -%}
+        {{ collection.title | upcase }}
+      {%- endif -%}
+    </h1>
+    <div class="custom-coll-meta">
+      <div class="custom-sort-inline">
+        <span>Sort by:</span>
+        <select id="custom-sort-select">
+          {% for option in collection.sort_options %}
+            <option value="{{ option.value }}" {% if option.value == collection.sort_by or option.value == collection.default_sort_by and collection.sort_by == blank %}selected{% endif %}>
+              {{ option.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      {%- assign real_count = collection.products_count -%}
+      {%- if collection.handle == 'all' -%}
+        {%- assign real_count = real_count | minus: 1 -%}
+      {%- endif -%}
+      <span class="custom-coll-count">{{ real_count | default: 0 }} products</span>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var s = document.getElementById('custom-sort-select');
+  if(s) {
+    s.addEventListener('change', function(){
+      var url = new URL(window.location.href);
+      url.searchParams.set('sort_by', s.value);
+      window.location.href = url.toString();
+    });
+  }
+
+  // Sync count with main grid js-product-count
+  var customCount = document.querySelector('.custom-coll-count');
+  function syncCount() {
+    var mainCount = document.querySelector('.js-product-count');
+    if (mainCount && customCount && mainCount.textContent.trim() !== '') {
+      var newText = mainCount.textContent.trim();
+      if (customCount.textContent !== newText) {
+        customCount.textContent = newText;
+      }
+    }
+  }
+
+  // Initial sync
+  setTimeout(syncCount, 100);
+
+  // Observe ajax DOM updates
+  var observer = new MutationObserver(syncCount);
+  if (document.body) {
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+  }
+});
+</script>

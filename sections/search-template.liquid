@@ -265,6 +265,11 @@
 				{%- paginate search.results by paginate_by, window_size: 2 -%}
 					<div class="search__grid js-grid-wrapper" data-type="{%- if search.types.size == 1 -%}{{- search.types[0] -}}{%- else -%}product{%- endif -%}">
 						{%- for item in search.results -%}
+							{%- if item.object_type == 'product' -%}
+								{%- unless item.selected_or_first_available_variant.requires_shipping -%}
+									{%- continue -%}
+								{%- endunless -%}
+							{%- endif -%}
 							<div class="search__item">
 								{%- case item.object_type -%}
 									{%- when 'product' %}

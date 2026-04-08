@@ -1,0 +1,266 @@
+{%- assign upsell_product = block.settings.upsell_product -%}
+{%- assign upsell_subtitle = block.settings.upsell_subtitle -%}
+{%- assign checked_by_default = block.settings.checked_by_default -%}
+
+{%- capture styles -%}
+	--offset-top-desktop: {{ block.settings.offset_top_desktop }}px;
+	--offset-bottom-desktop: {{ block.settings.offset_bottom_desktop }}px;
+	--offset-top-mobile: {{ block.settings.offset_top_mobile }}px;
+	--offset-bottom-mobile: {{ block.settings.offset_bottom_mobile }}px;
+{%- endcapture -%}
+
+{%- if upsell_product != blank -%}
+<style>
+	.product-upsell-block {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 12px 16px;
+		border: 1px solid #e1e1e1;
+		border-radius: 8px;
+		margin-top: 16px;
+		margin-bottom: 12px;
+		background-color: #ffffff;
+		cursor: pointer;
+		user-select: none;
+		transition: all 0.2s ease;
+		order: 10;
+		width: 100%;
+	}
+	.product-upsell-block.is-selected {
+		border-color: #2c3d33;
+		background-color: #fafafa;
+	}
+	.product-upsell__left {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+	.product-upsell__checkbox {
+		width: 20px;
+		height: 20px;
+		border: 2px solid #2c3d33;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: #fff;
+		flex-shrink: 0;
+		border-radius: 4px;
+	}
+	.product-upsell-block.is-selected .product-upsell__checkbox {
+		background: #2c3d33;
+	}
+	.product-upsell__checkbox svg {
+		width: 14px;
+		height: 14px;
+		fill: none;
+		stroke: #fff;
+		stroke-width: 3;
+		opacity: 0;
+	}
+	.product-upsell-block.is-selected .product-upsell__checkbox svg {
+		opacity: 1;
+	}
+	.product-upsell__icon {
+		width: 32px;
+		height: 32px;
+		object-fit: contain;
+		flex-shrink: 0;
+	}
+	.product-upsell__text {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+	.product-upsell__title {
+		font-family: 'Oswald', sans-serif !important;
+		font-size: 14px;
+		font-weight: 600;
+		text-transform: uppercase;
+		color: #2c3d33;
+		line-height: 1.2;
+		letter-spacing: 0.5px;
+	}
+	.product-upsell__subtitle {
+		font-size: 11px;
+		color: #555555;
+		line-height: 1.2;
+	}
+	.product-upsell__price {
+		font-family: 'Oswald', sans-serif !important;
+		font-size: 14px;
+		font-weight: 600;
+		color: #2c3d33;
+	}
+
+	@media (max-width: 767.98px) {
+		.product-upsell-block {
+			margin-top: 12px;
+			margin-bottom: 12px;
+			padding: 10px 12px;
+		}
+		.product-upsell__title, .product-upsell__price {
+			font-size: 13px;
+		}
+		.product-upsell__subtitle {
+			font-size: 10px;
+		}
+	}
+</style>
+
+<label class="product-upsell-block{% if checked_by_default %} is-selected{% endif %}" style="{{ styles }}">
+	<div class="product-upsell__left">
+		<div class="product-upsell__checkbox">
+			<svg viewBox="0 0 16 16"><path d="M3 8L6 11L13 4"></path></svg>
+		</div>
+		
+		<input type="checkbox" style="display: none;" class="js-upsell-checkbox" name="properties[_upsell]" value="{{ upsell_product.selected_or_first_available_variant.id }}" autocomplete="off" {% if checked_by_default %}checked{% endif %}>
+		
+		{%- if upsell_product.featured_image != blank -%}
+			<img src="{{ upsell_product.featured_image | image_url: width: 64 }}" class="product-upsell__icon" width="32" height="32" alt="{{ upsell_product.title | escape }}" loading="lazy">
+		{%- endif -%}
+
+		<div class="product-upsell__text">
+			<span class="product-upsell__title" style="font-family: var(--heading-font-family);">{{ upsell_product.title }}</span>
+			{%- if upsell_subtitle != blank -%}
+				<span class="product-upsell__subtitle">{{ upsell_subtitle }}</span>
+			{%- endif -%}
+		</div>
+	</div>
+
+	<div class="product-upsell__price">
+		{{ upsell_product.price | money }}
+	</div>
+</label>
+
+<script>
+(function() {
+	var UPSELL_VARIANT_ID = {{ upsell_product.selected_or_first_available_variant.id }};
+
+	/*
+	 * Use XMLHttpRequest for ALL internal Shopify Cart API calls.
+	 * This completely avoids recursion issues from monkey-patching window.fetch.
+	 */
+	function xhrGet(url) {
+		return new Promise(function(resolve, reject) {
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', url, true);
+			xhr.setRequestHeader('Content-Type', 'application/json');
+			xhr.onload = function() {
+				if (xhr.status >= 200 && xhr.status < 300) {
+					resolve(JSON.parse(xhr.responseText));
+				} else { reject(xhr); }
+			};
+			xhr.onerror = reject;
+			xhr.send();
+		});
+	}
+
+	function xhrPost(url, data) {
+		return new Promise(function(resolve, reject) {
+			var xhr = new XMLHttpRequest();
+			xhr.open('POST', url, true);
+			xhr.setRequestHeader('Content-Type', 'application/json');
+			xhr.onload = function() {
+				if (xhr.status >= 200 && xhr.status < 300) {
+					resolve(JSON.parse(xhr.responseText));
+				} else { reject(xhr); }
+			};
+			xhr.onerror = reject;
+			xhr.send(JSON.stringify(data));
+		});
+	}
+
+	/* Force shipping protection quantity to exactly 1 */
+	function enforceMaxOne() {
+		xhrGet('/cart.js').then(function(cart) {
+			var item = null;
+			for (var i = 0; i < cart.items.length; i++) {
+				if (cart.items[i].id === UPSELL_VARIANT_ID) {
+					item = cart.items[i];
+					break;
+				}
+			}
+			if (item && item.quantity > 1) {
+				xhrPost('/cart/change.js', { id: UPSELL_VARIANT_ID, quantity: 1 });
+			}
+		}).catch(function() {});
+	}
+
+	/* Check if upsell is already in cart */
+	function getUpsellCartQty() {
+		return xhrGet('/cart.js').then(function(cart) {
+			for (var i = 0; i < cart.items.length; i++) {
+				if (cart.items[i].id === UPSELL_VARIANT_ID) {
+					return cart.items[i].quantity;
+				}
+			}
+			return 0;
+		}).catch(function() { return 0; });
+	}
+
+	document.addEventListener('DOMContentLoaded', function() {
+		var block = document.querySelector('.product-upsell-block');
+		if (!block) return;
+
+		var checkbox = block.querySelector('.js-upsell-checkbox');
+
+		/* Toggle UI */
+		checkbox.addEventListener('change', function() {
+			block.classList.toggle('is-selected', this.checked);
+		});
+
+		/* Save the REAL fetch before anyone patches it */
+		var nativeFetch = window.fetch;
+		window.__upsellIsProcessing = window.__upsellIsProcessing || false;
+
+		window.fetch = function(url, opts) {
+			var isAddJs = typeof url === 'string' && url.indexOf('/cart/add') !== -1;
+
+			if (!isAddJs) {
+				return nativeFetch.call(window, url, opts);
+			}
+
+			/*
+			 * This IS an add-to-cart request. Prevent race conditions with a lock.
+			 */
+			return nativeFetch.call(window, url, opts).then(function(response) {
+				var cloned = response.clone();
+
+				if (checkbox.checked) {
+					if (!window.__upsellIsProcessing) {
+						window.__upsellIsProcessing = true;
+						setTimeout(function() {
+							getUpsellCartQty().then(function(qty) {
+								if (qty === 0) {
+									xhrPost('/cart/add.js', { items: [{ id: UPSELL_VARIANT_ID, quantity: 1 }] }).finally(function() {
+										window.__upsellIsProcessing = false;
+									});
+								} else if (qty > 1) {
+									xhrPost('/cart/change.js', { id: UPSELL_VARIANT_ID, quantity: 1 }).finally(function() {
+										window.__upsellIsProcessing = false;
+									});
+								} else {
+									window.__upsellIsProcessing = false;
+								}
+							});
+						}, 200);
+					}
+				} else {
+					/* Checkbox not checked — still enforce max 1 as safety */
+					if (!window.__upsellIsProcessing) {
+						window.__upsellIsProcessing = true;
+						setTimeout(function() {
+							enforceMaxOne();
+							window.__upsellIsProcessing = false;
+						}, 200);
+					}
+				}
+
+				return response;
+			});
+		};
+	});
+})();
+</script>
+{%- endif -%}

@@ -23,6 +23,7 @@ const FeaturedProducts = () => {
     });
   }
   function initSlider(section, slider) {
+    if (window.matchMedia('(max-width: 767px)').matches) return;
     const slidesLength = [...slider.querySelectorAll(selectors.slide)].length;
     const slidesPerViewDesktop = +slider.getAttribute(attributes.slidesPerRow) || 4;
     const sliderPrevButton = section.querySelector(selectors.sliderPrevButton);

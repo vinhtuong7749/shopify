@@ -623,6 +623,53 @@
 			]
 		},
 		{
+			"name": "Short Description",
+			"type": "short_description",
+			"limit": 1,
+			"settings": [
+				{
+					"type": "range",
+					"id": "offset_top_desktop",
+					"min": 0,
+					"max": 25,
+					"step": 1,
+					"unit": "px",
+					"label": "Desktop offset top",
+					"default": 8
+				},
+				{
+					"type": "range",
+					"id": "offset_bottom_desktop",
+					"min": 0,
+					"max": 25,
+					"step": 1,
+					"unit": "px",
+					"label": "Desktop offset bottom",
+					"default": 8
+				},
+				{
+					"type": "range",
+					"id": "offset_top_mobile",
+					"min": 0,
+					"max": 25,
+					"step": 1,
+					"unit": "px",
+					"label": "Mobile offset top",
+					"default": 8
+				},
+				{
+					"type": "range",
+					"id": "offset_bottom_mobile",
+					"min": 0,
+					"max": 25,
+					"step": 1,
+					"unit": "px",
+					"label": "Mobile offset bottom",
+					"default": 8
+				}
+			]
+		},
+		{
 			"name": "Description",
 			"type": "description",
 			"limit": 1,
@@ -1560,6 +1607,74 @@
 					"unit": "px",
 					"label": "Mobile offset bottom",
 					"default": 8
+				}
+			]
+		},
+		{
+			"name": "Product Upsell Checkbox",
+			"type": "upsell_product_block",
+			"limit": 1,
+			"settings": [
+				{
+					"type": "product",
+					"id": "upsell_product",
+					"label": "Upsell Product"
+				},
+				{
+					"type": "text",
+					"id": "upsell_subtitle",
+					"label": "Subtitle",
+					"default": "Protect your order from loss/damage."
+				},
+				{
+					"type": "checkbox",
+					"id": "checked_by_default",
+					"label": "Checked by default",
+					"default": true
+				},
+				{
+					"type": "header",
+					"content": "Layout"
+				},
+				{
+					"type": "range",
+					"id": "offset_top_desktop",
+					"min": 0,
+					"max": 50,
+					"step": 1,
+					"unit": "px",
+					"label": "Desktop offset top",
+					"default": 16
+				},
+				{
+					"type": "range",
+					"id": "offset_bottom_desktop",
+					"min": 0,
+					"max": 50,
+					"step": 1,
+					"unit": "px",
+					"label": "Desktop offset bottom",
+					"default": 16
+				},
+				{
+					"type": "range",
+					"id": "offset_top_mobile",
+					"min": 0,
+					"max": 50,
+					"step": 1,
+					"unit": "px",
+					"label": "Mobile offset top",
+					"default": 12
+				},
+				{
+					"type": "range",
+					"id": "offset_bottom_mobile",
+					"min": 0,
+					"max": 50,
+					"step": 1,
+					"unit": "px",
+					"label": "Mobile offset bottom",
+					"default": 12
 				}
 			]
 		},

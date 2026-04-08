@@ -188,20 +188,34 @@
 
 			{%- if enable_link -%}
 				<a
-					class="button-link media-card-overlay__link"
+					class="media-card-overlay__link-custom"
 					href="{{- link_url -}}"
 					{% if open_link_in_new_tab %}
 						target="_blank"
 						rel="nofollow"
 					{% endif %}
 				>
-					<span data-text="{{- link_label -}}">
-						<span>
-							{{- link_label -}}
-						</span>
-					</span>
+					{{- link_label -}}
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 4px; position: relative; top: 1px;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
 				</a>
 			{%- endif -%}
 		</div>
 	{%- endif -%}
 </div>
+
+<style>
+.media-card-overlay__link-custom {
+	display: inline-flex;
+	align-items: center;
+	font-family: 'Oswald', sans-serif;
+	font-size: 16px;
+	font-weight: 500;
+	color: #2c3d33;
+	text-decoration: none;
+	transition: opacity 0.2s ease;
+	margin-top: 16px;
+}
+.media-card-overlay__link-custom:hover {
+	opacity: 0.7;
+}
+</style>

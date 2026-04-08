@@ -33,15 +33,24 @@
 
 			<li class="header-menu__item-wrapper">
 				{%- assign link_title_down = first_level_link.title | downcase -%}
+				{%- assign header_link_url = first_level_link.url -%}
+				{%- if link_title_down == 'new arrivals' -%}
+					{%- assign header_link_url = '/collections/new-arrivals' -%}
+				{%- endif -%}
+				
 				{%- assign is_mega_menu = false -%}
 				{%- if link_title_down contains 'collection' or link_title_down contains 'shop' -%}
 					{%- assign is_mega_menu = true -%}
 				{%- endif -%}
+				{%- assign is_support_menu = false -%}
+				{%- if link_title_down == 'support' -%}
+					{%- assign is_support_menu = true -%}
+				{%- endif -%}
 
-				{%- if first_level_link.links != blank or is_mega_menu -%}
+				{%- if first_level_link.links != blank or is_mega_menu or is_support_menu -%}
 					<a
 						class="button-link header-menu__item{% if first_level_link.active %} header-menu__item--active{% endif %} no-js"
-						href="{{- first_level_link.url -}}"
+						href="{{- header_link_url -}}"
 						{% if first_level_link.current %}
 							aria-current="page"
 						{% endif %}
@@ -53,26 +62,33 @@
 						</span>
 					</a>
 
-					{%- if display_link_on_first_lvl and first_level_link.url != '#' -%}
+					{%- if display_link_on_first_lvl and header_link_url != '#' -%}
 						<a
-							href="{{ first_level_link.url }}"
-							class="button-link header-menu__item{% if first_level_link.child_active %} header-menu__item--active{% endif %} js-header-dropdown-menu-toggler"
-							type="button"
-							data-target="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
-							aria-controls="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
-							aria-expanded="false"
+							href="{% if is_mega_menu %}/collections/all{% else %}{{ header_link_url }}{% endif %}"
+							class="button-link header-menu__item header-menu__item--link{% if first_level_link.child_active %} header-menu__item--active{% endif %}"
+							{% if first_level_link.current %}
+								aria-current="page"
+							{% endif %}
 						>
 							<span data-text="{{- first_level_link.title | escape -}}">
 								<span>
 									{{- first_level_link.title | escape -}}
 								</span>
 							</span>
-
-							{%- render 'icons', icon: 'arrow-down' -%}
 						</a>
+						<button
+							class="button-link header-menu__item header-menu__item--arrow js-header-dropdown-menu-toggler"
+							type="button"
+							data-target="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
+							aria-controls="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
+							aria-expanded="false"
+							aria-label="{{- first_level_link.title | escape }} submenu"
+						>
+							{%- render 'icons', icon: 'arrow-down' -%}
+						</button>
 					{%- else -%}
 						<button
-							class="button-link 1 header-menu__item{% if first_level_link.child_active %} header-menu__item--active{% endif %} js-header-dropdown-menu-toggler"
+							class="button-link header-menu__item{% if first_level_link.child_active %} header-menu__item--active{% endif %} js-header-dropdown-menu-toggler"
 							type="button"
 							data-target="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
 							aria-controls="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
@@ -96,6 +112,84 @@
 							id="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
 							class="header-menu__list header-menu__list--nested js-header-dropdown-menu"
 						>
+							{%- if is_support_menu -%}
+								{%- comment -%} Custom order: Contact, Shipping, Refund, Privacy, Terms {%- endcomment -%}
+								{%- assign ordered_policies = '' -%}
+								{%- for policy in shop.policies -%}
+									{%- if policy.url contains 'contact-information' -%}
+										{%- assign contact_policy = policy -%}
+									{%- elsif policy.url contains 'shipping-policy' -%}
+										{%- assign shipping_policy = policy -%}
+									{%- elsif policy.url contains 'refund-policy' -%}
+										{%- assign refund_policy = policy -%}
+									{%- elsif policy.url contains 'privacy-policy' -%}
+										{%- assign privacy_policy = policy -%}
+									{%- elsif policy.url contains 'terms-of-service' -%}
+										{%- assign terms_policy = policy -%}
+									{%- endif -%}
+								{%- endfor -%}
+
+								{%- assign support_items = '' | split: '' -%}
+								{%- if contact_policy -%}{%- assign support_items = support_items | concat: contact_policy | compact -%}{%- endif -%}
+
+								{%- for item in support_items -%}{%- endfor -%}
+
+								{%- comment -%} Render each policy in order {%- endcomment -%}
+								{%- if contact_policy %}
+									{%- assign animation_delay = animation_delay | plus: 0.05 -%}
+									<li class="header-menu__item-wrapper" style="--animation-delay: {{ animation_delay }}s">
+										<span class="header-menu__item">
+											<a class="button-link" href="/pages/contact">
+												<span data-text="Contact Information"><span>Contact Information</span></span>
+											</a>
+										</span>
+									</li>
+								{%- endif -%}
+
+								{%- if shipping_policy %}
+									{%- assign animation_delay = animation_delay | plus: 0.05 -%}
+									<li class="header-menu__item-wrapper" style="--animation-delay: {{ animation_delay }}s">
+										<span class="header-menu__item">
+											<a class="button-link" href="{{ shipping_policy.url }}">
+												<span data-text="{{ shipping_policy.title | escape }}"><span>{{ shipping_policy.title | escape }}</span></span>
+											</a>
+										</span>
+									</li>
+								{%- endif -%}
+
+								{%- if refund_policy %}
+									{%- assign animation_delay = animation_delay | plus: 0.05 -%}
+									<li class="header-menu__item-wrapper" style="--animation-delay: {{ animation_delay }}s">
+										<span class="header-menu__item">
+											<a class="button-link" href="{{ refund_policy.url }}">
+												<span data-text="{{ refund_policy.title | escape }}"><span>{{ refund_policy.title | escape }}</span></span>
+											</a>
+										</span>
+									</li>
+								{%- endif -%}
+
+								{%- if privacy_policy %}
+									{%- assign animation_delay = animation_delay | plus: 0.05 -%}
+									<li class="header-menu__item-wrapper" style="--animation-delay: {{ animation_delay }}s">
+										<span class="header-menu__item">
+											<a class="button-link" href="{{ privacy_policy.url }}">
+												<span data-text="{{ privacy_policy.title | escape }}"><span>{{ privacy_policy.title | escape }}</span></span>
+											</a>
+										</span>
+									</li>
+								{%- endif -%}
+
+								{%- if terms_policy %}
+									{%- assign animation_delay = animation_delay | plus: 0.05 -%}
+									<li class="header-menu__item-wrapper" style="--animation-delay: {{ animation_delay }}s">
+										<span class="header-menu__item">
+											<a class="button-link" href="{{ terms_policy.url }}">
+												<span data-text="{{ terms_policy.title | escape }}"><span>{{ terms_policy.title | escape }}</span></span>
+											</a>
+										</span>
+									</li>
+								{%- endif -%}
+							{%- else -%}
 							{%- for second_level_link in first_level_link.links -%}
 								{%- assign animation_delay = animation_delay | plus: 0.05 -%}
 
@@ -143,6 +237,7 @@
 									{%- endif -%}
 								</li>
 							{%- endfor -%}
+							{%- endif -%}
 						</ul>
 
 						{%- for second_level_link in first_level_link.links -%}
@@ -183,7 +278,7 @@
 				{%- else -%}
 					<a
 						class="button-link header-menu__item{% if first_level_link.active %} header-menu__item--active{% endif %}"
-						href="{{- first_level_link.url -}}"
+						href="{{- header_link_url -}}"
 						{% if first_level_link.current %}
 							aria-current="page"
 						{% endif %}

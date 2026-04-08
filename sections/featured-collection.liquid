@@ -25,7 +25,7 @@
 {%- assign image 			   			   = section.settings.image | default: collection.featured_image -%}
 {%- assign link_label_default      		   = 'sections.collection_list.see_all_products' | t -%}
 {%- assign link_label 				       = section.settings.link_label | default: link_label_default -%}
-{%- assign link_url           	  		   = collection.url | default: "#" -%}
+{%- assign link_url           	  		   = routes.all_products_collection_url -%}
 {%- assign title_default 	   			   = 'sections.collection_list.card_title' | t -%}
 {%- assign title          	               = collection.title | default: title_default -%}
 {%- assign enable_color_scheme_inheritance = section.settings.enable_color_scheme_inheritance -%}
@@ -98,6 +98,9 @@
 			<div class="featured-collection__products">
 				{%- if collection != blank -%}
 					{%- for product in products limit: 2 -%}
+						{%- unless product.selected_or_first_available_variant.requires_shipping -%}
+							{%- continue -%}
+						{%- endunless -%}
 						<div class="featured-collection__product">
 							{%- render 'product-card',
 								product: product,

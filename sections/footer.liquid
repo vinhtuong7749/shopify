@@ -322,36 +322,92 @@
 		.footer-custom-top {
 			background-color: #243029;
 			color: #faf6ee;
-			padding: 48px 20px 24px;
+			padding: 64px 20px 48px;
 			width: 100%;
 		}
+		/* Desktop/Mobile visibility helpers */
+		.mobile-only { display: none !important; }
+
 		.footer-custom-top-inner {
 			max-width: 1400px;
 			margin: 0 auto;
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 60px;
+			text-align: left;
+		}
+
+		/* Grid Columns */
+		.footer-col {
 			display: flex;
 			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			text-align: center;
 		}
-		.footer-custom-top .footer__newsletter-heading {
-			font-size: 24px;
-			font-weight: 800;
-			text-transform: uppercase;
+		
+		/* Column 1: Logo & text */
+		.footer-col-1 .footer-logo-img {
+			width: 90px;
+			height: auto;
 			margin-bottom: 20px;
-			color: #faf6ee;
-			letter-spacing: -0.5px;
-			font-family: var(--font-heading-family);
 		}
+		.footer-col-1 p {
+			margin: 0 0 16px 0;
+			font-family: var(--base-font-family), system-ui, sans-serif;
+			font-weight: 400;
+			letter-spacing: 0;
+			font-size: 15px;
+			line-height: 1.6;
+			color: rgba(250, 246, 238, 0.85);
+		}
+		.footer-col-1 .footer-manifesto {
+		}
+
+		/* Column 2 & 3: Headings */
+		.footer-heading {
+			font-family: 'Oswald', sans-serif;
+			font-size: 20px;
+			font-weight: 600;
+			text-transform: uppercase;
+			margin: 0 0 30px 0;
+			color: #faf6ee;
+			letter-spacing: 0.05em;
+		}
+
+		/* Column 2: Info list */
+		.footer-info-list {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+		.footer-info-list li {
+			margin-bottom: 16px;
+			font-family: var(--base-font-family), system-ui, sans-serif;
+			font-weight: 400;
+			letter-spacing: 0;
+			font-size: 15px;
+			line-height: 1.5;
+			color: rgba(250, 246, 238, 0.85);
+		}
+
+		/* Column 3: Newsletter */
+		.footer-col-3 p {
+			margin: 0 0 24px 0;
+			font-family: var(--base-font-family), system-ui, sans-serif;
+			font-weight: 400;
+			letter-spacing: 0;
+			font-size: 15px;
+			line-height: 1.5;
+			color: rgba(250, 246, 238, 0.85);
+		}
+
+		/* Newsletter form */
 		.footer-custom-top .footer-form {
 			display: block;
-			max-width: 500px;
 			width: 100%;
-			margin: 0 auto;
+			margin-bottom: 30px;
 		}
 		.footer-custom-top .footer-form__wrapper {
 			display: flex;
-			height: 48px;
+			height: 44px;
 			width: 100%;
 			overflow: hidden;
 		}
@@ -360,17 +416,16 @@
 		}
 		.footer-custom-top .footer-form__input {
 			flex: 1;
-			background: #344a3c;
-			border: 1px solid #445a4c;
+			background: transparent;
+			border: 1px solid rgba(250, 246, 238, 0.3);
 			border-right: none;
 			color: #faf6ee;
-			padding: 0 20px;
+			padding: 0 16px;
 			height: 100% !important;
-			min-height: 48px !important;
-			max-height: 48px !important;
-			font-size: 11px;
-			text-transform: uppercase;
-			font-weight: 600;
+			min-height: 44px !important;
+			max-height: 44px !important;
+			font-size: 12px;
+			font-weight: 400;
 			letter-spacing: 1px;
 			margin: 0 !important;
 			box-sizing: border-box !important;
@@ -379,8 +434,7 @@
 			-webkit-appearance: none;
 		}
 		.footer-custom-top .footer-form__input:focus {
-			outline: none;
-			border-color: #6a7e6f;
+			border-color: #faf6ee;
 		}
 		.footer-custom-top .footer-form__input::placeholder {
 			color: rgba(250, 246, 238, 0.45);
@@ -390,12 +444,13 @@
 			color: #243029;
 			border: none;
 			height: 100% !important;
-			min-height: 48px !important;
-			max-height: 48px !important;
-			padding: 0 30px;
-			font-weight: 800;
+			min-height: 44px !important;
+			max-height: 44px !important;
+			padding: 0 20px;
+			font-family: 'Oswald', sans-serif;
+			font-weight: 600;
 			text-transform: uppercase;
-			font-size: 12px;
+			font-size: 14px;
 			letter-spacing: 1px;
 			cursor: pointer;
 			transition: background 0.3s ease;
@@ -410,6 +465,13 @@
 			background: #e8e4dc;
 		}
 		
+		/* Socials */
+		.footer-custom-socials {
+			display: flex;
+			gap: 24px;
+			align-items: center;
+		}
+
 		.footer-custom-bottom {
 			background-color: #243029;
 			color: rgba(250, 246, 238, 0.6);
@@ -456,6 +518,52 @@
 
 		/* Mobile adjustments */
 		@media screen and (max-width: 1024px) {
+			.desktop-only { display: none !important; }
+			.mobile-only { display: block !important; }
+			.footer-custom-socials.mobile-only { display: flex !important; }
+
+			.footer-custom-top { padding-top: 90px; padding-bottom: 0; }
+			.footer-custom-top-inner {
+				display: flex;
+				flex-direction: column;
+				gap: 0;
+			}
+			.footer-col {
+				width: 100%;
+				padding: 40px 0;
+			}
+			.footer-col-1 { display: none !important; }
+			.footer-col-3 { 
+				order: 1; 
+				padding-top: 0;
+				text-align: center; 
+				border-bottom: none;
+			}
+			.footer-col-2 { 
+				order: 2; 
+				text-align: center; 
+			}
+
+			.footer-col-1-inner { justify-content: center !important; gap: 0 !important; }
+			.footer-col-1-text { display: none !important; }
+
+			.footer-col-3 .footer-heading, .footer-col-2 .footer-heading {
+				width: 100%;
+				text-align: center;
+				margin-bottom: 20px;
+			}
+			
+			.footer-col-3 p { margin: 0 auto 24px; max-width: 100%; }
+			.footer-custom-top .footer-form { margin: 0 auto; max-width: 100%; }
+
+			.footer-col-2 .footer-custom-socials {
+				justify-content: center;
+				margin-top: 32px;
+			}
+
+			.footer-info-list { text-align: center; }
+			.footer-info-list li { margin-bottom: 12px; }
+
 			.footer-custom-bottom-inner {
 				flex-direction: column;
 				gap: 20px;
@@ -465,32 +573,102 @@
 				justify-content: center;
 				gap: 15px;
 			}
+			.footer-custom-bottom-right .footer__payments-container {
+				justify-content: center;
+				flex-wrap: wrap;
+			}
 		}
 	</style>
 
 	<div class="footer-custom-top">
 		<div class="footer-custom-top-inner">
-			{%- assign newsletter_block = section.blocks | where: 'type', 'newsletter' | first -%}
-			<h2 class="footer__newsletter-heading h4">
-				{{- newsletter_block.settings.heading | default: "NEWSLETTER" -}}
-			</h2>
-			
-			{%- form 'customer', class: 'footer-form js-newsletter-form' -%}
-				<input type="hidden" name="contact[tags]" value="newsletter"/>
-				<div class="footer-form__wrapper">
-					<input
-						type="email"
-						name="contact[email]"
-						class="footer-form__input input js-newsletter-input"
-						value="{{- form.email -}}"
-						placeholder="EMAIL ADDRESS"
-						required
-					/>
-					<button type="submit" name="commit" class="footer-form__button">
-						SUBSCRIBE
-					</button>
+			<!-- Column 1 -->
+			<div class="footer-col footer-col-1">
+				<div class="footer-col-1-inner" style="display: flex; gap: 20px; align-items: flex-start;">
+					{%- assign display_logo = logo_image | default: settings.logo -%}
+					{%- if display_logo != blank -%}
+						<div class="desktop-only" style="flex-shrink: 0;">
+							<img src="{{ display_logo | img_url: '300x' }}" alt="Camo Signal" class="footer-logo-img" loading="lazy" style="margin-bottom: 0;">
+						</div>
+					{%- endif -%}
+					
+					<div class="footer-col-1-text">
+						{%- if display_logo == blank -%}
+							<h2 class="footer-heading desktop-only" style="margin-bottom: 12px;">CAMO SIGNAL</h2>
+						{%- endif -%}
+						
+						{%- if section.settings.brand_heading != blank -%}
+							<h3 class="footer-heading" style="margin-bottom: 8px; font-size: 20px;">{{ section.settings.brand_heading | escape }}</h3>
+						{%- endif -%}
+						{%- if section.settings.manifesto_subheading != blank -%}
+							<p>{{ section.settings.manifesto_subheading | escape }}</p>
+						{%- endif -%}
+						{%- if section.settings.manifesto_text != blank -%}
+							<p class="footer-manifesto" style="margin-top: 12px; line-height: 1.6;">{{ section.settings.manifesto_text | escape | newline_to_br }}</p>
+						{%- endif -%}
+					</div>
 				</div>
-			{%- endform -%}
+			</div>
+
+
+			<!-- Column 2 -->
+			<div class="footer-col footer-col-2">
+				<h3 class="footer-heading">{{ section.settings.info_heading | default: 'CAMO SIGNAL INFO' | escape }}</h3>
+				<ul class="footer-info-list">
+					{%- if section.settings.info_phone != blank -%}<li>Phone: {{ section.settings.info_phone | escape }}</li>{%- endif -%}
+					{%- if section.settings.info_email != blank -%}<li>Email: {{ section.settings.info_email | escape }}</li>{%- endif -%}
+					{%- if section.settings.info_address != blank -%}<li>Address: {{ section.settings.info_address | escape }}</li>{%- endif -%}
+				</ul>
+				
+				<div class="footer-custom-socials mobile-only" style="margin-top: 32px;">
+					<a href="#" target="_blank" style="color: #faf6ee;">
+						{% render 'icons-social', icon: 'facebook' %}
+					</a>
+					<a href="#" target="_blank" style="color: #faf6ee;">
+						{% render 'icons-social', icon: 'instagram' %}
+					</a>
+					<a href="#" target="_blank" style="color: #faf6ee;">
+						{% render 'icons-social', icon: 'tiktok' %}
+					</a>
+				</div>
+			</div>
+
+			<!-- Column 3 -->
+			<div class="footer-col footer-col-3">
+				<h3 class="footer-heading">{{ section.settings.newsletter_heading | default: 'SUBSCRIBE TO OUR EMAIL' | escape }}</h3>
+				{%- if section.settings.newsletter_text != blank -%}
+					<p>{{ section.settings.newsletter_text | escape }}</p>
+				{%- endif -%}
+				
+				{%- form 'customer', class: 'footer-form js-newsletter-form' -%}
+					<input type="hidden" name="contact[tags]" value="newsletter"/>
+					<div class="footer-form__wrapper">
+						<input
+							type="email"
+							name="contact[email]"
+							class="footer-form__input input js-newsletter-input"
+							value="{{- form.email -}}"
+							placeholder="Email address"
+							required
+						/>
+						<button type="submit" name="commit" class="footer-form__button">
+							SUBSCRIBE
+						</button>
+					</div>
+				{%- endform -%}
+				
+				<div class="footer-custom-socials desktop-only" style="margin-top: 20px;">
+					<a href="#" target="_blank" style="color: #faf6ee;">
+						{% render 'icons-social', icon: 'facebook' %}
+					</a>
+					<a href="#" target="_blank" style="color: #faf6ee;">
+						{% render 'icons-social', icon: 'instagram' %}
+					</a>
+					<a href="#" target="_blank" style="color: #faf6ee;">
+						{% render 'icons-social', icon: 'tiktok' %}
+					</a>
+				</div>
+			</div>
 		</div>
 	</div>
 
@@ -499,32 +677,17 @@
 			<div class="footer-custom-bottom-left">
 				<span>&copy; {{ 'now' | date: "%Y" }} CAMO SIGNAL POWERED BY SHOPIFY</span>
 
-				{%- if shop.refund_policy != blank -%}
-				<a href="{{ shop.refund_policy.url }}">REFUND</a>
+				{%- if section.settings.sub_footer_menu != blank -%}
+					{%- for link in linklists[section.settings.sub_footer_menu].links -%}
+						<a href="{{ link.url }}">{{ link.title | upcase }}</a>
+					{%- endfor -%}
 				{%- else -%}
-				<a href="/policies/refund-policy">REFUND</a>
+					<a href="/pages/contact">CONTACT INFORMATION</a>
+					<a href="/policies/shipping-policy">SHIPPING POLICY</a>
+					<a href="/policies/refund-policy">REFUND POLICY</a>
+					<a href="/policies/privacy-policy">PRIVACY POLICY</a>
+					<a href="/policies/terms-of-service">TERMS OF SERVICE</a>
 				{%- endif -%}
-
-				{%- if shop.privacy_policy != blank -%}
-				<a href="{{ shop.privacy_policy.url }}">PRIVACY</a>
-				{%- else -%}
-				<a href="/policies/privacy-policy">PRIVACY</a>
-				{%- endif -%}
-
-				{%- if shop.terms_of_service != blank -%}
-				<a href="{{ shop.terms_of_service.url }}">TERMS</a>
-				{%- else -%}
-				<a href="/policies/terms-of-service">TERMS</a>
-				{%- endif -%}
-
-				{%- if shop.shipping_policy != blank -%}
-				<a href="{{ shop.shipping_policy.url }}">SHIPPING</a>
-				{%- else -%}
-				<a href="/policies/shipping-policy">SHIPPING</a>
-				{%- endif -%}
-
-				<a href="/pages/return">RETURN</a>
-				<a href="/pages/contact">CONTACT US</a>
 			</div>
 
 			<div class="footer-custom-bottom-right">
@@ -572,6 +735,81 @@
 			"unit": "px",
 			"label": "Logo width",
 			"default": 320
+		},
+		{
+			"type": "header",
+			"content": "Column 1: Brand Info"
+		},
+		{
+			"type": "text",
+			"id": "brand_heading",
+			"label": "Brand Heading",
+			"default": "CAMO SIGNAL"
+		},
+		{
+			"type": "text",
+			"id": "manifesto_subheading",
+			"label": "Brand Subheading",
+			"default": "Raised here. Stood Here."
+		},
+		{
+			"type": "textarea",
+			"id": "manifesto_text",
+			"label": "Brand Manifesto",
+			"default": "Built for those who hunt, protect, and live by their\nvalues — quietly, proudly."
+		},
+		{
+			"type": "header",
+			"content": "Column 2: Contact Info"
+		},
+		{
+			"type": "text",
+			"id": "info_heading",
+			"label": "Heading",
+			"default": "CAMO SIGNAL INFO"
+		},
+		{
+			"type": "text",
+			"id": "info_phone",
+			"label": "Phone Number",
+			"default": "+1 (307) 227-3117"
+		},
+		{
+			"type": "text",
+			"id": "info_email",
+			"label": "Email Address",
+			"default": "support.camosignal@gmail.com"
+		},
+		{
+			"type": "textarea",
+			"id": "info_address",
+			"label": "Physical Address",
+			"default": "30 N Gould St Ste N, Sheridan, WY, 82801, US"
+		},
+		{
+			"type": "header",
+			"content": "Column 3: Newsletter"
+		},
+		{
+			"type": "text",
+			"id": "newsletter_heading",
+			"label": "Heading",
+			"default": "SUBSCRIBE TO OUR EMAIL"
+		},
+		{
+			"type": "textarea",
+			"id": "newsletter_text",
+			"label": "Newsletter Text",
+			"default": "Subscribe to get special offers, giveaways, and exclusive deals"
+		},
+		{
+			"type": "header",
+			"content": "Bottom Footer"
+		},
+		{
+			"type": "link_list",
+			"id": "sub_footer_menu",
+			"label": "Sub-footer Menu"
 		},
 		{
 			"type": "textarea",

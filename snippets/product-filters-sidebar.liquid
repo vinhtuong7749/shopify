@@ -23,9 +23,12 @@
 
 {%- if product_list != blank -%}
 	<div class="product-filters product-filters--sidebar">
+
 		<form class="product-filters__form js-form">
 			<div class="product-filters__form-body">
 				{%- render 'product-filters-selected', product_list: product_list, filter_type: 'sidebar' -%}
+
+
 
 				<div
 					class="accordion product-filters__form-accordion js-accordion-container js-filters-container"
@@ -33,14 +36,13 @@
 				>
 					{%- assign filterListIndex = 1 -%}
 
-					{%- comment -%} Custom Collection Filter {%- endcomment -%}
 					<div
 						id="filter-{{ section.id }}-collection-{{- id -}}"
-						class="accordion__item product-filters__form-item js-accordion-item js-filter-item is-active"
+						class="accordion__item product-filters__form-item js-accordion-item js-filter-item is-active is-active"
 					>
 						<h3 class="accordion__title">
 							<button
-								class="focus-visible-outline accordion__control product-filters__form-item-toggle-button js-accordion-control is-active"
+								class="focus-visible-outline accordion__control product-filters__form-item-toggle-button js-accordion-control is-active is-active"
 								type="button"
 								id="Filter-accordion-{{ section.id }}-collection-{{- id -}}"
 								aria-controls="filter-list-{{ section.id }}-collection-{{- id -}}"
@@ -54,7 +56,7 @@
 						</h3>
 
 						<div
-							class="accordion__content accordion__content--animate js-accordion-content is-active"
+							class="accordion__content accordion__content--animate js-accordion-content is-active is-active"
 							id="filter-list-{{ section.id }}-collection-{{- id -}}"
 							aria-labelledby="Filter-accordion-{{ section.id }}-collection-{{- id -}}"
 							role="region"
@@ -62,8 +64,26 @@
 						>
 							<div class="js-accordion-inner product-filters__form-item-content">
 								<ul class="filter-list filter-list--sidebar filter-list--collection-custom js-collection-filter-list">
+									{%- comment -%} "ALL" option - shows all products {%- endcomment -%}
+									<li class="filter-list__item">
+										<a
+											href="/collections/all"
+											class="filter-list__collection-link js-collection-ajax-link {% if collection.handle == 'all' or collection == blank %}filter-list__collection-link--active{% endif %}"
+											data-collection-handle="all"
+										>
+											{%- if collection.handle == 'all' or collection == blank -%}
+												<span class="filter-list__collection-icon">&#9632;</span>
+											{%- else -%}
+												<span class="filter-list__collection-icon">&#9633;</span>
+											{%- endif -%}
+											ALL
+										</a>
+									</li>
+									{%- assign hide_handles = "deer,turkey,waterfowl,fishing,all,all-1" | split: "," -%}
 									{%- for col in collections -%}
-										{%- if col.all_products_count > 0 -%}
+										{%- if hide_handles contains col.handle -%}
+											{%- continue -%}
+										{%- endif -%}
 											<li class="filter-list__item">
 												<a
 													href="{{ col.url }}"
@@ -71,14 +91,168 @@
 													data-collection-handle="{{ col.handle }}"
 												>
 													{%- if collection.handle == col.handle -%}
-														<span class="filter-list__collection-icon">■</span>
+														<span class="filter-list__collection-icon">&#9632;</span>
 													{%- else -%}
-														<span class="filter-list__collection-icon">□</span>
+														<span class="filter-list__collection-icon">&#9633;</span>
 													{%- endif -%}
 													{{ col.title }}
 												</a>
 											</li>
+									{%- endfor -%}
+								</ul>
+							</div>
+						</div>
+					</div>
+
+					{%- assign filterListIndex = filterListIndex | plus: 1 -%}
+
+					{%- comment -%} ── CLOTHING (Product Type) Filter ── {%- endcomment -%}
+					<div
+						id="filter-{{ section.id }}-clothing-{{- id -}}"
+						class="accordion__item product-filters__form-item js-accordion-item js-filter-item js-clothing-accordion is-active"
+					>
+						<h3 class="accordion__title">
+							<button
+								class="focus-visible-outline accordion__control product-filters__form-item-toggle-button js-accordion-control js-clothing-accordion-btn is-active"
+								type="button"
+								id="Filter-accordion-{{ section.id }}-clothing-{{- id -}}"
+								aria-controls="filter-list-{{ section.id }}-clothing-{{- id -}}"
+								aria-expanded="true" is-active
+							>
+								<span typeof="product-filters__form-item-toggle-title">
+									CLOTHING
+									<span class="js-clothing-counter js-filter-item-counter" style="display:none;">&nbsp;(1)</span>
+								</span>
+								{%- render 'icons', icon: 'arrow-down' -%}
+							</button>
+						</h3>
+						<div
+							class="accordion__content accordion__content--animate js-accordion-content js-clothing-accordion-content is-active"
+							id="filter-list-{{ section.id }}-clothing-{{- id -}}"
+							aria-labelledby="Filter-accordion-{{ section.id }}-clothing-{{- id -}}"
+							role="region"
+							style="height: auto;"
+						>
+							<div class="js-accordion-inner product-filters__form-item-content">
+								<ul class="filter-list filter-list--sidebar filter-list--collection-custom js-clothing-filter-list">
+									{%- assign clothing_labels = "T-SHIRTS,SWEATSHIRTS,HOODIES,HATS" | split: "," -%}
+									{%- assign clothing_values = "Type1|3D Tshirt|T-Shirt,Sweatshirt,Hoodie,Hat" | split: "," -%}
+
+									{%- comment -%} Dynamically determine parameters from active store filters {%- endcomment -%}
+									{%- assign param_color = 'filter.v.option.color' -%}
+									{%- assign param_size = 'filter.v.option.size' -%}
+									{%- assign param_tag = 'filter.p.tag' -%}
+
+									{%- for filter in product_list.filters -%}
+										{%- assign downcased_label = filter.label | downcase -%}
+										{%- if downcased_label == 'color' or downcased_label == 'màu sắc' -%}
+											{%- assign param_color = filter.param_name -%}
 										{%- endif -%}
+										{%- if downcased_label == 'size' or downcased_label == 'kích thước' -%}
+											{%- assign param_size = filter.param_name -%}
+										{%- endif -%}
+										{%- if filter.type == 'list' and downcased_label != 'color' and downcased_label != 'size' and downcased_label != 'availability' and downcased_label != 'product type' -%}
+											{%- comment -%} If there's a tag filter or a catch-all for hunting {%- endcomment -%}
+											{%- if filter.param_name contains 'tag' -%}
+												{%- assign param_tag = filter.param_name -%}
+											{%- endif -%}
+										{%- endif -%}
+									{%- endfor -%}
+									{%- for i in (0..3) -%}
+										<li class="filter-list__item">
+											<a
+												href="javascript:void(0);"
+												class="filter-list__collection-link js-clothing-type-link"
+												data-product-type="{{ clothing_values[i] | replace: '|', ',' }}"
+											>
+												<span class="filter-list__collection-icon">&#9633;</span>
+												{{ clothing_labels[i] }}
+											</a>
+										</li>
+									{%- endfor -%}
+								</ul>
+							</div>
+						</div>
+					</div>
+
+					{%- comment -%} ── HUNTING Filter ── {%- endcomment -%}
+					<div id="filter-{{ section.id }}-hunting-{{- id -}}" class="accordion__item product-filters__form-item js-accordion-item js-filter-item js-custom-accordion is-active" data-filter-group="{{ param_tag }}">
+						<h3 class="accordion__title">
+							<button class="focus-visible-outline accordion__control product-filters__form-item-toggle-button js-accordion-control js-custom-accordion-btn is-active" type="button" aria-expanded="true">
+								<span typeof="product-filters__form-item-toggle-title">
+									HUNTING
+									<span class="js-custom-counter js-filter-item-counter" style="display:none;">&nbsp;(1)</span>
+								</span>
+								{%- render 'icons', icon: 'arrow-down' -%}
+							</button>
+						</h3>
+						<div class="accordion__content accordion__content--animate js-accordion-content js-custom-accordion-content is-active" style="height: auto;">
+							<div class="js-accordion-inner product-filters__form-item-content">
+								<ul class="filter-list filter-list--sidebar filter-list--collection-custom">
+									{%- assign hunting_types = "Deer,Turkey,Waterfowl,Fishing" | split: "," -%}
+									{%- for htype in hunting_types -%}
+										<li class="filter-list__item">
+											<a href="javascript:void(0);" class="filter-list__collection-link js-custom-filter-link" data-filter-param="{{ param_tag }}" data-filter-value="{{ htype }}">
+												<span class="filter-list__collection-icon">&#9633;</span>
+												{{ htype }}
+											</a>
+										</li>
+									{%- endfor -%}
+								</ul>
+							</div>
+						</div>
+					</div>
+
+					{%- comment -%} ── COLORS Filter ── {%- endcomment -%}
+					<div id="filter-{{ section.id }}-colors-{{- id -}}" class="accordion__item product-filters__form-item js-accordion-item js-filter-item js-custom-accordion is-active" data-filter-group="{{ param_color }}">
+						<h3 class="accordion__title">
+							<button class="focus-visible-outline accordion__control product-filters__form-item-toggle-button js-accordion-control js-custom-accordion-btn is-active" type="button" aria-expanded="true">
+								<span typeof="product-filters__form-item-toggle-title">
+									COLORS
+									<span class="js-custom-counter js-filter-item-counter" style="display:none;">&nbsp;(1)</span>
+								</span>
+								{%- render 'icons', icon: 'arrow-down' -%}
+							</button>
+						</h3>
+						<div class="accordion__content accordion__content--animate js-accordion-content js-custom-accordion-content is-active" style="height: auto;">
+							<div class="js-accordion-inner product-filters__form-item-content">
+								<ul class="custom-swatch-list">
+									{%- assign color_list = "Black,Olive,Graphite,Navy,Camo" | split: "," -%}
+									{%- for c in color_list -%}
+										{%- capture exact_hex_color -%}{%- render 'color-map', color_name: c -%}{%- endcapture -%}
+										{%- assign swatch_css = exact_hex_color | strip -%}
+										<li class="custom-swatch-item">
+											<a href="javascript:void(0);" class="custom-swatch-link js-custom-filter-link" data-filter-param="{{ param_color }}" data-filter-value="{{ c }}" title="{{ c }}">
+												<span class="custom-swatch-color" style="--swatch-color: {{ swatch_css }};"></span>
+											</a>
+										</li>
+									{%- endfor -%}
+								</ul>
+							</div>
+						</div>
+					</div>
+
+					{%- comment -%} ── SIZE Filter ── {%- endcomment -%}
+					<div id="filter-{{ section.id }}-size-{{- id -}}" class="accordion__item product-filters__form-item js-accordion-item js-filter-item js-custom-accordion is-active" data-filter-group="{{ param_size }}">
+						<h3 class="accordion__title">
+							<button class="focus-visible-outline accordion__control product-filters__form-item-toggle-button js-accordion-control js-custom-accordion-btn is-active" type="button" aria-expanded="true">
+								<span typeof="product-filters__form-item-toggle-title">
+									SIZE
+									<span class="js-custom-counter js-filter-item-counter" style="display:none;">&nbsp;(1)</span>
+								</span>
+								{%- render 'icons', icon: 'arrow-down' -%}
+							</button>
+						</h3>
+						<div class="accordion__content accordion__content--animate js-accordion-content js-custom-accordion-content is-active" style="height: auto;">
+							<div class="js-accordion-inner product-filters__form-item-content">
+								<ul class="custom-pill-list">
+									{%- assign size_list = "S,M,L,XL,2XL,3XL,4XL,5XL" | split: "," -%}
+									{%- for stype in size_list -%}
+										<li class="custom-pill-item">
+											<a href="javascript:void(0);" class="custom-pill-link js-custom-filter-link" data-filter-param="{{ param_size }}" data-filter-value="{{ stype }}">
+												{{ stype }}
+											</a>
+										</li>
 									{%- endfor -%}
 								</ul>
 							</div>
@@ -97,17 +271,22 @@
 							{%- continue -%}
 						{%- endif -%}
 
+						{%- comment -%} Skip filters we handle with custom UI {%- endcomment -%}
+						{%- if downcased_label == 'product type' or downcased_label == 'loại sản phẩm' or downcased_label == 'color' or downcased_label == 'màu sắc' or downcased_label == 'size' or downcased_label == 'kích thước' or downcased_label == 'tag' or downcased_label == 'thẻ' -%}
+							{%- continue -%}
+						{%- endif -%}
+
 						<div
 							id="filter-{{ section.id }}-{{ filter.param_name | escape }}-{{- id -}}"
-							class="accordion__item product-filters__form-item js-accordion-item js-filter-item"
+							class="accordion__item product-filters__form-item js-accordion-item js-filter-item is-active"
 						>
 							<h3 class="accordion__title">
 								<button
-									class="focus-visible-outline accordion__control product-filters__form-item-toggle-button js-accordion-control"
+									class="focus-visible-outline accordion__control product-filters__form-item-toggle-button js-accordion-control is-active"
 									type="button"
 									id="Filter-accordion-{{ section.id }}-{{- filterListIndex -}}-{{- id -}}"
 									aria-controls="filter-list-{{ section.id }}-{{- filterListIndex -}}-{{- id -}}"
-									aria-expanded="false"
+									aria-expanded="true" is-active
 								>
 									<span typeof="product-filters__form-item-toggle-title">
 										{{- filter.label -}}
@@ -123,11 +302,11 @@
 							</h3>
 
 							<div
-								class="accordion__content accordion__content--animate js-accordion-content"
+								class="accordion__content accordion__content--animate js-accordion-content is-active"
 								id="filter-list-{{ section.id }}-{{- filterListIndex -}}-{{- id -}}"
 								aria-labelledby="Filter-accordion-{{ section.id }}-{{- filterListIndex -}}-{{- id -}}"
 								role="region"
-								style="height: 0;"
+								style="height: auto;"
 							>
 								<div class="js-accordion-inner product-filters__form-item-content">
 									{%- case filter.type -%}
@@ -148,20 +327,75 @@
 							{%- assign filterListIndex = filterListIndex | plus: 1 -%}
 						</div>
 					{%- endfor -%}
+
+
+
+
 				</div>
+
+{%- comment -%} Clear All Button {%- endcomment -%}
+{%- assign has_active_filter = false -%}
+{%- if collection.handle != 'all' and collection.handle != blank -%}
+{%- assign has_active_filter = true -%}
+{%- endif -%}
+{%- assign current_sort = product_list.sort_by | default: product_list.default_sort_by -%}
+{%- if current_sort != product_list.default_sort_by -%}
+{%- assign has_active_filter = true -%}
+{%- endif -%}
+{%- for filter in product_list.filters -%}
+{%- if filter.active_values.size > 0 -%}
+{%- assign has_active_filter = true -%}
+{%- endif -%}
+{%- if filter.type == 'price_range' -%}
+{%- if filter.min_value.value > 0 or filter.max_value.value < filter.range_max -%}
+{%- assign has_active_filter = true -%}
+{%- endif -%}
+{%- endif -%}
+{%- endfor -%}
+<div class="filter-clear-wrapper ">
+<a href="/collections/all" class="filter-clear-btn js-filter-clear-btn">
+{%- render 'icons', icon: 'close' -%}
+<span>CLEAR ALL</span>
+</a>
+</div>
 			</div>
 		</form>
 	</div>
 {%- endif -%}
 
 <style>
-.filter-list--collection-custom {
+.filter-list--collection-custom,
+.filter-list--sort-custom {
 	list-style: none;
 	padding: 0;
 	margin: 0;
 }
-.filter-list--collection-custom .filter-list__item {
+.filter-list--collection-custom .filter-list__item,
+.filter-list--sort-custom .filter-list__item {
 	margin-bottom: 8px;
+}
+/* Clothing filter - disabled / Coming Soon */
+.filter-list__clothing-disabled {
+	opacity: 0.5;
+	cursor: default;
+	pointer-events: none;
+	position: relative;
+}
+.filter-list__coming-soon {
+	font-size: 10px;
+	font-weight: 400;
+	font-style: italic;
+	text-transform: none;
+	letter-spacing: 0.02em;
+	color: #8a9a8e;
+	margin-left: 6px;
+}
+.product-filters__form-item-toggle-button {
+	font-family: 'Oswald', sans-serif !important;
+	font-size: 20px !important;
+	font-weight: 600 !important;
+	text-transform: uppercase !important;
+	letter-spacing: 0.05em !important;
 }
 .filter-list__collection-link {
 	display: flex;
@@ -169,10 +403,10 @@
 	gap: 8px;
 	text-decoration: none;
 	color: #2c3d33;
-	font-family: 'Oswald', sans-serif;
+	font-family: var(--font-body-family, sans-serif);
 	font-size: 15px;
-	font-weight: 700;
-	text-transform: uppercase;
+	font-weight: 400;
+	text-transform: none;
 	transition: opacity 0.2s ease;
 	cursor: pointer;
 }
@@ -180,7 +414,7 @@
 	opacity: 0.7;
 }
 .filter-list__collection-link--active {
-	font-weight: 700;
+	font-weight: 600;
 }
 .filter-list__collection-icon {
 	font-size: 14px;
@@ -189,6 +423,136 @@
 	text-align: center;
 }
 
+
+/* Thinner fonts for mobile filter items */
+.product-filters__drawer .filter-list__collection-link,
+.product-filters__drawer .filter-list__item a,
+.product-filters__drawer .filter-list label {
+	font-weight: 400 !important;
+}
+.product-filters__drawer .filter-list__collection-link.filter-list__collection-link--active,
+.product-filters__drawer .filter-list__item a.filter-list__collection-link--active {
+	font-weight: 500 !important;
+}
+
+/* Custom Swatch Styles */
+.custom-swatch-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	list-style: none;
+	padding: 0;
+	margin: 0 0 10px 0;
+}
+.custom-swatch-link {
+	display: block;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	border: 1px solid rgba(44, 61, 51, 0.2);
+	padding: 2px;
+	transition: all 0.2s ease;
+	background: transparent;
+}
+.custom-swatch-link:hover {
+	border-color: rgba(44, 61, 51, 0.6);
+}
+.custom-swatch-link.filter-list__collection-link--active {
+	border-color: #2c3d33;
+}
+.custom-swatch-color {
+	display: block;
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	background-size: cover;
+	background-position: center;
+	background: var(--swatch-color, #eee);
+}
+.custom-swatch-link[title="Black"] .custom-swatch-color { background-color: #000 !important; }
+.custom-swatch-link[title="Olive"] .custom-swatch-color { background-color: #556b2f !important; }
+.custom-swatch-link[title="Navy"] .custom-swatch-color { background-color: #000080 !important; }
+.custom-swatch-link[title="Camo"] .custom-swatch-color { background: repeating-linear-gradient(45deg, #4f5f40, #4f5f40 5px, #8b7355 5px, #8b7355 10px) !important; }
+.custom-swatch-link[title="Graphite"] .custom-swatch-color { background-color: #53565A !important; }
+
+/* Custom Pill Styles */
+.custom-pill-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	list-style: none;
+	padding: 0;
+	margin: 0 0 10px 0;
+}
+.custom-pill-item {
+	flex: 0 0 auto;
+}
+.custom-pill-link {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 36px;
+	height: 30px;
+	padding: 0 10px;
+	border: 1px solid rgba(44, 61, 51, 0.2);
+	border-radius: 2px;
+	color: #2c3d33;
+	font-family: 'Oswald', sans-serif;
+	font-size: 12px;
+	font-weight: 500;
+	text-decoration: none;
+	background: transparent;
+	transition: all 0.2s ease;
+	text-transform: uppercase;
+	text-align: center;
+}
+.custom-pill-link:hover {
+	border-color: rgba(44, 61, 51, 0.6);
+}
+.custom-pill-link.filter-list__collection-link--active {
+	background: #2c3d33;
+	color: #fff;
+	border-color: #2c3d33;
+}
+
+/* Clear All button */
+.filter-clear-wrapper {
+margin-top: 16px;
+padding-top: 12px;
+border-top: 1px solid rgba(44, 61, 51, 0.15);
+}
+.filter-clear-wrapper--hidden {
+display: none;
+}
+.filter-clear-btn {
+display: inline-flex;
+align-items: center;
+gap: 6px;
+text-decoration: none;
+color: #2c3d33;
+font-family: 'Oswald', sans-serif;
+font-size: 13px;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 0.06em;
+padding: 6px 14px;
+border: 1px solid #2c3d33;
+border-radius: 2px;
+background: transparent;
+cursor: pointer;
+transition: all 0.2s ease;
+}
+.filter-clear-btn svg {
+width: 10px;
+height: 10px;
+}
+.filter-clear-btn:hover {
+background: #2c3d33;
+color: #f5f0eb;
+}
+.filter-clear-btn:hover svg {
+fill: #f5f0eb;
+}
 /* Loading state for grid during collection switch */
 .collection__grid-wrapper.is-ajax-loading {
 	opacity: 0.35;
@@ -245,163 +609,201 @@ document.addEventListener('DOMContentLoaded', () => {
 	/* Get the section_id from the collection section */
 	const sectionId = collectionSection.id;
 
+	/* ---- Collection switching (full navigation to keep sidebar stable) ---- */
 	document.addEventListener('click', async (e) => {
 		const link = e.target.closest('.js-collection-ajax-link');
 		if (!link) return;
 		e.preventDefault();
 
-		const targetUrl = link.getAttribute('href');
-		if (!targetUrl) return;
+		/* Build target URL preserving existing filter params */
+		const rawHref = link.getAttribute('href');
+		const currentUrl = new URL(window.location.href);
+		const targetUrlObj = new URL(rawHref, window.location.origin);
 
-		/* Show loading state */
-		const currentGrid = collectionSection.querySelector('.js-grid-wrapper');
-		const loaderEl = collectionSection.querySelector('.collection-ajax-loader');
-		if (currentGrid) currentGrid.classList.add('is-ajax-loading');
-		if (loaderEl) loaderEl.classList.add('is-active');
-
-		/* Scroll to top of collection */
-		const headerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-height-static')) || 0;
-		const headerOT = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-offset-top')) || 0;
-		const scrollTarget = collectionSection.querySelector('.js-element-to-scroll');
-		if (scrollTarget) {
-			const rect = scrollTarget.getBoundingClientRect();
-			if (rect.top < 0) {
-				window.scrollTo({ top: scrollTarget.offsetTop - headerH - headerOT, behavior: 'smooth' });
+		/* Carry over all current filter.* and sort_by params to the new collection */
+		for (const [key, val] of currentUrl.searchParams.entries()) {
+			if (key.startsWith('filter.') || key === 'sort_by') {
+				targetUrlObj.searchParams.append(key, val);
 			}
 		}
+		targetUrlObj.searchParams.delete('page');
 
-		try {
-			/* Fetch new collection page with section_id */
-			const fetchUrl = new URL(targetUrl, window.location.origin);
-			fetchUrl.searchParams.set('section_id', sectionId);
-
-			const response = await fetch(fetchUrl.toString());
-			const html = await response.text();
-			const doc = new DOMParser().parseFromString(html, 'text/html');
-
-			/* Swap the product grid */
-			const newGrid = doc.querySelector('.js-grid-wrapper');
-			if (newGrid && currentGrid) {
-				currentGrid.innerHTML = newGrid.innerHTML;
-			}
-
-			/* Swap pagination */
-			const newPag = doc.querySelector('.js-pagination');
-			const oldPag = collectionSection.querySelector('.js-pagination');
-			if (oldPag && newPag) oldPag.innerHTML = newPag.innerHTML;
-
-			/* Swap infinite scroll / load more */
-			const newInf = doc.querySelector('.js-infinite-scroll');
-			const oldInf = collectionSection.querySelector('.js-infinite-scroll');
-			if (oldInf && newInf) oldInf.outerHTML = newInf.outerHTML;
-
-			const newLM = doc.querySelector('.js-lazy-load');
-			const oldLM = collectionSection.querySelector('.js-lazy-load');
-			if (oldLM && newLM) oldLM.outerHTML = newLM.outerHTML;
-
-			/* Swap empty title state */
-			const newEmpty = doc.querySelector('.js-template-empty-title');
-			const oldEmpty = collectionSection.querySelector('.js-template-empty-title');
-			if (oldEmpty && newEmpty) {
-				oldEmpty.className = newEmpty.className;
-				oldEmpty.innerHTML = newEmpty.innerHTML;
-			}
-
-			/* Update sidebar collection links active state */
-			const newLinks = doc.querySelectorAll('.js-collection-ajax-link');
-			const oldLinks = collectionSection.querySelectorAll('.js-collection-ajax-link');
-			newLinks.forEach((nLink, i) => {
-				if (oldLinks[i]) {
-					oldLinks[i].className = nLink.className;
-					const nIcon = nLink.querySelector('.filter-list__collection-icon');
-					const oIcon = oldLinks[i].querySelector('.filter-list__collection-icon');
-					if (nIcon && oIcon) oIcon.innerHTML = nIcon.innerHTML;
-				}
-			});
-
-			/* Update sidebar filters (Availability, Price, etc.) */
-			const newFilters = doc.querySelectorAll('.js-filter-item');
-			const oldFilters = collectionSection.querySelectorAll('.js-filter-item');
-			newFilters.forEach((nf, i) => {
-				if (oldFilters[i]) {
-					const nInner = nf.querySelector('.js-accordion-inner');
-					const oInner = oldFilters[i].querySelector('.js-accordion-inner');
-					if (nInner && oInner) oInner.innerHTML = nInner.innerHTML;
-					const nCnt = nf.querySelector('.js-filter-item-counter');
-					const oCnt = oldFilters[i].querySelector('.js-filter-item-counter');
-					if (nCnt && oCnt) oCnt.innerHTML = nCnt.innerHTML;
-				}
-			});
-
-			/* Update sort dropdown */
-			const newSort = doc.querySelector('.js-sort-select-external');
-			const oldSort = collectionSection.querySelector('.js-sort-select-external');
-			if (oldSort && newSort) oldSort.innerHTML = newSort.innerHTML;
-
-			/* Update browser URL */
-			window.history.pushState({}, '', targetUrl);
-
-			/* Re-init theme JS */
-			if (window.themeCore && window.themeCore.Accordion) {
-				window.themeCore.Accordion.init();
-			}
-			if (window.themeCore && window.themeCore.EventBus) {
-				window.themeCore.EventBus.emit('search-types:init');
-			}
-
-		} catch (err) {
-			console.error('Collection AJAX error:', err);
-			window.location.href = targetUrl;
-		} finally {
-			const grid = collectionSection.querySelector('.js-grid-wrapper');
-			const loader = collectionSection.querySelector('.collection-ajax-loader');
-			if (grid) grid.classList.remove('is-ajax-loading');
-			if (loader) loader.classList.remove('is-active');
-		}
+		/* Full page navigation so sidebar re-renders correctly */
+		window.location.href = targetUrlObj.toString();
 	});
 
-	/* Handle browser back/forward */
-	window.addEventListener('popstate', async () => {
-		const url = window.location.href;
-		const cGrid = collectionSection.querySelector('.js-grid-wrapper');
-		const cLoader = collectionSection.querySelector('.collection-ajax-loader');
-		if (cGrid) cGrid.classList.add('is-ajax-loading');
-		if (cLoader) cLoader.classList.add('is-active');
+	/* ---- Sort By sidebar handler ---- */
+	document.addEventListener('click', async (e) => {
+		const sortLink = e.target.closest('.js-sort-option-link');
+		if (!sortLink) return;
+		e.preventDefault();
 
-		try {
-			const fetchUrl = new URL(url);
-			fetchUrl.searchParams.set('section_id', sectionId);
-			const response = await fetch(fetchUrl.toString());
-			const html = await response.text();
-			const doc = new DOMParser().parseFromString(html, 'text/html');
+		const sortValue = sortLink.getAttribute('data-sort-value');
+		if (!sortValue) return;
 
-			const newGrid = doc.querySelector('.js-grid-wrapper');
-			if (newGrid && cGrid) cGrid.innerHTML = newGrid.innerHTML;
+		/* Update active state visually */
+		const allSortLinks = document.querySelectorAll('.js-sort-option-link');
+		allSortLinks.forEach(link => {
+			link.classList.remove('filter-list__collection-link--active');
+			const icon = link.querySelector('.filter-list__collection-icon');
+			if (icon) icon.textContent = '\u25A1';
+		});
+		sortLink.classList.add('filter-list__collection-link--active');
+		const activeIcon = sortLink.querySelector('.filter-list__collection-icon');
+		if (activeIcon) activeIcon.textContent = '\u25A0';
 
-			const newLinks = doc.querySelectorAll('.js-collection-ajax-link');
-			const oldLinks = collectionSection.querySelectorAll('.js-collection-ajax-link');
-			newLinks.forEach((nLink, i) => {
-				if (oldLinks[i]) {
-					oldLinks[i].className = nLink.className;
-					const nIcon = nLink.querySelector('.filter-list__collection-icon');
-					const oIcon = oldLinks[i].querySelector('.filter-list__collection-icon');
-					if (nIcon && oIcon) oIcon.innerHTML = nIcon.innerHTML;
+		/* Also update the external sort dropdown if exists */
+		const externalSelect = document.querySelector('.js-sort-select-external');
+		if (externalSelect) {
+			externalSelect.value = sortValue;
+			externalSelect.dispatchEvent(new Event('change', { bubbles: true }));
+			return; /* Let the theme's existing sort handler do the work */
+		}
+
+		/* Fallback: Navigate with sort_by param */
+		const url = new URL(window.location.href);
+		url.searchParams.set('sort_by', sortValue);
+		window.location.href = url.toString();
+	});
+
+	/* ---- Handle browser back/forward ---- */
+	window.addEventListener('popstate', () => {
+		window.location.reload();
+	});
+
+
+	/* ---- Clothing Type Filter ---- */
+	(function initClothingFilter() {
+		const url = new URL(window.location.href);
+		const activeTypes = url.searchParams.getAll('filter.p.product_type');
+		const activeTypesStr = activeTypes.sort().join(',');
+		const clothingLinks = document.querySelectorAll('.js-clothing-type-link');
+		const accordion = document.querySelector('.js-clothing-accordion');
+		const accordionBtn = document.querySelector('.js-clothing-accordion-btn');
+		const accordionContent = document.querySelector('.js-clothing-accordion-content');
+		const counter = document.querySelector('.js-clothing-counter');
+
+		clothingLinks.forEach(link => {
+			const typeAttr = link.getAttribute('data-product-type');
+			if (!typeAttr) return;
+			const typesArray = typeAttr.split(',');
+			const typesStr = [...typesArray].sort().join(',');
+			const icon = link.querySelector('.filter-list__collection-icon');
+
+			/* Mark active */
+			if (activeTypesStr && activeTypesStr === typesStr) {
+				link.classList.add('filter-list__collection-link--active');
+				if (icon) icon.innerHTML = '\u25A0'; /* ■ filled */
+			}
+		});
+
+		/* Auto-expand accordion if filter is active */
+		if (activeTypes.length > 0) {
+			if (accordion) accordion.classList.add('is-active');
+			if (accordionBtn) {
+				accordionBtn.classList.add('is-active');
+				accordionBtn.setAttribute('aria-expanded', 'true');
+			}
+			if (accordionContent) {
+				accordionContent.style.height = 'auto';
+				accordionContent.classList.add('is-active');
+			}
+			if (counter) counter.style.display = 'inline';
+		}
+	})();
+
+	/* Click handler for clothing links */
+	document.addEventListener('click', (e) => {
+		const typeLink = e.target.closest('.js-clothing-type-link');
+		if (!typeLink) return;
+		e.preventDefault();
+
+		/* Don't navigate if disabled (Coming Soon) */
+		if (typeLink.classList.contains('filter-list__clothing-disabled')) return;
+
+		const productTypeAttr = typeLink.getAttribute('data-product-type');
+		if (!productTypeAttr) return;
+
+		/* Keep the current collection path (e.g. /collections/independence-day) */
+		const url = new URL(window.location.href);
+		const typesToApply = productTypeAttr.split(',');
+		const typesToApplyStr = [...typesToApply].sort().join(',');
+
+		const activeTypes = url.searchParams.getAll('filter.p.product_type');
+		const activeTypesStr = activeTypes.sort().join(',');
+
+		if (activeTypesStr === typesToApplyStr) {
+			/* Already active — remove the filter */
+			url.searchParams.delete('filter.p.product_type');
+		} else {
+			/* Apply the type filter, keep all other params */
+			url.searchParams.delete('filter.p.product_type');
+			typesToApply.forEach(t => {
+				url.searchParams.append('filter.p.product_type', t);
+			});
+		}
+
+		/* Remove page param to go back to page 1 */
+		url.searchParams.delete('page');
+
+		/* Full page navigation to let Shopify re-render with new filters on the current collection */
+		window.location.href = url.toString();
+	});
+
+	/* ---- Generalized Static Filters (Hunting, Colors, Size) ---- */
+	(function initCustomFilters() {
+		const url = new URL(window.location.href);
+		
+		const groups = document.querySelectorAll('.js-custom-accordion');
+		groups.forEach(accordion => {
+			const filterParam = accordion.getAttribute('data-filter-group');
+			const activeVal = url.searchParams.get(filterParam);
+			const links = accordion.querySelectorAll('.js-custom-filter-link');
+			const content = accordion.querySelector('.js-custom-accordion-content');
+			const btn = accordion.querySelector('.js-custom-accordion-btn');
+			const counter = accordion.querySelector('.js-custom-counter');
+			
+			links.forEach(link => {
+				const val = link.getAttribute('data-filter-value');
+				const icon = link.querySelector('.filter-list__collection-icon');
+				
+				if (activeVal && activeVal === val) {
+					link.classList.add('filter-list__collection-link--active');
+					if (icon) icon.innerHTML = '\u25A0'; /* ■ filled */
+					
+					/* Expand accordion */
+					accordion.classList.add('is-active');
+					if(btn) { btn.classList.add('is-active'); btn.setAttribute('aria-expanded', 'true'); }
+					if(content) { content.style.height = 'auto'; content.classList.add('is-active'); }
+					if(counter) counter.style.display = 'inline';
 				}
 			});
+		});
+	})();
 
-			const newPag = doc.querySelector('.js-pagination');
-			const oldPag = collectionSection.querySelector('.js-pagination');
-			if (oldPag && newPag) oldPag.innerHTML = newPag.innerHTML;
+	/* Click handler for custom filters */
+	document.addEventListener('click', (e) => {
+		const link = e.target.closest('.js-custom-filter-link');
+		if (!link) return;
+		e.preventDefault();
 
-		} catch (err) {
-			console.error('Popstate AJAX error:', err);
-			window.location.reload();
-		} finally {
-			const grid = collectionSection.querySelector('.js-grid-wrapper');
-			const loader = collectionSection.querySelector('.collection-ajax-loader');
-			if (grid) grid.classList.remove('is-ajax-loading');
-			if (loader) loader.classList.remove('is-active');
+		if (link.classList.contains('filter-list__clothing-disabled')) return;
+
+		const param = link.getAttribute('data-filter-param');
+		const val = link.getAttribute('data-filter-value');
+		if (!param || !val) return;
+
+		const url = new URL(window.location.href);
+		const currentVal = url.searchParams.get(param);
+
+		if (currentVal === val) {
+			url.searchParams.delete(param);
+		} else {
+			url.searchParams.set(param, val);
 		}
+
+		url.searchParams.delete('page');
+		window.location.href = url.toString();
 	});
 });
 </script>

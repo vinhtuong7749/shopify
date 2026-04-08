@@ -142,6 +142,7 @@
 					{%- endif -%}
 
 					{%- if variants_type == "radio" or use_color_swatch -%}
+						<div style="display: flex; flex-wrap: nowrap; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px;">
 						{%- for value in option.values -%}
 							{%- assign is_disabled = true -%}
 
@@ -167,7 +168,7 @@
 								{%- endcapture -%}
 							{%- endif -%}
 
-							<div class="{{- container_classes -}}">
+							<div class="{{- container_classes -}}" style="margin: 0; flex: 1 1 0; min-width: max-content;">
 								<input
 									id="quick-view-{{- value | handle -}}-{{- option_name_handle -}}"
 									type="radio"
@@ -184,6 +185,7 @@
 								<label
 									for="quick-view-{{- value | handle -}}-{{- option_name_handle -}}"
 									class="radio-option__label quick-view-form {% if is_disabled %}is-disabled{% endif %}"
+									style="padding-left: 8px !important; padding-right: 8px !important; width: 100%; text-align: center; display: block; box-sizing: border-box;"
 								>
 									{%- if swatch_image != blank -%}
 										<img
@@ -205,6 +207,7 @@
 								</label>
 							</div>
 						{%- endfor -%}
+						</div>
 					{%- else -%}
 						<div class="select-wrapper product-options__select-wrapper">
 							<select id="quick-view-option-{{ option_name_handle }}-{{- option.position -}}"
@@ -322,3 +325,31 @@
 		</a>
 	</div>
 {%- endform -%}
+
+<style>
+	/* Make color swatches round on quick view */
+	.quick-view__form .radio-option-swatch__label,
+	.quick-view__form .radio-option-swatch__label::before,
+	.quick-view__form .radio-option-swatch__label::after,
+	.quick-view__form .radio-option-swatch__image {
+		border-radius: 50% !important;
+	}
+
+	/* Round corners for Size and other standard variant blocks */
+	.quick-view__form .radio-option__label {
+		border-radius: 8px !important;
+	}
+
+	/* Make add to cart button oswald font */
+	.quick-view-form__button,
+	.quick-view-form__button-pdp {
+		font-family: 'Oswald', sans-serif !important;
+		font-size: 15px !important;
+		font-weight: 600 !important;
+		text-transform: uppercase !important;
+		letter-spacing: 0.08em !important;
+		border-radius: 8px !important;
+		background-color: var(--color-text-primary, #203224) !important;
+		color: #faf6ee !important;
+	}
+</style>

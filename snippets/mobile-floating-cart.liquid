@@ -1,0 +1,327 @@
+{%- comment -%}
+------------------------------------------------------------------------------
+  Snippet: Mobile Floating Cart Button
+  A fixed, draggable cart icon on mobile.
+  Optimized for thumb reach while scrolling.
+  Shows item count badge when cart has items.
+  Hides when header cart icon is visible (top of page).
+  Users can drag the button to reposition it.
+------------------------------------------------------------------------------
+{%- endcomment -%}
+
+{%- assign cart_type = settings.cart_type -%}
+
+<div class="mobile-floating-cart js-mobile-floating-cart" aria-label="Cart">
+	{%- if cart_type == "drawer" and template != "cart" -%}
+		<button
+			type="button"
+			class="mobile-floating-cart__button js-header-cart-toggler"
+			data-target="CartDrawer"
+			data-js-toggle="CartDrawer"
+			aria-expanded="false"
+			aria-controls="CartDrawer"
+			aria-label="{{ 'layout.header.labels.cart_drawer' | t | escape }}"
+		>
+			<svg class="mobile-floating-cart__icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+				<circle cx="9" cy="21" r="1"></circle>
+				<circle cx="20" cy="21" r="1"></circle>
+				<path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"></path>
+			</svg>
+
+			<span
+				class="mobile-floating-cart__count js-mobile-floating-cart-count"
+				data-cart-count="{{ cart.item_count }}"
+			>
+				<span class="js-header-cart-item-count">
+					{%- if cart.item_count > 99 -%}
+						99+
+					{%- else -%}
+						{{- cart.item_count -}}
+					{%- endif -%}
+				</span>
+			</span>
+		</button>
+	{%- else -%}
+		<a
+			href="{{ routes.cart_url }}"
+			class="mobile-floating-cart__button"
+			aria-label="{{ 'layout.header.labels.cart' | t | escape }}"
+		>
+			<svg class="mobile-floating-cart__icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+				<circle cx="9" cy="21" r="1"></circle>
+				<circle cx="20" cy="21" r="1"></circle>
+				<path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"></path>
+			</svg>
+
+			<span
+				class="mobile-floating-cart__count"
+				data-cart-count="{{ cart.item_count }}"
+			>
+				<span class="js-header-cart-item-count">
+					{%- if cart.item_count > 99 -%}
+						99+
+					{%- else -%}
+						{{- cart.item_count -}}
+					{%- endif -%}
+				</span>
+			</span>
+		</a>
+	{%- endif -%}
+</div>
+
+<style>
+	/* ================================================
+	   MOBILE FLOATING CART BUTTON
+	   Fixed, draggable, thumb-optimized
+	   ================================================ */
+	.mobile-floating-cart {
+		display: none;
+	}
+
+	@media (max-width: 1199px) {
+		.mobile-floating-cart {
+			display: block;
+			position: fixed;
+			bottom: 115px;
+			right: 26px;
+			z-index: 13;
+			opacity: 0;
+			visibility: hidden;
+			touch-action: none;
+			user-select: none;
+			-webkit-user-select: none;
+			transition: opacity 0.3s ease, visibility 0.3s ease;
+		}
+
+		.mobile-floating-cart.is-visible {
+			opacity: 1;
+			visibility: visible;
+		}
+
+		/* When being dragged, disable transitions so movement is instant */
+		.mobile-floating-cart.is-dragging {
+			transition: none !important;
+		}
+
+		/* Snap animation after drag release */
+		.mobile-floating-cart.is-snapping {
+			transition: right 0.25s ease, left 0.25s ease !important;
+		}
+
+		.mobile-floating-cart__button {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+			width: 52px;
+			height: 52px;
+			border: none;
+			border-radius: 50%;
+			background-color: var(--color-text-primary, #1a1a1a);
+			color: var(--color-background, #ffffff);
+			cursor: grab;
+			box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+			text-decoration: none;
+			-webkit-tap-highlight-color: transparent;
+			transition: transform 0.15s ease, box-shadow 0.15s ease;
+		}
+
+		.mobile-floating-cart.is-dragging .mobile-floating-cart__button {
+			cursor: grabbing;
+			transform: scale(1.08);
+			box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3);
+		}
+
+		.mobile-floating-cart__button:active:not(.is-dragging .mobile-floating-cart__button) {
+			transform: scale(0.93);
+		}
+
+		.mobile-floating-cart__icon {
+			width: 22px;
+			height: 22px;
+			flex-shrink: 0;
+			pointer-events: none;
+		}
+
+		.mobile-floating-cart__count {
+			position: absolute;
+			top: -4px;
+			right: -4px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			min-width: 20px;
+			height: 20px;
+			padding: 0 5px;
+			border-radius: 10px;
+			background-color: var(--color-button, #1a1a1a);
+			color: var(--color-button-text, #ffffff);
+			font-size: 10px;
+			font-weight: 600;
+			line-height: 1;
+			border: 2px solid var(--color-background, #ffffff);
+			pointer-events: none;
+		}
+
+		/* Hide badge when cart is empty */
+		.mobile-floating-cart__count[data-cart-count="0"] {
+			display: none;
+		}
+	}
+
+	/* Ensure it doesn't show on desktop */
+	@media (min-width: 1200px) {
+		.mobile-floating-cart {
+			display: none !important;
+		}
+	}
+</style>
+
+<script>
+	(function() {
+		var el = document.querySelector('.js-mobile-floating-cart');
+		if (!el) return;
+
+		/* ---- Scroll show/hide ---- */
+		var showThreshold = 100;
+		var ticking = false;
+
+		function updateVisibility() {
+			if (window.scrollY > showThreshold) {
+				el.classList.add('is-visible');
+			} else {
+				el.classList.remove('is-visible');
+			}
+			ticking = false;
+		}
+
+		window.addEventListener('scroll', function() {
+			if (!ticking) {
+				window.requestAnimationFrame(updateVisibility);
+				ticking = true;
+			}
+		}, { passive: true });
+
+		updateVisibility();
+
+		/* ---- Drag & Drop (touch) ---- */
+		var isDragging = false;
+		var wasDragged = false;
+		var startX = 0;
+		var startY = 0;
+		var startRight = 0;
+		var startBottom = 0;
+		var dragThreshold = 8; /* px movement before considered a drag */
+		var margin = 26; /* edge margin */
+
+		el.addEventListener('touchstart', function(e) {
+			var touch = e.touches[0];
+			startX = touch.clientX;
+			startY = touch.clientY;
+			wasDragged = false;
+
+			var rect = el.getBoundingClientRect();
+			startRight = window.innerWidth - rect.right;
+			startBottom = window.innerHeight - rect.bottom;
+		}, { passive: true });
+
+		el.addEventListener('touchmove', function(e) {
+			var touch = e.touches[0];
+			var dx = touch.clientX - startX;
+			var dy = touch.clientY - startY;
+
+			/* Only start drag after exceeding threshold */
+			if (!isDragging && (Math.abs(dx) > dragThreshold || Math.abs(dy) > dragThreshold)) {
+				isDragging = true;
+				wasDragged = true;
+				el.classList.add('is-dragging');
+			}
+
+			if (isDragging) {
+				e.preventDefault();
+
+				var newRight = startRight - dx;
+				var newBottom = startBottom - dy;
+
+				/* Clamp within viewport */
+				var maxRight = window.innerWidth - el.offsetWidth - margin;
+				var maxBottom = window.innerHeight - el.offsetHeight - margin;
+
+				newRight = Math.max(margin, Math.min(newRight, maxRight));
+				newBottom = Math.max(margin, Math.min(newBottom, maxBottom));
+
+				el.style.right = newRight + 'px';
+				el.style.bottom = newBottom + 'px';
+				el.style.left = 'auto';
+			}
+		}, { passive: false });
+
+		el.addEventListener('touchend', function(e) {
+			if (isDragging) {
+				isDragging = false;
+				el.classList.remove('is-dragging');
+
+				/* Snap to nearest horizontal edge */
+				var rect = el.getBoundingClientRect();
+				var centerX = rect.left + rect.width / 2;
+				var screenMid = window.innerWidth / 2;
+
+				el.classList.add('is-snapping');
+
+				if (centerX < screenMid) {
+					/* Snap to left */
+					el.style.right = 'auto';
+					el.style.left = margin + 'px';
+				} else {
+					/* Snap to right */
+					el.style.left = 'auto';
+					el.style.right = margin + 'px';
+				}
+
+				setTimeout(function() {
+					el.classList.remove('is-snapping');
+				}, 300);
+			}
+
+			/* If it was a drag, prevent the click/tap from opening the cart */
+			if (wasDragged) {
+				e.preventDefault();
+				var btn = el.querySelector('.mobile-floating-cart__button');
+				if (btn) {
+					btn.addEventListener('click', function blockClick(ev) {
+						ev.preventDefault();
+						ev.stopPropagation();
+						btn.removeEventListener('click', blockClick, true);
+					}, { once: true, capture: true });
+				}
+			}
+		}, { passive: false });
+
+		/* ---- Live cart count update ---- */
+		function updateFloatingCartCount(data) {
+			if (!data || !data.hasOwnProperty('item_count')) return;
+
+			var countBadges = el.querySelectorAll('[data-cart-count]');
+			var countTexts = el.querySelectorAll('.js-header-cart-item-count');
+
+			countBadges.forEach(function(badge) {
+				badge.setAttribute('data-cart-count', data.item_count);
+			});
+
+			countTexts.forEach(function(txt) {
+				txt.innerHTML = data.item_count > 99 ? '99+' : data.item_count;
+			});
+		}
+
+		/* Wait for theme EventBus to be ready, then listen */
+		function listenForCartUpdates() {
+			if (window.themeCore && window.themeCore.EventBus) {
+				window.themeCore.EventBus.listen(['cart:updated', 'header:update-item-count'], updateFloatingCartCount);
+			} else {
+				/* Retry until EventBus is available */
+				setTimeout(listenForCartUpdates, 500);
+			}
+		}
+		listenForCartUpdates();
+	})();
+</script>

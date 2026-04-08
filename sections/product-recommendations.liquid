@@ -122,6 +122,7 @@
 						{%- if enable_shopify_recommendations -%}
 							{%- if recommendations.products_count > 0 -%}
 								{%- for product in recommendations.products limit: limit -%}
+									{%- unless product.selected_or_first_available_variant.requires_shipping -%}{%- continue -%}{%- endunless -%}
 									<div class="product-recommendations__col swiper-slide js-product-recommendations-col">
 										{%- render
 											'product-card',
@@ -139,6 +140,7 @@
 							{%- endif -%}
 						{%- elsif product_list != blank and product_list.count > 0 -%}
 							{%- for product in product_list limit: limit -%}
+								{%- unless product.selected_or_first_available_variant.requires_shipping -%}{%- continue -%}{%- endunless -%}
 								<div class="product-recommendations__col swiper-slide">
 									{%- render
 										'product-card',

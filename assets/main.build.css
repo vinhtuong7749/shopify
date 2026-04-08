@@ -3481,6 +3481,9 @@ body.rtl .drawer.drawer--left {
 }
 .header-menu .header-menu__list.header-menu__list--main > .header-menu__item-wrapper-mega-menu,
 .header-menu .header-menu__list.header-menu__list--main > .header-menu__item-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 2px;
   transition-property: visibility, opacity;
   transition-duration: var(--timing-base);
 }

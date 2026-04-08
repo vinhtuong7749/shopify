@@ -4,6 +4,21 @@
 	------------------------------------------------------------------------------
 {%- endcomment -%}
 
+{%- if product.handle == 'shipping-protection-apparel' -%}
+  <script>
+    (function(){
+      var el = document.currentScript;
+      if (el) {
+        var wrapper = el.closest('.collection__item, .swiper-slide, .grid__item, .product-card-container, li');
+        if (wrapper) {
+          wrapper.remove();
+        } else if (el.parentElement) {
+          el.parentElement.style.display = 'none';
+        }
+      }
+    })();
+  </script>
+{%- else -%}
 {%- render 'adastra' with '/src/styles/product-card-mini.scss' -%}
 
 {%- assign quick_view_label         = 'products.product_card.open_quick_view' | t -%}
@@ -110,3 +125,4 @@
 		</button>
 	</div>
 </div>
+{%- endif -%}

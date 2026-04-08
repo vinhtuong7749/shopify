@@ -1,86 +1,149 @@
+{%- comment -%}
+  Mega Menu Collection - 4-Block Layout
+  Block 1: Clothing (text links)
+  Block 2: Hunting (with icons)
+  Block 3: Terrain (images only, no text) - uses collections directly
+  Block 4: Seasonal (Independence Day, Signature)
+{%- endcomment -%}
+
 <div
 	id="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
 	class="header-mega-desktop js-header-dropdown-menu"
 >
-	<div class="header-mega-desktop__inner">
-		{%- assign mega_links = first_level_link.links -%}
-		{%- assign mega_collections = blank -%}
-		
-		{%- if mega_links != blank -%}
-			{%- for second_level_link in mega_links limit: 5 -%}
-				{%- assign col = second_level_link.object -%}
-				{%- assign target_image = col.image | default: col.products.first.featured_image -%}
+	<div class="header-mega-desktop__inner mega-4block">
+		<!-- Block 1: CLOTHING -->
+		<div class="mega-block mega-block--clothing">
+			<h3 class="mega-block__heading">Clothing</h3>
+			<ul class="mega-block__list">
+				<li><a href="/collections/all?filter.p.product_type=Type1&filter.p.product_type=3D+Tshirt&filter.p.product_type=T-Shirt" class="mega-block__link">T-Shirts</a></li>
+			<li><a href="/collections/all?filter.p.product_type=Sweatshirt" class="mega-block__link">Sweatshirts</a></li>
+			<li><a href="/collections/all?filter.p.product_type=Hoodie" class="mega-block__link">Hoodies</a></li>
+			<li><a href="/collections/all?filter.p.product_type=Hat" class="mega-block__link">Hats</a></li>
+			</ul>
+		</div>
 
-				<div class="header-mega-desktop__card">
-                    <a href="{{ second_level_link.url }}" class="header-mega-desktop__image-link">
-					    <div class="header-mega-desktop__image-wrapper">
-						    {%- if target_image != blank -%}
-							    <img src="{{ target_image | img_url: '400x' }}" alt="{{ second_level_link.title | escape }}" loading="lazy" class="header-mega-desktop__image">
-						    {%- else -%}
-							    <div class="header-mega-desktop__placeholder"></div>
-						    {%- endif -%}
-					    </div>
-                    </a>
-                    <a href="{{ second_level_link.url }}" class="header-mega-desktop__title-link">
-					    <h3 class="header-mega-desktop__title">{{ second_level_link.title }}</h3>
-                    </a>
-                    
-                    {%- if second_level_link.links != blank -%}
-                        <ul class="header-mega-desktop__sub-links">
-                            {%- for third_level_link in second_level_link.links -%}
-                                <li>
-                                    <a href="{{ third_level_link.url }}" class="header-mega-desktop__sub-link">{{ third_level_link.title }}</a>
-                                </li>
-                            {%- endfor -%}
-                        </ul>
-                    {%- elsif col.products.size > 0 -%}
-                        <ul class="header-mega-desktop__sub-links">
-                            {%- for product in col.products limit: 4 -%}
-                                <li>
-                                    <a href="{{ product.url }}" class="header-mega-desktop__sub-link">{{ product.title | truncate: 35 }}</a>
-                                </li>
-                            {%- endfor -%}
-                        </ul>
-                    {%- endif -%}
-				</div>
-			{%- endfor -%}
-		{%- else -%}
-			{%- for col in collections limit: 5 -%}
-				{%- assign target_image = col.image | default: col.products.first.featured_image -%}
-				<div class="header-mega-desktop__card">
-                    <a href="{{ col.url }}" class="header-mega-desktop__image-link">
-					    <div class="header-mega-desktop__image-wrapper">
-						    {%- if target_image != blank -%}
-							    <img src="{{ target_image | img_url: '400x' }}" alt="{{ col.title | escape }}" loading="lazy" class="header-mega-desktop__image">
-						    {%- else -%}
-							    <div class="header-mega-desktop__placeholder"></div>
-						    {%- endif -%}
-					    </div>
-                    </a>
-                    <a href="{{ col.url }}" class="header-mega-desktop__title-link">
-					    <h3 class="header-mega-desktop__title">{{ col.title }}</h3>
-                    </a>
+		<!-- Block 2: HUNTING (with images) -->
+		<div class="mega-block mega-block--hunting">
+			<h3 class="mega-block__heading">Hunting</h3>
+			<div class="mega-hunting-list">
+				{%- assign hunting_handles = "deer,turkey,waterfowl,fishing" | split: "," -%}
+				{%- assign hunting_labels = "Deer,Turkey,Waterfowl,Fishing" | split: "," -%}
+				{%- for handle in hunting_handles -%}
+					{%- assign h_col = collections[handle] -%}
+					{%- assign h_label = hunting_labels[forloop.index0] -%}
+					<a href="/collections/{{ handle }}" class="mega-hunting-item">
+						<span class="mega-hunting-icon-wrap">
+							{%- if h_col.image != blank -%}
+								<img src="{{ h_col.image | img_url: '120x120', crop: 'center' }}" alt="{{ h_label }}" class="mega-hunting-icon" loading="lazy">
+							{%- else -%}
+								<span class="mega-hunting-icon-svg">
+									{%- case handle -%}
+										{%- when 'deer' -%}
+											<svg viewBox="0 0 64 64" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M22 8l-4-6h-2l3 8-5-3-2 2 7 5h-3l-1 2 5 3v5c-4 2-8 6-8 12v10c0 1 1 2 2 2h6l1-10 3-4h18l3 4 1 10h6c1 0 2-1 2-2V36c0-6-4-10-8-12v-5l5-3-1-2h-3l7-5-2-2-5 3 3-8h-2l-4 6-5-4h-6l-5 4z"/></svg>
+										{%- when 'turkey' -%}
+											<svg viewBox="0 0 64 64" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18 14c-6 4-10 12-6 22l8 6 4-2v8l-2 10h4l3-10 3 10h4l-2-10v-8l6 4 6-2c4-4 6-10 4-16-2-4-6-8-10-10l-2 4c-2-2-4-2-6-2h-4c-2 0-4 0-6 2l-1-6z"/><circle cx="38" cy="14" r="5"/><path d="M42 12l6-2 2 2-6 4z"/></svg>
+										{%- when 'waterfowl' -%}
+											<svg viewBox="0 0 64 64" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6 30c2-8 10-14 18-14h4l2-4 4-2 6 2-2 4h4c8 2 14 8 16 16 0 2-2 4-4 4l-12-4-8-2-12 4-8 2c-4 0-6-2-8-6z"/><path d="M20 38l-4 16h4l4-12 4 12h4l-4-16z"/></svg>
+										{%- when 'fishing' -%}
+											<svg viewBox="0 0 64 64" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 32c4-12 16-18 28-14l8-8 4 4-8 8c4 12-2 24-14 28-4 0-8-2-12-6s-6-8-6-12zm12 0a4 4 0 108 0 4 4 0 00-8 0z"/><path d="M46 14l6-6 4 4-6 6z"/></svg>
+									{%- endcase -%}
+								</span>
+							{%- endif -%}
+						</span>
+						<span class="mega-hunting-label">{{ h_label | upcase }}</span>
+					</a>
+				{%- endfor -%}
+			</div>
+		</div>
 
-                    {%- if col.products.size > 0 -%}
-                        <ul class="header-mega-desktop__sub-links">
-                            {%- for product in col.products limit: 4 -%}
-                                <li>
-                                    <a href="{{ product.url }}" class="header-mega-desktop__sub-link">{{ product.title | truncate: 35 }}</a>
-                                </li>
-                            {%- endfor -%}
-                        </ul>
-                    {%- endif -%}
-				</div>
-			{%- endfor -%}
-		{%- endif -%}
+		<!-- Block 3: TERRAIN (images only, no text) -->
+		<!-- Uses collection sub-links, excluding independence/signature -->
+		<div class="mega-block mega-block--terrain">
+			<h3 class="mega-block__heading">Terrain</h3>
+			<div class="mega-terrain-list">
+				{%- assign terrain_handles = "grassland-prairie-copy,forest-hardwood-copy,marsh-wetland-copy,mountainous-terrain-copy,pacific-northwest-copy" | split: "," -%}
+				{%- assign terrain_labels = "Forest & Hardwood,Desert & Brush Country,Grassland & Prairie,Marsh & Wetland,Mountainous Terrain" | split: "," -%}
+				{%- for th in terrain_handles -%}
+					{%- assign t_col = collections[th] -%}
+					{%- assign t_label = terrain_labels[forloop.index0] -%}
+					<a href="{%- if t_col != blank -%}{{ t_col.url }}{%- else -%}/collections/{{ th }}{%- endif -%}" class="mega-terrain-item">
+						<span class="mega-terrain-img-wrap">
+							{%- if t_col.image != blank -%}
+								<img src="{{ t_col.image | img_url: '120x120', crop: 'center' }}" alt="{{ t_label }}" class="mega-terrain-img" loading="lazy">
+							{%- elsif t_col.products.first.featured_image != blank -%}
+								<img src="{{ t_col.products.first.featured_image | img_url: '120x120', crop: 'center' }}" alt="{{ t_label }}" class="mega-terrain-img" loading="lazy">
+							{%- else -%}
+								<div class="mega-terrain-placeholder">{{ t_label | truncate: 2, '' }}</div>
+							{%- endif -%}
+						</span>
+						<span class="mega-terrain-label">{{ t_label | upcase }}</span>
+					</a>
+				{%- endfor -%}
+			</div>
+		</div>
+
+		<!-- Block 4: SEASONAL -->
+		<div class="mega-block mega-block--seasonal">
+			<h3 class="mega-block__heading">Seasonal</h3>
+			<div class="mega-seasonal-list">
+				{%- comment -%}
+					Try menu sub-links first (items containing independence/signature).
+					If none found, use hardcoded fallbacks.
+				{%- endcomment -%}
+				{%- assign has_seasonal_links = false -%}
+				{%- for link in first_level_link.links -%}
+					{%- assign link_title_lower = link.title | downcase -%}
+					{%- if link_title_lower contains 'independence' or link_title_lower contains 'signature' -%}
+						{%- assign has_seasonal_links = true -%}
+						{%- assign scol = link.object -%}
+						{%- assign simg = scol.image | default: scol.products.first.featured_image -%}
+						<a href="{{ link.url }}" class="mega-seasonal-item">
+							{%- if simg != blank -%}
+								<div class="mega-seasonal-img-wrap">
+									<img src="{{ simg | img_url: '300x' }}" alt="{{ link.title | escape }}" class="mega-seasonal-img" loading="lazy">
+								</div>
+							{%- endif -%}
+							<span class="mega-seasonal-label">{{ link.title }}</span>
+						</a>
+					{%- endif -%}
+				{%- endfor -%}
+
+				{%- unless has_seasonal_links -%}
+					{%- comment -%} Fallback: hardcoded seasonal items {%- endcomment -%}
+					{%- assign sig_col = collections['camo'] -%}
+					{%- assign ind_col = collections['usa'] -%}
+
+					{%- if ind_col != blank -%}
+						<a href="{{ ind_col.url }}" class="mega-seasonal-item">
+							{%- assign ind_img = ind_col.image | default: ind_col.products.first.featured_image -%}
+							{%- if ind_img != blank -%}
+								<div class="mega-seasonal-img-wrap">
+									<img src="{{ ind_img | img_url: '300x' }}" alt="Independence Day" class="mega-seasonal-img" loading="lazy">
+								</div>
+							{%- endif -%}
+							<span class="mega-seasonal-label">Independence Day</span>
+						</a>
+					{%- endif -%}
+
+					{%- if sig_col != blank -%}
+						<a href="{{ sig_col.url }}" class="mega-seasonal-item">
+							{%- assign sig_img = sig_col.image | default: sig_col.products.first.featured_image -%}
+							{%- if sig_img != blank -%}
+								<div class="mega-seasonal-img-wrap">
+									<img src="{{ sig_img | img_url: '300x' }}" alt="Signature" class="mega-seasonal-img" loading="lazy">
+								</div>
+							{%- endif -%}
+							<span class="mega-seasonal-label">Signature</span>
+						</a>
+					{%- endif -%}
+				{%- endunless -%}
+			</div>
+		</div>
 	</div>
 </div>
 
 <style>
-/* ── Mega Menu: Pure CSS positioning (no JS alignment needed) ── */
-
-/* Remove positioning context from parent elements so mega menu
-   can position relative to the header-section (which is full-width) */
+/* ── Mega Menu: positioning ── */
 .header-menu__item-wrapper:has(.header-mega-desktop) {
 	position: static !important;
 }
@@ -96,7 +159,7 @@
 	background: #faf6ee;
 	border-top: none;
 	box-shadow: 0 15px 40px rgba(0,0,0,0.10);
-	padding: 40px;
+	padding: 36px 40px;
 	opacity: 0;
 	visibility: hidden;
 	z-index: 100;
@@ -115,117 +178,240 @@
 	pointer-events: auto;
 }
 
-/* ── Card stagger animation ── */
-@keyframes megaCardFadeIn {
-	from {
-		opacity: 0;
-		transform: translateY(12px);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
-}
-
-.header-mega-desktop.is-active .header-mega-desktop__card {
-	animation: megaCardFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-.header-mega-desktop.is-active .header-mega-desktop__card:nth-child(1) { animation-delay: 0.04s; }
-.header-mega-desktop.is-active .header-mega-desktop__card:nth-child(2) { animation-delay: 0.08s; }
-.header-mega-desktop.is-active .header-mega-desktop__card:nth-child(3) { animation-delay: 0.12s; }
-.header-mega-desktop.is-active .header-mega-desktop__card:nth-child(4) { animation-delay: 0.16s; }
-.header-mega-desktop.is-active .header-mega-desktop__card:nth-child(5) { animation-delay: 0.20s; }
-
-/* ── Inner layout ── */
-.header-mega-desktop__inner {
-	display: flex;
-	justify-content: center;
-	align-items: flex-start;
-	gap: 30px;
-	width: 100%;
+/* ── 4-Block Grid Layout ── */
+.mega-4block {
+	display: grid !important;
+	grid-template-columns: 0.8fr 1.2fr 2fr 1.2fr;
+	gap: 32px;
 	max-width: 1200px;
 	margin: 0 auto;
+	align-items: start;
 }
 
-.header-mega-desktop__card {
-	flex: 1;
-	max-width: calc(25% - 22.5px);
-	display: flex;
-	flex-direction: column;
-	opacity: 0; /* hidden until animation plays */
-}
-
-.header-mega-desktop__image-link {
-	display: block;
-	margin-bottom: 20px;
-}
-
-.header-mega-desktop__image-wrapper {
-	width: 100%;
-	aspect-ratio: 16/9;
-	overflow: hidden;
-	background: #f4f4f4;
-	position: relative;
-}
-
-.header-mega-desktop__image {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-	transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.header-mega-desktop__card:hover .header-mega-desktop__image {
-	transform: scale(1.05);
-}
-
-.header-mega-desktop__placeholder {
-	width: 100%;
-	height: 100%;
-	background: #eaeaea;
-}
-
-.header-mega-desktop__title-link {
-	text-decoration: none;
-	display: block;
-	margin-bottom: 20px;
-}
-
-.header-mega-desktop__title {
+.mega-block__heading {
 	font-family: 'Oswald', sans-serif;
 	font-weight: 700;
-	font-size: 14px;
-	color: #2c3d33;
+	font-size: 13px;
 	text-transform: uppercase;
-	letter-spacing: 2px;
-	margin: 0;
-	transition: color 0.2s ease;
-	text-align: left;
+	letter-spacing: 2.5px;
+	color: #1a1a1a;
+	margin: 0 0 20px 0;
+	padding-bottom: 12px;
+	border-bottom: 2px solid #1a1a1a;
 }
 
-.header-mega-desktop__title-link:hover .header-mega-desktop__title {
-	color: #000;
-}
-
-.header-mega-desktop__sub-links {
+/* ── Block 1: Clothing ── */
+.mega-block__list {
 	list-style: none;
 	padding: 0;
 	margin: 0;
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: 10px;
 }
 
-.header-mega-desktop__sub-link {
+.mega-block__link {
 	font-family: 'Oswald', sans-serif;
-	font-size: 15px;
-	color: #666;
+	font-weight: 400;
+	font-size: 14px;
+	color: #555;
 	text-decoration: none;
 	transition: color 0.2s ease;
+	line-height: 1.8;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
 }
 
-.header-mega-desktop__sub-link:hover {
-	color: #2c3d33;
-	font-weight: 500;
+.mega-block__link:hover {
+	color: #000;
+}
+.mega-block__link--disabled {
+	opacity: 0.45;
+	cursor: default;
+	pointer-events: none;
+}
+.mega-block__coming-soon {
+	font-size: 10px;
+	font-style: italic;
+	font-weight: 400;
+	color: #8a9a8e;
+	margin-left: 4px;
+	letter-spacing: 0.02em;
+}
+
+/* ── Block 2: Hunting ── */
+.mega-hunting-list {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+
+.mega-hunting-item {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	text-decoration: none;
+	transition: opacity 0.2s ease;
+}
+
+.mega-hunting-item:hover {
+	opacity: 0.7;
+}
+
+.mega-hunting-icon-wrap {
+	width: 52px;
+	height: 52px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.mega-hunting-icon {
+	width: 52px;
+	height: 52px;
+	object-fit: contain;
+}
+
+.mega-hunting-icon-svg {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 48px;
+	height: 48px;
+	color: #1a1a1a;
+}
+
+.mega-hunting-icon-svg svg {
+	width: 100%;
+	height: 100%;
+}
+
+.mega-hunting-label {
+	font-family: 'Oswald', sans-serif;
+	font-weight: 400;
+	font-size: 14px;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: #1a1a1a;
+}
+
+/* ── Block 3: Terrain ── */
+.mega-terrain-list {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.mega-terrain-item {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	text-decoration: none;
+	transition: opacity 0.2s ease;
+}
+
+.mega-terrain-item:hover {
+	opacity: 0.7;
+}
+
+.mega-terrain-img-wrap {
+	width: 52px;
+	height: 52px;
+	border-radius: 6px;
+	overflow: hidden;
+	flex-shrink: 0;
+}
+
+.mega-terrain-img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.mega-terrain-placeholder {
+	width: 100%;
+	height: 100%;
+	background: #e8e4dc;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: 'Oswald', sans-serif;
+	font-size: 12px;
+	font-weight: 700;
+	color: #999;
+	text-transform: uppercase;
+}
+
+.mega-terrain-label {
+	font-family: 'Oswald', sans-serif;
+	font-weight: 400;
+	font-size: 14px;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: #1a1a1a;
+}
+
+/* ── Block 4: Seasonal ── */
+.mega-seasonal-list {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.mega-seasonal-item {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	text-decoration: none;
+	transition: opacity 0.2s ease;
+}
+
+.mega-seasonal-item:hover {
+	opacity: 0.8;
+}
+
+.mega-seasonal-img-wrap {
+	width: 100%;
+	overflow: hidden;
+	border-radius: 6px;
+}
+
+.mega-seasonal-img {
+	width: 100%;
+	height: auto;
+	display: block;
+	transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mega-seasonal-item:hover .mega-seasonal-img {
+	transform: scale(1.05);
+}
+
+.mega-seasonal-label {
+	font-family: 'Oswald', sans-serif;
+	font-weight: 400;
+	font-size: 14px;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: #1a1a1a;
+}
+
+/* ── Stagger animation ── */
+@keyframes megaBlockFadeIn {
+	from { opacity: 0; transform: translateY(12px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+.header-mega-desktop.is-active .mega-block {
+	animation: megaBlockFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.header-mega-desktop.is-active .mega-block:nth-child(1) { animation-delay: 0.03s; }
+.header-mega-desktop.is-active .mega-block:nth-child(2) { animation-delay: 0.07s; }
+.header-mega-desktop.is-active .mega-block:nth-child(3) { animation-delay: 0.11s; }
+.header-mega-desktop.is-active .mega-block:nth-child(4) { animation-delay: 0.15s; }
+
+.mega-block {
+	opacity: 0;
 }
 </style>

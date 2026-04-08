@@ -10,7 +10,25 @@
 {%- endcomment -%}
 
 {%- unless cart.empty? -%}
+	{%- comment -%} 1. Regular products {%- endcomment -%}
 	{%- for item in cart.items -%}
+		{%- if item.product.handle == 'shipping-protection-apparel' -%}
+			{%- continue -%}
+		{%- endif -%}
+
+		{%- if cart_drawer -%}
+			{%- render 'cart-item-drawer', item: item, cart_drawer: cart_drawer -%}
+		{%- else -%}
+			{%- render 'cart-item', item: item -%}
+		{%- endif -%}
+	{%- endfor -%}
+
+	{%- comment -%} 2. Shipping Protection always at bottom {%- endcomment -%}
+	{%- for item in cart.items -%}
+		{%- if item.product.handle != 'shipping-protection-apparel' -%}
+			{%- continue -%}
+		{%- endif -%}
+
 		{%- if cart_drawer -%}
 			{%- render 'cart-item-drawer', item: item, cart_drawer: cart_drawer -%}
 		{%- else -%}
@@ -18,3 +36,116 @@
 		{%- endif -%}
 	{%- endfor -%}
 {%- endunless -%}
+
+{%- comment -%} Enforce shipping protection max quantity = 1 {%- endcomment -%}
+<script>
+(function() {
+	var SP_HANDLE = 'shipping-protection-apparel';
+
+	var isEnforcing = false;
+	function enforceShippingProtectionMax(callback) {
+		if (isEnforcing) return;
+		isEnforcing = true;
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', '/cart.js', true);
+		xhr.setRequestHeader('Content-Type', 'application/json');
+		xhr.onload = function() {
+			if (xhr.status >= 200 && xhr.status < 300) {
+				var cart = JSON.parse(xhr.responseText);
+				var hasTooMany = false;
+				var spId = null;
+				for (var i = 0; i < cart.items.length; i++) {
+					if (cart.items[i].handle === SP_HANDLE && cart.items[i].quantity > 1) {
+						hasTooMany = true;
+						spId = cart.items[i].id;
+					}
+				}
+				if (hasTooMany && spId) {
+					var fix = new XMLHttpRequest();
+					fix.open('POST', '/cart/change.js', true);
+					fix.setRequestHeader('Content-Type', 'application/json');
+					fix.onload = function() {
+						isEnforcing = false;
+						if (callback && typeof callback === 'function') {
+							callback();
+						} else {
+							/* Refresh the cart drawer/page via AJAX */
+							if (window.themeCore && window.themeCore.EventBus) {
+								window.themeCore.EventBus.emit("cart:refresh");
+							} else {
+								window.location.reload();
+							}
+						}
+					};
+					fix.onerror = function() { isEnforcing = false; if (callback) callback(); };
+					fix.send(JSON.stringify({ id: spId, quantity: 1 }));
+					return;
+				}
+			}
+			isEnforcing = false;
+			if (callback && typeof callback === 'function') callback();
+		};
+		xhr.onerror = function() { isEnforcing = false; if (callback) callback(); };
+		xhr.send();
+	}
+
+	/* Check on page load */
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', function() { enforceShippingProtectionMax(); });
+	} else {
+		enforceShippingProtectionMax();
+	}
+
+	/* Intercept fetch for cart update/change requests to enforce after any modification */
+	var origFetch = window.fetch;
+	window.fetch = function() {
+		var url = arguments[0];
+		if (typeof url === 'string' && (url.indexOf('/cart/update') !== -1 || url.indexOf('/cart/change') !== -1 || url.indexOf('/cart/add') !== -1)) {
+			return origFetch.apply(this, arguments).then(function(res) {
+				var cloned = res.clone();
+				setTimeout(function() { enforceShippingProtectionMax(); }, 400);
+				return res;
+			});
+		}
+		return origFetch.apply(this, arguments);
+	};
+
+	/* Intercept checkout form submission to guarantee max 1 before proceeding to checkout */
+	document.addEventListener('submit', function(e) {
+		var isCheckout = false;
+		if (e.target && e.target.action && e.target.action.indexOf('/cart') !== -1) {
+			if (e.submitter && (e.submitter.name === 'checkout' || e.submitter.value === 'Checkout' || e.submitter.innerText === 'Checkout')) {
+				isCheckout = true;
+			} else if (e.target.querySelector('[name="checkout"]')) {
+				isCheckout = true; // Fallback
+			}
+		}
+
+		if (isCheckout) {
+			e.preventDefault();
+			var form = e.target;
+			enforceShippingProtectionMax(function() {
+				/* Submit programmatically bypassing the event listener so it doesn't loop */
+				HTMLFormElement.prototype.submit.call(form);
+			});
+		}
+	});
+})();
+</script>
+
+<style>
+	/* Hide quantity increase/decrease buttons for shipping protection */
+	[data-cart-item] .cart-item__details-title[href*="shipping-protection"] ~ .cart-item__quantity .quantity__buttons,
+	.cart-item:has(.cart-item__details-title[href*="shipping-protection"]) .quantity__buttons {
+		display: none !important;
+	}
+	.cart-item:has(.cart-item__details-title[href*="shipping-protection"]) .quantity__input {
+		pointer-events: none !important;
+		-moz-appearance: textfield !important;
+	}
+	.cart-item:has(.cart-item__details-title[href*="shipping-protection"]) .quantity__input::-webkit-inner-spin-button,
+	.cart-item:has(.cart-item__details-title[href*="shipping-protection"]) .quantity__input::-webkit-outer-spin-button {
+		-webkit-appearance: none !important;
+		margin: 0 !important;
+	}
+</style>

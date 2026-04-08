@@ -19,7 +19,7 @@
         "autoplay_speed": 5,
         "text_content": "<p>New customers save 10% with the code GET10</p>",
         "ticker_hide_bullets": false,
-        "ticker_text": "<p>New customers save 10% with the code GET10</p><p>New customers save 10% with the code GET10</p><p>New customers save 10% with the code GET10</p>",
+        "ticker_text": "<p>Free Shipping Over $70</p><p>Free Shipping Over $70</p><p>Free Shipping Over $70</p>",
         "desktop_movement_speed": 40,
         "mobile_movement_speed": 35,
         "discount_code": "GET10",
@@ -37,7 +37,7 @@
         "@media (min-width: 990px) {.header__hamburger {display: none !important; }}"
       ],
       "settings": {
-        "header_type": "sticky_hide",
+        "header_type": "static",
         "enable_transparent_header_homepage": true,
         "enable_transparent_header_collection": true,
         "enable_transparent_header_mobile": true,
@@ -50,13 +50,13 @@
         "menu": "main-menu",
         "mobile_top_menu": "",
         "open_menu_type": "mouseenter",
-        "make_first_lvl_clickable": false,
+        "make_first_lvl_clickable": true,
         "burger_menu": "main-menu",
         "hide_burger_menu_on_mobile": true,
         "additional_menu": "",
         "show_socials": true,
         "scroll_images_direction": "top",
-        "phone_number": "<a href=\"tel:+12345678910\" title=\"tel:+12345678910\">+12345678910</a>",
+        "phone_number": "<a href=\"tel:+13072273117\" title=\"tel:+1 307-227-3117\">+1 307-227-3117</a>",
         "schedule_information": "Daily 9 am - 9 pm",
         "media_url_1": "/",
         "media_url_2": "/",
@@ -70,6 +70,16 @@
         "count_text_color_transparent": "#000000",
         "count_text_bg": "#ececec",
         "count_text_bg_transparent": "#ececec"
+      }
+    },
+    "1775506654da104d7f": {
+      "type": "apps",
+      "settings": {
+        "container_width": "inherit",
+        "offset_top_desktop": 0,
+        "offset_bottom_desktop": 0,
+        "offset_top_mobile": 0,
+        "offset_bottom_mobile": 0
       }
     },
     "cart-drawer": {
@@ -108,13 +118,17 @@
         "show_cart_items_count": true,
         "cart_button_label": "View cart",
         "upsell_heading": "Upsell products",
-        "upsell_products": []
+        "upsell_products": [
+          "black-bear-wildlife-hunting-t-shirt",
+          "camoflage-freedom-t-shirt"
+        ]
       }
     }
   },
   "order": [
     "announcement-bar",
     "header",
+    "1775506654da104d7f",
     "cart-drawer"
   ]
 }

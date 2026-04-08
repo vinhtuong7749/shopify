@@ -229,6 +229,12 @@
 		</div>
 	{% endif %}
 
+	{%- for b in blocks -%}
+		{%- if b.type == 'upsell_product_block' -%}
+			{%- render 'product-upsell', block: b -%}
+		{%- endif -%}
+	{%- endfor -%}
+
 	<button
 		type="submit"
 		class="add-to-cart button button--block button--{{- button_type }} {% unless product.first_available_variant.available %}disabled{% endunless %}"
@@ -277,6 +283,36 @@
 			border-radius: 8px !important;
 			background-color: var(--color-text-primary, #203224) !important;
 			color: #faf6ee !important;
+			font-family: 'Oswald', sans-serif !important;
+			font-size: 15px !important;
+			font-weight: 600 !important;
+			text-transform: uppercase !important;
+			letter-spacing: 0.08em !important;
+		}
+
+		/* Force flex layout on product-add-to-cart to easily reorder dynamically injected Apps */
+		.product-add-to-cart {
+			display: flex;
+			flex-direction: column;
+		}
+		
+		.product-add-to-cart > .add-to-cart {
+			order: 15; /* Put button below upsell */
+		}
+		
+		.product-add-to-cart > .product-add-to-cart__additional-buttons {
+			order: 20; /* Keep alternative payments at the bottom */
+		}
+		
+		/* Target any div injected by the BMSM app directly, force its styling to match Tactical Minimal */
+		.product-add-to-cart > div[class*="x1ghz6dp"], 
+		.product-add-to-cart > div:not(.product-upsell-block):not(.add-to-cart):not(.product-add-to-cart__additional-buttons):not(.product-add-to-cart__error):not(.recipient-form) {
+			order: 0; /* App block appears ABOVE upsell */
+			margin-bottom: 0px !important; /* reduce gap! */
+			margin-top: 16px !important;
+		}
+		.product-add-to-cart > div:not(.product-upsell-block):not(.add-to-cart):not(.product-add-to-cart__additional-buttons):not(.product-add-to-cart__error):not(.recipient-form) * {
+			border-radius: 0px !important;
 		}
 
 		/* Apply standard border-radius where possible without breaking iframes */
@@ -297,23 +333,23 @@
 				left: 0 !important;
 				right: 0 !important;
 				z-index: 9999 !important;
-				background: #fff !important;
+				background: transparent !important;
 				padding: 12px 16px !important;
 				padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
-				box-shadow: 0 -2px 10px rgba(0,0,0,0.08) !important;
+				box-shadow: none !important;
 				transform: translateY(0) !important;
 				transition: transform 0.3s ease !important;
 				border: none !important;
 				margin: 0 !important;
 			}
 			.mobile-sticky-atc.is-hidden {
-				transform: translateY(100%) !important;
+				transform: translateY(150%) !important;
 			}
 			.mobile-sticky-atc__btn {
 				display: block !important;
 				width: 100% !important;
-				background: #000 !important;
-				color: #fff !important;
+				background: var(--color-text-primary, #203224) !important;
+				color: var(--color-background, #faf6ee) !important;
 				border: none !important;
 				padding: 15px 20px !important;
 				font-family: 'Oswald', sans-serif !important;
@@ -361,10 +397,15 @@
 						if (entry.isIntersecting) {
 							bar.classList.add('is-hidden');
 						} else {
-							bar.classList.remove('is-hidden');
+							// Show sticky bar ONLY if we haven't reached the real button yet (top of page)
+							if (entry.boundingClientRect.top > 0) {
+								bar.classList.remove('is-hidden');
+							} else {
+								bar.classList.add('is-hidden');
+							}
 						}
 					});
-				}, { threshold: 0.1 });
+				}, { threshold: 0 });
 
 				observer.observe(realBtn);
 

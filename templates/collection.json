@@ -11,6 +11,7 @@
   "sections": {
     "banner_LxJDDG": {
       "type": "banner",
+      "disabled": true,
       "name": "Banner",
       "settings": {
         "desktop_image_height": "600px",
@@ -178,14 +179,25 @@
         "offset_bottom_desktop": 0,
         "offset_top_mobile": 0,
         "offset_bottom_mobile": 0,
-        "inner_offset_top_desktop": 64,
+        "inner_offset_top_desktop": 16,
         "inner_offset_bottom_desktop": 64,
-        "inner_offset_top_mobile": 32,
+        "inner_offset_top_mobile": 10,
         "inner_offset_bottom_mobile": 32
+      }
+    },
+    "custom_title": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "{% render 'custom-collection-header' %}",
+        "offset_top_desktop": 15,
+        "offset_bottom_desktop": 0,
+        "offset_top_mobile": 10,
+        "offset_bottom_mobile": 0
       }
     }
   },
   "order": [
+    "custom_title",
     "banner_LxJDDG",
     "plp-banner",
     "collection_list",
