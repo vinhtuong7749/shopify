@@ -139,3 +139,136 @@
 		<small class="product-quantity__error-text js-product-quantity-error"></small>
 	</div>
 </div>
+
+<style>
+	/* =============================================
+	   Quantity button: compact rectangular style
+	   ============================================= */
+	.product-quantity__container {
+		display: inline-flex;
+		align-items: center;
+		border: 1px solid #b0b0b0 !important;
+		border-radius: 6px !important;
+		overflow: hidden;
+		background-color: var(--color-background, #faf6ee);
+		height: 32px;
+		width: fit-content;
+		max-width: fit-content;
+	}
+
+	.product-quantity .product-quantity__button {
+		width: 26px !important;
+		max-width: 26px !important;
+		min-width: 26px !important;
+		height: 32px !important;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: transparent;
+		border: none !important;
+		color: #333;
+		cursor: pointer;
+		flex-shrink: 0;
+		padding: 0;
+	}
+
+	.product-quantity .product-quantity__button .icon {
+		width: 12px;
+		height: 12px;
+	}
+
+	.product-quantity .product-quantity__input {
+		width: 28px !important;
+		min-width: 28px !important;
+		max-width: 28px !important;
+		flex-grow: 0 !important;
+		height: 32px;
+		font-size: 14px;
+		padding: 0;
+		margin: 0;
+		border: none !important;
+		background: transparent;
+		text-align: center;
+		font-size: 14px;
+		font-weight: 500;
+		color: #222;
+		-moz-appearance: textfield;
+		-webkit-appearance: textfield;
+		appearance: textfield;
+	}
+
+	.product-quantity .product-quantity__input::-webkit-outer-spin-button,
+	.product-quantity .product-quantity__input::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+
+	/* Desktop: label + nút cùng hàng, nút to hơn */
+	@media screen and (min-width: 768px) {
+		.product-quantity {
+			flex-direction: row !important;
+			align-items: center !important;
+			gap: 16px;
+		}
+		.product-quantity > .product-options__option-label {
+			margin-bottom: 0 !important;
+			white-space: nowrap;
+		}
+		.product-quantity .product-quantity__wrapper {
+			max-width: none;
+			width: auto;
+			gap: 0;
+		}
+		.product-quantity__container {
+			height: 38px;
+		}
+		.product-quantity .product-quantity__button {
+			width: 34px !important;
+			min-width: 34px !important;
+			max-width: 34px !important;
+			height: 38px !important;
+		}
+		.product-quantity .product-quantity__button .icon {
+			width: 14px;
+			height: 14px;
+		}
+		.product-quantity .product-quantity__input {
+			width: 40px !important;
+			min-width: 40px !important;
+			max-width: 40px !important;
+			height: 38px;
+			font-size: 15px;
+		}
+	}
+
+	/* Mobile: label + container nằm cùng hàng */
+	@media screen and (max-width: 767px) {
+		.product-quantity {
+			flex-direction: row !important;
+			align-items: center !important;
+			gap: 12px;
+		}
+		.product-quantity > .product-options__option-label {
+			margin-bottom: 0 !important;
+			font-size: 13px !important;
+			white-space: nowrap;
+		}
+		.product-quantity .product-quantity__wrapper {
+			max-width: none;
+			width: auto;
+			gap: 0;
+		}
+		.product-quantity__container {
+			height: 36px;
+		}
+		.product-quantity .product-quantity__button {
+			width: 36px;
+			height: 36px;
+		}
+		.product-quantity .product-quantity__input {
+			width: 32px;
+			height: 36px;
+			font-size: 14px;
+		}
+	}
+</style>

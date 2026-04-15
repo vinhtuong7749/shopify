@@ -22,7 +22,8 @@
 		.product-price .price__regular,
 		.product-price .price__sale,
 		.product-price .price__compare {
-			font-size: 14px !important;
+			font-size: 20px !important;
+			font-weight: 700 !important;
 		}
 
 		/* Short description under title */
@@ -80,7 +81,30 @@
 		/* Product info wrapper - tighter spacing */
 		.product-title-wrapper {
 			margin-bottom: 4px;
+			padding-top: 0 !important;
+			margin-top: -8px;
 		}
+
+		/* Color swatches nhỏ lại trên mobile */
+		.radio-option-swatch {
+			width: 28px !important;
+			height: 32px !important;
+		}
+		.radio-option-swatch .radio-option-swatch__label {
+			width: 28px !important;
+			height: 28px !important;
+		}
+
+		/* Đẩy nội dung sát ảnh */
+		.product-form {
+			padding-top: 4px !important;
+		}
+	}
+
+	/* Ẩn Pickup Availability + Sales Points (cả desktop & mobile) */
+	.product-pickup-availability,
+	.product-sales-point {
+		display: none !important;
 	}
 
 	/* ============================================

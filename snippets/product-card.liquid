@@ -420,7 +420,7 @@
 		{%- endif -%}
 
 		<div class="product-card__price" style="font-family: 'Oswald', sans-serif; font-size: 13px; color: #2c3d33; margin-bottom: 12px;">
-			{%- render 'price', product: product, show_unit_price: show_unit_price, currency_code_enabled: currency_code_enabled -%}
+			{%- render 'price', product: product, show_unit_price: show_unit_price, currency_code_enabled: currency_code_enabled, hide_from_price: true -%}
 		</div>
 
 		{%- if product.quantity_price_breaks_configured? -%}
@@ -584,6 +584,60 @@
 	}
 	.product-card__image {
 		border-radius: 8px !important;
+	}
+
+	/* ============================================
+	   MOBILE: Hide Quick Add + tighten card spacing
+	   ============================================ */
+	@media screen and (max-width: 767px) {
+		/* Hide Quick Add button on mobile */
+		.product-card__custom-quick-add {
+			display: none !important;
+		}
+		/* Reduce footer padding (space between image and title/price) */
+		.product-card__footer {
+			padding: 0 !important;
+			margin-top: 5px !important;
+		}
+		/* Tighten title margin and padding, reduce weight, uppercase first lettr, increase size, force strict 1-line ellipsis */
+		.product-card .product-card__title {
+			margin-bottom: 2px !important;
+			margin-top: 0 !important;
+			padding-top: 0 !important;
+			font-weight: 500 !important;
+			text-transform: capitalize !important;
+			font-size: 13px !important;
+			white-space: nowrap !important;
+			overflow: hidden !important;
+			text-overflow: ellipsis !important;
+			display: block !important;
+			max-width: 100% !important;
+			width: 100% !important;
+			min-height: auto !important;
+			word-break: normal !important;
+			overflow-wrap: normal !important;
+			-webkit-line-clamp: unset !important;
+			-webkit-box-orient: unset !important;
+		}
+		/* Tighten price margin and reduce font size */
+		.product-card__price,
+		.product-card__price .price,
+		.product-card__price .price-item,
+		.product-card__price .price-item--regular,
+		.product-card__price .price-item--sale {
+			margin-bottom: 4px !important;
+			margin-top: 0 !important;
+			font-size: 15px !important;
+		}
+		/* Tighten swatches wrapper */
+		.product-card__footer > div:last-of-type {
+			margin-bottom: 0 !important;
+		}
+		/* Reduce image bottom margin */
+		.product-card__main {
+			margin-bottom: 0 !important;
+			padding-bottom: 0 !important;
+		}
 	}
 </style>
 {%- endif -%}

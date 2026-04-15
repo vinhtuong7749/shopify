@@ -315,11 +315,17 @@
 			border-radius: 0px !important;
 		}
 
-		/* Apply standard border-radius where possible without breaking iframes */
 		.product-add-to-cart__additional-buttons,
 		.product-add-to-cart__additional-buttons .shopify-payment-button__button,
 		.product-add-to-cart__additional-buttons .shopify-payment-button__button--unbranded {
 			border-radius: 8px !important;
+		}
+
+		/* Ẩn nút "Buy with Shop" trên mobile */
+		@media screen and (max-width: 767px) {
+			.product-add-to-cart__additional-buttons {
+				display: none !important;
+			}
 		}
 
 		.mobile-sticky-atc {

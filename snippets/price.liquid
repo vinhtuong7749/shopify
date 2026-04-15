@@ -169,9 +169,11 @@
 		</div>
 	{%- endif -%}
 
+	{%- comment -%}
 	{%- if show_pay_installments -%}
 		<div class="price__installments">
 			{{- form | payment_terms -}}
 		</div>
 	{%- endif -%}
+	{%- endcomment -%}
 </div>

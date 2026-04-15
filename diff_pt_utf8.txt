@@ -1,0 +1,33 @@
+﻿diff --git a/sections/product-template.liquid b/sections/product-template.liquid
+index 65d9a3a..5281414 100644
+--- a/sections/product-template.liquid
++++ b/sections/product-template.liquid
+@@ -38,8 +38,9 @@
+ 		/* Giß╗¢i hß║ín chiß╗üu cao hiß╗ân thß╗ï ß║únh sß║ún phß║⌐m tr├¬n Desktop ─æß╗â vß╗½a m├án h├¼nh */
+ 		#shopify-section-{{- section.id -}} .product-media__aspect-ratio {
+ 			padding-top: 0 !important;
+-			height: 70vh !important;
+-			min-height: 400px;
++			height: 60vh !important; /* ─É├ú thu nhß╗Å chiß╗üu cao tß╗½ 70px xuß╗æng 60vh */
++			max-height: 600px;
++			min-height: 300px;
+ 		}
+ 		#shopify-section-{{- section.id -}} .product-media__aspect-ratio .product-media__image,
+ 		#shopify-section-{{- section.id -}} .product-media__aspect-ratio img {
+@@ -52,6 +53,16 @@
+ 		}
+ 	}
+ 
++	@media screen and (min-width: 1200px) {
++		/* ├ëp buß╗Öc phß║ºn Product Media v├á Product Form chia ─æ├║ng 50-50 kh├┤ng gian */
++		#shopify-section-{{- section.id -}} .product-media {
++			width: calc(50% - 32px) !important;
++		}
++		#shopify-section-{{- section.id -}} .product-form {
++			width: calc(50% - 32px) !important;
++		}
++	}
++
+ 	{% if breadcrumbs_block != blank -%}
+ 		.breadcrumb {
+ 			display: none;

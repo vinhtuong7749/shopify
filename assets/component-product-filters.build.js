@@ -200,7 +200,8 @@ const ProductFilters = (section) => {
     filtersFooter: ".js-filters-footer",
     filterSortExternal: ".js-filter-sort-external",
     filtersState: ".js-filters-state",
-    searchTypes: ".js-search-types"
+    searchTypes: ".js-search-types",
+    productCount: ".js-product-count"
   };
   const FILTER_PRICE_SELECTORS = {
     maxInput: ".js-price-input-max",
@@ -466,13 +467,14 @@ const ProductFilters = (section) => {
       filtersFooter,
       filterSort,
       filtersState,
-      searchTypes
+      searchTypes,
+      productCount
     } = newNodes;
     if (filtersState) {
       section.classList.toggle(classes.filtersHidden, JSON.parse(filtersState.dataset.filtersEmpty));
     }
     currentNodes.gridWrapper.innerHTML = gridWrapper.innerHTML;
-    if (gridWrapper.innerHTML) {
+    if (gridWrapper.innerHTML.trim() !== '') {
       currentNodes.emptyTitle.classList.add(classes.hidden);
       currentNodes.emptyTitle.ariaHidden = "true";
     } else {
@@ -547,7 +549,8 @@ const ProductFilters = (section) => {
       loadMoreButton,
       filtersFooter,
       filterSort,
-      searchTypes
+      searchTypes,
+      productCount
     });
     infiniteScroll && setInfiniteScrollObserver();
     filterPrice && drawPriceRange();

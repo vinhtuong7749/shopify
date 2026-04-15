@@ -86,6 +86,15 @@
 		{%- render 'translations-methods' -%}
 		{%- render 'translations' -%}
 
+		<style>
+			/* Hide Judge.me Reviews tab on mobile */
+			@media screen and (max-width: 767px) {
+				.jdgm-revs-tab {
+					display: none !important;
+				}
+			}
+		</style>
+
 		{{ content_for_header }}
 
 		<script>
@@ -140,5 +149,145 @@
 
 		{%- render 'mobile-floating-cart' -%}
 		{%- section 'smart-popup' -%}
+
+		{%- comment -%} Global Cart Enforcer (Shipping Protection Max 1 & Merge Split Variants) {%- endcomment -%}
+		<style>
+			html.is-cart-merging .cart-drawer__items,
+			html.is-cart-merging .cart-item,
+			html.is-cart-merging .cart-items {
+				opacity: 0.2 !important;
+				pointer-events: none !important;
+			}
+		</style>
+		<script>
+		(function() {
+			var SP_HANDLE = 'shipping-protection-apparel';
+			var isEnforcing = false;
+
+			function enforceCartRules(callback) {
+				if (isEnforcing) return;
+				isEnforcing = true;
+				var xhr = new XMLHttpRequest();
+				xhr.open('GET', '/cart.js', true);
+				xhr.setRequestHeader('Content-Type', 'application/json');
+				xhr.onload = function() {
+					if (xhr.status >= 200 && xhr.status < 300) {
+						var cart = JSON.parse(xhr.responseText);
+						var updates = {};
+						var needsUpdate = false;
+						var variants = {};
+
+						for (var i = 0; i < cart.items.length; i++) {
+							var item = cart.items[i];
+
+							// 1. Shipping Protection rule:
+							if (item.handle === SP_HANDLE) {
+								if (item.quantity > 1) {
+									needsUpdate = true;
+									updates[item.key] = 1;
+								}
+								continue;
+							}
+
+							// 2. Merge identical variants rule:
+							if (variants[item.variant_id]) {
+								needsUpdate = true;
+								variants[item.variant_id].qty += item.quantity;
+								updates[item.key] = 0; // Remove the duplicate
+								updates[variants[item.variant_id].key] = variants[item.variant_id].qty; // Apply sum to the first occurrence
+							} else {
+								variants[item.variant_id] = { key: item.key, qty: item.quantity };
+							}
+						}
+
+						if (needsUpdate) {
+							document.documentElement.classList.add('is-cart-merging');
+							var fix = new XMLHttpRequest();
+							fix.open('POST', '/cart/update.js', true);
+							fix.setRequestHeader('Content-Type', 'application/json');
+							fix.onload = function() {
+								isEnforcing = false;
+								if (callback && typeof callback === 'function') {
+									callback();
+								} else {
+									/* Refresh the cart drawer/page via AJAX */
+									if (window.themeCore && window.themeCore.EventBus) {
+										window.themeCore.EventBus.emit("cart:refresh");
+										setTimeout(function() { document.documentElement.classList.remove('is-cart-merging'); }, 600);
+									} else {
+										window.location.reload();
+									}
+								}
+							};
+							fix.onerror = function() { 
+								isEnforcing = false; 
+								document.documentElement.classList.remove('is-cart-merging');
+								if (callback) callback(); 
+							};
+							fix.send(JSON.stringify({ updates: updates }));
+							return;
+						}
+					}
+					isEnforcing = false;
+					document.documentElement.classList.remove('is-cart-merging');
+					if (callback && typeof callback === 'function') callback();
+				};
+				xhr.onerror = function() { 
+					isEnforcing = false; 
+					document.documentElement.classList.remove('is-cart-merging');
+					if (callback) callback(); 
+				};
+				xhr.send();
+			}
+
+			/* Check on page load */
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', function() { enforceCartRules(); });
+			} else {
+				enforceCartRules();
+			}
+
+			/* Intercept fetch for cart update/change requests to enforce after any modification */
+			var origFetch = window.fetch;
+			window.fetch = function() {
+				var url = arguments[0];
+				if (typeof url === 'string' && (url.indexOf('/cart/update') !== -1 || url.indexOf('/cart/change') !== -1 || url.indexOf('/cart/add') !== -1)) {
+					document.documentElement.classList.add('is-cart-merging');
+					return origFetch.apply(this, arguments).then(function(res) {
+						var cloned = res.clone();
+						setTimeout(function() { enforceCartRules(); }, 50); // fast trigger
+						return res;
+					}).catch(function(err) {
+						document.documentElement.classList.remove('is-cart-merging');
+						throw err;
+					});
+				}
+				return origFetch.apply(this, arguments);
+			};
+
+			/* Intercept checkout form submission to guarantee rules before proceeding to checkout */
+			document.addEventListener('submit', function(e) {
+				var isCheckout = false;
+				if (e.target && e.target.action && e.target.action.indexOf('/cart') !== -1) {
+					if (e.submitter && (e.submitter.name === 'checkout' || e.submitter.value === 'Checkout' || e.submitter.innerText === 'Checkout')) {
+						isCheckout = true;
+					} else if (e.target.querySelector('[name="checkout"]')) {
+						isCheckout = true; // Fallback
+					}
+				}
+
+				if (isCheckout) {
+					e.preventDefault();
+					var form = e.target;
+					document.documentElement.classList.add('is-cart-merging');
+					enforceCartRules(function() {
+						document.documentElement.classList.remove('is-cart-merging');
+						/* Submit programmatically bypassing the event listener so it doesn't loop */
+						HTMLFormElement.prototype.submit.call(form);
+					});
+				}
+			});
+		})();
+		</script>
 	</body>
 </html>

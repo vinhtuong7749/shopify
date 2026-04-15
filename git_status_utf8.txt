@@ -1,0 +1,79 @@
+﻿On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+	modified:   layout/theme.liquid
+	modified:   snippets/cart-items.liquid
+	modified:   snippets/product-upsell.liquid
+
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   assets/article-template.build.css
+	modified:   assets/collection.build.css
+	modified:   assets/component-product-filters.build.js
+	modified:   assets/component-product-filters.build.min.js
+	modified:   assets/product-card.build.css
+	modified:   assets/product-carousel-5c4cc215.js
+	modified:   assets/product.build.css
+	modified:   assets/search.build.css
+	modified:   layout/theme.liquid
+	modified:   sections/banner.liquid
+	modified:   sections/cart-drawer.liquid
+	modified:   sections/cart-template.liquid
+	modified:   sections/collection-template.liquid
+	modified:   sections/featured-product.liquid
+	modified:   sections/featured-products.liquid
+	modified:   sections/footer-group.json
+	modified:   sections/footer.liquid
+	modified:   sections/header-group.json
+	modified:   sections/header.liquid
+	modified:   sections/hunting-collections.liquid
+	modified:   sections/image-with-text.liquid
+	modified:   sections/page-collection-camo.liquid
+	modified:   sections/page-collection-usa.liquid
+	modified:   sections/product-template.liquid
+	modified:   snippets/cart-discount.liquid
+	modified:   snippets/cart-footer.liquid
+	modified:   snippets/cart-item-drawer.liquid
+	modified:   snippets/cart-item.liquid
+	modified:   snippets/cart-items.liquid
+	modified:   snippets/cart-upsell.liquid
+	modified:   snippets/header-mega-menu-collection.liquid
+	modified:   snippets/header-mega-menu-content.liquid
+	modified:   snippets/header-mega-menu.liquid
+	modified:   snippets/header-mobile.liquid
+	modified:   snippets/icons-social.liquid
+	modified:   snippets/price.liquid
+	modified:   snippets/product-card.liquid
+	modified:   snippets/product-drawers.liquid
+	modified:   snippets/product-filters-and-sort.liquid
+	modified:   snippets/product-filters-selected.liquid
+	modified:   snippets/product-filters-sidebar.liquid
+	modified:   snippets/product-media.liquid
+	modified:   templates/index.json
+	modified:   templates/page.about.json
+	modified:   templates/product.json
+	modified:   templates/product.pre-order.json
+	deleted:    thechaoticclub.html
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	README_ISSUES.md
+	assets/pdp-hover-scroll.js
+	assets/product-modal.css
+	check_filters.html
+	color_test.html
+	custom_filter_test.html
+	diff.txt
+	diff_utf8.txt
+	forest_test.html
+	git_status.txt
+	local_test.html
+	local_test3.html
+	sections/image-with-text-orcas.liquid
+	snippets/product-modal.liquid
+	test1.html
+	test2.html
+

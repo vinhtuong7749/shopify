@@ -266,6 +266,46 @@
 			overflow: visible;
 		}
 	}
+
+	/* Mobile: move search icon to right side (next to cart) */
+	@media (max-width: 1199px) {
+		/* Hide the search icon from the LEFT side (hamburger area) */
+		.header__mobile-menu-wrapper .header__icon--search-mobile,
+		.header__mobile-menu-wrapper .no-js.header__icon--search-mobile {
+			display: none !important;
+		}
+		/* Show the desktop search icon on mobile too */
+		.header__utils .header__icons .header__icon--search:not(.no-js) {
+			display: inline-flex !important;
+		}
+		/* Keep no-js search hidden on mobile */
+		.header__utils .header__icons .header__icon--search.no-js {
+			display: none !important;
+		}
+		/* Compact icon row: tight gap, flush to right edge */
+		.header__utils .header__icons {
+			display: flex !important;
+			align-items: center;
+			gap: 2px !important;
+			margin-right: -6px;
+		}
+		.header__utils .header__icons .header__icon {
+			padding: 6px 5px !important;
+			min-width: 0 !important;
+		}
+		.header__utils .header__icons .header__icon--search {
+			order: 1;
+		}
+		.header__utils .header__icons .header__icon--account {
+			order: 0;
+		}
+		.header__utils .header__icons .header__icon--cart {
+			order: 2;
+		}
+		.header__utils .header__icons .header__icon--search-close {
+			order: 3;
+		}
+	}
 </style>
 
 {%- capture classes -%}

@@ -429,7 +429,7 @@
 			letter-spacing: 1px;
 			margin: 0 !important;
 			box-sizing: border-box !important;
-			border-radius: 0 !important;
+			border-radius: 22px 0 0 22px !important;
 			outline: none !important;
 			-webkit-appearance: none;
 		}
@@ -456,7 +456,7 @@
 			transition: background 0.3s ease;
 			margin: 0 !important;
 			box-sizing: border-box !important;
-			border-radius: 0 !important;
+			border-radius: 0 22px 22px 0 !important;
 			display: flex !important;
 			align-items: center !important;
 			justify-content: center !important;
@@ -470,6 +470,12 @@
 			display: flex;
 			gap: 24px;
 			align-items: center;
+		}
+		.footer-custom-socials a {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			height: 24px;
 		}
 
 		.footer-custom-bottom {
@@ -598,13 +604,13 @@
 						{%- endif -%}
 						
 						{%- if section.settings.brand_heading != blank -%}
-							<h3 class="footer-heading" style="margin-bottom: 8px; font-size: 20px;">{{ section.settings.brand_heading | escape }}</h3>
+							<h3 class="footer-heading" style="font-size: 20px;">{{ section.settings.brand_heading | escape }}</h3>
 						{%- endif -%}
 						{%- if section.settings.manifesto_subheading != blank -%}
-							<p>{{ section.settings.manifesto_subheading | escape }}</p>
+							<p>{{ section.settings.manifesto_subheading }}</p>
 						{%- endif -%}
 						{%- if section.settings.manifesto_text != blank -%}
-							<p class="footer-manifesto" style="margin-top: 12px; line-height: 1.6;">{{ section.settings.manifesto_text | escape | newline_to_br }}</p>
+							<div class="footer-manifesto" style="margin-top: 12px; line-height: 1.6;">{{ section.settings.manifesto_text }}</div>
 						{%- endif -%}
 					</div>
 				</div>
@@ -615,9 +621,9 @@
 			<div class="footer-col footer-col-2">
 				<h3 class="footer-heading">{{ section.settings.info_heading | default: 'CAMO SIGNAL INFO' | escape }}</h3>
 				<ul class="footer-info-list">
-					{%- if section.settings.info_phone != blank -%}<li>Phone: {{ section.settings.info_phone | escape }}</li>{%- endif -%}
-					{%- if section.settings.info_email != blank -%}<li>Email: {{ section.settings.info_email | escape }}</li>{%- endif -%}
-					{%- if section.settings.info_address != blank -%}<li>Address: {{ section.settings.info_address | escape }}</li>{%- endif -%}
+					{%- if section.settings.info_phone != blank -%}<li>Phone: {{ section.settings.info_phone }}</li>{%- endif -%}
+					{%- if section.settings.info_email != blank -%}<li>Email: {{ section.settings.info_email }}</li>{%- endif -%}
+					{%- if section.settings.info_address != blank -%}<li>Address: {{ section.settings.info_address }}</li>{%- endif -%}
 				</ul>
 				
 				<div class="footer-custom-socials mobile-only" style="margin-top: 32px;">
@@ -637,7 +643,7 @@
 			<div class="footer-col footer-col-3">
 				<h3 class="footer-heading">{{ section.settings.newsletter_heading | default: 'SUBSCRIBE TO OUR EMAIL' | escape }}</h3>
 				{%- if section.settings.newsletter_text != blank -%}
-					<p>{{ section.settings.newsletter_text | escape }}</p>
+					<div class="footer-newsletter-text">{{ section.settings.newsletter_text }}</div>
 				{%- endif -%}
 				
 				{%- form 'customer', class: 'footer-form js-newsletter-form' -%}
@@ -713,6 +719,39 @@
 	</div>
 </footer>
 
+<style>
+/* Reduce excessive spacing in the footer for mobile only */
+@media screen and (max-width: 767px) {
+  .footer-custom-top {
+    padding-top: 10px !important; /* Cut top space */
+  }
+  .footer-custom-row {
+    gap: 20px !important;
+  }
+  .footer-col {
+    padding-top: 25px !important; /* Cut top space */
+    padding-bottom: 10px !important;
+    margin-bottom: 10px !important;
+  }
+  .footer-col-3 p {
+    margin-bottom: 35px !important; /* Push form down a bit */
+  }
+  .footer-col-2 .footer-custom-socials.mobile-only {
+    margin-top: 15px !important;
+  }
+  .footer-heading {
+    margin-bottom: 10px !important;
+  }
+  .footer-info-list li {
+    margin-bottom: 5px !important;
+  }
+  .footer-custom-bottom {
+    padding-top: 15px !important;
+    margin-top: 0 !important;
+  }
+}
+</style>
+
 {% schema %}
 {
 	"name": "Footer",
@@ -747,16 +786,16 @@
 			"default": "CAMO SIGNAL"
 		},
 		{
-			"type": "text",
+			"type": "inline_richtext",
 			"id": "manifesto_subheading",
 			"label": "Brand Subheading",
 			"default": "Raised here. Stood Here."
 		},
 		{
-			"type": "textarea",
+			"type": "richtext",
 			"id": "manifesto_text",
 			"label": "Brand Manifesto",
-			"default": "Built for those who hunt, protect, and live by their\nvalues — quietly, proudly."
+			"default": "<p>Built for those who hunt, protect, and live by their<br>values — quietly, proudly.</p>"
 		},
 		{
 			"type": "header",
@@ -769,19 +808,19 @@
 			"default": "CAMO SIGNAL INFO"
 		},
 		{
-			"type": "text",
+			"type": "inline_richtext",
 			"id": "info_phone",
 			"label": "Phone Number",
 			"default": "+1 (307) 227-3117"
 		},
 		{
-			"type": "text",
+			"type": "inline_richtext",
 			"id": "info_email",
 			"label": "Email Address",
 			"default": "support.camosignal@gmail.com"
 		},
 		{
-			"type": "textarea",
+			"type": "inline_richtext",
 			"id": "info_address",
 			"label": "Physical Address",
 			"default": "30 N Gould St Ste N, Sheridan, WY, 82801, US"
@@ -797,10 +836,10 @@
 			"default": "SUBSCRIBE TO OUR EMAIL"
 		},
 		{
-			"type": "textarea",
+			"type": "richtext",
 			"id": "newsletter_text",
 			"label": "Newsletter Text",
-			"default": "Subscribe to get special offers, giveaways, and exclusive deals"
+			"default": "<p>Subscribe to get special offers, giveaways, and exclusive deals</p>"
 		},
 		{
 			"type": "header",

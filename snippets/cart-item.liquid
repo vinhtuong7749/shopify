@@ -164,9 +164,20 @@
 		</p>
 	{%- endif -%}
 
-	<a href="{{- item.url -}}" class="focus-visible-outline cart-item__details-title">
-		{{- title | escape -}}
-	</a>
+	<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; width: 100%;">
+		<a href="{{- item.url -}}" class="focus-visible-outline cart-item__details-title" style="flex: 1;">
+			{{- title | escape -}}
+		</a>
+
+		<a href="{{ item.url_to_remove }}"
+		   class="cart-item__cta button-link focus-visible-outline js-cart-item-remove"
+		   data-index="{{- item.index | plus: 1 -}}"
+		   data-item-key="{{- item.key -}}"
+		   style="margin-top: 5px; align-self: flex-start; color: #555; flex-shrink: 0;"
+		>
+			{% render 'icons', icon: 'trash' %}
+		</a>
+	</div>
 
 	{%- unless item.product.has_only_default_variant -%}
 		<p class="cart-item__details-text">
@@ -371,18 +382,7 @@
 		{{ summary_price }}
 
 		<div class="cart-item__actions">
-			<a href="{{ item.url_to_remove }}"
-			   id="Remove-{{- item.index | plus: 1 -}}-desktop"
-			   class="cart-item__cta button-link focus-visible-outline js-cart-item-remove"
-			   data-index="{{- item.index | plus: 1 -}}"
-			   data-item-key="{{- item.key -}}"
-			>
-				{% render 'icons', icon: 'menu-close' %}
 
-				<span data-text="{{- 'cart.general.remove' | t | escape -}}">
-					<span>{{- 'cart.general.remove' | t | escape -}}</span>
-				</span>
-			</a>
 		</div>
 	</div>
 
@@ -401,30 +401,28 @@
 					{{ item_details }}
 				</div>
 
-				{{ summary_price }}
+
 			</div>
 
 			<div class="cart-item__footer">
-				<a href="{{ item.url_to_remove }}"
-				   id="Remove-{{- item.index | plus: 1 -}}-mobile"
-				   class="cart-item__cta button-link focus-visible-outline js-cart-item-remove"
-				   data-index="{{- item.index | plus: 1 -}}"
-				   data-item-key="{{- item.key -}}"
-				>
-					{% render 'icons', icon: 'menu-close' %}
-
-					<span data-text="{{- 'cart.general.remove' | t | escape -}}">
-						<span>{{- 'cart.general.remove' | t | escape -}}</span>
-					</span>
-				</a>
-
 				<div class="cart-item__quantity">
 					<div class="cart-item__quantity-wrapper">
 						<label class="visually-hidden" for="Quantity-{{- item.index | plus: 1 -}}-mobile">
 							{{- 'products.quantity.label' | t -}}
 						</label>
 
-						<div class="quantity js-quantity">
+						<div class="quantity js-quantity" style="display: flex; flex-direction: row; align-items: center; border: 1px solid #ccc; max-width: 100px;">
+								<button
+									class="focus-visible-outline quantity__button"
+									name="minus"
+									type="button"
+									data-quantity-decrease
+									aria-label="{{ 'products.quantity.decrease' | t: product: title | escape }}"
+									style="width: 32px; height: 36px; border: none; background: none; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #555;"
+								>
+									{% render 'icons', icon: 'minus' %}
+								</button>
+
 							<input
 								class="focus-visible-outline quantity__input"
 								id="Quantity-{{- item.index | plus: 1 -}}-mobile"
@@ -439,34 +437,26 @@
 								data-item-key="{{- item.key -}}"
 								data-quantity-input
 								aria-label="{{ 'products.quantity.input_label' | t: product: title | escape }}"
+								style="width: 34px; text-align: center; border-left: 1px solid #ccc; border-right: 1px solid #ccc; border-top: none; border-bottom: none; height: 36px; min-height: 36px; padding: 0; margin: 0; box-sizing: border-box; -moz-appearance: textfield;"
 							/>
 
-							<div class="quantity__buttons">
 								<button
 									class="focus-visible-outline quantity__button{% if max_inventory_added %} disabled{% endif %}"
 									name="plus"
 									type="button"
 									data-quantity-increase
 									aria-label="{{ 'products.quantity.increase' | t: product: title | escape }}"
+									style="width: 32px; height: 36px; border: none; background: none; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #555;"
 								>
-									{% render 'icons', icon: 'arrow-up' %}
+									{% render 'icons', icon: 'plus' %}
 								</button>
-
-								<button
-									class="focus-visible-outline quantity__button"
-									name="minus"
-									type="button"
-									data-quantity-decrease
-									aria-label="{{ 'products.quantity.decrease' | t: product: title | escape }}"
-								>
-									{% render 'icons', icon: 'arrow-down' %}
-								</button>
-							</div>
 						</div>
 					</div>
 
 					{{- quantity_rules -}}
 				</div>
+
+				{{ summary_price }}
 			</div>
 
 			<div class="cart-item__error js-cart-item-error" id="LineItemError-{{ item.index | plus: 1 }}-mobile" role="alert">

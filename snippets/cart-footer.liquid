@@ -13,56 +13,23 @@
 {%- assign benefits_blocks = section.blocks | where: 'type', 'benefit' -%}
 
 {%- capture benefits -%}
-	{%- if benefits_blocks.size > 0 -%}
-		{%- for block in benefits_blocks -%}
-			{%- assign benefit_text = block.settings.text -%}
-			{%- assign benefit_icon = block.settings.icon -%}
-
-			{%- if benefit_text != blank -%}
-				<div class="cart-footer__benefit">
-					{%- if benefit_icon != blank -%}
-						<img
-							class="cart-footer__benefit-icon"
-							srcset="{{- benefit_icon | image_url: width: 20, height: 20 }} 1x,
-									{{ benefit_icon | image_url: width: 40, height: 40 }} 2x"
-							src="{{- benefit_icon | image_url: width: 40, height: 40 -}}"
-							alt="{{- benefit_icon.alt | escape -}}"
-							loading="lazy"
-							fetchpriority="low"
-						/>
-					{%- endif -%}
-
-					<div class="cart-footer__benefit-text rte">{{- benefit_text -}}</div>
-				</div>
-			{%- endif -%}
-		{%- endfor -%}
-	{%- endif -%}
 {%- endcapture -%}
 
-{%- capture tax_message  -%}
-	<small class="rte cart-footer__tax">
-		{%- if cart.taxes_included and shop.shipping_policy.body != blank -%}
-			{{ 'cart.general.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url }}
-		{%- elsif cart.taxes_included -%}
-			{{ 'cart.general.taxes_included_but_shipping_at_checkout' | t }}
-		{%- elsif shop.shipping_policy.body != blank -%}
-			{{ 'cart.general.taxes_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}
-		{%- else -%}
-			{{ 'cart.general.taxes_and_shipping_at_checkout' | t }}
-		{%- endif -%}
-	</small>
+{%- capture tax_message -%}
 {%- endcapture -%}
 
 {%- capture cart_total -%}
 	{%- if cart.cart_level_discount_applications.size > 0 -%}
-		<div class="cart-footer__savings">
-			<ul class="discounts discounts--right cart-footer__discounts" role="list" aria-label="{{- 'customer.order.discount' | t | escape -}}">
+		<div class="cart-footer__savings" style="display: flex; align-items: center; justify-content: space-between; font-size: 14px; margin-bottom: 8px;">
+			<span style="font-family: var(--font-body-family);">Discounts</span>
+			<ul class="discounts discounts--right cart-footer__discounts" role="list" aria-label="{{- 'customer.order.discount' | t | escape -}}" style="margin: 0; padding: 0; list-style: none; display: flex; align-items: center; gap: 8px;">
 				{%- for discount in cart.cart_level_discount_applications -%}
-					<li class="discounts__item">
-						{% render 'icons', icon: 'discount' %}
-
-						{{ discount.title }}
-						(-{{ discount.total_allocated_amount | money }})
+					<li class="discounts__item" style="display: flex; align-items: center; gap: 6px;">
+						<div style="background: #f2f2f2; padding: 4px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; font-weight: 600; font-size: 12px; color: #333;">
+							{% render 'icons', icon: 'discount' %}
+							{{ discount.title }}
+						</div>
+						<span style="color: #333;">-{{ discount.total_allocated_amount | money }}</span>
 					</li>
 				{%- endfor -%}
 			</ul>
@@ -91,34 +58,82 @@
 		{%- assign cta_class = "cart-template__ctas" -%}
 	{%- endif -%}
 
-	<div class="{{ cta_class }} js-cart-footer-button">
+	<div class="{{ cta_class }} js-cart-footer-button" style="display: flex; flex-direction: column; width: 100%; position: sticky; bottom: 0; z-index: 200; background: #ffffff; padding: 16px 24px 12px; border-top: 1px solid #e0e0e0; margin-left: auto; margin-right: auto; max-width: 100%;">
 		{%- capture default_checkout_button -%}
-			{{- 'cart.general.checkout' | t -}}
+			Checkout &bull; <span class="js-cart-subtotal">{{ cart.total_price | money }}</span>
 		{%- endcapture -%}
 
 		{%- assign checkout_button = settings.cart_checkout_button | default: default_checkout_button -%}
 
 		{%- if cart_button_label != blank and cart_drawer == true -%}
-			<a href="{{ routes.cart_url }}" class="cart-footer__button button button--primary button--block">
+			<a href="{{ routes.cart_url }}" class="cart-footer__button button button--primary button--block" style="display: none;">
 				{{- cart_button_label -}}
 			</a>
 		{%- endif -%}
 
 		<button
 			type="submit"
-			class="cart-footer__button button button--secondary button--block"
+			class="cart-footer__button button button--secondary button--block js-checkout-button"
 			name="checkout"
 			form="cart-{{- section.id -}}"
+			style="width: 100%; background: #0d1f6b !important; border-color: #0d1f6b !important; font-family: 'Oswald', sans-serif !important; text-transform: uppercase; font-size: 16px; font-weight: 600; padding: 14px; margin-bottom: 8px; border-radius: 6px !important;"
+			onclick="
+				var form = document.getElementById('cart-{{- section.id -}}');
+				if (form) {
+					event.preventDefault();
+					var input = document.createElement('input');
+					input.type = 'hidden';
+					input.name = 'checkout';
+					input.value = 'Checkout';
+					form.appendChild(input);
+					form.submit();
+				}
+			"
 		>
-			<span data-text="{{- checkout_button -}}">
-				<span>{{- checkout_button -}}</span>
+			<span data-text="{{- checkout_button | strip_html -}}">
+				<span>{{ default_checkout_button }}</span>
 			</span>
 		</button>
 	</div>
 
 	{%- if settings.show_additional_checkout_buttons and additional_checkout_buttons -%}
-		<div class="cart-footer__ctas-additional js-cart-footer-additional-buttons">
+		<style>
+			/* Force border-radius on all dynamic checkout buttons (PayPal, Shop Pay, GPay) */
+			.cart-footer__ctas-additional,
+			.cart-footer__ctas-additional * {
+				--payment-button-border-radius: 6px;
+				--buttons-border-radius: 6px;
+				--border-radius: 6px;
+			}
+			.cart-footer__ctas-additional [role="button"],
+			.cart-footer__ctas-additional .shopify-cleanslate,
+			.cart-footer__ctas-additional .shopify-cleanslate > div,
+			.cart-footer__ctas-additional .additional-checkout-buttons ul li button {
+				border-radius: 6px !important;
+			}
+			/* Some buttons use iframes inside shadow DOM, wrapping them with overflow-hidden ensures border-radius applies at wrapper level */
+			.cart-footer__ctas-additional .additional-checkout-buttons ul li {
+				border-radius: 6px !important;
+				overflow: hidden !important;
+			}
+			
+			/* Hide dynamic checkout buttons on mobile */
+			@media screen and (max-width: 767px) {
+				.cart-footer__ctas-additional {
+					display: none !important;
+				}
+			}
+		</style>
+		<div class="cart-footer__ctas-additional js-cart-footer-additional-buttons" style="width: 100%; margin-bottom: 24px; padding: 0 24px;">
 			{{ content_for_additional_checkout_buttons }}
+		</div>
+	{%- endif -%}
+
+	{%- if cart_drawer == true -%}
+		<div class="cart-drawer__payment-icons" style="width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap; padding: 0 24px 24px;">
+			{%- for type in shop.enabled_payment_types -%}
+				{{ type | payment_type_svg_tag: class: 'icon icon--full-color' }}
+			{%- endfor -%}
 		</div>
 	{%- endif -%}
 {%- endcapture -%}
@@ -164,7 +179,7 @@
 									/>
 								</div>
 
-								<button class="button button--secondary cart-discount__discount-form-button js-cart-discount-apply-button">
+								<button class="button button--secondary cart-discount__discount-form-button js-cart-discount-apply-button" style="border-radius: 6px !important; font-family: 'Oswald', sans-serif !important; text-transform: uppercase; font-weight: 600; background: #0d1f6b !important; border-color: #0d1f6b !important; color: #ffffff !important;">
 									{{- "cart.general.apply_discount" | t -}}
 								</button>
 							</form>
@@ -245,8 +260,8 @@
 		</div>
 	</div>
 {%- else -%}
-	<div class="cart-footer">
-		<div class="cart-footer__summary">
+	<div class="cart-footer" style="display: contents;">
+		<div class="cart-footer__summary" style="padding: 0 24px;">
 			{%- render 'cart-discount' -%}
 			{%- render 'cart-notes', id: section.id -%}
 
@@ -261,7 +276,7 @@
 			</div>
 		</div>
 
-		<div class="cart-footer__main">
+		<div class="cart-footer__main" style="display: contents;">
 			{%- if settings.show_tax_and_shipping -%}
 				{{- tax_message -}}
 			{%- endif -%}

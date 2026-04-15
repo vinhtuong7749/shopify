@@ -231,9 +231,8 @@
 	</style>
 
 	<div class="product-accordion" style="{{ styles }}" data-product-accordion>
-		{%- comment -%} Description Accordion {%- endcomment -%}
+		{%- comment -%} DESCRIPTION - Full Page Overlay Trigger {%- endcomment -%}
 		{%- if product.description != blank -%}
-			{%- assign desc_id = 'desc-' | append: section.id -%}
 			{%- assign desc_content = product.description | replace: '<img', '<img loading="lazy"' -%}
 
 			{%- comment -%} Remove product title from description {%- endcomment -%}
@@ -274,12 +273,55 @@
 			{%- comment -%} Clean up empty tags {%- endcomment -%}
 			{%- assign desc_content = desc_content | replace: '<p></p>', '' | replace: '<p> </p>', '' | strip -%}
 
-			{%- render 'product-accordion',
-				title: 'DESCRIPTION',
-				content: desc_content,
-				accordion_id: desc_id,
-				open: false
-			-%}
+			<div class="product-accordion__item">
+				<button
+					class="product-accordion__trigger"
+					type="button"
+					aria-expanded="false"
+					onclick="document.getElementById('description-overlay').classList.add('is-active'); document.body.style.overflow='hidden';"
+				>
+					<span>DESCRIPTION</span>
+					<span class="product-accordion__trigger-icon">
+						<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<line x1="0" y1="6" x2="12" y2="6" stroke="currentColor" stroke-width="1.5"/>
+							<line class="product-accordion__icon-vertical" x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5"/>
+						</svg>
+					</span>
+				</button>
+			</div>
+
+			{%- comment -%} DESCRIPTION OVERLAY {%- endcomment -%}
+			<div id="description-overlay" class="size-chart-overlay">
+				<div class="size-chart-overlay__backdrop" onclick="document.getElementById('description-overlay').classList.remove('is-active'); document.body.style.overflow='';"></div>
+				<div class="size-chart-overlay__panel">
+					<div class="size-chart-overlay__header">
+						<h2 class="size-chart-overlay__title">DESCRIPTION</h2>
+						<button class="size-chart-overlay__close" type="button" onclick="document.getElementById('description-overlay').classList.remove('is-active'); document.body.style.overflow='';" aria-label="Close">
+							<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<line x1="2" y1="2" x2="18" y2="18" stroke="currentColor" stroke-width="2"/>
+								<line x1="18" y1="2" x2="2" y2="18" stroke="currentColor" stroke-width="2"/>
+							</svg>
+						</button>
+					</div>
+					<div class="size-chart-overlay__content" style="display:block;">
+						<div class="product-desc-overlay__body rte">
+							{{ desc_content }}
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<script>
+				document.addEventListener('keydown', function(e) {
+					if (e.key === 'Escape') {
+						var overlay = document.getElementById('description-overlay');
+						if (overlay && overlay.classList.contains('is-active')) {
+							overlay.classList.remove('is-active');
+							document.body.style.overflow = '';
+						}
+					}
+				});
+			</script>
 		{%- endif -%}
 
 		{%- comment -%} SIZE GUIDE - Full Page Overlay Trigger {%- endcomment -%}
@@ -329,7 +371,7 @@
 							<thead>
 								<tr>
 									<th>Size</th>
-									<th>Width (in)</th>
+									<th>Chest (in)</th>
 									<th>Length (in)</th>
 									<th>Sleeve (in)</th>
 								</tr>
@@ -346,6 +388,30 @@
 							</tbody>
 						</table>
 					</div>
+
+					<div class="size-chart-overlay__table-wrap" style="margin-top: 24px;">
+						<p class="size-chart-overlay__note">Measurements in <strong>centimeters (cm)</strong>.</p>
+						<table class="size-chart-overlay__table">
+							<thead>
+								<tr>
+									<th>Size</th>
+									<th>Chest (cm)</th>
+									<th>Length (cm)</th>
+									<th>Sleeve (cm)</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr><td>S</td><td>45.7</td><td>71.1</td><td>38.4</td></tr>
+								<tr><td>M</td><td>50.8</td><td>73.7</td><td>41.9</td></tr>
+								<tr><td>L</td><td>55.9</td><td>76.2</td><td>45.7</td></tr>
+								<tr><td>XL</td><td>61.0</td><td>78.7</td><td>49.5</td></tr>
+								<tr><td>2XL</td><td>66.0</td><td>81.3</td><td>53.3</td></tr>
+								<tr><td>3XL</td><td>71.1</td><td>83.8</td><td>56.8</td></tr>
+								<tr><td>4XL</td><td>76.2</td><td>86.4</td><td>60.1</td></tr>
+								<tr><td>5XL</td><td>81.3</td><td>88.9</td><td>63.5</td></tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
 
 				{%- comment -%} Hoodie & Sweatshirt Size Chart {%- endcomment -%}
@@ -357,7 +423,7 @@
 							<thead>
 								<tr>
 									<th>Size</th>
-									<th>Width (in)</th>
+									<th>Chest (in)</th>
 									<th>Length (in)</th>
 									<th>Sleeve (in)</th>
 								</tr>
@@ -371,6 +437,30 @@
 								<tr><td>3XL</td><td>30</td><td>32</td><td>38.5</td></tr>
 								<tr><td>4XL</td><td>32</td><td>33</td><td>39.5</td></tr>
 								<tr><td>5XL</td><td>34</td><td>34</td><td>40.5</td></tr>
+							</tbody>
+						</table>
+					</div>
+
+					<div class="size-chart-overlay__table-wrap" style="margin-top: 24px;">
+						<p class="size-chart-overlay__note">Measurements in <strong>centimeters (cm)</strong>.</p>
+						<table class="size-chart-overlay__table">
+							<thead>
+								<tr>
+									<th>Size</th>
+									<th>Chest (cm)</th>
+									<th>Length (cm)</th>
+									<th>Sleeve (cm)</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr><td>S</td><td>50.8</td><td>68.6</td><td>85.1</td></tr>
+								<tr><td>M</td><td>55.9</td><td>71.1</td><td>87.6</td></tr>
+								<tr><td>L</td><td>61.0</td><td>73.7</td><td>90.2</td></tr>
+								<tr><td>XL</td><td>66.0</td><td>76.2</td><td>92.7</td></tr>
+								<tr><td>2XL</td><td>71.1</td><td>78.7</td><td>95.3</td></tr>
+								<tr><td>3XL</td><td>76.2</td><td>81.3</td><td>97.8</td></tr>
+								<tr><td>4XL</td><td>81.3</td><td>83.8</td><td>100.3</td></tr>
+								<tr><td>5XL</td><td>86.4</td><td>86.4</td><td>102.9</td></tr>
 							</tbody>
 						</table>
 					</div>
@@ -597,32 +687,86 @@
 			});
 		</script>
 
-		{% if product.type == 'Type1' %}
-		{% capture shipping_content %}
-		<h3><strong>Shipping Policy</strong></h3>
-		<h4><strong>Processing Time</strong></h4>
-		<p>Orders are processed within <strong>5-13 business days</strong> (excluding weekends and holidays). You will receive a confirmation email with tracking information once your order ships.</p>
-		<h4><strong>Shipping Rates &amp; Delivery Estimates</strong></h4>
-		<p><strong>Standard Shipping:</strong> 3-5 business days - Free on orders over <strong>$70</strong>, otherwise <strong>$5.45</strong> flat rate</p>
-		<p>Orders containing items made with different printing methods or fulfilled from different locations may arrive in <strong>separate packages</strong> and include <strong>multiple tracking numbers</strong>.</p>
-		{% endcapture %}
-		{% else %}
-		{% capture shipping_content %}
-		<h3><strong>Shipping Policy</strong></h3>
-		<h4><strong>Processing Time</strong></h4>
-		<p>Orders are processed within <strong>1-3 business days</strong> (excluding weekends and holidays). You will receive a confirmation email with tracking information once your order ships.</p>
-		<h4><strong>Shipping Rates &amp; Delivery Estimates</strong></h4>
-		<p><strong>Standard Shipping:</strong> 3-5 business days - Free on orders over <strong>$70</strong>, otherwise <strong>$5.45</strong> flat rate</p>
-		<p>Orders containing items made with different printing methods or fulfilled from different locations may arrive in <strong>separate packages</strong> and include <strong>multiple tracking numbers</strong>.</p>
-		{% endcapture %}
-		{% endif %}
+		{%- comment -%} SHIPPING POLICY - Full Page Overlay Trigger {%- endcomment -%}
+		<div class="product-accordion__item">
+			<button
+				class="product-accordion__trigger"
+				type="button"
+				aria-expanded="false"
+				onclick="document.getElementById('shipping-overlay').classList.add('is-active'); document.body.style.overflow='hidden';"
+			>
+				<span>SHIPPING POLICY</span>
+				<span class="product-accordion__trigger-icon">
+					<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<line x1="0" y1="6" x2="12" y2="6" stroke="currentColor" stroke-width="1.5"/>
+						<line class="product-accordion__icon-vertical" x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5"/>
+					</svg>
+				</span>
+			</button>
+		</div>
 
-		{%- render 'product-accordion',
-			title: 'SHIPPING POLICY',
-			content: shipping_content,
-			accordion_id: 'shipping-hardcoded',
-			open: false
-		-%}
+		{%- comment -%} SHIPPING POLICY OVERLAY (2 tabs) {%- endcomment -%}
+		<div id="shipping-overlay" class="size-chart-overlay">
+			<div class="size-chart-overlay__backdrop" onclick="document.getElementById('shipping-overlay').classList.remove('is-active'); document.body.style.overflow='';"></div>
+			<div class="size-chart-overlay__panel">
+				<div class="size-chart-overlay__header">
+					<h2 class="size-chart-overlay__title">SHIPPING POLICY</h2>
+					<button class="size-chart-overlay__close" type="button" onclick="document.getElementById('shipping-overlay').classList.remove('is-active'); document.body.style.overflow='';" aria-label="Close">
+						<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<line x1="2" y1="2" x2="18" y2="18" stroke="currentColor" stroke-width="2"/>
+							<line x1="18" y1="2" x2="2" y2="18" stroke="currentColor" stroke-width="2"/>
+						</svg>
+					</button>
+				</div>
+
+				{%- assign is_3d_or_hat = false -%}
+				{%- if product.type == 'Hat' or product.type == '3D Tshirt' or product.type == 'Type1' -%}
+					{%- assign is_3d_or_hat = true -%}
+				{%- endif -%}
+
+				{%- if is_3d_or_hat -%}
+					{%- comment -%} 3D & Hats Products (5-13 business days) {%- endcomment -%}
+					<div class="size-chart-overlay__content shipping-tab-content" style="padding-top: 10px; text-align: left;">
+						<div class="rte" style="color: var(--color-text-primary, #203224);">
+							<p><strong>Processing Time</strong></p>
+							<p>Orders are processed within <strong>5-13 business days</strong> (excluding weekends and holidays). You will receive a confirmation email with tracking information once your order ships.</p>
+
+							<br/>
+
+							<p><strong>Shipping Rates & Delivery Estimates</strong></p>
+							<p><strong>Standard Shipping:</strong> 3-5 business days.</p>
+							<p>Orders containing items made with different printing methods or fulfilled from different locations may arrive in <strong>separate packages</strong> and include <strong>multiple tracking numbers</strong>.</p>
+						</div>
+					</div>
+				{%- else -%}
+					{%- comment -%} Standard Products (1-3 business days) {%- endcomment -%}
+					<div class="size-chart-overlay__content shipping-tab-content" style="padding-top: 10px; text-align: left;">
+						<div class="rte" style="color: var(--color-text-primary, #203224);">
+							<p><strong>Processing Time</strong></p>
+							<p>Orders are processed within <strong>1-3 business days</strong> (excluding weekends and holidays). You will receive a confirmation email with tracking information once your order ships.</p>
+
+							<br/>
+
+							<p><strong>Shipping Rates & Delivery Estimates</strong></p>
+							<p><strong>Standard Shipping:</strong> 3-5 business days.</p>
+							<p>Orders containing items made with different printing methods or fulfilled from different locations may arrive in <strong>separate packages</strong> and include <strong>multiple tracking numbers</strong>.</p>
+						</div>
+					</div>
+				{%- endif -%}
+			</div>
+		</div>
+
+		<script>
+			document.addEventListener('keydown', function(e) {
+				if (e.key === 'Escape') {
+					var overlay = document.getElementById('shipping-overlay');
+					if (overlay && overlay.classList.contains('is-active')) {
+						overlay.classList.remove('is-active');
+						document.body.style.overflow = '';
+					}
+				}
+			});
+		</script>
 
 		{%- comment -%} Drawer 1 (Specifications / custom) {%- endcomment -%}
 		{%- if show_drawer_1 -%}

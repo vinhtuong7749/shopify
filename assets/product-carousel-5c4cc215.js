@@ -1027,7 +1027,7 @@ const ProductCarousel = ({ config, selectors, sectionId }) => {
     if (sliderThumbnails) {
       const thumbnailsPosition = sliderThumbnails.dataset.thumbnailsPosition;
       let thumbnailsDirections = "horizontal";
-      if (thumbnailsPosition === "right") {
+      if (thumbnailsPosition === "right" || thumbnailsPosition === "left") {
         thumbnailsDirections = "vertical";
       }
       if (thumbnailsDirections === "horizontal") {

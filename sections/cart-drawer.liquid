@@ -38,7 +38,7 @@
 	{%- capture shipping_bar_content -%}
 		{%- for block in section.blocks -%}
 			{%- if block.type == 'shipping' -%}
-				{%- assign amount = 70 -%} {%- comment -%} Forced to 70 to fix $1000 issue {%- endcomment -%}
+				{%- assign amount = block.settings.amount -%}
 				{%- assign message = block.settings.message -%}
 				{%- assign congratulatory_message = block.settings.congratulatory_message -%}
 				{%- assign congratulatory_image = block.settings.icon -%}
@@ -157,10 +157,17 @@
 						{{- content -}}
 
 						{%- comment -%} Inline upsell after items {%- endcomment -%}
-						{%- if upsell_products != blank -%}
-							<div class="cart-drawer__section cart-drawer__section--upsell" style="padding: 16px; margin: 12px 16px 8px; background: #f5f3ef; border-radius: 10px;">
-								<h3 style="font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 700; text-transform: uppercase; color: #2c3d33; letter-spacing: 0.5px; margin: 0 0 12px 0;">{{ upsell_heading }}</h3>
-								{%- render 'cart-upsell', products: upsell_products, heading: '' -%}
+						{%- capture internal_upsell_html -%}
+							{%- render 'cart-upsell', products: upsell_products, heading: '' -%}
+						{%- endcapture -%}
+						
+						{%- assign clean_html = internal_upsell_html | strip -%}
+						{%- if upsell_products != blank and clean_html != '' -%}
+							<div class="cart-drawer__section cart-drawer__section--upsell" style="margin: 12px 16px 24px;">
+								<h3 style="background: #0d1f6b; color: #fff; padding: 12px; margin: 0; font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 700; text-transform: none; text-align: center; letter-spacing: 0.5px;">{{ upsell_heading }}</h3>
+								<div style="padding: 12px 0;">
+									{{- internal_upsell_html -}}
+								</div>
 							</div>
 						{%- endif -%}
 					</div>
@@ -169,7 +176,7 @@
 			</div>
 
 			{%- if footer != '' -%}
-				<div class="drawer__footer cart-drawer__footer js-cart-footer">
+				<div class="drawer__footer cart-drawer__footer js-cart-footer" style="display: contents;">
 					{{- footer -}}
 				</div>
 			{%- endif -%}

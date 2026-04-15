@@ -168,31 +168,39 @@
 												{%- for mh in mob_hunt_handles -%}
 													{%- assign mh_col = collections[mh] -%}
 													{%- assign mh_label = mob_hunt_labels[forloop.index0] -%}
+													{%- assign mh_empty = false -%}
+													{%- if mh_col == blank or mh_col.products_count == 0 -%}
+														{%- assign mh_empty = true -%}
+													{%- endif -%}
 													<li class="header-mobile__dropdown-item">
-														<a class="header-mobile__dropdown-link header-mobile__hunt-link" href="/collections/{{ mh }}">
+														<a class="header-mobile__dropdown-link header-mobile__hunt-link{% if mh_empty %} header-mobile__dropdown-link--disabled{% endif %}" href="/collections/{{ mh }}">
 															{%- if mh_col.image != blank -%}
 																<img src="{{ mh_col.image | img_url: '80x80', crop: 'center' }}" alt="{{ mh_label }}" loading="lazy" class="header-mobile__hunt-icon">
 															{%- endif -%}
-															<span>{{ mh_label }}</span>
+															<span>{{ mh_label }}{%- if mh_empty -%}<em class="header-mobile__coming-soon"> — Coming Soon</em>{%- endif -%}</span>
 														</a>
 													</li>
 												{%- endfor -%}
 
 												{%- comment -%} ── TERRAIN (image + name, vertical) ── {%- endcomment -%}
 								<li class="header-mobile__mega-heading">Terrain</li>
-								{%- assign mob_terrain_handles = "grassland-prairie-copy,forest-hardwood-copy,marsh-wetland-copy,mountainous-terrain-copy,pacific-northwest-copy" | split: "," -%}
+								{%- assign mob_terrain_handles = "forest-hardwood,desert-brush-country,grassland-prairie,marsh-wetland,mountainous-terrain" | split: "," -%}
 								{%- assign mob_terrain_labels = "Forest & Hardwood,Desert & Brush Country,Grassland & Prairie,Marsh & Wetland,Mountainous Terrain" | split: "," -%}
 								{%- for mth in mob_terrain_handles -%}
 									{%- assign mt_c = collections[mth] -%}
 									{%- assign mt_label = mob_terrain_labels[forloop.index0] -%}
+									{%- assign mt_empty = false -%}
+									{%- if mt_c == blank or mt_c.products_count == 0 -%}
+										{%- assign mt_empty = true -%}
+									{%- endif -%}
 									<li class="header-mobile__dropdown-item">
-										<a class="header-mobile__dropdown-link header-mobile__hunt-link" href="{%- if mt_c != blank -%}{{ mt_c.url }}{%- else -%}/collections/{{ mth }}{%- endif -%}">
+										<a class="header-mobile__dropdown-link header-mobile__hunt-link{% if mt_empty %} header-mobile__dropdown-link--disabled{% endif %}" href="{%- if mt_c != blank -%}{{ mt_c.url }}{%- else -%}/collections/{{ mth }}{%- endif -%}">
 											{%- if mt_c.image != blank -%}
 												<img src="{{ mt_c.image | img_url: '80x80', crop: 'center' }}" alt="{{ mt_label }}" loading="lazy" class="header-mobile__hunt-icon" style="border-radius:4px;">
 											{%- elsif mt_c.products.first.featured_image != blank -%}
 												<img src="{{ mt_c.products.first.featured_image | img_url: '80x80', crop: 'center' }}" alt="{{ mt_label }}" loading="lazy" class="header-mobile__hunt-icon" style="border-radius:4px;">
 											{%- endif -%}
-											<span>{{ mt_label }}</span>
+											<span>{{ mt_label }}{%- if mt_empty -%}<em class="header-mobile__coming-soon"> — Coming Soon</em>{%- endif -%}</span>
 										</a>
 									</li>
 								{%- endfor -%}
@@ -213,13 +221,17 @@
 									{%- assign m_ind_col = collections['usa'] -%}
 									{%- assign m_sig_col = collections['camo'] -%}
 									{%- if m_ind_col != blank -%}
+										{%- assign m_ind_empty = false -%}
+										{%- if m_ind_col.products_count == 0 -%}{%- assign m_ind_empty = true -%}{%- endif -%}
 										<li class="header-mobile__dropdown-item">
-											<a class="header-mobile__dropdown-link" href="{{ m_ind_col.url }}"><span>Independence Day</span></a>
+											<a class="header-mobile__dropdown-link{% if m_ind_empty %} header-mobile__dropdown-link--disabled{% endif %}" href="{{ m_ind_col.url }}"><span>Independence Day{%- if m_ind_empty -%}<em class="header-mobile__coming-soon"> — Coming Soon</em>{%- endif -%}</span></a>
 										</li>
 									{%- endif -%}
 									{%- if m_sig_col != blank -%}
+										{%- assign m_sig_empty = false -%}
+										{%- if m_sig_col.products_count == 0 -%}{%- assign m_sig_empty = true -%}{%- endif -%}
 										<li class="header-mobile__dropdown-item">
-											<a class="header-mobile__dropdown-link" href="{{ m_sig_col.url }}"><span>Signature</span></a>
+											<a class="header-mobile__dropdown-link{% if m_sig_empty %} header-mobile__dropdown-link--disabled{% endif %}" href="{{ m_sig_col.url }}"><span>Signature{%- if m_sig_empty -%}<em class="header-mobile__coming-soon"> — Coming Soon</em>{%- endif -%}</span></a>
 										</li>
 									{%- endif -%}
 								{%- endunless -%}

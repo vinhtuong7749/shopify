@@ -15,6 +15,10 @@
 
 {%- assign active_filters_size = 0 -%}
 
+{%- if collection.handle != blank and collection.handle != 'all' and collection.handle != 'all-1' -%}
+	{%- assign active_filters_size = active_filters_size | plus: 1 -%}
+{%- endif -%}
+
 {%- for filter in product_list.filters -%}
 	{%- case filter.type -%}
 		{%- when 'list' or 'boolean' -%}
@@ -57,24 +61,36 @@
 					{%- if show_list_clear_button -%}
 						{%- if active_filters_size > 1 -%}
 							<li class="product-filters-selected__item">
-								<button
+								<a
 									class="focus-visible-outline product-filters-selected__button product-filters-selected__button--clear-all js-reset-filters"
-									type="button"
+									href="/collections/all"
 									aria-label="{{- 'general.filters.clear_all' | t | escape -}}"
 								>
 									{{- 'general.filters.clear_all' | t -}}
 									{%- render 'icons', icon: 'close' -%}
-								</button>
+								</a>
 							</li>
 						{%- endif -%}
+					{%- endif -%}
+
+					{%- if collection.handle != blank and collection.handle != 'all' and collection.handle != 'all-1' -%}
+						<li class="product-filters-selected__item">
+							<a
+								class="focus-visible-outline product-filters-selected__button js-collection-ajax-link"
+								href="/collections/all"
+								aria-label="Remove Collection: {{ collection.title | escape }}"
+							>
+								{{- collection.title -}}
+								{%- render 'icons', icon: 'close' -%}
+							</a>
+						</li>
 					{%- endif -%}
 
 					{%- for filter in product_list.filters -%}
 						{%- case filter.type -%}
 							{%- when 'list' or 'boolean' -%}
 								{%- if filter.active_values.size > 0 -%}
-									{%- for filter_value in filter.values -%}
-										{%- if filter_value.active -%}
+									{%- for filter_value in filter.active_values -%}
 											{%- assign filter_value_label = filter_value.label -%}
 											{%- assign tech_tag = filter_value_label | slice: 0, 7 -%}
 
@@ -101,7 +117,6 @@
 													{%- render 'icons', icon: 'close' -%}
 												</a>
 											</li>
-										{%- endif -%}
 									{%- endfor -%}
 								{%- endif -%}
 							{%- when 'price_range' -%}
@@ -137,13 +152,13 @@
 
 				{%- if show_clear_button -%}
 					{%- if active_filters_size > 1 -%}
-						<button
+						<a
 							class="focus-visible-outline product-filters-selected__button-clear-all js-reset-filters"
-							type="button"
+							href="/collections/all"
 							aria-label="{{- 'general.filters.clear_all' | t | escape -}}"
 						>
 							{{- 'general.filters.clear_all' | t -}}
-						</button>
+						</a>
 					{%- endif -%}
 				{%- endif -%}
 			</div>

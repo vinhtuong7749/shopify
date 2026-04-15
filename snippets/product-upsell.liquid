@@ -233,11 +233,15 @@
 						setTimeout(function() {
 							getUpsellCartQty().then(function(qty) {
 								if (qty === 0) {
-									xhrPost('/cart/add.js', { items: [{ id: UPSELL_VARIANT_ID, quantity: 1 }] }).finally(function() {
+									xhrPost('/cart/add.js', { items: [{ id: UPSELL_VARIANT_ID, quantity: 1 }] }).then(function() {
+										if (window.themeCore && window.themeCore.EventBus) window.themeCore.EventBus.emit('cart:refresh');
+									}).finally(function() {
 										window.__upsellIsProcessing = false;
 									});
 								} else if (qty > 1) {
-									xhrPost('/cart/change.js', { id: UPSELL_VARIANT_ID, quantity: 1 }).finally(function() {
+									xhrPost('/cart/change.js', { id: UPSELL_VARIANT_ID, quantity: 1 }).then(function() {
+										if (window.themeCore && window.themeCore.EventBus) window.themeCore.EventBus.emit('cart:refresh');
+									}).finally(function() {
 										window.__upsellIsProcessing = false;
 									});
 								} else {

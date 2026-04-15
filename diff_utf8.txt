@@ -1,0 +1,124 @@
+﻿diff --git a/sections/product-template.liquid b/sections/product-template.liquid
+index 65d9a3a..c42d459 100644
+--- a/sections/product-template.liquid
++++ b/sections/product-template.liquid
+@@ -35,10 +35,11 @@
+ 			padding-bottom: {{- section.settings.offset_bottom_desktop -}}px;
+ 		}
+ 		
+-		/* Giß╗¢i hß║ín chiß╗üu cao hiß╗ân thß╗ï ß║únh sß║ún phß║⌐m tr├¬n Desktop ─æß╗â vß╗½a m├án h├¼nh */
++		/* Giß╗¢i hß║ín chiß╗üu cao hiß╗ân thß╗ï ß║únh sß║ún phß║⌐m tr├¬n Desktop ─æß╗â vß╗½a m├án h├¼nh (├íp dß╗Ñng cho mß╗ìi layout ─æß╗â tr├ính ß║únh dß╗ìc bß╗ï qu├í to) */
+ 		#shopify-section-{{- section.id -}} .product-media__aspect-ratio {
+ 			padding-top: 0 !important;
+ 			height: 70vh !important;
++			max-height: 700px;
+ 			min-height: 400px;
+ 		}
+ 		#shopify-section-{{- section.id -}} .product-media__aspect-ratio .product-media__image,
+@@ -52,6 +53,21 @@
+ 		}
+ 	}
+ 
++	@media screen and (min-width: 1200px) {
++		#shopify-section-{{- section.id -}} .product-media {
++			width: calc(50% - 32px) !important; /* Chia ─æß╗üu 50% */
++		}
++		#shopify-section-{{- section.id -}} .product-form {
++			width: calc(50% - 32px) !important; /* Chia ─æß╗üu 50% */
++		}
++		.product-media--thumbnails-position-left-override {
++			flex-direction: row-reverse !important;
++		}
++		.product-media--thumbnails-position-left-override .product-media__container {
++			flex-direction: row-reverse !important;
++		}
++	}
++
+ 	{% if breadcrumbs_block != blank -%}
+ 		.breadcrumb {
+ 			display: none;
+@@ -171,6 +187,10 @@
+ 					"value": "bottom",
+ 					"label": "Bottom"
+ 				},
++				{
++					"value": "left",
++					"label": "Left"
++				},
+ 				{
+ 					"value": "right",
+ 					"label": "Right"
+diff --git a/snippets/product-media.liquid b/snippets/product-media.liquid
+index 0fd4406..7c99b13 100644
+--- a/snippets/product-media.liquid
++++ b/snippets/product-media.liquid
+@@ -23,10 +23,17 @@
+ {%- if product.media.size > 0 -%}
+ 	{%- assign is_show_first_media_image = settings.is_show_first_media_image -%}
+ 	{%- assign media_layout = section.settings.media_layout | default: 'stacked_2_col' -%}
+-	{%- assign thumbnails_position = section.settings.thumbnails_position | default: 'bottom' -%}
++	{%- assign thumbnails_position_raw = section.settings.thumbnails_position | default: 'bottom' -%}
+ 	{%- assign is_show_thumbnails_mobile = section.settings.show_thumbnails_mobile | default: false -%}
+ 	{%- assign is_lazy = true -%}
+ 
++	{%- assign thumbnails_position_css = thumbnails_position_raw -%}
++	{%- assign thumbnails_position_js = thumbnails_position_raw -%}
++	{%- if thumbnails_position_raw == 'left' -%}
++		{%- assign thumbnails_position_js = 'right' -%}
++		{%- assign thumbnails_position_css = 'right product-media--thumbnails-position-left-override' -%}
++	{%- endif -%}
++
+ 	{%- if section.settings.is_zoom_enabled -%}
+ 		{%- assign is_zoom_enabled = true -%}
+ 	{%- endif -%}
+@@ -44,7 +51,7 @@
+ 	{%- endif -%}
+ 
+ 	{%- capture media_container_classes -%}
+-		product-media product-media--layout-{{- media_layout }} product-media--thumbnails-position-{{- thumbnails_position }} js-product-media-container
++		product-media product-media--layout-{{- media_layout }} product-media--thumbnails-position-{{- thumbnails_position_css }} js-product-media-container
+ 	{%- endcapture -%}
+ 
+ 	<div
+@@ -460,7 +467,7 @@
+ 				class="product-media__slider-thumbnails-container {% if is_show_thumbnails_mobile %}product-media__slider-thumbnails-container--mobile{% endif %}">
+ 				<div
+ 					class="swiper js-product-media-slider-thumbnails-{{- section.id }} product-media__slider-thumbnails {% if product.media.size == 1 %}is-hidden{% endif %}"
+-					data-thumbnails-position="{{- thumbnails_position -}}"
++					data-thumbnails-position="{{- thumbnails_position_js -}}"
+ 				>
+ 					<div class="swiper-wrapper product-media__slider-thumbnails-wrapper">
+ 						{% for media in product.media %}
+@@ -472,28 +479,28 @@
+ 										{%- render "product-gallery-thumbnail",
+ 											image: media,
+ 											is_lazy: true,
+-											thumbnails_position: thumbnails_position
++											thumbnails_position: thumbnails_position_js
+ 										-%}
+ 									{%- when 'video' -%}
+ 										{%- render "product-gallery-poster",
+ 											image: media.preview_image,
+ 											is_lazy: true,
+ 											media_type: media.media_type,
+-											thumbnails_position: thumbnails_position
++											thumbnails_position: thumbnails_position_js
+ 										-%}
+ 									{%- when 'external_video' -%}
+ 										{%- render "product-gallery-poster",
+ 											image: media.preview_image,
+ 											is_lazy: true,
+ 											media_type: media.media_type,
+-											thumbnails_position: thumbnails_position
++											thumbnails_position: thumbnails_position_js
+ 										-%}
+ 									{%- when 'model' -%}
+ 										{%- render "product-gallery-poster",
+ 											image: media.preview_image,
+ 											is_lazy: true,
+ 											media_type: media.media_type,
+-											thumbnails_position: thumbnails_position
++											thumbnails_position: thumbnails_position_js
+ 										-%}
+ 								{%- endcase -%}
+ 							</button>

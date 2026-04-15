@@ -73,6 +73,7 @@
 						{%- render 'product-options', section: section, block: block, product: product -%}
 					{%- when 'quantity' -%}
 						{%- render 'product-quantity', block: block, product: product -%}
+						{%- render 'product-promo-banner' -%}
 					{%- when 'price' -%}
 						{%- render 'price',
 							product: product,

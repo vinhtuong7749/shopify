@@ -224,17 +224,26 @@
 											{%- for third_level_link in second_level_link.links -%}
 												{%- assign animation_delay = animation_delay | plus: 0.03 -%}
 
+												{%- assign tl_collection_empty = false -%}
+												{%- if third_level_link.type == 'collection_link' -%}
+													{%- assign tl_col_obj = third_level_link.object -%}
+													{%- if tl_col_obj != blank and tl_col_obj.products_count == 0 -%}
+														{%- assign tl_collection_empty = true -%}
+													{%- endif -%}
+												{%- endif -%}
+
 												<li class="header-mega-menu__menu-item-wrapper" style="--animation-delay: {{ animation_delay }}s">
 													<a
-														class="button-link header-mega-menu__menu-item"
+														class="button-link header-mega-menu__menu-item{% if tl_collection_empty %} header-mega-menu__menu-item--disabled{% endif %}"
 														href="{{- third_level_link.url -}}"
 														{% if third_level_link.current %}
 															aria-current="page"
 														{% endif %}
+														{% if tl_collection_empty %}tabindex="-1"{% endif %}
 													>
 														<span data-text="{{- third_level_link.title | escape -}}">
 															<span>
-																{{- third_level_link.title | escape -}}
+																{{- third_level_link.title | escape -}}{%- if tl_collection_empty -%}<em class="mega-block__coming-soon"> — Coming Soon</em>{%- endif -%}
 															</span>
 														</span>
 													</a>
@@ -242,16 +251,24 @@
 											{%- endfor -%}
 										</ul>
 									{%- else -%}
+										{%- assign sl_collection_empty = false -%}
+										{%- if second_level_link.type == 'collection_link' -%}
+											{%- assign sl_col_obj = second_level_link.object -%}
+											{%- if sl_col_obj != blank and sl_col_obj.products_count == 0 -%}
+												{%- assign sl_collection_empty = true -%}
+											{%- endif -%}
+										{%- endif -%}
 										<a
-											class="button-link header-mega-menu__menu-item"
+											class="button-link header-mega-menu__menu-item{% if sl_collection_empty %} header-mega-menu__menu-item--disabled{% endif %}"
 											href="{{- second_level_link.url -}}"
 											{% if second_level_link.current %}
 												aria-current="page"
 											{% endif %}
+											{% if sl_collection_empty %}tabindex="-1"{% endif %}
 										>
 											<span data-text="{{- second_level_link.title | escape -}}">
 												<span>
-													{{- second_level_link.title | escape -}}
+													{{- second_level_link.title | escape -}}{%- if sl_collection_empty -%}<em class="mega-block__coming-soon"> — Coming Soon</em>{%- endif -%}
 												</span>
 											</span>
 										</a>

@@ -31,7 +31,11 @@
 				{%- for handle in hunting_handles -%}
 					{%- assign h_col = collections[handle] -%}
 					{%- assign h_label = hunting_labels[forloop.index0] -%}
-					<a href="/collections/{{ handle }}" class="mega-hunting-item">
+					{%- assign h_has_products = false -%}
+					{%- if h_col != blank and h_col.products_count > 0 -%}
+						{%- assign h_has_products = true -%}
+					{%- endif -%}
+					<a href="/collections/{{ handle }}" class="mega-hunting-item{% unless h_has_products %} mega-hunting-item--disabled{% endunless %}"{% unless h_has_products %} tabindex="-1"{% endunless %}>
 						<span class="mega-hunting-icon-wrap">
 							{%- if h_col.image != blank -%}
 								<img src="{{ h_col.image | img_url: '120x120', crop: 'center' }}" alt="{{ h_label }}" class="mega-hunting-icon" loading="lazy">
@@ -50,7 +54,7 @@
 								</span>
 							{%- endif -%}
 						</span>
-						<span class="mega-hunting-label">{{ h_label | upcase }}</span>
+						<span class="mega-hunting-label">{{ h_label | upcase }}{%- unless h_has_products -%}<em class="mega-block__coming-soon"> — Coming Soon</em>{%- endunless -%}</span>
 					</a>
 				{%- endfor -%}
 			</div>
@@ -61,12 +65,16 @@
 		<div class="mega-block mega-block--terrain">
 			<h3 class="mega-block__heading">Terrain</h3>
 			<div class="mega-terrain-list">
-				{%- assign terrain_handles = "grassland-prairie-copy,forest-hardwood-copy,marsh-wetland-copy,mountainous-terrain-copy,pacific-northwest-copy" | split: "," -%}
+				{%- assign terrain_handles = "forest-hardwood,desert-brush-country,grassland-prairie,marsh-wetland,mountainous-terrain" | split: "," -%}
 				{%- assign terrain_labels = "Forest & Hardwood,Desert & Brush Country,Grassland & Prairie,Marsh & Wetland,Mountainous Terrain" | split: "," -%}
 				{%- for th in terrain_handles -%}
 					{%- assign t_col = collections[th] -%}
 					{%- assign t_label = terrain_labels[forloop.index0] -%}
-					<a href="{%- if t_col != blank -%}{{ t_col.url }}{%- else -%}/collections/{{ th }}{%- endif -%}" class="mega-terrain-item">
+					{%- assign t_has_products = false -%}
+					{%- if t_col != blank and t_col.products_count > 0 -%}
+						{%- assign t_has_products = true -%}
+					{%- endif -%}
+					<a href="{%- if t_col != blank -%}{{ t_col.url }}{%- else -%}/collections/{{ th }}{%- endif -%}" class="mega-terrain-item{% unless t_has_products %} mega-terrain-item--disabled{% endunless %}"{% unless t_has_products %} tabindex="-1"{% endunless %}>
 						<span class="mega-terrain-img-wrap">
 							{%- if t_col.image != blank -%}
 								<img src="{{ t_col.image | img_url: '120x120', crop: 'center' }}" alt="{{ t_label }}" class="mega-terrain-img" loading="lazy">
@@ -76,7 +84,7 @@
 								<div class="mega-terrain-placeholder">{{ t_label | truncate: 2, '' }}</div>
 							{%- endif -%}
 						</span>
-						<span class="mega-terrain-label">{{ t_label | upcase }}</span>
+						<span class="mega-terrain-label">{{ t_label | upcase }}{%- unless t_has_products -%}<em class="mega-block__coming-soon"> — Coming Soon</em>{%- endunless -%}</span>
 					</a>
 				{%- endfor -%}
 			</div>
@@ -257,6 +265,11 @@
 .mega-hunting-item:hover {
 	opacity: 0.7;
 }
+.mega-hunting-item--disabled {
+	opacity: 0.4;
+	pointer-events: none;
+	cursor: default;
+}
 
 .mega-hunting-icon-wrap {
 	width: 52px;
@@ -313,6 +326,11 @@
 
 .mega-terrain-item:hover {
 	opacity: 0.7;
+}
+.mega-terrain-item--disabled {
+	opacity: 0.4;
+	pointer-events: none;
+	cursor: default;
 }
 
 .mega-terrain-img-wrap {

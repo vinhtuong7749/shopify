@@ -134,7 +134,7 @@
 						</legend>
 
 						{% if variants_type == "radio" %}
-							<div style="display: flex; flex-wrap: wrap; gap: 6px; padding-bottom: 4px;">
+							<div class="product-options__size-grid">
 							{%- for value in option.values  -%}
 								{%- assign handleized_value = value | handleize -%}
 								{%- assign is_disabled = true -%}
@@ -143,7 +143,7 @@
 									{%- assign is_disabled = false -%}
 								{% endif %}
 
-								<div class="radio-option" style="margin: 0; flex: 0 0 auto;">
+								<div class="radio-option">
 									<input
 										id="section-{{- section.id -}}-product-{{- product.id -}}-option-{{- handleized_option -}}-value-{{- handleized_value -}}"
 										type="radio"
@@ -160,7 +160,6 @@
 									<label
 										for="section-{{- section.id -}}-product-{{- product.id -}}-option-{{- handleized_option -}}-value-{{- handleized_value -}}"
 										class="radio-option__label {% if is_disabled %}is-disabled{% endif %}"
-										style="padding: 6px 12px !important; min-width: 36px; text-align: center; display: flex; align-items: center; justify-content: center; box-sizing: border-box; font-size: 12px;"
 									>
 										{{- value -}}
 									</label>
@@ -280,5 +279,67 @@
 	/* Round corners for Size and other standard variant blocks */
 	.product-options .radio-option__label {
 		border-radius: 8px !important;
+	}
+
+	/* Size button: đổi màu khi được chọn */
+	.product-options .radio-option .radio-input:checked + .radio-option__label {
+		background-color: #2c3d33 !important;
+		color: #ffffff !important;
+		border-color: #2c3d33 !important;
+	}
+
+	/* Desktop: size-grid dùng flex mặc định */
+	.product-options__size-grid {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		padding-bottom: 4px;
+	}
+
+	/* Mobile: Size selector grid 6 cột đều nhau */
+	@media screen and (max-width: 767px) {
+		/* Force parent containers trải rộng full */
+		.product-options,
+		.product-options .js-product-options,
+		.product-options .product-options__default,
+		.product-options .product-options__default fieldset,
+		.product-options fieldset.product-options__default {
+			width: 100% !important;
+			max-width: 100% !important;
+			box-sizing: border-box !important;
+		}
+
+		/* CSS Grid 6 cột đều nhau */
+		.product-options__size-grid {
+			display: grid !important;
+			grid-template-columns: repeat(6, 1fr) !important;
+			gap: 4px !important;
+			width: 100% !important;
+			max-width: 100% !important;
+		}
+
+		/* Mỗi radio-option lấp đầy ô grid */
+		.product-options__size-grid .radio-option {
+			width: 100% !important;
+			min-width: 0 !important;
+			margin: 0 !important;
+			padding: 0 !important;
+		}
+
+		/* Label nút chọn size - hình chữ nhật ngang 28px */
+		.product-options__size-grid .radio-option__label {
+			width: 100% !important;
+			height: 28px !important;
+			min-height: 28px !important;
+			max-height: 28px !important;
+			min-width: unset !important;
+			padding: 0 !important;
+			font-size: 12px !important;
+			font-weight: 500 !important;
+			border-radius: 4px !important;
+			display: flex !important;
+			align-items: center !important;
+			justify-content: center !important;
+		}
 	}
 </style>

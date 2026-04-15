@@ -44,6 +44,12 @@
 {%- assign timer_day 					= section.settings.timer_day -%}
 {%- assign timer_hour 					= section.settings.timer_hour -%}
 {%- assign timer_timezone 				= section.settings.timer_timezone -%}
+{%- assign evergreen_timer              = section.settings.evergreen_timer -%}
+{%- assign evergreen_reset_hour         = section.settings.evergreen_reset_hour | default: 7 -%}
+{%- assign timer_label_days             = section.settings.timer_label_days | default: 'DAYS' -%}
+{%- assign timer_label_hours            = section.settings.timer_label_hours | default: 'HOURS' -%}
+{%- assign timer_label_minutes          = section.settings.timer_label_minutes | default: 'MINUTES' -%}
+{%- assign timer_label_seconds          = section.settings.timer_label_seconds | default: 'SECONDS' -%}
 {%- assign timer_background 			= section.settings.timer_background -%}
 {%- assign timer_color 					= section.settings.timer_color -%}
 {%- assign timer_border_color 			= section.settings.timer_color | color_modify: 'alpha', 0.12 -%}
@@ -235,86 +241,123 @@
 	{%- endcapture -%}
 
 	{%- capture timer -%}
-		{%- if enable_timer and timer_year != blank and timer_month != blank and timer_day != blank and timer_hour != blank -%}
-			<div class="banner__timer js-timer"  role="timer" aria-live="off">
-				<script class="js-timer-settings" type="application/json">
-					{
-						"year": {{- timer_year | json -}},
-						"month": {{- timer_month | json -}},
-						"day": {{- timer_day | json -}},
-						"hour": {{- timer_hour | json -}},
-						"timezone": {{- timer_timezone | json -}}
-					}
-				</script>
-
-				<div class="banner__timer-col">
-					<div class="banner__timer-values">
-						<p class="h3 is-hidden banner__timer-value js-timer-days-hundreds">
-							0
-						</p>
-
-						<p class="h3 banner__timer-value js-timer-days-dozens">
-							0
-						</p>
-
-						<p class="h3 banner__timer-value js-timer-days-units">
-							0
-						</p>
-					</div>
-
-					<p class="banner__timer-label">
-						{{- 'sections.banner.timer_days_label' | t -}}
-					</p>
+		{%- if enable_timer -%}
+			<style>
+				.custom-timer {
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					gap: 24px;
+					margin: 20px auto;
+				}
+				.custom-timer__col {
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					justify-content: center;
+				}
+				.custom-timer__number {
+					font-family: var(--font-heading-family), 'Oswald', sans-serif;
+					font-size: 32px;
+					line-height: 1.2;
+					font-weight: 300;
+					letter-spacing: 2px;
+					margin: 0;
+					color: var(--timer-cell-color, #fff);
+				}
+				.custom-timer__label {
+					font-family: var(--font-body-family), sans-serif;
+					font-size: 11px;
+					text-transform: uppercase;
+					letter-spacing: 2px;
+					margin-top: 5px;
+					color: var(--timer-cell-color, #fff);
+				}
+				.custom-timer__divider {
+					height: 35px;
+					width: 1px;
+					background-color: var(--timer-cell-color, #fff);
+					opacity: 0.5;
+				}
+				@media (max-width: 767px) {
+					.custom-timer { gap: 12px; margin: 15px auto; }
+					.custom-timer__number { font-size: 24px; }
+					.custom-timer__label { font-size: 9px; letter-spacing: 1px; margin-top: 3px; }
+					.custom-timer__divider { height: 25px; }
+				}
+			</style>
+			
+			<div class="custom-timer" id="EvergreenTimer-{{ section.id }}" role="timer" aria-live="off">
+				<div class="custom-timer__col">
+					<p class="custom-timer__number js-d-both">0</p>
+					<p class="custom-timer__label">{{- timer_label_days | escape -}}</p>
 				</div>
-
-				<div class="banner__timer-col">
-					<div class="banner__timer-values">
-						<p class="h3 banner__timer-value js-timer-hours-dozens">
-							0
-						</p>
-
-						<p class="h3 banner__timer-value js-timer-hours-units">
-							0
-						</p>
-					</div>
-
-					<p class="banner__timer-label">
-						{{- 'sections.banner.timer_hours_label' | t -}}
-					</p>
+				<div class="custom-timer__divider"></div>
+				<div class="custom-timer__col">
+					<p class="custom-timer__number js-h-both">00</p>
+					<p class="custom-timer__label">{{- timer_label_hours | escape -}}</p>
 				</div>
-
-				<div class="banner__timer-col">
-					<div class="banner__timer-values">
-						<p class="h3 banner__timer-value js-timer-minutes-dozens">
-							0
-						</p>
-
-						<p class="h3 banner__timer-value js-timer-minutes-units">
-							0
-						</p>
-					</div>
-
-					<p class="banner__timer-label">
-						{{- 'sections.banner.timer_minutes_label' | t -}}
-					</p>
+				<div class="custom-timer__divider"></div>
+				<div class="custom-timer__col">
+					<p class="custom-timer__number js-m-both">00</p>
+					<p class="custom-timer__label">{{- timer_label_minutes | escape -}}</p>
 				</div>
-
-				<div class="banner__timer-col">
-					<div class="banner__timer-values">
-						<p class="h3 banner__timer-value js-timer-seconds-dozens">
-							0
-						</p>
-
-						<p class="h3 banner__timer-value js-timer-seconds-units">
-							0
-						</p>
-					</div>
-
-					<p class="banner__timer-label">
-						{{- 'sections.banner.timer_seconds_label' | t -}}
-					</p>
+				<div class="custom-timer__divider"></div>
+				<div class="custom-timer__col">
+					<p class="custom-timer__number js-s-both">00</p>
+					<p class="custom-timer__label">{{- timer_label_seconds | escape -}}</p>
 				</div>
 			</div>
+
+			<script>
+				document.addEventListener('DOMContentLoaded', function() {
+					function updateEvergreenTimer() {
+						var timerEl = document.getElementById('EvergreenTimer-{{ section.id }}');
+						if (!timerEl) return;
+						
+						var now = new Date();
+						var targetTime = 0;
+
+						{% if evergreen_timer %}
+							var targetHour = {{ evergreen_reset_hour | default: 7 | json }};
+							var nextResetUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), targetHour, 0, 0, 0));
+
+							if (now.getTime() >= nextResetUTC.getTime()) {
+								nextResetUTC.setUTCDate(nextResetUTC.getUTCDate() + 1);
+							}
+							targetTime = nextResetUTC.getTime();
+						{% else %}
+							var fixedTarget = new Date(
+								{{ timer_year | default: 2024 | json }}, 
+								{{ timer_month | default: 1 | json }}, 
+								{{ timer_day | default: 1 | json }}, 
+								{{ timer_hour | default: 0 | json }}, 
+								0, 0
+							);
+							// Apply manual timezone offset offset
+							var offsetHours = {{ timer_timezone | default: 0 | json }};
+							fixedTarget.setHours(fixedTarget.getHours() - offsetHours);
+							targetTime = fixedTarget.getTime();
+						{% endif %}
+
+						var diff = targetTime - now.getTime();
+						
+						if (diff > 0) {
+							var d = Math.floor(diff / (1000 * 60 * 60 * 24));
+							var h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+							var m = Math.floor((diff / 1000 / 60) % 60);
+							var s = Math.floor((diff / 1000) % 60);
+
+							timerEl.querySelector('.js-d-both').textContent = d.toString();
+							timerEl.querySelector('.js-h-both').textContent = h.toString().padStart(2, '0');
+							timerEl.querySelector('.js-m-both').textContent = m.toString().padStart(2, '0');
+							timerEl.querySelector('.js-s-both').textContent = s.toString().padStart(2, '0');
+						}
+					}
+					setInterval(updateEvergreenTimer, 1000);
+					updateEvergreenTimer();
+				});
+			</script>
 		{%- endif -%}
 	{%- endcapture -%}
 
@@ -323,10 +366,6 @@
 			<div class="banner__content">
 				{%- if show_section_breadcrumbs -%}
 					{%- render 'breadcrumbs', class: 'breadcrumb--banner' -%}
-				{%- endif -%}
-
-				{%- if timer != blank -%}
-					{{- timer -}}
 				{%- endif -%}
 
 				{%- if title != blank -%}
@@ -339,6 +378,10 @@
 					<div class="banner__text rte">
 						{{- text -}}
 					</div>
+				{%- endif -%}
+
+				{%- if timer != blank -%}
+					{{- timer -}}
 				{%- endif -%}
 
 				{% if button_label_1 != blank and button_link_1 != blank %}
@@ -759,6 +802,47 @@
 			"id": "enable_timer",
 			"label": "Enable",
 			"default": false
+		},
+		{
+			"type": "checkbox",
+			"id": "evergreen_timer",
+			"label": "Enable 24h Evergreen Auto-Reset",
+			"default": true
+		},
+		{
+			"type": "range",
+			"id": "evergreen_reset_hour",
+			"min": 0,
+			"max": 23,
+			"step": 1,
+			"unit": "h",
+			"label": "Daily Reset Hour (UTC)",
+			"info": "For 2 PM Vietnam Time (14:00 UTC+7), select 7.",
+			"default": 7
+		},
+		{
+			"type": "text",
+			"id": "timer_label_days",
+			"label": "Label for Days",
+			"default": "DAYS"
+		},
+		{
+			"type": "text",
+			"id": "timer_label_hours",
+			"label": "Label for Hours",
+			"default": "HOURS"
+		},
+		{
+			"type": "text",
+			"id": "timer_label_minutes",
+			"label": "Label for Minutes",
+			"default": "MINUTES"
+		},
+		{
+			"type": "text",
+			"id": "timer_label_seconds",
+			"label": "Label for Seconds",
+			"default": "SECONDS"
 		},
 		{
 			"type": "number",

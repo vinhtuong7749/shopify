@@ -40,7 +40,6 @@
 {%- assign is_lazy = true -%}
 
 {%- capture section_styles -%}
-	--text-alignment: {{ text_alignment | replace: 'left', 'start' | replace: 'right', 'end' }};
 	--inner-offset-top: {{ section.settings.inner_offset_top }}px; {{-  -}}
 	--inner-offset-bottom: {{ section.settings.inner_offset_bottom }}px; {{-  -}}
 	--inner-offset-top-mobile: {{ section.settings.inner_offset_top_mobile }}px; {{-  -}}
@@ -52,18 +51,120 @@
 
 {%- render 'adastra' with '/src/styles/image-with-text.scss' -%}
 
+{%- assign mobile_align = section.settings.text_alignment_mobile | default: 'center' -%}
+{%- assign mobile_align_css = mobile_align | replace: 'left', 'start' | replace: 'right', 'end' -%}
+{%- assign desktop_align_css = text_alignment | default: 'center' | replace: 'left', 'start' | replace: 'right', 'end' -%}
+
 {%- style -%}
+	/* Mobile-first: set --text-alignment to mobile value */
+	#shopify-section-{{- section.id -}} .image-with-text {
+		--text-alignment: {{ mobile_align_css }};
+	}
+
 	#shopify-section-{{- section.id -}} {
 		padding-top: {{- section.settings.offset_top_mobile -}}px;
-			padding-bottom: {{- section.settings.offset_bottom_mobile -}}px;
+		padding-bottom: {{- section.settings.offset_bottom_mobile -}}px;
+	}
+
+	#shopify-section-{{- section.id -}} .image-with-text-image,
+	#shopify-section-{{- section.id -}} .image-with-text__image-col-inner,
+	#shopify-section-{{- section.id -}} .image-with-text__image-container--multi .image-with-text-image {
+		border-radius: {{ section.settings.image_border_radius }}px;
+		overflow: hidden;
+	}
+
+	{% if section.settings.image_aspect_ratio != 'auto' %}
+		{% assign active_aspect_ratio = section.settings.image_aspect_ratio %}
+	{% else %}
+		{% assign active_aspect_ratio = section.settings.first_col_image_1.aspect_ratio | default: '1 / 1' %}
+	{% endif %}
+
+	#shopify-section-{{ section.id }} .image-with-text .image-with-text__image-wrapper {
+		aspect-ratio: {{ active_aspect_ratio }} !important;
+		padding-top: 0 !important;
+		padding-bottom: 0 !important;
+		height: auto !important;
+		display: block !important;
+		position: relative !important;
+	}
+
+	#shopify-section-{{ section.id }} .image-with-text .image-with-text__image {
+		aspect-ratio: {{ active_aspect_ratio }} !important;
+		object-fit: cover !important;
+		width: 100% !important;
+		height: auto !important;
+		position: relative !important;
+		top: auto !important;
+		left: auto !important;
+	}
+
+	#shopify-section-{{- section.id -}} .image-with-text__heading {
+		font-size: {{ section.settings.heading_font_size_mobile }}px !important;
+	}
+
+	#shopify-section-{{- section.id -}} .image-with-text__text-content p,
+	#shopify-section-{{- section.id -}} .image-with-text__text-content {
+		font-size: {{ section.settings.text_font_size_mobile }}px !important;
+	}
+
+	/* Mobile text alignment */
+	#shopify-section-{{- section.id -}} .image-with-text__content,
+	#shopify-section-{{- section.id -}} .image-with-text__content > *,
+	#shopify-section-{{- section.id -}} .image-with-text__heading,
+	#shopify-section-{{- section.id -}} .image-with-text__text-content,
+	#shopify-section-{{- section.id -}} .image-with-text__text-content p,
+	#shopify-section-{{- section.id -}} .image-with-text__content .rte {
+		text-align: {{ mobile_align }} !important;
+	}
+
+	@media screen and (min-width: 992px) {
+		/* Desktop: override --text-alignment to desktop value */
+		#shopify-section-{{- section.id -}} .image-with-text {
+			--text-alignment: {{ desktop_align_css }};
 		}
 
-		@media screen and (min-width: 992px) {
-			#shopify-section-{{- section.id -}} {
-				padding-top: {{- section.settings.offset_top_desktop -}}px;
-				padding-bottom: {{- section.settings.offset_bottom_desktop -}}px;
-			}
+		#shopify-section-{{- section.id -}} {
+			padding-top: {{- section.settings.offset_top_desktop -}}px;
+			padding-bottom: {{- section.settings.offset_bottom_desktop -}}px;
 		}
+
+		#shopify-section-{{- section.id -}} .image-with-text__container {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+
+		#shopify-section-{{- section.id -}} .image-with-text__image-container {
+			width: {{ section.settings.image_width_desktop }}%;
+			flex: 0 0 {{ section.settings.image_width_desktop }}%;
+			max-width: {{ section.settings.image_width_desktop }}%;
+		}
+
+		#shopify-section-{{- section.id -}} .image-with-text__content-wrapper {
+			width: calc({{ 100 | minus: section.settings.image_width_desktop }}% - 40px);
+			flex: 0 0 calc({{ 100 | minus: section.settings.image_width_desktop }}% - 40px);
+			max-width: calc({{ 100 | minus: section.settings.image_width_desktop }}% - 40px);
+		}
+
+		#shopify-section-{{- section.id -}} .image-with-text__heading {
+			font-size: {{ section.settings.heading_font_size_desktop }}px !important;
+		}
+
+		#shopify-section-{{- section.id -}} .image-with-text__text-content p,
+		#shopify-section-{{- section.id -}} .image-with-text__text-content {
+			font-size: {{ section.settings.text_font_size_desktop }}px !important;
+		}
+
+		/* Desktop text alignment */
+		#shopify-section-{{- section.id -}} .image-with-text__content,
+		#shopify-section-{{- section.id -}} .image-with-text__content > *,
+		#shopify-section-{{- section.id -}} .image-with-text__heading,
+		#shopify-section-{{- section.id -}} .image-with-text__text-content,
+		#shopify-section-{{- section.id -}} .image-with-text__text-content p,
+		#shopify-section-{{- section.id -}} .image-with-text__content .rte {
+			text-align: {{ text_alignment }} !important;
+		}
+	}
 {%- endstyle -%}
 
 {%- capture content -%}
@@ -262,46 +363,46 @@
 </section>
 
 
+
 {%- schema -%}
 	{
-		"name": "Image with text",
+		"name": "Ảnh kèm vùng chữ",
 		"disabled_on": {
 			"groups": ["header", "footer", "custom.popup"]
 		},
 		"settings": [
 			{
 				"type": "header",
-				"content": "Colors"
+				"content": "Màu sắc (Colors)"
 			},
 			{
 				"type": "checkbox",
 				"id": "enable_color_scheme_inheritance",
-				"label": "Enable color scheme inheritance",
-				"default": true,
-				"info": "When this setting is enabled, the color scheme is inherited from the theme settings."
+				"label": "Kế thừa bảng màu sắc chung",
+				"default": true
 			},
 			{
 				"type": "color_scheme",
 				"id": "color_scheme",
-				"label": "Color scheme",
+				"label": "Bảng màu",
 				"default": "scheme-1"
 			},
 			{
 				"type": "header",
-				"content": "General"
+				"content": "Bố cục chung (General)"
 			},
 			{
 				"id": "images_layout",
 				"type": "select",
-				"label": "Images layout",
+				"label": "Bố cục ảnh",
 				"options": [
 					{
 						"value": "one_image",
-						"label": "One image"
+						"label": "Một ảnh lớn"
 					},
 					{
 						"value": "multiply_images",
-						"label": "Multiply images"
+						"label": "Nhiều ảnh xếp lớp"
 					}
 				],
 				"default": "multiply_images"
@@ -309,39 +410,38 @@
 			{
 				"type": "checkbox",
 				"id": "enable_images_animation",
-				"label": "Enable images animation",
+				"label": "Bật hiệu ứng nổi bọt ảnh",
 				"default": true,
-				"info": "Works with the 'Multiply images' layout."
+				"info": "Chỉ hoạt động khi chọn 'Nhiều ảnh xếp lớp'."
 			},
 			{
 				"type": "select",
 				"id": "scroll_images_direction",
-				"label": "Scroll images direction",
+				"label": "Hướng cuộn ảnh",
 				"options": [
 					{
 						"value": "top",
-						"label": "Top"
+						"label": "Hướng lên"
 					},
 					{
 						"value": "bottom",
-						"label": "Bottom"
+						"label": "Hướng xuống"
 					}
 				],
-				"default": "top",
-				"info": "This setting changes the animation direction for all columns to a reverse direction."
+				"default": "top"
 			},
 			{
 				"id": "image_position",
 				"type": "select",
-				"label": "Image position",
+				"label": "Vị trí cột ảnh",
 				"options": [
 					{
 						"value": "left",
-						"label": "Left"
+						"label": "Trái"
 					},
 					{
 						"value": "right",
-						"label": "Right"
+						"label": "Phải"
 					}
 				],
 				"default": "left"
@@ -349,81 +449,204 @@
 			{
 				"id": "text_alignment",
 				"type": "select",
-				"label": "Text alignment",
+				"label": "Căn lề khu vực chữ (Desktop)",
 				"options": [
 					{
 						"value": "left",
-						"label": "Left"
+						"label": "Trái"
 					},
 					{
 						"value": "center",
-						"label": "Center"
+						"label": "Giữa"
 					},
 					{
 						"value": "right",
-						"label": "Right"
+						"label": "Phải"
 					}
 				],
 				"default": "center"
 			},
 			{
+				"id": "text_alignment_mobile",
+				"type": "select",
+				"label": "Căn lề khu vực chữ (Mobile)",
+				"options": [
+					{
+						"value": "left",
+						"label": "Trái"
+					},
+					{
+						"value": "center",
+						"label": "Giữa"
+					},
+					{
+						"value": "right",
+						"label": "Phải"
+					}
+				],
+				"default": "center"
+			},
+			{
+				"type": "header",
+				"content": "Kích thước Tùy chỉnh (Đặc biệt)"
+			},
+			{
+				"type": "range",
+				"id": "image_width_desktop",
+				"min": 30,
+				"max": 70,
+				"step": 1,
+				"unit": "%",
+				"label": "Độ rộng cột ảnh (Desktop)",
+				"default": 50
+			},
+			{
+				"type": "select",
+				"id": "image_aspect_ratio",
+				"label": "Tỉ lệ ảnh (Aspect Ratio)",
+				"options": [
+					{
+						"value": "auto",
+						"label": "Tự nhiên (Ảnh gốc)"
+					},
+					{
+						"value": "1 / 1",
+						"label": "1:1 (Vuông)"
+					},
+					{
+						"value": "4 / 3",
+						"label": "4:3 (Ngang tiêu chuẩn)"
+					},
+					{
+						"value": "3 / 2",
+						"label": "3:2 (Ngang truyền thống)"
+					},
+					{
+						"value": "16 / 9",
+						"label": "16:9 (Chữ nhật ngang phim)"
+					},
+					{
+						"value": "2 / 1",
+						"label": "2:1 (Ngang rộng - thấp gấp đôi chiều dọc)"
+					},
+					{
+						"value": "2.5 / 1",
+						"label": "2.5:1 (Siêu ngang)"
+					}
+				],
+				"default": "2 / 1"
+			},
+			{
+				"type": "range",
+				"id": "image_border_radius",
+				"min": 0,
+				"max": 50,
+				"step": 1,
+				"unit": "px",
+				"label": "Độ bo góc ảnh (Border Radius)",
+				"default": 0
+			},
+			{
+				"type": "range",
+				"id": "heading_font_size_desktop",
+				"min": 20,
+				"max": 80,
+				"step": 1,
+				"unit": "px",
+				"label": "Cỡ chữ Tiêu đề (Desktop)",
+				"default": 40
+			},
+			{
+				"type": "range",
+				"id": "heading_font_size_mobile",
+				"min": 16,
+				"max": 50,
+				"step": 1,
+				"unit": "px",
+				"label": "Cỡ chữ Tiêu đề (Mobile)",
+				"default": 28
+			},
+			{
+				"type": "range",
+				"id": "text_font_size_desktop",
+				"min": 12,
+				"max": 30,
+				"step": 1,
+				"unit": "px",
+				"label": "Cỡ chữ Đoạn văn (Desktop)",
+				"default": 16
+			},
+			{
+				"type": "range",
+				"id": "text_font_size_mobile",
+				"min": 10,
+				"max": 24,
+				"step": 1,
+				"unit": "px",
+				"label": "Cỡ chữ Đoạn văn (Mobile)",
+				"default": 14
+			},
+			{
+				"type": "header",
+				"content": "Nội dung"
+			},
+			{
 				"id": "label",
 				"type": "text",
-				"label": "Label",
-				"default": "Label"
+				"label": "Nhãn phụ (Subheading)",
+				"default": "Camo Signal Story"
 			},
 			{
 				"id": "heading",
 				"type": "inline_richtext",
-				"label": "Heading",
-				"default": "Text heading"
+				"label": "Tiêu đề (Heading)",
+				"default": "Câu chuyện thương hiệu"
 			},
 			{
 				"id": "text_content",
 				"type": "richtext",
-				"label": "Text"
+				"label": "Đoạn văn chi tiết"
 			},
 			{
 				"id": "button_label",
 				"type": "text",
-				"label": "Button label",
-				"default": "Button label"
+				"label": "Ký tự nút bấm",
+				"default": "Xem thêm"
 			},
 			{
 				"id": "button_aria_label",
 				"type": "text",
-				"label": "Button aria-label",
-				"info": "Need for good accessibility, e.g. 'All news about'."
+				"label": "Văn bản hỗ trợ nút (Aria label)"
 			},
 			{
 				"id": "button_url",
 				"type": "url",
-				"label": "Button link"
+				"label": "Đường dẫn nút (Link)"
 			},
 			{
 				"id": "button_style",
 				"type": "select",
-				"label": "Button style",
+				"label": "Kiểu thiết kế nút",
 				"options": [
 					{
 						"value": "primary",
-						"label": "Primary"
+						"label": "Chính (Primary)"
 					},
 					{
 						"value": "secondary",
-						"label": "Secondary"
+						"label": "Phụ (Secondary)"
 					}
 				],
 				"default": "primary"
 			},
 			{
 				"type": "header",
-				"content": "First column images"
+				"content": "Dữ liệu Cột Ảnh Thứ Nhất"
 			},
 			{
 				"type": "range",
 				"id": "fist_col_movement_speed",
-				"label": "Movement speed",
+				"label": "Tốc độ cuộn ảnh",
 				"min": 10,
 				"max": 30,
 				"unit": "s",
@@ -432,27 +655,27 @@
 			{
 				"type": "image_picker",
 				"id": "first_col_image_1",
-				"label": "First image",
-				"info": "Use this image when you want to show one image with 'One image' layout."
+				"label": "Ảnh chính 1",
+				"info": "Ảnh hiển thị nếu chọn layout 'Một ảnh lớn'"
 			},
 			{
 				"type": "image_picker",
 				"id": "first_col_image_2",
-				"label": "Second image"
+				"label": "Ảnh chính 2"
 			},
 			{
 				"type": "image_picker",
 				"id": "first_col_image_3",
-				"label": "Third image"
+				"label": "Ảnh chính 3"
 			},
 			{
 				"type": "header",
-				"content": "Second column images"
+				"content": "Dữ liệu Cột Ảnh Thứ Hai"
 			},
 			{
 				"type": "range",
 				"id": "second_col_movement_speed",
-				"label": "Movement speed",
+				"label": "Tốc độ cuộn ảnh cột 2",
 				"min": 10,
 				"max": 30,
 				"unit": "s",
@@ -461,50 +684,49 @@
 			{
 				"type": "image_picker",
 				"id": "second_col_image_1",
-				"label": "First image"
+				"label": "Ảnh phụ 1"
 			},
 			{
 				"type": "image_picker",
 				"id": "second_col_image_2",
-				"label": "Second image"
+				"label": "Ảnh phụ 2"
 			},
 			{
 				"type": "image_picker",
 				"id": "second_col_image_3",
-				"label": "Third image"
+				"label": "Ảnh phụ 3"
 			},
 			{
 				"type": "header",
-				"content": "Layout"
+				"content": "Căn lề không gian (Layout)"
 			},
 			{
 				"type": "select",
 				"id": "container_width",
-				"label": "Container width",
+				"label": "Độ rộng vùng an toàn",
 				"options": [
 					{
 						"value": "1808px",
-						"label": "Default - 1680px"
+						"label": "Mặc định - 1680px"
 					},
 					{
 						"value": "2048px",
-						"label": "Large - 1920px"
+						"label": "Lớn - 1920px"
 					},
 					{
 						"value": "100%",
-						"label": "Full width"
+						"label": "Toàn màn hình"
 					},
 					{
 						"value": "inherit",
-						"label": "Inherit of general setting"
+						"label": "Theo cài đặt chung Theme"
 					}
 				],
-				"default": "inherit",
-				"info": "if you select 'Inherit of general setting', then container width will be used from the Theme settings/Layout"
+				"default": "inherit"
 			},
 			{
 				"type": "paragraph",
-				"content": "External offsets"
+				"content": "Viền ngoài (Margin)"
 			},
 			{
 				"type": "range",
@@ -513,7 +735,7 @@
 				"max": 100,
 				"step": 1,
 				"unit": "px",
-				"label": "Desktop external offset top",
+				"label": "Khoảng cách trên (Desktop)",
 				"default": 50
 			},
 			{
@@ -523,7 +745,7 @@
 				"max": 100,
 				"step": 1,
 				"unit": "px",
-				"label": "Desktop external offset bottom",
+				"label": "Khoảng cách dưới (Desktop)",
 				"default": 50
 			},
 			{
@@ -533,7 +755,7 @@
 				"max": 100,
 				"step": 1,
 				"unit": "px",
-				"label": "Mobile external offset top",
+				"label": "Khoảng cách trên (Mobile)",
 				"default": 25
 			},
 			{
@@ -543,12 +765,12 @@
 				"max": 100,
 				"step": 1,
 				"unit": "px",
-				"label": "Mobile external offset bottom",
+				"label": "Khoảng cách dưới (Mobile)",
 				"default": 25
 			},
 			{
 				"type": "paragraph",
-				"content": "Internal offsets"
+				"content": "Viền trong (Padding)"
 			},
 			{
 				"type": "range",
@@ -557,7 +779,7 @@
 				"max": 100,
 				"step": 1,
 				"unit": "px",
-				"label": "Desktop internal offset top",
+				"label": "Đệm trên (Desktop)",
 				"default": 30
 			},
 			{
@@ -567,7 +789,7 @@
 				"max": 100,
 				"step": 1,
 				"unit": "px",
-				"label": "Desktop internal offset bottom",
+				"label": "Đệm dưới (Desktop)",
 				"default": 30
 			},
 			{
@@ -577,7 +799,7 @@
 				"max": 100,
 				"step": 1,
 				"unit": "px",
-				"label": "Mobile internal offset top",
+				"label": "Đệm trên (Mobile)",
 				"default": 30
 			},
 			{
@@ -587,15 +809,15 @@
 				"max": 100,
 				"step": 1,
 				"unit": "px",
-				"label": "Mobile internal offset bottom",
+				"label": "Đệm dưới (Mobile)",
 				"default": 30
 			}
 		],
 		"presets": [
 			{
-				"name": "Image with text",
+				"name": "Ảnh kèm vùng chữ (TV)",
 				"settings": {
-					"text_content": "<p>Combine an image with text to highlight a specific product, collection, or blog post of your choice. Enhance the content by including information on its availability, style, or possibly a review.</p>"
+					"text_content": "<p>Kết hợp ảnh với nội dung chữ để tôn bật sản phẩm hoặc tin tức bạn muốn truyền tải đến khách hàng.</p>"
 				}
 			}
 		]

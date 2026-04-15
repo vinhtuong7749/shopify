@@ -18038,7 +18038,7 @@ html.no-js .product .product__container.need-animate {
 /* stylelint-disable */
 .product-media {
   position: relative;
-  width: calc(67.2% - 32px);
+  width: calc(50% - 32px);
 }
 .product-media .product-media__grid {
   display: flex;
