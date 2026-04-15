@@ -75,19 +75,26 @@
 						{%- render 'product-quantity', block: block, product: product -%}
 						{%- render 'product-promo-banner' -%}
 					{%- when 'price' -%}
-						{%- render 'price',
-							product: product,
-							use_variant: use_variant,
-							show_unit_price: settings.is_show_unit_price,
-							currency_code_enabled: settings.is_currency_code_enabled,
-							price_class: 'product-price',
-							hide_from_price: true,
-							show_taxes_included: section.settings.show_taxes_included,
-							show_pay_installments: section.settings.show_pay_installments,
-							form: form,
-							show_volume_pricing_info: true,
-							block: block
-						-%}
+						<div class="product-price-and-timer" style="display: flex; align-items: center; gap: 16px;">
+							<div class="product-price-wrapper">
+								{%- render 'price',
+									product: product,
+									use_variant: use_variant,
+									show_unit_price: settings.is_show_unit_price,
+									currency_code_enabled: settings.is_currency_code_enabled,
+									price_class: 'product-price',
+									hide_from_price: true,
+									show_taxes_included: section.settings.show_taxes_included,
+									show_pay_installments: section.settings.show_pay_installments,
+									form: form,
+									show_volume_pricing_info: true,
+									block: block
+								-%}
+							</div>
+							<div class="product-timer-wrapper">
+								{%- render 'product-countdown', section: section -%}
+							</div>
+						</div>
 					{%- when 'add_to_cart' -%}
 						{%- render 'product-add-to-cart',
 							form: form,

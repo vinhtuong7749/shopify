@@ -1,0 +1,57 @@
+{%- comment -%}
+  Snippet: Product Countdown
+  Displays a 24-hour evergreen countdown timer, resetting at 2 PM Vietnam Time (07:00 UTC).
+{%- endcomment -%}
+
+<style>
+	.product-custom-timer-simple {
+		font-family: var(--font-heading-family), 'Oswald', sans-serif;
+		font-size: 20px;
+		font-weight: 500;
+		color: var(--color-text-primary, #000);
+		letter-spacing: 1px;
+	}
+</style>
+
+<div class="product-custom-timer-simple" id="ProductEvergreenTimer-{{ section.id }}" role="timer" aria-live="off">
+	<!-- Ẩn số ngày đi -->
+	<span class="js-d-both" style="display: none;">0</span>
+	
+	<span class="js-h-both">00</span>:<span class="js-m-both">00</span>:<span class="js-s-both">00</span>
+</div>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		function updateEvergreenTimer() {
+			var timerEl = document.getElementById('ProductEvergreenTimer-{{ section.id }}');
+			if (!timerEl) return;
+			
+			var now = new Date();
+			
+			// 2 PM Vietnam Time = 14:00 (UTC+7) = 07:00 UTC
+			var targetHour = 7;
+			var nextResetUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), targetHour, 0, 0, 0));
+
+			if (now.getTime() >= nextResetUTC.getTime()) {
+				nextResetUTC.setUTCDate(nextResetUTC.getUTCDate() + 1);
+			}
+			var targetTime = nextResetUTC.getTime();
+
+			var diff = targetTime - now.getTime();
+			
+			if (diff > 0) {
+				var d = Math.floor(diff / (1000 * 60 * 60 * 24));
+				var h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+				var m = Math.floor((diff / 1000 / 60) % 60);
+				var s = Math.floor((diff / 1000) % 60);
+
+				timerEl.querySelector('.js-d-both').textContent = d.toString();
+				timerEl.querySelector('.js-h-both').textContent = h.toString().padStart(2, '0');
+				timerEl.querySelector('.js-m-both').textContent = m.toString().padStart(2, '0');
+				timerEl.querySelector('.js-s-both').textContent = s.toString().padStart(2, '0');
+			}
+		}
+		setInterval(updateEvergreenTimer, 1000);
+		updateEvergreenTimer();
+	});
+</script>

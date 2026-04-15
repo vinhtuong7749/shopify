@@ -35,7 +35,12 @@
 	{%- assign filter_list_class = 'filter-list--sidebar' -%}
 {%- endif -%}
 
-<ul class="filter-list {{ filter_list_class }} js-filter-list">
+{%- assign swatch_list_class = '' -%}
+{%- if filter.presentation == "swatch" -%}
+	{%- assign swatch_list_class = 'filter-list--swatch' -%}
+{%- endif -%}
+
+<ul class="filter-list {{ filter_list_class }} {{ swatch_list_class }} js-filter-list">
 	{%- for filter_value in sorted_values -%}
 		<li class="filter-list__item">
 			{%- capture filter_active -%}
@@ -72,27 +77,21 @@
 			{%- endif -%}
 
 			{%- if filter.presentation == "swatch" -%}
+				{%- capture swatch_style -%}
+					{%- if filter_value.swatch.image -%}
+						--swatch-image: url('{{ filter_value.swatch.image | image_url: width: 60 }}'); --swatch-color: transparent;
+					{%- elsif filter_value.swatch.color -%}
+						--swatch-color: {{ filter_value.swatch.color }};
+					{%- endif -%}
+				{%- endcapture -%}
 				<label
 					class="checkbox__label checkbox__label--swatch"
 					for="Filter-{{ section.id }}-{{- filter.param_name | escape -}}-{{- forloop.index -}}-{{- id -}}"
+					style="{{ swatch_style }}"
+					title="{{ filter_value_label | escape }}"
 				>
-					{%- if filter_value.swatch.image  -%}
-						<img
-							src="{{- filter_value.swatch.image | image_url: width: 60, height: 60 -}}"
-							class="checkbox__label-image"
-							aria-hidden="true"
-							fetchpriority="low"
-							loading="lazy"
-							decoding="async"
-							width="20"
-							height="20"
-							alt=""
-						/>
-					{%- elsif filter_value.swatch.color -%}
-						<span class="checkbox__label-image" style="--swatch-color: {{filter_value.swatch.color }};"></span>
-					{%- endif -%}
-
-					{{- filter_value_label | escape }} ({{- filter_value.count -}})
+					<span class="checkbox__label-image"></span>
+					<span class="visually-hidden">{{- filter_value_label | escape }} ({{- filter_value.count -}})</span>
 				</label>
 			{%- elsif filter.presentation == "image" -%}
 				<label
@@ -116,39 +115,10 @@
 					{{- filter_value_label | escape }} ({{- filter_value.count -}})
 				</label>
 			{%- else -%}
-				{%- assign is_swatch = false -%}
-				{%- assign swatch_image = filter_value.value | handle | prepend: 'swatch-' | append: '.png' -%}
-
-				{%- for swatch in swatches -%}
-					{%- assign trimmed_string = swatch | strip -%}
-
-					{%- if filter_label == trimmed_string -%}
-						{%- assign is_swatch = true -%}
-						{%- break -%}
-					{%- endif -%}
-				{%- endfor -%}
-
 				<label
-					class="checkbox__label {% if is_swatch and show_swatches %}checkbox__label--swatch{% endif %}"
+					class="checkbox__label"
 					for="Filter-{{ section.id }}-{{- filter.param_name | escape -}}-{{- forloop.index -}}-{{- id -}}"
 				>
-					{%- if is_swatch and show_swatches -%}
-						{%- if images[swatch_image] != blank -%}
-							<img
-								src="{{- images[swatch_image] | image_url: width: 34, height: 34 -}}"
-								class="checkbox__label-image"
-								aria-hidden="true"
-								fetchpriority="low"
-								loading="lazy"
-								decoding="async"
-								width="20"
-								height="20"
-								alt=""
-							/>
-						{%- else -%}
-							<span class="checkbox__label-image" style="--swatch-color: {{ filter_value.value | split: ' ' | last | handle }};"></span>
-						{%- endif -%}
-					{%- endif -%}
 
 					{{- filter_value_label | escape }} ({{- filter_value.count -}})
 				</label>

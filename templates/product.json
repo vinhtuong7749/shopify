@@ -231,7 +231,7 @@
         "offset_bottom_desktop": 0,
         "offset_top_mobile": 0,
         "offset_bottom_mobile": 0,
-        "inner_offset_top": 64,
+        "inner_offset_top": 32,
         "inner_offset_bottom": 0,
         "inner_offset_top_mobile": 16,
         "inner_offset_bottom_mobile": 0
@@ -242,6 +242,7 @@
       "blocks": {
         "judge_me_reviews_preview_badge_keMgwT": {
           "type": "shopify://apps/judge-me-reviews/blocks/preview_badge/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "disabled": true,
           "settings": {}
         },
         "judge_me_reviews_review_widget_4K7azG": {

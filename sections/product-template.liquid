@@ -68,6 +68,57 @@
 			width: calc(50% - 32px) !important;
 			padding-left: 0 !important;
 		}
+
+		/* Hiển thị thumbnails bên trái cho Carousel */
+		.product-media.product-media--layout-carousel.product-media--thumbnails-position-left {
+			column-gap: 16px;
+			height: max-content;
+			display: flex !important;
+			flex-direction: row-reverse !important;
+			align-items: flex-start;
+			position: sticky !important;
+			top: var(--header-height-sticky, 20px) !important;
+		}
+		.product-media.product-media--layout-carousel.product-media--thumbnails-position-left .product-media__grid {
+			flex: 1;
+			min-width: 0; /* Cho phép co giãn đúng kích thước thay vì overflow */
+		}
+		.product-media.product-media--layout-carousel.product-media--thumbnails-position-left .product-media__swiper-button-prev,
+		.product-media.product-media--layout-carousel.product-media--thumbnails-position-left .product-media__swiper-button-next {
+			display: none !important;
+		}
+		.product-media.product-media--layout-carousel.product-media--thumbnails-position-left .product-media__slider-thumbnails-container {
+			width: 80px;
+			display: block !important; /* Đảm bảo luôn hiển thị trên Desktop */
+		}
+		.product-media.product-media--layout-carousel.product-media--thumbnails-position-left .product-media__slider-thumbnails {
+			height: 100%;
+			max-height: 368px;
+			margin-top: 0;
+			padding-top: 0;
+			padding-bottom: 0;
+			scroll-behavior: smooth;
+			-ms-overflow-style: none; /* IE and Edge */
+			scrollbar-width: none; /* Firefox */
+		}
+		.product-media.product-media--layout-carousel.product-media--thumbnails-position-left .product-media__slider-thumbnails::-webkit-scrollbar,
+		.product-media.product-media--layout-carousel.product-media--thumbnails-position-left .product-media__slider-thumbnails-container::-webkit-scrollbar {
+			display: none;
+		}
+		.product-media.product-media--layout-carousel.product-media--thumbnails-position-left .product-media__slider-thumbnails-slide {
+			display: block;
+			width: 80px;
+			margin-bottom: 10px;
+			aspect-ratio: 1;
+		}
+		.product-media.product-media--layout-carousel.product-media--thumbnails-position-left .product-media__slider-thumbnails-slide img {
+			border: 1px solid var(--color-border-secondary, #e2e2e2) !important;
+			border-radius: 6px !important;
+		}
+		.product-media.product-media--layout-carousel.product-media--thumbnails-position-left .product-media__slider-thumbnails-slide.swiper-slide-thumb-active img,
+		.product-media.product-media--layout-carousel.product-media--thumbnails-position-left .product-media__slider-thumbnails-slide.is-active img {
+			border: 2px solid #1b4332 !important; /* Xanh đậm */
+		}
 	}
 
 	{% if breadcrumbs_block != blank -%}
@@ -192,6 +243,10 @@
 				{
 					"value": "right",
 					"label": "Right"
+				},
+				{
+					"value": "left",
+					"label": "Left"
 				}
 			],
 			"default": "bottom",
