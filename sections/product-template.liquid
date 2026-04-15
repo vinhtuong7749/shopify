@@ -55,18 +55,18 @@
 
 	@media screen and (min-width: 992px) {
 		/* Ép buộc phần Product Media và Product Form chia đúng 50-50 không gian */
-		#shopify-section-{{- section.id -}} .product-media {
-			flex: 0 0 50% !important;
-			max-width: 50% !important;
-			width: 50% !important;
-			padding-right: 32px;
+		.product .product-media {
+			flex: 0 0 calc(50% - 32px) !important;
+			max-width: calc(50% - 32px) !important;
+			width: calc(50% - 32px) !important;
+			padding-right: 0 !important;
 		}
-		#shopify-section-{{- section.id -}} .shopify-product-form,
-		#shopify-section-{{- section.id -}} .product-form {
-			flex: 0 0 50% !important;
-			max-width: 50% !important;
-			width: 50% !important;
-			padding-left: 32px;
+		.product .shopify-product-form,
+		.product .product-form {
+			flex: 0 0 calc(50% - 32px) !important;
+			max-width: calc(50% - 32px) !important;
+			width: calc(50% - 32px) !important;
+			padding-left: 0 !important;
 		}
 	}
 
