@@ -35,15 +35,16 @@
 			padding-bottom: {{- section.settings.offset_bottom_desktop -}}px;
 		}
 		
-		/* Giới hạn chiều cao hiển thị ảnh sản phẩm trên Desktop để vừa màn hình */
-		#shopify-section-{{- section.id -}} .product-media__aspect-ratio {
+		/* Giới hạn chiều cao hiển thị ảnh sản phẩm trên Desktop để vừa màn hình
+		   Chú ý: KHÔNG áp dụng vào zoom modal (dùng .product-media để scope) */
+		#shopify-section-{{- section.id -}} .product-media .product-media__aspect-ratio {
 			padding-top: 0 !important;
-			height: 60vh !important; /* Đã thu nhỏ chiều cao từ 70px xuống 60vh */
+			height: 60vh !important;
 			max-height: 600px;
 			min-height: 300px;
 		}
-		#shopify-section-{{- section.id -}} .product-media__aspect-ratio .product-media__image,
-		#shopify-section-{{- section.id -}} .product-media__aspect-ratio img {
+		#shopify-section-{{- section.id -}} .product-media .product-media__aspect-ratio .product-media__image,
+		#shopify-section-{{- section.id -}} .product-media .product-media__aspect-ratio img {
 			object-fit: contain !important;
 			position: absolute;
 			top: 0;
@@ -70,6 +71,8 @@
 		}
 
 		/* Hiển thị thumbnails bên trái cho Carousel */
+		/* LƯU Ý: KHÔNG dùng position: sticky ở đây vì sẽ tạo stacking context
+		   làm hỏng modal zoom (fixed elements bên trong sẽ không thoát ra được) */
 		.product-media.product-media--layout-carousel.product-media--thumbnails-position-left {
 			column-gap: 16px;
 			height: max-content;
@@ -119,6 +122,16 @@
 		.product-media.product-media--layout-carousel.product-media--thumbnails-position-left .product-media__slider-thumbnails-slide.is-active img {
 			border: 2px solid #1b4332 !important; /* Xanh đậm */
 		}
+
+		/* Zoom modal phải luôn ở trên cùng */
+		[data-zoom-modal] {
+			z-index: 9999 !important;
+		}
+	}
+
+	/* Zoom modal z-index fix - outside media query to apply everywhere */
+	[data-zoom-modal] {
+		z-index: 9999 !important;
 	}
 
 	{% if breadcrumbs_block != blank -%}
@@ -158,6 +171,37 @@
 		{% endif %}
 	{%- endfor -%}
 </section>
+
+<script>
+/* Fix zoom modal kẹt trong stacking context do position: sticky.
+   Đợi theme JS init xong (theme:all:loaded) rồi mới di chuyển modal ra ngoài body.
+   Vì: JS khởi tạo zoom lưu reference đến modal element trước → di chuyển sau không làm hỏng reference */
+(function() {
+	function teleportZoomModal() {
+		var zoomModals = document.querySelectorAll('[data-zoom-modal]');
+		zoomModals.forEach(function(modal) {
+			if (modal && modal.parentElement !== document.body) {
+				document.body.appendChild(modal);
+			}
+		});
+	}
+
+	/* Chạy sau khi theme JS đã init xong */
+	document.addEventListener('theme:all:loaded', function() {
+		setTimeout(teleportZoomModal, 100);
+	}, { once: true });
+
+	/* Fallback: nếu theme:all:loaded đã bắn trước khi script này chạy */
+	if (window.themeCore && window.themeCore.loaded) {
+		setTimeout(teleportZoomModal, 200);
+	}
+
+	/* Re-run on Shopify section reload (theme editor) */
+	document.addEventListener('shopify:section:load', function() {
+		setTimeout(teleportZoomModal, 300);
+	});
+})();
+</script>
 
 {%- render 'adastra' with '/src/scripts/section-product.js' -%}
 
