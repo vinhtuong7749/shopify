@@ -24,6 +24,25 @@
 {%- endif -%}
 
 {%- style -%}
+	/* CHẶN ĐỨT ĐIỂM CHẠM CỦA JAVASCRIPT BẰNG BIẾN :ROOT !IMPORTANT */
+	/* File Javascript của theme liên tục gán --header-height-sticky = 0 inline trên HTML khi cuộn.
+	   Dùng :root !important sẽ đè chết giá trị inline này, ép nó luôn bằng với chiều cao cố định của header! */
+	:root {
+		--header-height-sticky: 130px !important; /* Giá trị tĩnh ép buộc, trùm qua mọi tính toán */
+	}
+
+	/* Ép thanh Header luôn ghim cứng ở phần Top, không bao giờ thụt lên / biến mất */
+	.header-section,
+	.header-section.is-collapsed {
+		position: sticky !important;
+		top: 0 !important;
+	}
+
+	/* Cố thủ cột Hình Ảnh Sản Phẩm, ghi đè trực tiếp mọi class */
+	html body .product-media .product-media__grid-column.product-media__grid-column--sticky {
+		top: 150px !important; /* 130px header + 20px lề */
+	}
+
 	#shopify-section-{{- section.id -}} {
 		padding-top: {{- section.settings.offset_top_mobile -}}px;
 		padding-bottom: {{- section.settings.offset_bottom_mobile -}}px;
@@ -33,6 +52,14 @@
 		#shopify-section-{{- section.id -}} {
 			padding-top: {{- section.settings.offset_top_desktop -}}px;
 			padding-bottom: {{- section.settings.offset_bottom_desktop -}}px;
+		}
+		
+		/* Thu hẹp riêng khung hiển thị của trang sản phẩm xuống 1600px */
+		.product .product__container {
+			max-width: 1600px !important;
+			margin-left: auto;
+			margin-right: auto;
+			width: 100%;
 		}
 		
 		/* Giới hạn chiều cao hiển thị ảnh sản phẩm trên Desktop để vừa màn hình
