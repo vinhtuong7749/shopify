@@ -156,6 +156,7 @@
 			gap: 4px !important;
 			width: 100% !important;
 			justify-content: space-between !important;
+			margin-bottom: 4px !important;
 		}
 	}
 
@@ -226,7 +227,58 @@
 				</a>
 			{%- endif -%}
 		</div>
+		<div class="injected-review-container" id="injected-review-container-{{ section.id }}" style="display: flex; align-items: center; margin-top: -2px;"></div>
 	</div>
+
+	<script>
+		(function() {
+			function moveReviewInline() {
+				var wrapper = document.getElementById('injected-review-container-{{ section.id }}');
+				if (!wrapper) return;
+				
+				// Try to find common review widgets inside the product form
+				var form = wrapper.closest('.product-form');
+				if (!form) return;
+				
+				var reviewWidgets = form.querySelectorAll('.loox-rating, .jdgm-preview-badge, .spr-badge, .yotpo.bottomLine, .okeReviews-reviewsSummary, [data-stamped-product-reviews-badge]');
+				for (var i = 0; i < reviewWidgets.length; i++) {
+					var widget = reviewWidgets[i];
+					var block = widget.closest('.shopify-app-block');
+					
+					// If it's inside a shopify app block wrapper, move the whole wrapper
+					if (block && block.parentNode !== wrapper && !wrapper.contains(block)) {
+						wrapper.appendChild(block);
+						break;
+					} else if (widget && widget.parentNode !== wrapper && !wrapper.contains(widget)) {
+						wrapper.appendChild(widget);
+						break;
+					}
+				}
+			}
+
+			// Run immediately
+			moveReviewInline();
+			
+			// Wait for DOM
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', moveReviewInline);
+			} else {
+				moveReviewInline();
+			}
+			
+			// Check again in case apps load asynchronously
+			window.addEventListener('load', moveReviewInline);
+			
+			// Observer to catch slow apps like judge.me or loox injecting elements
+			var observer = new MutationObserver(function(mutations) {
+				var wrapper = document.getElementById('injected-review-container-{{ section.id }}');
+				if (wrapper && wrapper.children.length === 0) {
+					moveReviewInline();
+				}
+			});
+			observer.observe(document.body, { childList: true, subtree: true });
+		})();
+	</script>
 
 	{%- comment -%} Short description: extract intro text before DESIGN & MATERIAL (desktop only) {%- endcomment -%}
 	{%- if template.name == 'product' and product.description != blank -%}

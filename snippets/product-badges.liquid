@@ -13,7 +13,7 @@
 	{%- assign tags = product.tags -%}
 {%- endif -%}
 
-{%- assign is_sale_percentage_label_enabled = false -%}
+{%- assign is_sale_percentage_label_enabled = settings.is_sale_percentage_label_enabled -%}
 
 {%- if tags.size > 0 or product.available == false or is_sale_percentage_label_enabled -%}
 	<ul
