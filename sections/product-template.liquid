@@ -83,6 +83,10 @@
 
 	@media screen and (min-width: 992px) {
 		/* Ép buộc phần Product Media và Product Form chia đúng 50-50 không gian */
+		.product .product__container {
+			flex-direction: row !important;
+			align-items: flex-start !important;
+		}
 		.product .product-media {
 			flex: 0 0 calc(50% - 32px) !important;
 			max-width: calc(50% - 32px) !important;

@@ -150,13 +150,41 @@
 			gap: 6px !important;
 			flex-wrap: nowrap !important;
 		}
+		.product-title-wrapper {
+			padding-bottom: 0px !important;
+			margin-bottom: -12px !important; /* Pull up tightly to counter line-height for NO REVIEW items */
+		}
 		/* Stretch price+flash group to phone edges */
 		.product-flashsale-and-price-group {
 			flex-wrap: nowrap !important;
 			gap: 4px !important;
 			width: 100% !important;
 			justify-content: space-between !important;
-			margin-bottom: 4px !important;
+			margin-top: 0px !important;
+			margin-bottom: 0px !important;
+		}
+		
+		/* Aggressively pull up Variant Picker Color block */
+		.product-form .product-options,
+		.product-form .product-combination {
+			margin-top: 0px !important;
+			padding-top: 0px !important;
+		}
+		/* Removed gap, using margins on review container instead */
+		.product-title-and-fomo {
+			gap: 0px !important;
+		}
+		.injected-review-container {
+			margin-top: 8px !important; /* Space from Title */
+			margin-bottom: 18px !important; /* Counters the -12px wrapper margin and adds breathing room before Price */
+		}
+		.injected-review-container:empty {
+			display: none !important;
+		}
+		.injected-review-container > .shopify-app-block,
+		.injected-review-container > div {
+			margin-top: 0 !important;
+			margin-bottom: 0 !important;
 		}
 	}
 
