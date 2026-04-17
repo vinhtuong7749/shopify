@@ -265,14 +265,24 @@
 </div>
 
 {%- if show_sticky_add_to_cart -%}
-	<div class="mobile-sticky-atc js-mobile-sticky-atc" id="mobile-sticky-atc">
-		<button
-			type="button"
-			class="mobile-sticky-atc__btn js-mobile-sticky-atc-btn"
-			{% unless product.first_available_variant.available %}disabled{% endunless %}
-		>
-			{{- button_add_to_cart_text -}}
-		</button>
+	<div class="fomo-sticky-bar js-fomo-sticky-bar" id="fomo-sticky-bar">
+		<div class="fomo-sticky-bar__container">
+			<div class="fomo-sticky-bar__left">
+				<span class="fomo-sticky-bar__text">🔥 Flash Sale:</span>
+				<div class="fomo-sticky-bar__timer js-fomo-timer">
+					<span class="js-h-both">00</span>:<span class="js-m-both">00</span>:<span class="js-s-both">00</span>
+				</div>
+			</div>
+			<div class="fomo-sticky-bar__right">
+				<button
+					type="button"
+					class="fomo-sticky-bar__btn js-mobile-sticky-atc-btn"
+					{% unless product.first_available_variant.available %}disabled{% endunless %}
+				>
+					{{- button_add_to_cart_text -}}
+				</button>
+			</div>
+		</div>
 	</div>
 
 	<style>
@@ -328,83 +338,128 @@
 			}
 		}
 
-		.mobile-sticky-atc {
-			display: none !important;
+		/* FOMO Sticky Bar Styles */
+		.fomo-sticky-bar {
+			position: fixed;
+			z-index: 9999;
+			left: 0;
+			right: 0;
+			background: #203224; /* Theme dark green */
+			box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+			transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 		}
+
+		.fomo-sticky-bar__container {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			max-width: 1400px;
+			margin: 0 auto;
+			padding: 8px 16px;
+			gap: 12px;
+		}
+
+		.fomo-sticky-bar__left {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.fomo-sticky-bar__text {
+			font-family: var(--font-body-family), sans-serif;
+			font-size: 14px;
+			color: #faf6ee;
+			white-space: nowrap;
+		}
+
+		.fomo-sticky-bar__timer {
+			font-family: 'Oswald', sans-serif;
+			font-size: 16px;
+			font-weight: 600;
+			color: #e84c3d; /* Blaze Red / Orange */
+			letter-spacing: 0.5px;
+		}
+
+		.fomo-sticky-bar__btn {
+			background: #e84c3d;
+			color: #fff;
+			border: none;
+			padding: 10px 24px;
+			font-family: 'Oswald', sans-serif;
+			font-size: 14px;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			cursor: pointer;
+			border-radius: 4px;
+			white-space: nowrap;
+			transition: background 0.2s, opacity 0.2s;
+			min-width: 140px;
+		}
+		.fomo-sticky-bar__btn:hover {
+			background: #ff6b5b;
+		}
+		.fomo-sticky-bar__btn:disabled {
+			background: #666;
+			cursor: not-allowed;
+			opacity: 0.5;
+		}
+
+		/* Desktop Layout (Sticky Header) */
+		@media (min-width: 768px) {
+			.fomo-sticky-bar {
+				display: none !important;
+			}
+		}
+
+		/* Mobile Layout (Sticky Footer) */
 		@media (max-width: 767.98px) {
-			.mobile-sticky-atc {
-				display: block !important;
-				position: fixed !important;
-				bottom: 0 !important;
-				left: 0 !important;
-				right: 0 !important;
-				z-index: 9999 !important;
-				background: transparent !important;
-				padding: 12px 16px !important;
-				padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
-				box-shadow: none !important;
-				transform: translateY(0) !important;
-				transition: transform 0.3s ease !important;
-				border: none !important;
-				margin: 0 !important;
+			.fomo-sticky-bar {
+				display: block;
+				top: auto;
+				bottom: 0;
+				transform: translateY(150%);
+				padding-bottom: env(safe-area-inset-bottom, 0px);
 			}
-			.mobile-sticky-atc.is-hidden {
-				transform: translateY(150%) !important;
-			}
-			.mobile-sticky-atc__btn {
-				display: block !important;
-				width: 100% !important;
-				background: var(--color-text-primary, #203224) !important;
-				color: var(--color-background, #faf6ee) !important;
-				border: none !important;
-				padding: 15px 20px !important;
-				font-family: 'Oswald', sans-serif !important;
-				font-size: 14px !important;
-				font-weight: 600 !important;
-				text-transform: uppercase !important;
-				letter-spacing: 0.08em !important;
-				text-align: center !important;
-				cursor: pointer !important;
-				transition: opacity 0.2s !important;
-				line-height: 1.2 !important;
-				border-radius: 8px !important;
-				-webkit-appearance: none !important;
-				appearance: none !important;
-			}
-			.mobile-sticky-atc__btn:hover {
-				opacity: 0.85 !important;
-			}
-			.mobile-sticky-atc__btn:disabled {
-				opacity: 0.5 !important;
-				cursor: not-allowed !important;
+			.fomo-sticky-bar:not(.is-hidden) {
+				transform: translateY(0);
 			}
 			html .footer {
-				padding-bottom: 70px;
+				padding-bottom: 80px; /* Space for the footer bar */
+			}
+			.fomo-sticky-bar__container {
+				padding: 10px 12px;
+				gap: 8px;
+			}
+			.fomo-sticky-bar__text {
+				display: none; /* Hide text to save space on mobile, timer explains itself */
+			}
+			.fomo-sticky-bar__btn {
+				padding: 10px 16px;
+				min-width: auto;
+				font-size: 13px;
 			}
 		}
 	</style>
 
 	<script>
 		(function() {
-			function initMobileStickyATC() {
-				var bar = document.getElementById('mobile-sticky-atc');
+			function initFomoStickyATC() {
+				var bar = document.getElementById('fomo-sticky-bar');
 				var realBtn = document.querySelector('.product-add-to-cart .add-to-cart');
 				if (!bar || !realBtn) return;
 
-				if (window.innerWidth > 767) {
-					bar.classList.add('is-hidden');
-					return;
-				}
-
-				bar.classList.remove('is-hidden');
+				bar.classList.add('is-hidden');
 
 				var observer = new IntersectionObserver(function(entries) {
 					entries.forEach(function(entry) {
 						if (entry.isIntersecting) {
+							// Real button is visible: hide the sticky bar
 							bar.classList.add('is-hidden');
 						} else {
-							// Show sticky bar ONLY if we haven't reached the real button yet (top of page)
-							if (entry.boundingClientRect.top > 0) {
+							// Real button is NOT visible: Check scroll direction/position
+							// If we've scrolled past the button, show it.
+							if (entry.boundingClientRect.top < 0) {
 								bar.classList.remove('is-hidden');
 							} else {
 								bar.classList.add('is-hidden');
@@ -422,11 +477,11 @@
 			}
 
 			if (document.readyState === 'loading') {
-				document.addEventListener('DOMContentLoaded', initMobileStickyATC);
+				document.addEventListener('DOMContentLoaded', initFomoStickyATC);
 			} else {
-				initMobileStickyATC();
+				initFomoStickyATC();
 			}
-			document.addEventListener('shopify:section:load', initMobileStickyATC);
+			document.addEventListener('shopify:section:load', initFomoStickyATC);
 		})();
 	</script>
 {%- endif -%}

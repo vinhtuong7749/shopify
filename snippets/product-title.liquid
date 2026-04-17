@@ -12,18 +12,22 @@
 			overflow: hidden;
 			text-overflow: ellipsis;
 			display: block;
-			font-size: 18px !important;
+			font-size: 22px !important;
 			line-height: 1.2 !important;
 		}
 
-		/* Product price */
-		.product-price,
-		.product-price .price,
-		.product-price .price__regular,
-		.product-price .price__sale,
-		.product-price .price__compare {
+		/* Product price: Base sizes on mobile */
+		.product-price .price-item--regular:not(.price-item--sale) {
 			font-size: 20px !important;
 			font-weight: 700 !important;
+		}
+		.product-price .price-item--sale {
+			font-size: 24px !important;
+			font-weight: 700 !important;
+		}
+		.product-price .price--on-sale .price-item--regular {
+			font-size: 24px !important;
+			font-weight: 500 !important;
 		}
 
 		/* Short description under title */
@@ -111,18 +115,56 @@
 	   PRICE: make text sharp & clear everywhere
 	   ============================================ */
 
-	/* Sale price — RED and bold */
-	.price-item--sale {
-		color: #c0392b !important;
+	/* Sale price — RED, bold, and large */
+	.product-price .price-item--sale {
+		color: #d33636 !important; /* Update to match pill color */
 		opacity: 1 !important;
 		font-weight: 700 !important;
+		font-size: 28px !important;
+		line-height: 1 !important;
+		margin: 0 !important;
 	}
 
-	/* Compare-at / regular price (strikethrough) — visible, not faded */
-	.price--on-sale .price-item--regular {
-		color: #555555 !important;
+	/* Compare-at / regular price — smaller, NOT bold, with strikethrough */
+	.product-price.price--on-sale .price-item--regular {
+		color: #999999 !important;
 		opacity: 1 !important;
 		font-weight: 400 !important;
+		font-size: 18px !important;
+		text-decoration: line-through !important;
+		line-height: 1 !important;
+		margin: 0 !important;
+	}
+
+	@media (max-width: 767px) {
+		.product-price .price-item--sale {
+			font-size: 20px !important;
+			white-space: nowrap !important;
+		}
+		.product-price.price--on-sale .price-item--regular {
+			font-size: 18px !important;
+			font-weight: 400 !important;
+			white-space: nowrap !important;
+		}
+		.product-price .price__sale {
+			gap: 6px !important;
+			flex-wrap: nowrap !important;
+		}
+		/* Stretch price+flash group to phone edges */
+		.product-flashsale-and-price-group {
+			flex-wrap: nowrap !important;
+			gap: 4px !important;
+			width: 100% !important;
+			justify-content: space-between !important;
+		}
+	}
+
+	/* Align the two prices on the same row */
+	.product-price .price__sale {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 8px;
 	}
 
 	/* Regular price (non-sale) — sharp */
@@ -172,15 +214,19 @@
 {%- endcapture -%}
 
 <div class="product-title-wrapper" style="{{ styles }}">
-	{%- if template.name == 'product' -%}
-		<h1 class="product-title h3">
-			{{- title -}}
-		</h1>
-	{%- else -%}
-		<a class="product-title h3 focus-visible-outline" href="{{- product.url -}}">
-			{{- title -}}
-		</a>
-	{%- endif -%}
+	<div class="product-title-and-fomo" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px;">
+		<div class="product-title-container" style="width: 100%;">
+			{%- if template.name == 'product' -%}
+				<h1 class="product-title h3" style="margin: 0;">
+					{{- title -}}
+				</h1>
+			{%- else -%}
+				<a class="product-title h3 focus-visible-outline" href="{{- product.url -}}" style="margin: 0;">
+					{{- title -}}
+				</a>
+			{%- endif -%}
+		</div>
+	</div>
 
 	{%- comment -%} Short description: extract intro text before DESIGN & MATERIAL (desktop only) {%- endcomment -%}
 	{%- if template.name == 'product' and product.description != blank -%}

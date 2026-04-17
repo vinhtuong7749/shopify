@@ -75,26 +75,79 @@
 						{%- render 'product-quantity', block: block, product: product -%}
 						{%- render 'product-promo-banner' -%}
 					{%- when 'price' -%}
-						<div class="product-price-and-timer" style="display: flex; align-items: center; gap: 16px;">
-							<div class="product-price-wrapper">
-								{%- render 'price',
-									product: product,
-									use_variant: use_variant,
-									show_unit_price: settings.is_show_unit_price,
-									currency_code_enabled: settings.is_currency_code_enabled,
-									price_class: 'product-price',
-									hide_from_price: true,
-									show_taxes_included: section.settings.show_taxes_included,
-									show_pay_installments: section.settings.show_pay_installments,
-									form: form,
-									show_volume_pricing_info: true,
-									block: block
-								-%}
+						<div class="product-flashsale-and-price-group" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap; gap: 8px; margin-bottom: 16px; margin-top: 8px; width: 100%;">
+							<div class="product-price-and-review-wrapper" id="product-price-and-review-wrapper-{{ section.id }}" style="display: flex; align-items: center; justify-content: flex-start; gap: 8px; flex: 1 1 auto; min-width: 0;">
+								<div class="product-price-container" style="flex: 0 1 auto; min-width: 0;">
+									{%- render 'price',
+										product: product,
+										use_variant: use_variant,
+										show_unit_price: settings.is_show_unit_price,
+										currency_code_enabled: true,
+										price_class: 'product-price',
+										hide_from_price: true,
+										show_taxes_included: section.settings.show_taxes_included,
+										show_pay_installments: section.settings.show_pay_installments,
+										form: form,
+										show_volume_pricing_info: true,
+										block: block
+									-%}
+								</div>
+								<div class="injected-review-container" id="injected-review-container-{{ section.id }}" style="flex: 0 0 auto; display: flex; align-items: center;"></div>
 							</div>
-							<div class="product-timer-wrapper">
+							<div style="flex: 0 0 auto;">
 								{%- render 'product-countdown', section: section -%}
 							</div>
 						</div>
+						
+						<script>
+							(function() {
+								function moveReviewInline() {
+									var wrapper = document.getElementById('injected-review-container-{{ section.id }}');
+									if (!wrapper) return;
+									
+									// Try to find common review widgets inside the product form
+									var form = wrapper.closest('.product-form');
+									if (!form) return;
+									
+									var reviewWidgets = form.querySelectorAll('.loox-rating, .jdgm-preview-badge, .spr-badge, .yotpo.bottomLine, .okeReviews-reviewsSummary, [data-stamped-product-reviews-badge]');
+									for (var i = 0; i < reviewWidgets.length; i++) {
+										var widget = reviewWidgets[i];
+										var block = widget.closest('.shopify-app-block');
+										
+										// If it's inside a shopify app block wrapper, move the whole wrapper
+										if (block && block.parentNode !== wrapper && !wrapper.contains(block)) {
+											wrapper.appendChild(block);
+											break;
+										} else if (widget && widget.parentNode !== wrapper && !wrapper.contains(widget)) {
+											wrapper.appendChild(widget);
+											break;
+										}
+									}
+								}
+
+								// Run immediately
+								moveReviewInline();
+								
+								// Wait for DOM
+								if (document.readyState === 'loading') {
+									document.addEventListener('DOMContentLoaded', moveReviewInline);
+								} else {
+									moveReviewInline();
+								}
+								
+								// Check again in case apps load asynchronously
+								window.addEventListener('load', moveReviewInline);
+								
+								// Observer to catch slow apps like judge.me or loox injecting elements
+								var observer = new MutationObserver(function(mutations) {
+									var wrapper = document.getElementById('injected-review-container-{{ section.id }}');
+									if (wrapper && wrapper.children.length === 0) {
+										moveReviewInline();
+									}
+								});
+								observer.observe(document.body, { childList: true, subtree: true });
+							})();
+						</script>
 					{%- when 'add_to_cart' -%}
 						{%- render 'product-add-to-cart',
 							form: form,
@@ -157,18 +210,23 @@
 					{%- when 'quantity' -%}
 						{%- render 'product-quantity', block: block, product: product -%}
 					{%- when 'price' -%}
-						{%- render 'price',
-							product: product,
-							use_variant: use_variant,
-							show_unit_price: settings.is_show_unit_price,
-							currency_code_enabled: settings.is_currency_code_enabled,
-							price_class: 'product-price h4',
-							hide_from_price: true,
-							show_taxes_included: section.settings.show_taxes_included,
-							show_pay_installments: section.settings.show_pay_installments,
-							form: form,
-							block: block
-						-%}
+						<div class="product-price-and-review-wrapper" id="product-price-and-review-wrapper-{{ section.id }}-fallback" style="display: flex; align-items: flex-start; justify-content: flex-start; gap: 16px; margin-bottom: 8px;">
+							<div class="product-price-container" style="flex: 0 0 auto;">
+								{%- render 'price',
+									product: product,
+									use_variant: use_variant,
+									show_unit_price: settings.is_show_unit_price,
+									currency_code_enabled: settings.is_currency_code_enabled,
+									price_class: 'product-price h4',
+									hide_from_price: true,
+									show_taxes_included: section.settings.show_taxes_included,
+									show_pay_installments: section.settings.show_pay_installments,
+									form: form,
+									block: block
+								-%}
+							</div>
+							<div class="injected-review-container" id="injected-review-container-{{ section.id }}-fallback" style="flex: 0 0 auto; display: flex; align-items: center; padding-top: 4px;"></div>
+						</div>
 					{%- when 'add_to_cart' -%}
 						{%- render 'product-add-to-cart',
 							form: form,

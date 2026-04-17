@@ -217,12 +217,22 @@
 											{%- assign s_check = s_label | append: '|||' -%}
 											{%- assign s_available = false -%}
 											{%- if available_seasonal_values contains s_check -%}{%- assign s_available = true -%}{%- endif -%}
+											{%- assign s_checked = false -%}
+											{%- assign target_down = s_label | downcase -%}
+											{%- for filter in product_list.filters -%}
+												{%- if filter.param_name == 'filter.p.m.custom.seasonal' -%}
+													{%- for value in filter.active_values -%}
+														{%- assign val_down = value.label | downcase -%}
+														{%- if val_down == target_down -%}{%- assign s_checked = true -%}{%- endif -%}
+													{%- endfor -%}
+												{%- endif -%}
+											{%- endfor -%}
 											<li class="filter-list__item">
-												<a href="javascript:void(0);" class="filter-list__collection-link js-custom-filter-link{% unless s_available %} filter-list__collection-link--disabled{% endunless %}" data-filter-param="filter.p.m.custom.seasonal" data-filter-value="{{ s_label }}">
-													<span class="custom-checkbox-icon"></span>
+												<input class="checkbox__input visually-hidden filter-list__checkbox" type="checkbox" name="filter.p.m.custom.seasonal" value="{{ s_label }}" id="FilterDrawer-{{ section.id }}-seasonal-{{ forloop.index }}-{{ id }}"{% if s_checked %} checked{% endif %}{% unless s_available %} disabled{% endunless %}>
+												<label class="checkbox__label{% unless s_available %} is-disabled{% endunless %}" for="FilterDrawer-{{ section.id }}-seasonal-{{ forloop.index }}-{{ id }}" {% unless s_available %}style="pointer-events: none; opacity: 0.6;"{% endunless %}>
 													{{ seasonal_display[forloop.index0] }}
-													{%- unless s_available -%}<span class="filter-list__coming-soon"> — <em>Coming Soon</em></span>{%- endunless -%}
-												</a>
+													{%- unless s_available -%}<span class="filter-list__coming-soon" style="color:#7a8a7e;"> — <em>Coming Soon</em></span>{%- endunless -%}
+												</label>
 											</li>
 										{%- endfor -%}
 										</ul>

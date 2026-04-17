@@ -34,9 +34,9 @@
 {%- assign reference_unit			= product.selected_or_first_available_variant.unit_price_measurement.reference_unit -%}
 
 {%- if currency_code_enabled -%}
-	{%- assign money_price 			= price | money_with_currency -%}
-	{%- assign money_price_min		= product.price_min | money_with_currency -%}
-	{%- assign money_price_max		= product.price_max | money_with_currency -%}
+	{%- assign money_price 			= price | money_with_currency | replace: '$', '' | replace: '₫', '' -%}
+	{%- assign money_price_min		= product.price_min | money_with_currency | replace: '$', '' | replace: '₫', '' -%}
+	{%- assign money_price_max		= product.price_max | money_with_currency | replace: '$', '' | replace: '₫', '' -%}
 {%- endif -%}
 
 {%- if target == product and product.price_varies and hide_from_price != true -%}
@@ -79,9 +79,9 @@
 				<span>
 					<span class="price-item price-item--regular" data-price-old>
 						{%- if currency_code_enabled -%}
-							{{- compare_at_price | money_with_currency -}}
+							{{- compare_at_price | money_with_currency | replace: '$', '' | replace: '₫', '' -}}
 						{%- else -%}
-							{{- compare_at_price | money -}}
+							{{- compare_at_price | money | replace: '$', '' | replace: '₫', '' -}}
 						{%- endif -%}
 					</span>
 				</span>
@@ -99,9 +99,9 @@
 						<span>
 							<s class="price-item price-item--regular">
 								{%- if settings.currency_code_enabled -%}
-									{{- compare_at_price | money_with_currency -}}
+									{{- compare_at_price | money_with_currency | replace: '$', '' | replace: '₫', '' -}}
 								{%- else -%}
-									{{- compare_at_price | money -}}
+									{{- compare_at_price | money | replace: '$', '' | replace: '₫', '' -}}
 								{%- endif -%}
 							</s>
 						</span>

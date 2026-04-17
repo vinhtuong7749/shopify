@@ -102,6 +102,31 @@
 						</ul>
 					</div>
 
+{%- comment -%} Clear All Button {%- endcomment -%}
+{%- assign has_active_filter = false -%}
+{%- if collection.handle != 'all' and collection.handle != blank -%}
+{%- assign has_active_filter = true -%}
+{%- endif -%}
+{%- assign current_sort = product_list.sort_by | default: product_list.default_sort_by -%}
+{%- if current_sort != product_list.default_sort_by -%}
+{%- assign has_active_filter = true -%}
+{%- endif -%}
+{%- for filter in product_list.filters -%}
+{%- if filter.active_values.size > 0 -%}
+{%- assign has_active_filter = true -%}
+{%- endif -%}
+{%- if filter.type == 'price_range' -%}
+{%- if filter.min_value.value > 0 or filter.max_value.value < filter.range_max -%}
+{%- assign has_active_filter = true -%}
+{%- endif -%}
+{%- endif -%}
+{%- endfor -%}
+<div class="filter-clear-wrapper ">
+<button type="button" class="filter-clear-btn js-reset-filters">
+<span>CLEAR ALL</span>
+</button>
+</div>
+
 					{%- comment -%} ── BRAND ── {%- endcomment -%}
 					<div
 						id="filter-{{ section.id }}-seasonal-{{- id -}}"
@@ -489,31 +514,7 @@
 
 				</div>
 
-{%- comment -%} Clear All Button {%- endcomment -%}
-{%- assign has_active_filter = false -%}
-{%- if collection.handle != 'all' and collection.handle != blank -%}
-{%- assign has_active_filter = true -%}
-{%- endif -%}
-{%- assign current_sort = product_list.sort_by | default: product_list.default_sort_by -%}
-{%- if current_sort != product_list.default_sort_by -%}
-{%- assign has_active_filter = true -%}
-{%- endif -%}
-{%- for filter in product_list.filters -%}
-{%- if filter.active_values.size > 0 -%}
-{%- assign has_active_filter = true -%}
-{%- endif -%}
-{%- if filter.type == 'price_range' -%}
-{%- if filter.min_value.value > 0 or filter.max_value.value < filter.range_max -%}
-{%- assign has_active_filter = true -%}
-{%- endif -%}
-{%- endif -%}
-{%- endfor -%}
-<div class="filter-clear-wrapper ">
-<a href="/collections/all" class="filter-clear-btn js-filter-clear-btn">
-{%- render 'icons', icon: 'close' -%}
-<span>CLEAR ALL</span>
-</a>
-</div>
+
 			</div>
 		</form>
 	</div>
@@ -691,41 +692,35 @@
 
 /* Clear All button */
 .filter-clear-wrapper {
-margin-top: 16px;
-padding-top: 12px;
-border-top: 1px solid rgba(44, 61, 51, 0.15);
+margin-bottom: 20px;
 }
 .filter-clear-wrapper--hidden {
 display: none;
 }
 .filter-clear-btn {
-display: inline-flex;
+display: flex;
 align-items: center;
+justify-content: center;
 gap: 6px;
+width: 100%;
 text-decoration: none;
-color: #2c3d33;
+color: #fff;
 font-family: 'Oswald', sans-serif;
-font-size: 13px;
+font-size: 15px;
 font-weight: 700;
 text-transform: uppercase;
 letter-spacing: 0.06em;
-padding: 6px 14px;
-border: 1px solid #2c3d33;
+padding: 12px 14px;
+background: #2c3d33;
 border-radius: 2px;
-background: transparent;
 cursor: pointer;
 transition: all 0.2s ease;
 }
 .filter-clear-btn svg {
-width: 10px;
-height: 10px;
+display: none; /* Hide the close icon if there is one */
 }
 .filter-clear-btn:hover {
-background: #2c3d33;
-color: #f5f0eb;
-}
-.filter-clear-btn:hover svg {
-fill: #f5f0eb;
+opacity: 0.9;
 }
 /* Loading state for grid during collection switch */
 .collection__grid-wrapper.is-ajax-loading {
@@ -935,30 +930,39 @@ document.addEventListener('DOMContentLoaded', () => {
 		const productTypeAttr = typeLink.getAttribute('data-product-type');
 		if (!productTypeAttr) return;
 
-		/* Keep the current collection path (e.g. /collections/independence-day) */
-		const url = new URL(window.location.href);
 		const typesToApply = productTypeAttr.split(',');
 		const typesToApplyStr = [...typesToApply].sort().join(',');
 
+		const url = new URL(window.location.href);
 		const activeTypes = url.searchParams.getAll('filter.p.product_type');
 		const activeTypesStr = activeTypes.sort().join(',');
 
+		const form = typeLink.closest('form.js-form') || document.querySelector('form.js-form');
+		if (!form) return;
+
 		if (activeTypesStr === typesToApplyStr) {
 			/* Already active — remove the filter */
-			url.searchParams.delete('filter.p.product_type');
+			form.querySelectorAll('input[name="filter.p.product_type"]').forEach(chk => chk.checked = false);
 		} else {
 			/* Apply the type filter, keep all other params */
-			url.searchParams.delete('filter.p.product_type');
+			form.querySelectorAll('input[name="filter.p.product_type"]').forEach(chk => chk.checked = false);
 			typesToApply.forEach(t => {
-				url.searchParams.append('filter.p.product_type', t);
+				let existing = form.querySelector(`input[name="filter.p.product_type"][value="${t.replace(/"/g, '\\"')}"]`);
+				if (existing) {
+					existing.checked = true;
+				} else {
+					const chk = document.createElement('input');
+					chk.type = 'checkbox';
+					chk.name = 'filter.p.product_type';
+					chk.value = t;
+					chk.checked = true;
+					chk.style.display = 'none';
+					form.appendChild(chk);
+				}
 			});
 		}
 
-		/* Remove page param to go back to page 1 */
-		url.searchParams.delete('page');
-
-		/* Full page navigation to let Shopify re-render with new filters on the current collection */
-		window.location.href = url.toString();
+		form.dispatchEvent(new Event('change', {bubbles: true}));
 	});
 
 	/* ---- Generalized Static Filters (Hunting, Terrain, Colors, Size) ---- */
@@ -1026,21 +1030,28 @@ document.addEventListener('DOMContentLoaded', () => {
 		const val = link.getAttribute('data-filter-value');
 		if (!param || !val) return;
 
+		const form = link.closest('form.js-form') || document.querySelector('form.js-form');
+		if (!form) return;
+
 		const url = new URL(window.location.href);
 		const activeVals = url.searchParams.getAll(param);
 
-		if (activeVals.includes(val)) {
-			// Wipe and append all EXCEPT the one we are toggling off
-			url.searchParams.delete(param);
-			activeVals.forEach(v => {
-				if (v !== val) url.searchParams.append(param, v);
-			});
+		let existing = form.querySelector(`input[name="${param}"][value="${val}"]`);
+		if (existing) {
+			existing.checked = !existing.checked;
 		} else {
-			url.searchParams.append(param, val);
+			if (!activeVals.includes(val)) {
+				const chk = document.createElement('input');
+				chk.type = 'checkbox';
+				chk.name = param;
+				chk.value = val;
+				chk.checked = true;
+				chk.style.display = 'none';
+				form.appendChild(chk);
+			}
 		}
 
-		url.searchParams.delete('page');
-		window.location.href = url.toString();
+		form.dispatchEvent(new Event('change', {bubbles: true}));
 	});
 
 	/* Enforce ALL button state correctly if theme JS overrides it */

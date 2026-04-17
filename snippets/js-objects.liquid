@@ -18,8 +18,8 @@
 	window.themeCore.objects = {
 		"shop": {
 			"currency": {{- shop.currency | json -}},
-			"money_format": {{- shop.money_format | json -}},
-			"money_with_currency_format": {{- shop.money_with_currency_format | json -}}
+			"money_format": {{- shop.money_format | replace: '$', '' | json -}},
+			"money_with_currency_format": {{- shop.money_with_currency_format | replace: '$', '' | json -}}
 		},
 		"currency": {
 			"cart": {{- cart.currency | json -}}
