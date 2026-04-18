@@ -300,10 +300,15 @@
 			padding-bottom: 0 !important;
 			margin-bottom: 0 !important;
 		}
+		/* Ensure container padding is respected */
+		#shopify-section-{{ section.id }} .container {
+			padding-left: 16px !important;
+			padding-right: 16px !important;
+		}
 		#shopify-section-{{ section.id }} .featured-products__row {
 			display: grid !important;
-			grid-template-columns: 1fr 1fr !important;
-			gap: 28px 12px !important;
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+			gap: 24px 12px !important;
 			transform: none !important;
 			transition: none !important;
 			flex-wrap: unset !important;
@@ -352,7 +357,6 @@
 			border-radius: 10px;
 			overflow: hidden;
 		}
-	}
 	}
 </style>
 <script>

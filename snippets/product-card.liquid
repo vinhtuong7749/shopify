@@ -587,9 +587,57 @@
 	}
 
 	/* ============================================
-	   MOBILE: Hide Quick Add + tighten card spacing
+	   MOBILE: Fix uneven cards and layout breakage
 	   ============================================ */
 	@media screen and (max-width: 767px) {
+		/* ===== FORCE UNIFORM CARD IMAGE SIZE ON MOBILE ===== */
+		/* Ensure grids don't break because of different image heights */
+		.product-card__image-wrapper {
+			aspect-ratio: 1 / 1 !important;
+			width: 100% !important;
+			overflow: hidden !important;
+			position: relative !important;
+		}
+		.product-card__image-picture {
+			width: 100% !important;
+			height: 100% !important;
+			display: block !important;
+			position: absolute !important;
+			top: 0 !important;
+			left: 0 !important;
+		}
+		.product-card__image {
+			width: 100% !important;
+			height: 100% !important;
+			object-fit: cover !important;
+			object-position: center top !important;
+		}
+		/* SVG placeholders */
+		.product-card__image--placeholder {
+			width: 100% !important;
+			height: 100% !important;
+		}
+
+		/* Product card box model safeguard to prevent blowout */
+		.product-card {
+			width: 100% !important;
+			max-width: 100% !important;
+			min-width: 0 !important; /* CRITICAL for flex/grid blowout */
+			box-sizing: border-box !important;
+			overflow: hidden !important;
+		}
+		.product-card__main {
+			width: 100% !important;
+			margin-bottom: 0 !important;
+			padding-bottom: 0 !important;
+			min-width: 0 !important;
+		}
+		.product-card__info {
+			min-width: 0 !important;
+			width: 100% !important;
+			overflow: hidden !important;
+		}
+
 		/* Hide Quick Add button on mobile */
 		.product-card__custom-quick-add {
 			display: none !important;
@@ -598,8 +646,11 @@
 		.product-card__footer {
 			padding: 0 !important;
 			margin-top: 5px !important;
+			min-width: 0 !important;
+			width: 100% !important;
+			overflow: hidden !important;
 		}
-		/* Tighten title margin and padding, reduce weight, uppercase first lettr, increase size, force strict 1-line ellipsis */
+		/* Tighten title margin and padding, force strict 1-line ellipsis */
 		.product-card .product-card__title {
 			margin-bottom: 2px !important;
 			margin-top: 0 !important;
@@ -614,6 +665,7 @@
 			max-width: 100% !important;
 			width: 100% !important;
 			min-height: auto !important;
+			min-width: 0 !important;
 			word-break: normal !important;
 			overflow-wrap: normal !important;
 			-webkit-line-clamp: unset !important;
@@ -628,15 +680,15 @@
 			margin-bottom: 4px !important;
 			margin-top: 0 !important;
 			font-size: 15px !important;
+			white-space: nowrap !important;
+			overflow: hidden !important;
+			text-overflow: ellipsis !important;
 		}
 		/* Tighten swatches wrapper */
 		.product-card__footer > div:last-of-type {
 			margin-bottom: 0 !important;
-		}
-		/* Reduce image bottom margin */
-		.product-card__main {
-			margin-bottom: 0 !important;
-			padding-bottom: 0 !important;
+			max-width: 100% !important;
+			overflow: hidden !important;
 		}
 	}
 </style>
