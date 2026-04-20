@@ -148,5 +148,24 @@
 	color: #faf6ee;
 	border-color: #2c3d33;
 }
+
+/* Responsive adjustments for mobile */
+@media screen and (max-width: 767px) {
+	.pagination__list {
+		flex-wrap: wrap;
+		gap: 4px;
+	}
+	.pagination__numbers {
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 4px;
+	}
+	.pagination__link {
+		min-width: 36px !important;
+		height: 36px !important;
+		padding: 0 8px !important;
+		font-size: 13px !important;
+	}
+}
 </style>
 

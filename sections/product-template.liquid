@@ -7,6 +7,8 @@
 {%- render 'adastra' with '/src/styles/carousel.scss' -%}
 {%- render 'adastra' with '/src/styles/product.scss' -%}
 
+{% render 'customix' %}
+
 {%- assign container 					   = section.settings.container_width -%}
 {%- assign color_scheme      	           = section.settings.color_scheme -%}
 {%- assign enable_color_scheme_inheritance = section.settings.enable_color_scheme_inheritance -%}
@@ -106,10 +108,9 @@
 		   làm hỏng modal zoom (fixed elements bên trong sẽ không thoát ra được) */
 		.product-media.product-media--layout-carousel.product-media--thumbnails-position-left {
 			column-gap: 16px;
-			height: max-content;
 			display: flex !important;
 			flex-direction: row-reverse !important;
-			align-items: flex-start;
+			align-items: stretch; /* Kéo dài thumbnail container theo chiều cao ảnh main */
 			position: sticky !important;
 			top: var(--header-height-sticky, 20px) !important;
 		}
@@ -123,17 +124,17 @@
 		}
 		.product-media.product-media--layout-carousel.product-media--thumbnails-position-left .product-media__slider-thumbnails-container {
 			width: 80px;
-			display: block !important; /* Đảm bảo luôn hiển thị trên Desktop */
+			height: 100%; /* Stretch theo chiều cao flex parent */
+			display: flex !important;
+			flex-direction: column;
 		}
 		.product-media.product-media--layout-carousel.product-media--thumbnails-position-left .product-media__slider-thumbnails {
+			flex: 1; /* Chiếm toàn bộ chiều cao container */
 			height: 100%;
-			max-height: 368px;
 			margin-top: 0;
 			padding-top: 0;
 			padding-bottom: 0;
-			scroll-behavior: smooth;
-			-ms-overflow-style: none; /* IE and Edge */
-			scrollbar-width: none; /* Firefox */
+			overflow: hidden;
 		}
 		.product-media.product-media--layout-carousel.product-media--thumbnails-position-left .product-media__slider-thumbnails::-webkit-scrollbar,
 		.product-media.product-media--layout-carousel.product-media--thumbnails-position-left .product-media__slider-thumbnails-container::-webkit-scrollbar {
@@ -142,7 +143,8 @@
 		.product-media.product-media--layout-carousel.product-media--thumbnails-position-left .product-media__slider-thumbnails-slide {
 			display: block;
 			width: 80px;
-			margin-bottom: 10px;
+			height: 80px !important; /* Chiều cao cố định để Swiper auto tính đúng */
+			margin-bottom: 0;
 			aspect-ratio: 1;
 		}
 		.product-media.product-media--layout-carousel.product-media--thumbnails-position-left .product-media__slider-thumbnails-slide img {
@@ -152,6 +154,47 @@
 		.product-media.product-media--layout-carousel.product-media--thumbnails-position-left .product-media__slider-thumbnails-slide.swiper-slide-thumb-active img,
 		.product-media.product-media--layout-carousel.product-media--thumbnails-position-left .product-media__slider-thumbnails-slide.is-active img {
 			border: 2px solid #1b4332 !important; /* Xanh đậm */
+		}
+
+		/* Nút điều hướng lên/xuống cho thumbnails dọc - kiểu tròn */
+		.product-media__slider-thumbnails-container .thumb-nav {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 36px;
+			height: 36px;
+			background: #ffffff;
+			border: none;
+			border-radius: 50%;
+			cursor: pointer;
+			color: #333;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+			transition: box-shadow 0.2s ease, transform 0.15s ease, background 0.2s ease;
+			flex-shrink: 0;
+			padding: 0;
+			margin: 4px auto;
+			align-self: center;
+		}
+		.product-media__slider-thumbnails-container .thumb-nav svg {
+			width: 18px;
+			height: 18px;
+			stroke-width: 2.5;
+		}
+		.product-media__slider-thumbnails-container .thumb-nav:hover {
+			box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
+			transform: scale(1.08);
+			background: #f8f8f8;
+		}
+		.product-media__slider-thumbnails-container .thumb-nav:active {
+			transform: scale(0.95);
+		}
+		.product-media__slider-thumbnails-container .thumb-nav.swiper-button-disabled {
+			opacity: 0.3;
+			cursor: not-allowed;
+			pointer-events: none;
+		}
+		.product-media__slider-thumbnails-container .thumb-nav.is-hidden {
+			display: none;
 		}
 
 		/* Zoom modal phải luôn ở trên cùng */

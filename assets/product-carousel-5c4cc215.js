@@ -1043,27 +1043,56 @@ const ProductCarousel = ({ config, selectors, sectionId }) => {
           threshold: 10,
           breakpoints: {
             1200: {
-              slidesPerView: 6,
+              slidesPerView: "auto",
               spaceBetween: 16
             }
           }
         });
       } else {
+        const thumbPrev = document.querySelector(`.js-thumb-nav-prev-${sectionId}`);
+        const thumbNext = document.querySelector(`.js-thumb-nav-next-${sectionId}`);
         Thumbnails = new Swiper(selectors.sliderThumbnails, {
-          direction: "horizontal",
-          slidesPerView: 5,
-          spaceBetween: 4,
-          freeMode: true,
+          direction: thumbnailsDirections,
+          slidesPerView: "auto",
+          spaceBetween: 10,
+          freeMode: false,
           watchSlidesProgress: true,
           threshold: 10,
-          breakpoints: {
-            1200: {
-              direction: thumbnailsDirections,
-              slidesPerView: 4,
-              spaceBetween: 16
-            }
-          }
+          speed: 400
         });
+
+        // Wire up buttons manually — reliable hơn Swiper navigation option
+        // vì buttons nằm ngoài swiper container
+        if (thumbPrev) {
+          thumbPrev.addEventListener("click", () => {
+            Thumbnails.slidePrev(400);
+          });
+        }
+        if (thumbNext) {
+          thumbNext.addEventListener("click", () => {
+            Thumbnails.slideNext(400);
+          });
+        }
+
+        // Tự động ẩn/hiện nút dựa trên trạng thái Swiper
+        const updateNavState = () => {
+          if (!thumbPrev || !thumbNext) return;
+          if (Thumbnails.isLocked) {
+            // Tất cả slides vừa khớp → ẩn cả 2 nút
+            thumbPrev.classList.add("is-hidden");
+            thumbNext.classList.add("is-hidden");
+          } else {
+            thumbPrev.classList.remove("is-hidden");
+            thumbNext.classList.remove("is-hidden");
+            // Mờ nút khi đã ở đầu/cuối
+            thumbPrev.classList.toggle("swiper-button-disabled", Thumbnails.isBeginning);
+            thumbNext.classList.toggle("swiper-button-disabled", Thumbnails.isEnd);
+          }
+        };
+
+        Thumbnails.on("slideChange", updateNavState);
+        Thumbnails.on("resize", updateNavState);
+        setTimeout(updateNavState, 200);
       }
       on("keydown", Thumbnails.el, (e) => {
         if (e.keyCode !== 13 && e.keyCode !== 32) {

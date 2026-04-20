@@ -95,7 +95,7 @@
         "type": "shopify://apps/customix-personalizer/blocks/app/d207e469-c2f9-4c9c-a8dc-25c6df211067",
         "disabled": false,
         "settings": {
-          "hide_preview": true,
+          "hide_preview": false,
           "show_preview_by_default": false,
           "hide_preview_design_btn": true,
           "show_close_button": false,

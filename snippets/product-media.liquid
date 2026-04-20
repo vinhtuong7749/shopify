@@ -460,52 +460,125 @@
 		</div>
 
 		{% if product.media.size > 1 %}
+		<div
+			class="product-media__slider-thumbnails-container {% if is_show_thumbnails_mobile %}product-media__slider-thumbnails-container--mobile{% endif %}">
+			{%- if thumbnails_position == 'left' or thumbnails_position == 'right' -%}
+				<button
+					class="thumb-nav thumb-nav--prev js-thumb-nav-prev-{{ section.id }}"
+					aria-label="Previous thumbnails"
+					type="button">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+				</button>
+			{%- endif -%}
 			<div
-				class="product-media__slider-thumbnails-container {% if is_show_thumbnails_mobile %}product-media__slider-thumbnails-container--mobile{% endif %}">
-				<div
-					class="swiper js-product-media-slider-thumbnails-{{- section.id }} product-media__slider-thumbnails {% if product.media.size == 1 %}is-hidden{% endif %}"
-					data-thumbnails-position="{{- thumbnails_position_js -}}"
-				>
-					<div class="swiper-wrapper product-media__slider-thumbnails-wrapper">
-						{% for media in product.media %}
-							<button class="swiper-slide product-media__slider-thumbnails-slide"
-									data-slide-index="{{ forloop.index0 }}"
-							>
-								{%- case media.media_type -%}
-									{%- when 'image' -%}
-										{%- render "product-gallery-thumbnail",
-											image: media,
-											is_lazy: true,
-											thumbnails_position: thumbnails_position_js
-										-%}
-									{%- when 'video' -%}
-										{%- render "product-gallery-poster",
-											image: media.preview_image,
-											is_lazy: true,
-											media_type: media.media_type,
-											thumbnails_position: thumbnails_position_js
-										-%}
-									{%- when 'external_video' -%}
-										{%- render "product-gallery-poster",
-											image: media.preview_image,
-											is_lazy: true,
-											media_type: media.media_type,
-											thumbnails_position: thumbnails_position_js
-										-%}
-									{%- when 'model' -%}
-										{%- render "product-gallery-poster",
-											image: media.preview_image,
-											is_lazy: true,
-											media_type: media.media_type,
-											thumbnails_position: thumbnails_position_js
-										-%}
-								{%- endcase -%}
-							</button>
-						{% endfor %}
-					</div>
+				class="swiper js-product-media-slider-thumbnails-{{- section.id }} product-media__slider-thumbnails {% if product.media.size == 1 %}is-hidden{% endif %}"
+				data-thumbnails-position="{{- thumbnails_position_js -}}"
+			>
+				<div class="swiper-wrapper product-media__slider-thumbnails-wrapper">
+					{% for media in product.media %}
+						<button class="swiper-slide product-media__slider-thumbnails-slide"
+								data-slide-index="{{ forloop.index0 }}"
+						>
+							{%- case media.media_type -%}
+								{%- when 'image' -%}
+									{%- render "product-gallery-thumbnail",
+										image: media,
+										is_lazy: true,
+										thumbnails_position: thumbnails_position_js
+									-%}
+								{%- when 'video' -%}
+									{%- render "product-gallery-poster",
+										image: media.preview_image,
+										is_lazy: true,
+										media_type: media.media_type,
+										thumbnails_position: thumbnails_position_js
+									-%}
+								{%- when 'external_video' -%}
+									{%- render "product-gallery-poster",
+										image: media.preview_image,
+										is_lazy: true,
+										media_type: media.media_type,
+										thumbnails_position: thumbnails_position_js
+									-%}
+								{%- when 'model' -%}
+									{%- render "product-gallery-poster",
+										image: media.preview_image,
+										is_lazy: true,
+										media_type: media.media_type,
+										thumbnails_position: thumbnails_position_js
+									-%}
+							{%- endcase -%}
+						</button>
+					{% endfor %}
 				</div>
 			</div>
+			{%- if thumbnails_position == 'left' or thumbnails_position == 'right' -%}
+				<button
+					class="thumb-nav thumb-nav--next js-thumb-nav-next-{{ section.id }}"
+					aria-label="Next thumbnails"
+					type="button">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+				</button>
+			{%- endif -%}
+		</div>
 		{% endif %}
+
+		{%- if product.media.size > 1 -%}
+		{%- if thumbnails_position == 'left' or thumbnails_position == 'right' -%}
+		<script>
+		(function() {
+			var sectionId = '{{- section.id -}}';
+			var btnPrev = document.querySelector('.js-thumb-nav-prev-' + sectionId);
+			var btnNext = document.querySelector('.js-thumb-nav-next-' + sectionId);
+			var swiperEl = document.querySelector('.js-product-media-slider-thumbnails-' + sectionId);
+
+			if (!btnPrev || !btnNext || !swiperEl) return;
+
+			function getSwiper() {
+				return swiperEl.swiper || null;
+			}
+
+			function updateButtons(sw) {
+				if (!sw) return;
+				if (sw.isLocked) {
+					btnPrev.classList.add('is-hidden');
+					btnNext.classList.add('is-hidden');
+				} else {
+					btnPrev.classList.remove('is-hidden');
+					btnNext.classList.remove('is-hidden');
+					btnPrev.style.opacity = sw.isBeginning ? '0.3' : '1';
+					btnNext.style.opacity = sw.isEnd ? '0.3' : '1';
+					btnPrev.style.pointerEvents = sw.isBeginning ? 'none' : '';
+					btnNext.style.pointerEvents = sw.isEnd ? 'none' : '';
+				}
+			}
+
+			btnPrev.addEventListener('click', function() {
+				var sw = getSwiper();
+				if (sw) { sw.slidePrev(400); updateButtons(sw); }
+			});
+
+			btnNext.addEventListener('click', function() {
+				var sw = getSwiper();
+				if (sw) { sw.slideNext(400); updateButtons(sw); }
+			});
+
+			// Chờ Swiper init xong rồi cập nhật trạng thái nút
+			function waitForSwiper(attempts) {
+				var sw = getSwiper();
+				if (sw) {
+					updateButtons(sw);
+					sw.on('slideChange', function() { updateButtons(sw); });
+					sw.on('resize', function() { updateButtons(sw); });
+				} else if (attempts > 0) {
+					setTimeout(function() { waitForSwiper(attempts - 1); }, 200);
+				}
+			}
+			waitForSwiper(20);
+		})();
+		</script>
+		{%- endif -%}
+		{%- endif -%}
 
 		{%- if is_zoom_enabled -%}
 			{%- assign id = 'ZoomMediaModal-' | append: section.id -%}
