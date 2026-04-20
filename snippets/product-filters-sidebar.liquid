@@ -102,30 +102,6 @@
 						</ul>
 					</div>
 
-{%- comment -%} Clear All Button {%- endcomment -%}
-{%- assign has_active_filter = false -%}
-{%- if collection.handle != 'all' and collection.handle != blank -%}
-{%- assign has_active_filter = true -%}
-{%- endif -%}
-{%- assign current_sort = product_list.sort_by | default: product_list.default_sort_by -%}
-{%- if current_sort != product_list.default_sort_by -%}
-{%- assign has_active_filter = true -%}
-{%- endif -%}
-{%- for filter in product_list.filters -%}
-{%- if filter.active_values.size > 0 -%}
-{%- assign has_active_filter = true -%}
-{%- endif -%}
-{%- if filter.type == 'price_range' -%}
-{%- if filter.min_value.value > 0 or filter.max_value.value < filter.range_max -%}
-{%- assign has_active_filter = true -%}
-{%- endif -%}
-{%- endif -%}
-{%- endfor -%}
-<div class="filter-clear-wrapper ">
-<button type="button" class="filter-clear-btn js-reset-filters">
-<span>CLEAR ALL</span>
-</button>
-</div>
 
 					{%- comment -%} ── BRAND ── {%- endcomment -%}
 					<div
@@ -875,6 +851,35 @@ document.addEventListener('DOMContentLoaded', () => {
 	});
 
 
+	/* ---- Sync custom URL params with hidden form inputs ---- */
+	function syncHiddenCustomInputs() {
+		const forms = document.querySelectorAll('form.js-form');
+		forms.forEach(form => {
+			/* Delete all dynamically injected hidden inputs to completely refresh them from the current URL */
+			form.querySelectorAll('.js-appended-hidden-filter').forEach(el => el.remove());
+			/* Edge case: clean up any untagged ones left by old click handlers */
+			form.querySelectorAll('input[type="checkbox"]').forEach(el => {
+				if (el.style.display === 'none' && !el.classList.contains('filter-list__checkbox')) el.remove();
+			});
+			
+			const url = new URL(window.location.href);
+			const customParams = ['filter.p.product_type', 'filter.p.m.custom.seasonal'];
+			customParams.forEach(param => {
+				url.searchParams.getAll(param).forEach(val => {
+					const chk = document.createElement('input');
+					chk.className = 'js-appended-hidden-filter';
+					chk.type = 'checkbox';
+					chk.name = param;
+					chk.value = val;
+					chk.checked = true;
+					chk.style.display = 'none';
+					form.appendChild(chk);
+				});
+			});
+		});
+	}
+	syncHiddenCustomInputs();
+
 	/* ---- Clothing Type Filter ---- */
 	function initClothingFilter() {
 		const url = new URL(window.location.href);
@@ -952,6 +957,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					existing.checked = true;
 				} else {
 					const chk = document.createElement('input');
+					chk.className = 'js-appended-hidden-filter';
 					chk.type = 'checkbox';
 					chk.name = 'filter.p.product_type';
 					chk.value = t;
@@ -1010,6 +1016,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (window.themeCore && window.themeCore.EventBus) {
 			window.themeCore.EventBus.listen("search-types:init", () => {
 				setTimeout(() => {
+					syncHiddenCustomInputs();
 					initClothingFilter();
 					initCustomFilters();
 					verifyFilteredProducts();
@@ -1042,6 +1049,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		} else {
 			if (!activeVals.includes(val)) {
 				const chk = document.createElement('input');
+				chk.className = 'js-appended-hidden-filter';
 				chk.type = 'checkbox';
 				chk.name = param;
 				chk.value = val;

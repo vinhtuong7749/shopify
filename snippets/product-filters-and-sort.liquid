@@ -529,8 +529,8 @@
 						</div>
 					</div>
 
-					<div class="product-filters__form-footer">
-						<button class="button button--secondary product-filters__form-footer-button  js-reset-filters" type="button" disabled>
+					<div class="product-filters__form-footer js-filters-footer">
+						<button class="button button--secondary product-filters__form-footer-button  js-reset-filters" type="button" {% if active_filters_size == 0 %}disabled{% endif %}>
 							{{- 'general.filters.clear_all' | t -}}
 						</button>
 

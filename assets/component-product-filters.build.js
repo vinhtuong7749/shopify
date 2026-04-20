@@ -425,12 +425,20 @@ const ProductFilters = (section) => {
     });
     return priceNumberInputs.some((input) => input.classList.contains(classes.error));
   }
+  let latestRequestURL = null;
+
   async function rerenderTemplate(url) {
+    const requestURL = getSectionIdRequestURL(url, section.id);
+    latestRequestURL = requestURL;
     togglePreloader(true);
     currentNodes.gridWrapper.ariaBusy = "true";
     collapses.length && collapses.forEach((collapse) => collapse.block(true));
-    const requestURL = getSectionIdRequestURL(url, section.id);
+    
     const newHTML = await getHTML(requestURL);
+    if (latestRequestURL !== requestURL) {
+      return;
+    }
+    
     let newNodes = getNodes(newHTML, CHANGEABLE_ELEMENTS_MULTIPLE_SELECTORS);
     newNodes = Object.assign(newNodes, getNodes(newHTML, CHANGEABLE_ELEMENTS_ONCE_SELECTORS, true));
     setHTML(newNodes);
@@ -687,9 +695,17 @@ const ProductFilters = (section) => {
     if (!resetFilters) {
       return;
     }
-    const url = new URL(window.location.href);
+    event.preventDefault();
+    let targetHref = resetFilters.href || window.location.href;
+    const url = new URL(targetHref, window.location.origin);
+    
     const urlKeys = [...url.searchParams.keys()];
     urlKeys.filter((key) => ![URL_KEYS.sort, URL_KEYS.query, URL_KEYS.type].includes(key)).forEach((key) => url.searchParams.delete(key));
+    
+    if (!resetFilters.href && url.pathname.startsWith('/collections/')) {
+      url.pathname = '/collections/all';
+    }
+    
     window.parent === window.top && window.history.pushState({}, null, url);
     scrollToTop();
     await rerenderTemplate(url);
