@@ -418,7 +418,15 @@
 
 				bar.querySelector('.js-mobile-sticky-atc-btn').addEventListener('click', function(e) {
 					e.preventDefault();
-					realBtn.click();
+					// Check if Customix App button exists and is visible
+					var customixBtn = document.querySelector('#cm-options button, [class*="customix"] button[type="submit"], [class*="customix"] button, [class*="cx-"] button');
+					if (customixBtn && customixBtn.offsetParent !== null) {
+						// Scroll up to the Customix form if user hasn't filled it out (Optional optimization)
+						// For now, just trigger Customix's own validation/add logic
+						customixBtn.click();
+					} else {
+						realBtn.click();
+					}
 				});
 			}
 

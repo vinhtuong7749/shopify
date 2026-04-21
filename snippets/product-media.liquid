@@ -563,13 +563,41 @@
 				if (sw) { sw.slideNext(400); updateButtons(sw); }
 			});
 
-			// Chờ Swiper init xong rồi cập nhật trạng thái nút
+			// Giới hạn tối đa MAX_VISIBLE thumbnails hiển thị cùng lúc
+			var MAX_VISIBLE = 7;
+			var SPACE_BETWEEN = 8;
+
+			function applyMaxSlides(sw) {
+				if (!sw || !sw.slides || sw.slides.length <= MAX_VISIBLE) return;
+
+				// Đọc chiều cao thực tế của 1 slide từ DOM
+				var firstSlide = sw.slides[0];
+				var slideH = firstSlide ? firstSlide.offsetHeight : 80;
+				if (slideH < 10) slideH = 80; // fallback nếu chưa render
+
+				// Tính max-height chính xác = 7 slides + 6 gaps
+				var maxH = (MAX_VISIBLE * slideH) + ((MAX_VISIBLE - 1) * SPACE_BETWEEN);
+
+				// Ép container có chiều cao đúng → Swiper tự clip phần còn lại
+				swiperEl.style.maxHeight = maxH + 'px';
+				swiperEl.style.height = maxH + 'px';
+				swiperEl.style.overflow = 'hidden';
+
+				// Cập nhật lại Swiper để nhận chiều cao mới
+				sw.params.spaceBetween = SPACE_BETWEEN;
+				sw.update();
+			}
+
 			function waitForSwiper(attempts) {
 				var sw = getSwiper();
 				if (sw) {
+					applyMaxSlides(sw);
 					updateButtons(sw);
 					sw.on('slideChange', function() { updateButtons(sw); });
-					sw.on('resize', function() { updateButtons(sw); });
+					sw.on('resize', function() {
+						applyMaxSlides(sw);
+						updateButtons(sw);
+					});
 				} else if (attempts > 0) {
 					setTimeout(function() { waitForSwiper(attempts - 1); }, 200);
 				}
