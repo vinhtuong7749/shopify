@@ -540,17 +540,41 @@
 
 			function updateButtons(sw) {
 				if (!sw) return;
-				if (sw.isLocked) {
+				var MAX_VISIBLE = 7;
+				if (sw.isLocked || (sw.slides && sw.slides.length <= MAX_VISIBLE)) {
 					btnPrev.classList.add('is-hidden');
 					btnNext.classList.add('is-hidden');
-				} else {
-					btnPrev.classList.remove('is-hidden');
-					btnNext.classList.remove('is-hidden');
-					btnPrev.style.opacity = sw.isBeginning ? '0.3' : '1';
-					btnNext.style.opacity = sw.isEnd ? '0.3' : '1';
-					btnPrev.style.pointerEvents = sw.isBeginning ? 'none' : '';
-					btnNext.style.pointerEvents = sw.isEnd ? 'none' : '';
+					return;
 				}
+				
+				btnPrev.classList.remove('is-hidden');
+				btnNext.classList.remove('is-hidden');
+
+				var isBeginning = sw.isBeginning;
+				var isEnd = sw.isEnd;
+
+				// Fallback logic in case Swiper gets stuck sub-pixel
+				if (!isEnd && sw.slides) {
+					if (sw.activeIndex >= sw.slides.length - MAX_VISIBLE) {
+						isEnd = true;
+					}
+				}
+
+				var maxTrans = typeof sw.maxTranslate === 'function' ? sw.maxTranslate() : sw.maxTranslate;
+				if (!isEnd && typeof sw.translate !== 'undefined' && typeof maxTrans !== 'undefined') {
+					if (Math.abs(sw.translate) >= Math.abs(maxTrans) - 2) {
+						isEnd = true;
+					}
+				}
+
+				if (sw.activeIndex === 0) {
+					isBeginning = true;
+				}
+
+				btnPrev.style.opacity = isBeginning ? '0.3' : '1';
+				btnNext.style.opacity = isEnd ? '0.3' : '1';
+				btnPrev.style.pointerEvents = isBeginning ? 'none' : '';
+				btnNext.style.pointerEvents = isEnd ? 'none' : '';
 			}
 
 			btnPrev.addEventListener('click', function() {
