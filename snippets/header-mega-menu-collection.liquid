@@ -11,14 +11,27 @@
 	class="header-mega-desktop js-header-dropdown-menu"
 >
 	<div class="header-mega-desktop__inner mega-4block">
-		<!-- Block 1: CLOTHING -->
+		<!-- Block 1: CLOTHING (Dynamic via linklist 'collection-clothing') -->
 		<div class="mega-block mega-block--clothing">
 			<h3 class="mega-block__heading">Clothing</h3>
 			<ul class="mega-block__list">
-				<li><a href="/collections/all?filter.p.product_type=Type1&filter.p.product_type=3D+Tshirt&filter.p.product_type=T-Shirt" class="mega-block__link">T-Shirts</a></li>
-			<li><a href="/collections/all?filter.p.product_type=Sweatshirt" class="mega-block__link">Sweatshirts</a></li>
-			<li><a href="/collections/all?filter.p.product_type=Hoodie" class="mega-block__link">Hoodies</a></li>
-			<li><a href="/collections/all?filter.p.product_type=Hat" class="mega-block__link">Hats</a></li>
+				{%- assign clothing_menu = linklists['collection-clothing'] -%}
+				{%- if clothing_menu != blank and clothing_menu.links.size > 0 -%}
+					{%- comment -%}
+						Dynamic: đọc từ Shopify Admin > Navigation > "collection-clothing"
+						Để thêm product type mới: vào Admin > Navigation > Collection Clothing > Add menu item
+					{%- endcomment -%}
+					{%- for clink in clothing_menu.links -%}
+						<li><a href="{{ clink.url }}" class="mega-block__link">{{ clink.title }}</a></li>
+					{%- endfor -%}
+				{%- else -%}
+					{%- comment -%} Fallback hardcoded — dùng khi linklist chưa được tạo {%- endcomment -%}
+					<li><a href="/collections/all?filter.p.product_type=Type1&filter.p.product_type=3D+Tshirt&filter.p.product_type=T-Shirt" class="mega-block__link">T-Shirts</a></li>
+					<li><a href="/collections/all?filter.p.product_type=Sweatshirt" class="mega-block__link">Sweatshirts</a></li>
+					<li><a href="/collections/all?filter.p.product_type=Hoodie" class="mega-block__link">Hoodies</a></li>
+					<li><a href="/collections/all?filter.p.product_type=Hat" class="mega-block__link">Hats</a></li>
+					<li><a href="/collections/all?filter.p.product_type=Long-sleeve" class="mega-block__link">Long-Sleeve</a></li>
+				{%- endif -%}
 			</ul>
 		</div>
 
