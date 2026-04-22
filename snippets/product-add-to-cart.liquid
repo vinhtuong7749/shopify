@@ -257,7 +257,31 @@
 		{%- render 'icons', icon: 'loader' -%}
 	</button>
 
+	<div class="product-custom-banner-wrapper" style="order: 17; width: 100%; margin-top: 16px; margin-bottom: -10px;">
+		{%- assign is_hat = false -%}
+		{%- assign current_type = product.type | downcase -%}
+		{%- if current_type == 'hat' -%}
+			{%- assign is_hat = true -%}
+		{%- endif -%}
+
+		<picture>
+			{%- if is_hat -%}
+				<source media="(max-width: 767px)" srcset="https://cdn.shopify.com/s/files/1/0741/7987/0911/files/Shipping-Mo1.jpg?v=1776857084">
+				<img src="https://cdn.shopify.com/s/files/1/0741/7987/0911/files/Shipping-1item.jpg?v=1776857186" alt="Promo Banner" style="width: 100%; height: auto; border-radius: 6px 6px 0 0; display: block;">
+			{%- else -%}
+				<source media="(max-width: 767px)" srcset="https://cdn.shopify.com/s/files/1/0741/7987/0911/files/Shipping-Mo1_b4238c92-15d6-448a-9a49-e812c6490d7a.jpg?v=1776857116">
+				<img src="https://cdn.shopify.com/s/files/1/0741/7987/0911/files/Shipping-2item.jpg?v=1776857227" alt="Promo Banner" style="width: 100%; height: auto; border-radius: 6px 6px 0 0; display: block;">
+			{%- endif -%}
+		</picture>
+	</div>
+
 	<div class="product-promo-banner-wrapper" style="order: 18; width: 100%;">
+		<style>
+			.product-add-to-cart .product-promo-banner-wrapper .product-promo-banner,
+			.product-add-to-cart .product-promo-banner-wrapper .product-promo-banner__img {
+				border-radius: 0 0 6px 6px !important;
+			}
+		</style>
 		{%- render 'product-promo-banner' -%}
 	</div>
 
@@ -310,12 +334,12 @@
 		
 		/* Target any div injected by the BMSM app directly, force its styling to match Tactical Minimal */
 		.product-add-to-cart > div[class*="x1ghz6dp"], 
-		.product-add-to-cart > div:not(.product-upsell-block):not(.add-to-cart):not(.product-add-to-cart__additional-buttons):not(.product-add-to-cart__error):not(.recipient-form):not(.product-promo-banner-wrapper) {
+		.product-add-to-cart > div:not(.product-upsell-block):not(.add-to-cart):not(.product-add-to-cart__additional-buttons):not(.product-add-to-cart__error):not(.recipient-form):not(.product-promo-banner-wrapper):not(.product-custom-banner-wrapper) {
 			order: 19; /* App block appears BELOW promo banner */
 			margin-bottom: 0px !important; /* reduce gap! */
 			margin-top: 16px !important;
 		}
-		.product-add-to-cart > div:not(.product-upsell-block):not(.add-to-cart):not(.product-add-to-cart__additional-buttons):not(.product-add-to-cart__error):not(.recipient-form):not(.product-promo-banner-wrapper) * {
+		.product-add-to-cart > div:not(.product-upsell-block):not(.add-to-cart):not(.product-add-to-cart__additional-buttons):not(.product-add-to-cart__error):not(.recipient-form):not(.product-promo-banner-wrapper):not(.product-custom-banner-wrapper) * {
 			border-radius: 0px !important;
 		}
 

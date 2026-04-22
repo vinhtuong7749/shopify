@@ -2024,6 +2024,71 @@
 					"default": 8
 				}
 			]
+		},
+		{
+			"type": "custom_image_banner",
+			"name": "Custom Banner",
+			"settings": [
+				{
+					"type": "image_picker",
+					"id": "banner_image",
+					"label": "Desktop Banner Image"
+				},
+				{
+					"type": "image_picker",
+					"id": "banner_image_mobile",
+					"label": "Mobile Banner Image (Optional)"
+				},
+				{
+					"type": "url",
+					"id": "banner_link",
+					"label": "Banner Link"
+				},
+				{
+					"type": "text",
+					"id": "condition_type",
+					"label": "Show ONLY for Product Type(s)",
+					"info": "Comma-separated. Leave blank to show on all products. Example: Hat, Cap"
+				},
+				{
+					"type": "text",
+					"id": "condition_collection",
+					"label": "Show ONLY for Collection(s)",
+					"info": "Comma-separated collection handles. Leave blank to show on all products. Example: graphic-tees, hats"
+				},
+				{
+					"type": "text",
+					"id": "exclude_type",
+					"label": "Hide for Product Type(s)",
+					"info": "Comma-separated. Useful for fallback banners. Example: Hat, Cap"
+				},
+				{
+					"type": "text",
+					"id": "exclude_collection",
+					"label": "Hide for Collection(s)",
+					"info": "Comma-separated collection handles."
+				},
+				{
+					"type": "range",
+					"id": "margin_top",
+					"min": 0,
+					"max": 50,
+					"step": 1,
+					"unit": "px",
+					"label": "Margin Top",
+					"default": 16
+				},
+				{
+					"type": "range",
+					"id": "margin_bottom",
+					"min": 0,
+					"max": 50,
+					"step": 1,
+					"unit": "px",
+					"label": "Margin Bottom",
+					"default": 16
+				}
+			]
 		}
 	]
 }
