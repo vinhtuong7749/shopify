@@ -170,13 +170,16 @@
 
 		function updateEvergreenTimer() {
 			var now = new Date();
-			var targetHour = 7; // 2PM Vietnam
-			var nextResetUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), targetHour, 0, 0, 0));
+			var startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+			var diffSinceStartOfDay = now.getTime() - startOfDay.getTime();
+			var periodMs = 4 * 60 * 60 * 1000; // 4 hours in milliseconds
 
-			if (now.getTime() >= nextResetUTC.getTime()) {
-				nextResetUTC.setUTCDate(nextResetUTC.getUTCDate() + 1);
+			var nextPeriodMs = Math.ceil(diffSinceStartOfDay / periodMs) * periodMs;
+			if (nextPeriodMs === diffSinceStartOfDay) {
+				nextPeriodMs += periodMs;
 			}
-			var targetTime = nextResetUTC.getTime();
+			
+			var targetTime = startOfDay.getTime() + nextPeriodMs;
 			var diff = targetTime - now.getTime();
 			
 			if (diff > 0) {

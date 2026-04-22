@@ -257,6 +257,10 @@
 		{%- render 'icons', icon: 'loader' -%}
 	</button>
 
+	<div class="product-promo-banner-wrapper" style="order: 18; width: 100%;">
+		{%- render 'product-promo-banner' -%}
+	</div>
+
 	{% if block.settings.show_additional_buttons %}
 		<div class="product-add-to-cart__additional-buttons product-add-to-cart__additional-buttons--{{ button_buy_it_type }}">
 			{{ form | payment_button }}
@@ -306,12 +310,12 @@
 		
 		/* Target any div injected by the BMSM app directly, force its styling to match Tactical Minimal */
 		.product-add-to-cart > div[class*="x1ghz6dp"], 
-		.product-add-to-cart > div:not(.product-upsell-block):not(.add-to-cart):not(.product-add-to-cart__additional-buttons):not(.product-add-to-cart__error):not(.recipient-form) {
-			order: 0; /* App block appears ABOVE upsell */
+		.product-add-to-cart > div:not(.product-upsell-block):not(.add-to-cart):not(.product-add-to-cart__additional-buttons):not(.product-add-to-cart__error):not(.recipient-form):not(.product-promo-banner-wrapper) {
+			order: 19; /* App block appears BELOW promo banner */
 			margin-bottom: 0px !important; /* reduce gap! */
 			margin-top: 16px !important;
 		}
-		.product-add-to-cart > div:not(.product-upsell-block):not(.add-to-cart):not(.product-add-to-cart__additional-buttons):not(.product-add-to-cart__error):not(.recipient-form) * {
+		.product-add-to-cart > div:not(.product-upsell-block):not(.add-to-cart):not(.product-add-to-cart__additional-buttons):not(.product-add-to-cart__error):not(.recipient-form):not(.product-promo-banner-wrapper) * {
 			border-radius: 0px !important;
 		}
 

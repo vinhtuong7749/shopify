@@ -9,6 +9,8 @@
  */
 {
   "current": {
+    "social_facebook_link": "https://www.facebook.com/profile.php?id=61575744733042",
+    "social_instagram_link": "https://www.instagram.com/camo.signal/",
     "base_font": "oswald_n4",
     "heading_font": "anton_n4",
     "base_font_size": 130,
@@ -65,11 +67,6 @@
         "disabled": false,
         "settings": {}
       },
-      "144831480468751239": {
-        "type": "shopify://apps/essential-upsell/blocks/app-embed/50627fd9-24fd-4250-8614-accc12826d80",
-        "disabled": false,
-        "settings": {}
-      },
       "12120936241911852800": {
         "type": "shopify://apps/judge-me-reviews/blocks/reviews_tab/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
         "disabled": false,
@@ -103,6 +100,28 @@
           "save_thumbnail": true,
           "form_selector": ".product-form",
           "media_selector": ".product-media"
+        }
+      },
+      "18228966181090706294": {
+        "type": "shopify://apps/selleasy/blocks/app-embed/790c1a03-a71f-4bc1-9869-00dad526d3c2",
+        "disabled": false,
+        "settings": {
+          "storefrontAccessToken": ""
+        }
+      },
+      "144831480468751239": {
+        "type": "shopify://apps/essential-upsell/blocks/app-embed/50627fd9-24fd-4250-8614-accc12826d80",
+        "disabled": true,
+        "settings": {}
+      },
+      "8746983209849429782": {
+        "type": "shopify://apps/dealeasy/blocks/app-embed/e47a8634-0496-480d-9e46-6f7fafd34b30",
+        "disabled": true,
+        "settings": {
+          "dealeasy_public_access_token": "",
+          "using_translated_handles": true,
+          "bundle_cart_validation": false,
+          "custom_script_and_style": "<script></script>\n<style></style>"
         }
       }
     },

@@ -73,7 +73,6 @@
 						{%- render 'product-options', section: section, block: block, product: product -%}
 					{%- when 'quantity' -%}
 						{%- render 'product-quantity', block: block, product: product -%}
-						{%- render 'product-promo-banner' -%}
 					{%- when 'price' -%}
 						<div class="product-flashsale-and-price-group" style="display: flex; align-items: center; justify-content: flex-start; flex-wrap: nowrap; gap: 16px; margin-bottom: 16px; margin-top: 8px;">
 							<div class="product-price-and-review-wrapper" id="product-price-and-review-wrapper-{{ section.id }}" style="display: flex; align-items: center; justify-content: flex-start; gap: 8px; flex: 0 1 auto; min-width: 0;">

@@ -627,10 +627,10 @@
 				</ul>
 				
 				<div class="footer-custom-socials mobile-only" style="margin-top: 32px;">
-					<a href="#" target="_blank" style="color: #faf6ee;">
+					<a href="{{ settings.social_facebook_link | default: 'https://www.facebook.com/profile.php?id=61575744733042' }}" target="_blank" style="color: #faf6ee;">
 						{% render 'icons-social', icon: 'facebook' %}
 					</a>
-					<a href="#" target="_blank" style="color: #faf6ee;">
+					<a href="{{ settings.social_instagram_link | default: 'https://www.instagram.com/camo.signal/' }}" target="_blank" style="color: #faf6ee;">
 						{% render 'icons-social', icon: 'instagram' %}
 					</a>
 					<a href="#" target="_blank" style="color: #faf6ee;">
@@ -664,10 +664,10 @@
 				{%- endform -%}
 				
 				<div class="footer-custom-socials desktop-only" style="margin-top: 20px;">
-					<a href="#" target="_blank" style="color: #faf6ee;">
+					<a href="{{ settings.social_facebook_link | default: 'https://www.facebook.com/profile.php?id=61575744733042' }}" target="_blank" style="color: #faf6ee;">
 						{% render 'icons-social', icon: 'facebook' %}
 					</a>
-					<a href="#" target="_blank" style="color: #faf6ee;">
+					<a href="{{ settings.social_instagram_link | default: 'https://www.instagram.com/camo.signal/' }}" target="_blank" style="color: #faf6ee;">
 						{% render 'icons-social', icon: 'instagram' %}
 					</a>
 					<a href="#" target="_blank" style="color: #faf6ee;">

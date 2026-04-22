@@ -81,6 +81,26 @@
             "offset_bottom_mobile": 8
           }
         },
+        "dealeasy_vd_cards_F9ftCd": {
+          "type": "shopify://apps/dealeasy/blocks/vd-cards/e47a8634-0496-480d-9e46-6f7fafd34b30",
+          "settings": {
+            "lb-product-handle": "",
+            "lb-product-id": ""
+          }
+        },
+        "add_to_cart": {
+          "type": "add_to_cart",
+          "settings": {
+            "button_type": "secondary",
+            "button_buy_it_type": "primary",
+            "show_additional_buttons": false,
+            "show_gift_card_recipient": true,
+            "offset_top_desktop": 8,
+            "offset_bottom_desktop": 8,
+            "offset_top_mobile": 8,
+            "offset_bottom_mobile": 8
+          }
+        },
         "upsell": {
           "type": "upsell_product_block",
           "settings": {
@@ -93,18 +113,9 @@
             "offset_bottom_mobile": 12
           }
         },
-        "add_to_cart": {
-          "type": "add_to_cart",
-          "settings": {
-            "button_type": "secondary",
-            "button_buy_it_type": "primary",
-            "show_additional_buttons": true,
-            "show_gift_card_recipient": true,
-            "offset_top_desktop": 8,
-            "offset_bottom_desktop": 8,
-            "offset_top_mobile": 8,
-            "offset_bottom_mobile": 8
-          }
+        "selleasy_lb_upsell_widget_cpal_JbWLNH": {
+          "type": "shopify://apps/selleasy/blocks/lb-upsell-widget-cpal/790c1a03-a71f-4bc1-9869-00dad526d3c2",
+          "settings": {}
         },
         "drawers": {
           "type": "drawers",
@@ -198,8 +209,10 @@
         "options",
         "inventory_status",
         "quantity",
-        "upsell",
+        "dealeasy_vd_cards_F9ftCd",
         "add_to_cart",
+        "upsell",
+        "selleasy_lb_upsell_widget_cpal_JbWLNH",
         "drawers",
         "pickup_availability",
         "sales_point_cDLqCC",
