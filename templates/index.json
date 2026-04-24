@@ -257,7 +257,7 @@
       "name": "Featured products",
       "settings": {
         "enable_color_scheme_inheritance": true,
-        "color_scheme": "",
+        "color_scheme": "scheme-1",
         "heading": "",
         "link_label": "Shop all products",
         "link_url": "shopify://collections/all",

@@ -9,14 +9,14 @@
  */
 {
   "current": {
-    "social_facebook_link": "https://www.facebook.com/profile.php?id=61575744733042",
-    "social_instagram_link": "https://www.instagram.com/camo.signal/",
     "base_font": "oswald_n4",
     "heading_font": "anton_n4",
     "base_font_size": 130,
     "favicon": "shopify://shop_images/LOGO_FINAL_WEBSITE.png",
     "container_width": "2048px",
     "product_default_image": "shopify://shop_images/Northeast_Wildlife_Nature_T_shirt_5.jpg",
+    "social_facebook_link": "https://www.facebook.com/profile.php?id=61575744733042",
+    "social_instagram_link": "https://www.instagram.com/camo.signal/",
     "show_breadcrumbs": false,
     "sections": {
       "smart-popup": {
@@ -39,7 +39,7 @@
           "input_placeholder": "Your email address",
           "btn_label": "Subscribe",
           "success_message": "Thank you! Use the promo code below at checkout:",
-          "coupon_code": "CAMO10",
+          "coupon_code": "CAMOSIGNAL10",
           "disclaimer": "No spam, unsubscribe anytime. Just early promotions and new releases.",
           "bg_color": "#2c3d33",
           "text_color": "#faf6ee",
@@ -134,7 +134,7 @@
           "color_text_heading": "#2c3d33",
           "color_accent": "#ffd875",
           "color_link": "#d33636",
-          "color_background": "#faf6ee",
+          "color_background": "#ffffff",
           "color_background_secondary": "#f2f2f2",
           "color_background_popup_drawer": "#ffffff",
           "button_text_color_primary": "#2c3d33",
