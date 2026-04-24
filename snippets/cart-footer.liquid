@@ -19,6 +19,13 @@
 {%- endcapture -%}
 
 {%- capture cart_total -%}
+	{%- assign total_compare_at_price = 0 -%}
+	{%- for item in cart.items -%}
+		{%- assign item_compare_price = item.variant.compare_at_price | default: item.original_price -%}
+		{%- assign line_compare = item_compare_price | times: item.quantity -%}
+		{%- assign total_compare_at_price = total_compare_at_price | plus: line_compare -%}
+	{%- endfor -%}
+
 	{%- if cart.cart_level_discount_applications.size > 0 -%}
 		<div class="cart-footer__savings" style="display: flex; align-items: center; justify-content: space-between; font-size: 14px; margin-bottom: 8px;">
 			<span style="font-family: var(--font-body-family);">Discounts</span>
@@ -36,15 +43,20 @@
 		</div>
 	{%- endif -%}
 
-	<p class="cart-footer__subtotal">
-		<span class="cart-footer__subtotal-label">
-			{{- 'cart.general.subtotal' | t | append: ':' -}}
+	<div class="cart-footer__subtotal" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+		<span class="cart-footer__subtotal-label" style="font-weight: 600; font-size: 16px;">
+			Subtotal ({{ cart.item_count }} {% if cart.item_count == 1 %}item{% else %}items{% endif %})
 		</span>
 
-		<span class="cart-footer__subtotal-value">
-			{{- cart.total_price | money -}}
+		<span class="cart-footer__subtotal-value" style="display: flex; gap: 8px; align-items: center; font-weight: 600; font-size: 18px;">
+			{%- if total_compare_at_price > cart.total_price -%}
+				<span style="color: #c0392b;">{{ cart.total_price | money }}</span>
+				<s style="color: #999; font-size: 14px; font-weight: 400;">{{ total_compare_at_price | money }}</s>
+			{%- else -%}
+				<span style="color: #c0392b;">{{ cart.total_price | money }}</span>
+			{%- endif -%}
 		</span>
-	</p>
+	</div>
 {%- endcapture -%}
 
 {%- capture checkout_buttons -%}
@@ -58,9 +70,16 @@
 		{%- assign cta_class = "cart-template__ctas" -%}
 	{%- endif -%}
 
-	<div class="{{ cta_class }} js-cart-footer-button" style="display: flex; flex-direction: column; width: 100%; position: sticky; bottom: 0; z-index: 200; background: #ffffff; padding: 16px 24px 12px; border-top: 1px solid #e0e0e0; margin-left: auto; margin-right: auto; max-width: 100%;">
+	<div class="{{ cta_class }} js-cart-footer-button" style="display: flex; flex-direction: column; width: 100%; position: sticky; bottom: 0; z-index: 200; background: #faf6ee; padding: 16px 24px 12px; border-top: 1px solid #e0dcd2; margin-left: auto; margin-right: auto; max-width: 100%;">
+		<div style="margin-bottom: 6px; width: 100%;">
+			{%- render 'cart-discount' -%}
+		</div>
+
+		<div class="js-cart-subtotal" style="width: 100%;">
+			{{- cart_total -}}
+		</div>
 		{%- capture default_checkout_button -%}
-			Checkout &bull; <span class="js-cart-subtotal">{{ cart.total_price | money }}</span>
+			Checkout
 		{%- endcapture -%}
 
 		{%- assign checkout_button = settings.cart_checkout_button | default: default_checkout_button -%}
@@ -161,71 +180,10 @@
 							assign discount_codes = discount_codes | uniq
 						%}
 
-						<div class="js-cart-discount-block cart-discount">
-							<form class="cart-discount__discount-form js-cart-discount-form" novalidate>
-								<div class="input-wrapper cart-discount__discount-form-input-wrapper">
-									<label class="visually-hidden" for="cart-discount">
-										{{- "cart.general.discount" | t -}}
-									</label>
 
-									<input
-										class="input cart-discount__discount-form-input"
-										type="text"
-										id="cart-discount"
-										name="discount"
-										placeholder="{{- 'cart.general.discount_placeholder' | t -}}"
-									/>
-								</div>
-
-								<button class="button button--secondary cart-discount__discount-form-button js-cart-discount-apply-button" style="border-radius: 6px !important; font-family: 'Oswald', sans-serif !important; text-transform: uppercase; font-weight: 600; background: #0d1f6b !important; border-color: #0d1f6b !important; color: #ffffff !important;">
-									{{- "cart.general.apply_discount" | t -}}
-								</button>
-							</form>
-
-							<div
-								class="cart-discount__discount-form-error js-cart-discount-error is-hidden"
-								role="alert"
-							>
-								<span class="cart-discount__discount-form-error-icon-wrapper">
-									{% render 'icons', icon: 'error' %}
-								</span>
-
-								<span class="cart-discount__discount-form-error-text js-cart-discount-error-code is-hidden">
-									{{ 'cart.general.discount_code_error' | t }}
-								</span>
-
-								<small class="cart-discount__discount-form-error-text js-cart-discount-error-shipping is-hidden">
-									{{ 'cart.general.shipping_discount_error' | t }}
-								</small>
-							</div>
-
-							{%- if discount_codes.size > 0 -%}
-								<ul class="cart-discount__codes">
-									{% for discount_code in discount_codes %}
-										<li
-											class="cart-discount__pill js-cart-discount-pill"
-											aria-label="{{ 'cart.general.discount_applied' | t: code: discount_code }}"
-											data-discount-code="{{ discount_code }}"
-										>
-											<p class="cart-discount__pill-code">
-												{{ discount_code }}
-											</p>
-
-											<button
-												class="cart-discount__pill-remove focus-visible-outline js-cart-discount-pill-remove"
-												aria-label="{{ 'cart.general.remove_discount' | t: code: discount_code }}"
-												type="button"
-											>
-												{% render 'icons', icon: 'close' %}
-											</button>
-										</li>
-									{% endfor %}
-								</ul>
-							{%- endif -%}
-						</div>
 					{% endif %}
 
-					{%- if settings.show_cart_note -%}
+					{%- if false and settings.show_cart_note -%}
 						<div class="textarea-wrapper">
 							<textarea
 								id="note-cart"
@@ -245,8 +203,9 @@
 			{%- endif -%}
 
 			<div class="cart-template__total">
-				<div class="js-cart-subtotal">
+				<div class="js-cart-subtotal" style="display: none;">
 					{{- cart_total -}}
+				</div>
 
 					{%- if settings.show_tax_and_shipping -%}
 						{{- tax_message -}}
@@ -260,7 +219,6 @@
 {%- else -%}
 	<div class="cart-footer" style="display: contents;">
 		<div class="cart-footer__summary" style="padding: 0 24px;">
-			{%- render 'cart-discount' -%}
 			{%- render 'cart-notes', id: section.id -%}
 
 			{%- if benefits != blank -%}
@@ -268,10 +226,6 @@
 					{{- benefits -}}
 				</div>
 			{%- endif -%}
-
-			<div class="cart-footer__subtotal-block js-cart-subtotal">
-				{{- cart_total -}}
-			</div>
 		</div>
 
 		<div class="cart-footer__main" style="display: contents;">

@@ -22,95 +22,74 @@
 		assign discount_codes = discount_codes | uniq
 	%}
 
-	<div class="js-cart-discount-block">
-		<div class="cart-block cart-discount js-cart-discount-accordion-container js-accordion-container">
-			<div class="cart-block__accordion js-accordion-item">
-				<button
-					class="cart-block__header focus-visible-outline js-accordion-control"
-					aria-controls="cart-discounts"
-					aria-expanded="false"
-				>
-					<span class="cart-block__icon cart-block__icon-plus">
-						{% render 'icons', icon: 'plus' %}
-					</span>
+	<div class="js-cart-discount-block cart-discount" style="margin-bottom: 0;">
+		<form class="cart-discount__discount-form js-cart-discount-form" novalidate style="display: flex; gap: 8px;">
+			<div class="input-wrapper cart-discount__discount-form-input-wrapper" style="flex: 1; margin: 0; display: flex;">
+				<label class="visually-hidden" for="cart-discount">
+					{{- "cart.general.discount" | t -}}
+				</label>
 
-					<span class="cart-block__icon cart-block__icon-minus">
-						{% render 'icons', icon: 'minus' %}
-					</span>
-
-					<span class="cart-block__text">
-						{{- "cart.general.discount_accordion_button" | t -}}
-					</span>
-				</button>
-
-				<div
-					id="cart-discounts"
-					class="cart-discount__content cart-block__content js-accordion-content"
-				>
-					<div class="cart-block__wrapper js-accordion-inner">
-						<form class="cart-discount__discount-form js-cart-discount-form" novalidate>
-							<div class="input-wrapper cart-discount__discount-form-input-wrapper">
-								<label class="visually-hidden" for="cart-discount">
-									{{- "cart.general.discount" | t -}}
-								</label>
-
-								<input
-									class="input cart-discount__discount-form-input"
-									type="text"
-									id="cart-discount"
-									name="discount"
-									placeholder="{{- 'cart.general.discount_placeholder' | t -}}"
-								/>
-							</div>
-
-							<button class="button button--secondary cart-discount__discount-form-button js-cart-discount-apply-button" style="border-radius: 6px !important; font-family: 'Oswald', sans-serif !important; text-transform: uppercase; font-weight: 600; background: #0d1f6b !important; border-color: #0d1f6b !important; color: #ffffff !important;">
-								{{- "cart.general.apply_discount" | t -}}
-							</button>
-						</form>
-
-						<div
-							class="cart-discount__discount-form-error js-cart-discount-error is-hidden"
-							role="alert"
-						>
-							<span class="cart-discount__discount-form-error-icon-wrapper">
-								{% render 'icons', icon: 'error' %}
-							</span>
-
-							<span class="cart-discount__discount-form-error-text js-cart-discount-error-code is-hidden">
-								{{ 'cart.general.discount_code_error' | t }}
-							</span>
-
-							<small class="cart-discount__discount-form-error-text js-cart-discount-error-shipping is-hidden">
-								{{ 'cart.general.shipping_discount_error' | t }}
-							</small>
-						</div>
-
-						{%- if discount_codes.size > 0 -%}
-							<ul class="cart-discount__codes">
-								{% for discount_code in discount_codes %}
-									<li
-										class="cart-discount__pill js-cart-discount-pill"
-										aria-label="{{ 'cart.general.discount_applied' | t: code: discount_code }}"
-										data-discount-code="{{ discount_code }}"
-									>
-										<p class="cart-discount__pill-code">
-											{{ discount_code }}
-										</p>
-
-										<button
-											class="cart-discount__pill-remove focus-visible-outline js-cart-discount-pill-remove"
-											aria-label="{{ 'cart.general.remove_discount' | t: code: discount_code }}"
-											type="button"
-										>
-											{% render 'icons', icon: 'close' %}
-										</button>
-									</li>
-								{% endfor %}
-							</ul>
-						{%- endif -%}
-					</div>
-				</div>
+				<style>
+					.cart-discount__discount-form-input::placeholder {
+						font-family: 'Oswald', sans-serif !important;
+						text-transform: uppercase;
+						letter-spacing: 0.5px;
+					}
+				</style>
+				<input
+					class="input cart-discount__discount-form-input"
+					type="text"
+					id="cart-discount"
+					name="discount"
+					placeholder="DISCOUNT CODE"
+					style="height: 44px !important; min-height: 44px !important; padding: 0 12px; width: 100%; border: 1px solid #e0dcd2; border-radius: 4px; background: transparent; font-size: 14px; box-sizing: border-box !important; margin: 0; font-family: 'Oswald', sans-serif !important; text-transform: uppercase; letter-spacing: 0.5px;"
+				/>
 			</div>
+
+			<button class="button button--secondary cart-discount__discount-form-button js-cart-discount-apply-button" style="height: 44px !important; min-height: 44px !important; border-radius: 4px !important; font-family: 'Oswald', sans-serif !important; text-transform: uppercase; font-weight: 600; padding: 0 24px; letter-spacing: 0.5px; box-sizing: border-box !important; margin: 0; display: flex; align-items: center; justify-content: center; background-color: #324335 !important; border-color: #324335 !important; color: #ffffff !important;">
+				APPLY
+			</button>
+		</form>
+
+		<div
+			class="cart-discount__discount-form-error js-cart-discount-error is-hidden"
+			role="alert"
+		>
+			<span class="cart-discount__discount-form-error-icon-wrapper">
+				{% render 'icons', icon: 'error' %}
+			</span>
+
+			<span class="cart-discount__discount-form-error-text js-cart-discount-error-code is-hidden">
+				{{ 'cart.general.discount_code_error' | t }}
+			</span>
+
+			<small class="cart-discount__discount-form-error-text js-cart-discount-error-shipping is-hidden">
+				{{ 'cart.general.shipping_discount_error' | t }}
+			</small>
 		</div>
+
+		{%- if discount_codes.size > 0 -%}
+			<ul class="cart-discount__codes">
+				{% for discount_code in discount_codes %}
+					<li
+						class="cart-discount__pill js-cart-discount-pill"
+						aria-label="{{ 'cart.general.discount_applied' | t: code: discount_code }}"
+						data-discount-code="{{ discount_code }}"
+					>
+						<p class="cart-discount__pill-code">
+							{{ discount_code }}
+						</p>
+
+						<button
+							class="cart-discount__pill-remove focus-visible-outline js-cart-discount-pill-remove"
+							aria-label="{{ 'cart.general.remove_discount' | t: code: discount_code }}"
+							type="button"
+						>
+							{% render 'icons', icon: 'close' %}
+						</button>
+					</li>
+				{% endfor %}
+			</ul>
+		{%- endif -%}
 	</div>
 {%- endif -%}

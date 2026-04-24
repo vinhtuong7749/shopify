@@ -28,16 +28,6 @@
 	{%- endcapture -%}
 {% endif %}
 
-{%- capture discounts -%}
-	{%- for discount in item.line_level_discount_allocations -%}
-		<li class="discounts__item cart-item-drawer__discount">
-			{% render 'icons', icon: 'discount' %}
-
-			{{ discount.discount_application.title }}
-		</li>
-	{%- endfor -%}
-{%- endcapture -%}
-
 {%- capture properties -%}
 	{%- for property in item.properties -%}
 		{%- assign property_first_char = property.first | slice: 0 -%}
@@ -212,7 +202,7 @@
 		</a>
 	</div>
 
-	<div class="cart-item-drawer__content">
+	<div class="cart-item-drawer__content" style="min-width: 0; flex: 1;">
 		<div class="cart-item-drawer__header">
 			<div class="cart-item-drawer__details">
 				{%- if settings.show_vendor -%}
@@ -221,8 +211,8 @@
 					</p>
 				{%- endif -%}
 
-				<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; width: 100%;">
-					<a href="{{- item.url -}}" class="focus-visible-outline cart-item-drawer__details-title" style="flex: 1;">
+				<div style="display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 10px; width: 100%;">
+					<a href="{{- item.url -}}" class="focus-visible-outline cart-item-drawer__details-title" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">
 						{{- title | escape -}}
 					</a>
 
@@ -231,19 +221,38 @@
 					   class="button-link focus-visible-outline js-cart-item-remove"
 					   data-index="{{- item.index | plus: 1 -}}"
 					   data-item-key="{{- item.key -}}"
-					   style="margin-top: 5px; align-self: flex-start; color: #555; flex-shrink: 0;"
+					   style="margin-top: 5px; color: #555;"
 					>
 						{% render 'icons', icon: 'trash' %}
 					</a>
 				</div>
 
+				{%- assign has_options = false -%}
 				{%- unless item.product.has_only_default_variant -%}
-					<p class="cart-item-drawer__details-text">
-						{%- for option in variant.options -%}
-							{{- option.name }} {% unless forloop.last %}|{% endunless %}
-						{%- endfor -%}
-					</p>
+					{%- assign has_options = true -%}
 				{%- endunless -%}
+
+				{%- if has_options or item.line_level_discount_allocations.size > 0 -%}
+					<p class="cart-item-drawer__details-text" style="display: flex; align-items: center; flex-wrap: wrap;">
+						{%- if has_options -%}
+							{%- for option in variant.options -%}
+								<span>{{- option.name }}</span>{% unless forloop.last %}&nbsp;|&nbsp;{% endunless %}
+							{%- endfor -%}
+						{%- endif -%}
+						
+						{%- if item.line_level_discount_allocations.size > 0 -%}
+							{%- if has_options -%} &nbsp;|&nbsp; {% endif -%}
+							<span style="display: flex; align-items: center; gap: 4px;">
+								{%- for discount in item.line_level_discount_allocations -%}
+									<span style="display: flex; align-items: center; gap: 4px;">
+										<span style="display: flex; align-items: center; margin-top: -1px; transform: scale(0.85); transform-origin: center;">{% render 'icons', icon: 'discount' %}</span>
+										<span>{{ discount.discount_application.title }}</span>
+									</span>{%- unless forloop.last -%}, {% endunless -%}
+								{%- endfor -%}
+							</span>
+						{%- endif -%}
+					</p>
+				{%- endif -%}
 
 				{%- if item.selling_plan_allocation != nil -%}
 					<p class="cart-item-drawer__option cart-item-drawer__option--italic">
@@ -266,27 +275,27 @@
 					<div class="cart-item-drawer__price-wrapper" style="display: flex; align-items: center; gap: 8px;">
 						<div class="cart-item-drawer__summary{% if variant.available and item.unit_price_measurement %} cart-item-drawer__summary--with-unit{% endif %}" style="margin: 0; padding: 0;">
 							{%- if is_discounted -%}
-								<div class="cart-item-drawer__price-varies" style="justify-content: flex-start !important;">
+								<div class="cart-item-drawer__price-varies" style="justify-content: flex-start !important; align-items: baseline; gap: 6px;">
 									<span class="visually-hidden">
 										{{- 'products.product.price.sale_price' | t -}}
 									</span>
-									<span class="cart-item-drawer__price cart-item-drawer__price--new">
+									<span class="cart-item-drawer__price cart-item-drawer__price--new" style="font-size: 18px; font-weight: 700; color: #c0392b;">
 										{{- item.final_line_price | money -}}
 									</span>
 									<span class="visually-hidden">
 										{{ 'products.product.price.regular_price' | t }}
 									</span>
-									<s class="cart-item-drawer__price cart-item-drawer__price--old">
+									<s class="cart-item-drawer__price cart-item-drawer__price--old" style="font-size: 14px; font-weight: 400; color: #999;">
 										{{- item.original_line_price | money -}}
 									</s>
 								</div>
 							{%- else -%}
 								{%- if item.variant.compare_at_price and show_compare_at_price_in_cart -%}
-									<div class="cart-item-drawer__price-varies" style="justify-content: flex-start !important;">
-										<div class="cart-item-drawer__price cart-item-drawer__price--new">
+									<div class="cart-item-drawer__price-varies" style="justify-content: flex-start !important; align-items: baseline; gap: 6px;">
+										<div class="cart-item-drawer__price cart-item-drawer__price--new" style="font-size: 18px; font-weight: 700; color: #c0392b;">
 											{{- item.original_line_price | money -}}
 										</div>
-										<s class="cart-item-drawer__price cart-item-drawer__price--old">
+										<s class="cart-item-drawer__price cart-item-drawer__price--old" style="font-size: 14px; font-weight: 400; color: #999;">
 											{{ item.variant.compare_at_price | times: item.quantity | money }}
 										</s>
 									</div>
@@ -309,14 +318,6 @@
 								</small>
 							{%- endif -%}
 						</div>
-
-						{%- assign base_price = item.variant.compare_at_price | default: item.variant.price -%}
-						{%- assign base_line_price = base_price | times: item.quantity -%}
-						{%- if base_line_price > item.final_line_price -%}
-							{%- assign discount_amount = base_line_price | minus: item.final_line_price -%}
-							{%- assign discount_percent = discount_amount | times: 100.0 | divided_by: base_line_price | round -%}
-							<span style="background: #c0392b; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; line-height: 1.2;">-{{ discount_percent }}%</span>
-						{%- endif -%}
 					</div>
 
 					{{- quantity_widget -}}

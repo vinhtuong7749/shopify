@@ -126,11 +126,7 @@
 	aria-labelledby="CartDrawer-{{- heading | handle -}}"
 	style="background-color: #faf6ee !important; --color-background: #faf6ee !important; --color-background-popup-drawer: #faf6ee !important;"
 >
-	<div class="drawer__header js-cart-header">
-		<h2 class="drawer__title cart-drawer__title-empty h4" id="CartDrawer-{{- heading | handle -}}">
-			{{- heading -}}
-		</h2>
-
+	<div class="drawer__header js-cart-header" style="position: absolute; top: 12px; right: 12px; z-index: 50; border: none; padding: 0; margin: 0; background: transparent;">
 			<button
 				class="drawer__close focus-visible-outline js-cart-close-button"
 				data-target="CartDrawer"
@@ -141,7 +137,10 @@
 			</button>
 		</div>
 
-	<div class="drawer__body cart-drawer__container js-cart-container js-scroll-lock-container" data-scrollable>
+	<div class="drawer__body cart-drawer__container js-cart-container js-scroll-lock-container" data-scrollable style="padding-top: 20px;">
+		<h2 class="drawer__title cart-drawer__title-empty h4" id="CartDrawer-{{- heading | handle -}}" style="font-family: 'Oswald', sans-serif; color: #2c3d33; font-weight: 700; text-transform: uppercase; margin: 0 16px 8px; font-size: 20px; letter-spacing: 0.5px; border-bottom: 1px solid #e0dcd2; padding-bottom: 16px; padding-right: 40px;">
+			{{- heading -}}
+		</h2>
 		<div class="cart-drawer__content js-cart-content">
 			{%- if cart.empty? -%}
 				{%- render 'cart-empty' -%}
@@ -150,7 +149,7 @@
 					<div id="cart-drawer-main-content">
 						{%- comment -%} Shipping bar at top {%- endcomment -%}
 						{%- if shipping_bar_content != '' -%}
-							<div class="cart-drawer__section cart-drawer__section--shipping" style="padding: 12px 16px; margin: 8px 16px 12px; background: #f5f3ef; border-radius: 10px;">
+							<div class="cart-drawer__section cart-drawer__section--shipping" style="padding: 10px 16px; margin: 16px 16px 8px; background: #2c3d33; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
 								{{- shipping_bar_content -}}
 							</div>
 						{%- endif -%}
