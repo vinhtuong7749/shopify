@@ -417,45 +417,127 @@
 		(function() {
 			function initMobileStickyATC() {
 				var bar = document.getElementById('mobile-sticky-atc');
-				var realBtn = document.querySelector('.product-add-to-cart .add-to-cart');
-				if (!bar || !realBtn) return;
+				var fakeBtn = bar ? bar.querySelector('.js-mobile-sticky-atc-btn') : null;
+				if (!bar || !fakeBtn) return;
 
 				if (window.innerWidth > 767) {
 					bar.classList.add('is-hidden');
 					return;
 				}
 
-				bar.classList.remove('is-hidden');
-
-				var observer = new IntersectionObserver(function(entries) {
-					entries.forEach(function(entry) {
-						if (entry.isIntersecting) {
-							bar.classList.add('is-hidden');
-						} else {
-							// Show sticky bar ONLY if we haven't reached the real button yet (top of page)
-							if (entry.boundingClientRect.top > 0) {
-								bar.classList.remove('is-hidden');
+				var form = document.querySelector('form[action^="/cart/add"]') || document.querySelector('.product-form');
+				var currentObserver = null;
+				var activeBtn = null;
+				
+				function startObserver(target) {
+					if (!target) return;
+					if (currentObserver) currentObserver.disconnect();
+					
+					currentObserver = new IntersectionObserver(function(entries) {
+						entries.forEach(function(entry) {
+							if (entry.isIntersecting) {
+								bar.classList.add('is-hidden'); // Original button is in view, hide sticky
 							} else {
-								bar.classList.add('is-hidden');
+								if (entry.boundingClientRect.top > 0) {
+									bar.classList.remove('is-hidden'); // Scrolled past it, show sticky
+								} else {
+									bar.classList.add('is-hidden'); // Scrolled above it
+								}
 							}
-						}
-					});
-				}, { threshold: 0 });
+						});
+					}, { threshold: 0 });
+					
+					// Observe the wrapper to be safe, or the button itself
+					var targetToObserve = target.closest('.product-add-to-cart') || target.closest('[class*="custom-option"]') || target;
+					currentObserver.observe(targetToObserve);
+				}
 
-				observer.observe(realBtn);
-
-				bar.querySelector('.js-mobile-sticky-atc-btn').addEventListener('click', function(e) {
+				// Click handler for our sticky fake button
+				fakeBtn.addEventListener('click', function(e) {
 					e.preventDefault();
-					// Check if Customix App button exists and is visible
-					var customixBtn = document.querySelector('#cm-options button, [class*="customix"] button[type="submit"], [class*="customix"] button, [class*="cx-"] button');
-					if (customixBtn && customixBtn.offsetParent !== null) {
-						// Scroll up to the Customix form if user hasn't filled it out (Optional optimization)
-						// For now, just trigger Customix's own validation/add logic
-						customixBtn.click();
-					} else {
-						realBtn.click();
+					
+					if (activeBtn) {
+						activeBtn.click(); // Trigger the actual button
+						
+						// Universal error scrolling logic using polling
+						var checkCount = 0;
+						var errorScrollInterval = setInterval(function() {
+							checkCount++;
+							var container = form ? (form.closest('.shopify-section') || document) : document;
+							var targetEl = null;
+							
+							var errorEls = container.querySelectorAll('.error, [class*="error"], [class*="Error"], [style*="color: red"], [style*="color: rgb(255"], [style*="color: #f"], [style*="color:#f"]');
+							for (var i = 0; i < errorEls.length; i++) {
+								var el = errorEls[i];
+								var txt = (el.innerText || el.textContent || '').trim().toUpperCase();
+								if (el.offsetParent !== null && txt.length > 0 && (txt.indexOf('REQUIRED') > -1 || txt.indexOf('BẮT BUỘC') > -1 || txt.indexOf('ERROR') > -1 || txt.indexOf('VUI LÒNG') > -1)) {
+									targetEl = el; break;
+								}
+							}
+							
+							if (!targetEl) {
+								var allText = container.querySelectorAll('span, p, div, label');
+								for (var i = 0; i < allText.length; i++) {
+									var el = allText[i];
+									var txt = (el.innerText || el.textContent || '').trim().toUpperCase();
+									if (el.offsetParent !== null && (txt === 'THIS OPTION IS REQUIRED!' || txt === 'THIS OPTION IS REQUIRED' || txt === 'BẮT BUỘC')) {
+										targetEl = el; break;
+									}
+								}
+							}
+							
+							if (targetEl) {
+								clearInterval(errorScrollInterval);
+								var scrollTarget = targetEl.closest('.cm-option, .cx-option, [class*="customix"], div[class*="field"], div[class*="option"]') || targetEl;
+								var offset = scrollTarget.getBoundingClientRect().top + window.scrollY - 180;
+								window.scrollTo({ top: offset, behavior: 'smooth' });
+							} else if (checkCount === 1 && form && typeof form.checkValidity === 'function' && !form.checkValidity()) {
+								clearInterval(errorScrollInterval);
+								var firstInvalid = form.querySelector(':invalid');
+								if (firstInvalid) {
+									var offset = firstInvalid.getBoundingClientRect().top + window.scrollY - 150;
+									window.scrollTo({ top: offset, behavior: 'smooth' });
+								}
+							}
+							
+							if (checkCount > 10) { // Stop checking after 1 second
+								clearInterval(errorScrollInterval);
+							}
+						}, 100);
 					}
 				});
+
+				// Polling to find the correct active button
+				var detectAppInterval = setInterval(function() {
+					var primaryBtn = null;
+					var realBtn = document.querySelector('.product-add-to-cart .add-to-cart');
+					
+					var btns = form ? form.querySelectorAll('button:not([style*="display: none"])') : document.querySelectorAll('button:not([style*="display: none"])');
+					for(var j = 0; j < btns.length; j++) {
+						var b = btns[j];
+						if (b.offsetParent !== null && 
+							b.className.indexOf('quantity') === -1 && 
+							b.className.indexOf('shopify-payment') === -1 && 
+							b.className.indexOf('mobile-sticky-atc') === -1) {
+							
+							if (b.type === 'submit' || b.className.indexOf('add-to-cart') > -1 || b.className.indexOf('cx-') > -1 || b.id.indexOf('custom') > -1) {
+								primaryBtn = b;
+								if (primaryBtn !== realBtn) break; // found app button
+							}
+						}
+					}
+					
+					if (!primaryBtn && realBtn && realBtn.offsetParent !== null) {
+						primaryBtn = realBtn;
+					}
+					
+					// If we found a valid button and it's different from the one we are currently tracking
+					if (primaryBtn && primaryBtn !== activeBtn) {
+						activeBtn = primaryBtn;
+						startObserver(activeBtn);
+					}
+					
+				}, 1000);
 			}
 
 			if (document.readyState === 'loading') {

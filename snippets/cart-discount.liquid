@@ -69,15 +69,14 @@
 		</div>
 
 		{%- if discount_codes.size > 0 -%}
-			<ul class="cart-discount__codes" style="list-style: none; padding: 0; margin: 8px 0 0 0; display: flex; flex-wrap: wrap; gap: 8px;">
+			<ul class="cart-discount__codes">
 				{% for discount_code in discount_codes %}
 					<li
 						class="cart-discount__pill js-cart-discount-pill"
 						aria-label="{{ 'cart.general.discount_applied' | t: code: discount_code }}"
 						data-discount-code="{{ discount_code }}"
-						style="background: #ebf0ec; color: #324335; border: 1px solid #324335; padding: 4px 10px; border-radius: 4px; font-family: 'Oswald', sans-serif; text-transform: uppercase; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; box-sizing: border-box;"
 					>
-						<p class="cart-discount__pill-code" style="margin: 0; line-height: 1;">
+						<p class="cart-discount__pill-code">
 							{{ discount_code }}
 						</p>
 
@@ -85,11 +84,8 @@
 							class="cart-discount__pill-remove focus-visible-outline js-cart-discount-pill-remove"
 							aria-label="{{ 'cart.general.remove_discount' | t: code: discount_code }}"
 							type="button"
-							style="background: none; border: none; padding: 0; margin: 0; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: #324335;"
 						>
-							<span style="display: flex; width: 12px; height: 12px; align-items: center; justify-content: center;">
-								{% render 'icons', icon: 'close' %}
-							</span>
+							{% render 'icons', icon: 'close' %}
 						</button>
 					</li>
 				{% endfor %}
