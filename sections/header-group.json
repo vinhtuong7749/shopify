@@ -19,7 +19,7 @@
         "autoplay_speed": 5,
         "text_content": "",
         "ticker_hide_bullets": false,
-        "ticker_text": "<p>Free shipping over $89</p><p>Buy 2 save 10%</p><p>Buy 3 save 15%</p><p>Buy 4 save 20%</p>",
+        "ticker_text": "<p>Free shipping from 2 items</p><p>Buy 2 save 10%</p><p>Buy 3 save 15%</p><p>Buy 4 save 20%</p>",
         "desktop_movement_speed": 40,
         "mobile_movement_speed": 10,
         "discount_code": "",
@@ -92,7 +92,7 @@
         "selling": {
           "type": "shipping",
           "settings": {
-            "amount": 89,
+            "amount": 45,
             "message": "You are only {amount} away from free shipping",
             "congratulatory_message": "You got free shipping",
             "bar_color": "#e9e9e9",

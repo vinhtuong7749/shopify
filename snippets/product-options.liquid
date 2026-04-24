@@ -100,7 +100,7 @@
 									>
 										{%- if swatch_image != blank -%}
 											<img
-												src="{{- swatch_image | image_url: width: 48, height: 48 -}}"
+												src="{{- swatch_image | image_url: width: 96, height: 96 -}}"
 												class="radio-option-swatch__image"
 												aria-hidden="true"
 												fetchpriority="low"
@@ -332,6 +332,25 @@
 
 	/* Mobile: Size selector grid 6 cột đều nhau */
 	@media screen and (max-width: 767px) {
+		/* Hiển thị 7 màu trên 1 hàng (Color swatches) */
+		.product-options .product-options__swatch-container {
+			display: grid !important;
+			grid-template-columns: repeat(7, 1fr) !important;
+			gap: 12px 6px !important;
+			width: 100% !important;
+		}
+		
+		.product-options .radio-option-swatch {
+			width: 100% !important;
+			height: auto !important;
+			aspect-ratio: 1 / 1 !important;
+		}
+		
+		.product-options .radio-option-swatch__label {
+			width: 100% !important;
+			height: 100% !important;
+		}
+
 		/* Force parent containers trải rộng full */
 		.product-options,
 		.product-options .js-product-options,
