@@ -35,13 +35,13 @@
 {%- endif -%}
 
 {%- capture discounts -%}
-	{%- for discount in item.line_level_discount_allocations -%}
-		<li class="discounts__item cart-item__discount">
-			{% render 'icons', icon: 'discount' %}
-
-			{{ discount.discount_application.title }}
-		</li>
-	{%- endfor -%}
+	{%- assign base_price = item.variant.compare_at_price | default: item.variant.price -%}
+	{%- assign base_line_price = base_price | times: item.quantity -%}
+	{%- if base_line_price > item.final_line_price -%}
+		{%- assign discount_amount = base_line_price | minus: item.final_line_price -%}
+		{%- assign discount_percent = discount_amount | times: 100.0 | divided_by: base_line_price | round -%}
+		<span style="display: inline-block; background: #c0392b; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; line-height: 1.2; margin-top: 5px;">-{{ discount_percent }}%</span>
+	{%- endif -%}
 {%- endcapture -%}
 
 {%- capture properties -%}
@@ -199,11 +199,7 @@
 		</dl>
 	{%- endif -%}
 
-	{%- if discounts != '' -%}
-		<ul class="discounts cart-item__discounts" role="list" aria-label="{{ 'customer.order.discount' | t | escape }}">
-			{{- discounts -}}
-		</ul>
-	{%- endif -%}
+
 {%- endcapture -%}
 
 {%- capture price_item -%}
@@ -320,6 +316,7 @@
 
 			<div class="cart-item__details">
 				{{ item_details }}
+				{{ discounts }}
 
 				<div class="cart-item__error js-cart-item-error" id="LineItemError-{{ item.index | plus: 1 }}-desktop" role="alert">
 					<small class="cart-item__error-text js-cart-item-error-message"></small>
@@ -399,64 +396,85 @@
 			<div class="cart-item__header">
 				<div class="cart-item__details">
 					{{ item_details }}
-				</div>
+					<div class="cart-item__bottom-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+						<div class="cart-item__price-wrapper" style="display: flex; align-items: center; gap: 8px;">
+							<div class="cart-item__summary" style="margin: 0; padding: 0;">
+								{%- if is_discounted -%}
+									<div class="cart-item__price-varies" style="justify-content: flex-start !important;">
+										<span class="visually-hidden">{{- 'products.product.price.sale_price' | t -}}</span>
+										<span class="cart-item__price cart-item__price--new">{{- item.final_line_price | money -}}</span>
+										<span class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>
+										<s class="cart-item__price cart-item__price--old">{{- item.original_line_price | money -}}</s>
+									</div>
+								{%- else -%}
+									{%- if item.variant.compare_at_price and show_compare_at_price_in_cart -%}
+										<div class="cart-item__price-varies" style="justify-content: flex-start !important;">
+											<div class="cart-item__price cart-item__price--new">{{- item.original_line_price | money -}}</div>
+											<s class="cart-item__price cart-item__price--old">{{ item.variant.compare_at_price | times: item.quantity | money }}</s>
+										</div>
+									{%- else -%}
+										<div class="cart-item__price">{{- item.original_line_price | money -}}</div>
+									{%- endif -%}
+								{%- endif -%}
+							</div>
+							{{ discounts | replace: 'margin-top: 5px;', 'margin-top: 0;' }}
+						</div>
 
+						<div class="cart-item__quantity">
+							<div class="cart-item__quantity-wrapper">
+								<label class="visually-hidden" for="Quantity-{{- item.index | plus: 1 -}}-mobile">
+									{{- 'products.quantity.label' | t -}}
+								</label>
 
-			</div>
+								<div class="quantity js-quantity" style="display: flex; flex-direction: row; align-items: center; border: 1px solid #ccc; border-radius: 8px; max-width: 100px;">
+										<button
+											class="focus-visible-outline quantity__button"
+											name="minus"
+											type="button"
+											data-quantity-decrease
+											aria-label="{{ 'products.quantity.decrease' | t: product: title | escape }}"
+											style="width: 32px; height: 36px; border: none; background: none; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #555;"
+										>
+											{% render 'icons', icon: 'minus' %}
+										</button>
 
-			<div class="cart-item__footer">
-				<div class="cart-item__quantity">
-					<div class="cart-item__quantity-wrapper">
-						<label class="visually-hidden" for="Quantity-{{- item.index | plus: 1 -}}-mobile">
-							{{- 'products.quantity.label' | t -}}
-						</label>
+									<input
+										class="focus-visible-outline quantity__input"
+										id="Quantity-{{- item.index | plus: 1 -}}-mobile"
+										type="number"
+										name="updates[]"
+										pattern="[0-9]*"
+										value="{{- item.quantity -}}"
+										min="{{ item.variant.quantity_rule.min }}"
+										max="{{ item.variant.quantity_rule.max }}"
+										step="{{ item.variant.quantity_rule.increment }}"
+										data-index="{{- item.index | plus: 1 -}}"
+										data-item-key="{{- item.key -}}"
+										data-quantity-input
+										aria-label="{{ 'products.quantity.input_label' | t: product: title | escape }}"
+										style="width: 34px; text-align: center; border-left: none; border-right: none; border-top: none; border-bottom: none; height: 36px; min-height: 36px; padding: 0; margin: 0; box-sizing: border-box; -moz-appearance: textfield;"
+									/>
 
-						<div class="quantity js-quantity" style="display: flex; flex-direction: row; align-items: center; border: 1px solid #ccc; max-width: 100px;">
-								<button
-									class="focus-visible-outline quantity__button"
-									name="minus"
-									type="button"
-									data-quantity-decrease
-									aria-label="{{ 'products.quantity.decrease' | t: product: title | escape }}"
-									style="width: 32px; height: 36px; border: none; background: none; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #555;"
-								>
-									{% render 'icons', icon: 'minus' %}
-								</button>
+										<button
+											class="focus-visible-outline quantity__button{% if max_inventory_added %} disabled{% endif %}"
+											name="plus"
+											type="button"
+											data-quantity-increase
+											aria-label="{{ 'products.quantity.increase' | t: product: title | escape }}"
+											style="width: 32px; height: 36px; border: none; background: none; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #555;"
+										>
+											{% render 'icons', icon: 'plus' %}
+										</button>
+								</div>
+							</div>
 
-							<input
-								class="focus-visible-outline quantity__input"
-								id="Quantity-{{- item.index | plus: 1 -}}-mobile"
-								type="number"
-								name="updates[]"
-								pattern="[0-9]*"
-								value="{{- item.quantity -}}"
-								min="{{ item.variant.quantity_rule.min }}"
-								max="{{ item.variant.quantity_rule.max }}"
-								step="{{ item.variant.quantity_rule.increment }}"
-								data-index="{{- item.index | plus: 1 -}}"
-								data-item-key="{{- item.key -}}"
-								data-quantity-input
-								aria-label="{{ 'products.quantity.input_label' | t: product: title | escape }}"
-								style="width: 34px; text-align: center; border-left: 1px solid #ccc; border-right: 1px solid #ccc; border-top: none; border-bottom: none; height: 36px; min-height: 36px; padding: 0; margin: 0; box-sizing: border-box; -moz-appearance: textfield;"
-							/>
-
-								<button
-									class="focus-visible-outline quantity__button{% if max_inventory_added %} disabled{% endif %}"
-									name="plus"
-									type="button"
-									data-quantity-increase
-									aria-label="{{ 'products.quantity.increase' | t: product: title | escape }}"
-									style="width: 32px; height: 36px; border: none; background: none; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #555;"
-								>
-									{% render 'icons', icon: 'plus' %}
-								</button>
+							{{- quantity_rules -}}
 						</div>
 					</div>
-
-					{{- quantity_rules -}}
 				</div>
+			</div>
 
-				{{ summary_price }}
+			<div class="cart-item__footer" style="display: none;">
 			</div>
 
 			<div class="cart-item__error js-cart-item-error" id="LineItemError-{{ item.index | plus: 1 }}-mobile" role="alert">

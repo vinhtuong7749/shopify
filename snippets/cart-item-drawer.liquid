@@ -129,7 +129,7 @@
 				{{- 'products.quantity.label' | t -}}
 			</label>
 
-			<div class="quantity js-quantity" style="display: flex; flex-direction: row; align-items: center; border: 1px solid #ccc; max-width: 100px;">
+			<div class="quantity js-quantity" style="display: flex; flex-direction: row; align-items: center; border: 1px solid #ccc; border-radius: 8px; max-width: 100px;">
 					<button
 						class="focus-visible-outline quantity__button"
 						name="minus"
@@ -155,7 +155,7 @@
 					data-item-key="{{- item.key -}}"
 					data-quantity-input
 					aria-label="{{ 'products.quantity.input_label' | t: product: title | escape }}"
-					style="width: 34px; text-align: center; border-left: 1px solid #ccc; border-right: 1px solid #ccc; border-top: none; border-bottom: none; height: 36px; min-height: 36px; padding: 0; margin: 0; box-sizing: border-box; -moz-appearance: textfield;"
+					style="width: 34px; text-align: center; border-left: none; border-right: none; border-top: none; border-bottom: none; height: 36px; min-height: 36px; padding: 0; margin: 0; box-sizing: border-box; -moz-appearance: textfield;"
 				/>
 
 					<button
@@ -257,76 +257,70 @@
 					</dl>
 				{%- endif -%}
 
-				{%- if discounts != '' -%}
-					<ul class="discounts cart-item-drawer__discounts" role="list" aria-label="{{ 'customer.order.discount' | t | escape }}">
-						{{- discounts -}}
-					</ul>
-				{%- endif -%}
-			</div>
-
-			{%- assign is_discounted = false -%}
-
-			{%- if item.original_line_price != item.final_line_price -%}
-				{%- assign is_discounted = true -%}
-			{%- endif -%}
-
-
-		</div>
-
-		<div class="cart-item-drawer__footer">
-			{{- quantity_widget -}}
-
-			<div class="cart-item-drawer__summary{% if variant.available and item.unit_price_measurement %} cart-item-drawer__summary--with-unit{% endif %}">
-				{%- if is_discounted -%}
-					<div class="cart-item-drawer__price-varies">
-						<span class="visually-hidden">
-							{{- 'products.product.price.sale_price' | t -}}
-						</span>
-
-						<span class="cart-item-drawer__price cart-item-drawer__price--new">
-							{{- item.final_line_price | money -}}
-						</span>
-
-						<span class="visually-hidden">
-							{{ 'products.product.price.regular_price' | t }}
-						</span>
-
-						<s class="cart-item-drawer__price cart-item-drawer__price--old">
-							{{- item.original_line_price | money -}}
-						</s>
-					</div>
-				{%- else -%}
-					{%- if item.variant.compare_at_price and show_compare_at_price_in_cart -%}
-						<div class="cart-item-drawer__price-varies">
-							<div class="cart-item-drawer__price cart-item-drawer__price--new">
-								{{- item.original_line_price | money -}}
-							</div>
-
-							<s class="cart-item-drawer__price cart-item-drawer__price--old">
-								{{ item.variant.compare_at_price | times: item.quantity | money }}
-							</s>
-						</div>
-					{%- else -%}
-						<div class="cart-item-drawer__price">
-							{{- item.original_line_price | money -}}
-						</div>
-					{%- endif -%}
+				{%- assign is_discounted = false -%}
+				{%- if item.original_line_price != item.final_line_price -%}
+					{%- assign is_discounted = true -%}
 				{%- endif -%}
 
-				{%- if variant.available and item.unit_price_measurement -%}
-					<small class="unit-price caption">
-						<span class="visually-hidden">{{ 'products.product.price.unit_price' | t }}</span>
-						{{ variant.unit_price | money }}
+				<div class="cart-item-drawer__bottom-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+					<div class="cart-item-drawer__price-wrapper" style="display: flex; align-items: center; gap: 8px;">
+						<div class="cart-item-drawer__summary{% if variant.available and item.unit_price_measurement %} cart-item-drawer__summary--with-unit{% endif %}" style="margin: 0; padding: 0;">
+							{%- if is_discounted -%}
+								<div class="cart-item-drawer__price-varies" style="justify-content: flex-start !important;">
+									<span class="visually-hidden">
+										{{- 'products.product.price.sale_price' | t -}}
+									</span>
+									<span class="cart-item-drawer__price cart-item-drawer__price--new">
+										{{- item.final_line_price | money -}}
+									</span>
+									<span class="visually-hidden">
+										{{ 'products.product.price.regular_price' | t }}
+									</span>
+									<s class="cart-item-drawer__price cart-item-drawer__price--old">
+										{{- item.original_line_price | money -}}
+									</s>
+								</div>
+							{%- else -%}
+								{%- if item.variant.compare_at_price and show_compare_at_price_in_cart -%}
+									<div class="cart-item-drawer__price-varies" style="justify-content: flex-start !important;">
+										<div class="cart-item-drawer__price cart-item-drawer__price--new">
+											{{- item.original_line_price | money -}}
+										</div>
+										<s class="cart-item-drawer__price cart-item-drawer__price--old">
+											{{ item.variant.compare_at_price | times: item.quantity | money }}
+										</s>
+									</div>
+								{%- else -%}
+									<div class="cart-item-drawer__price">
+										{{- item.original_line_price | money -}}
+									</div>
+								{%- endif -%}
+							{%- endif -%}
 
-						<span aria-hidden="true">/</span>
+							{%- if variant.available and item.unit_price_measurement -%}
+								<small class="unit-price caption">
+									<span class="visually-hidden">{{ 'products.product.price.unit_price' | t }}</span>
+									{{ variant.unit_price | money }}
+									<span aria-hidden="true">/</span>
+									{%- if variant.unit_price_measurement.reference_value != 1 -%}
+										{{- variant.unit_price_measurement.reference_value -}}
+									{%- endif -%}
+									{{ variant.unit_price_measurement.reference_unit }}
+								</small>
+							{%- endif -%}
+						</div>
 
-						{%- if variant.unit_price_measurement.reference_value != 1 -%}
-							{{- variant.unit_price_measurement.reference_value -}}
+						{%- assign base_price = item.variant.compare_at_price | default: item.variant.price -%}
+						{%- assign base_line_price = base_price | times: item.quantity -%}
+						{%- if base_line_price > item.final_line_price -%}
+							{%- assign discount_amount = base_line_price | minus: item.final_line_price -%}
+							{%- assign discount_percent = discount_amount | times: 100.0 | divided_by: base_line_price | round -%}
+							<span style="background: #c0392b; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; line-height: 1.2;">-{{ discount_percent }}%</span>
 						{%- endif -%}
+					</div>
 
-						{{ variant.unit_price_measurement.reference_unit }}
-					</small>
-				{%- endif -%}
+					{{- quantity_widget -}}
+				</div>
 			</div>
 		</div>
 
