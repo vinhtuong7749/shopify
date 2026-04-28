@@ -6,14 +6,12 @@
 
 <style>
 	@media (max-width: 767px) {
-		/* Product title: 1 line, smaller font */
+		/* Product title: Wrap text fully, smaller font */
 		.product-title {
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
+			white-space: normal;
 			display: block;
 			font-size: 22px !important;
-			line-height: 1.2 !important;
+			line-height: 1.25 !important;
 		}
 
 		/* Product price: Base sizes on mobile */
@@ -137,6 +135,38 @@
 	}
 
 	@media (max-width: 767px) {
+		/* Mobile Order Reversal: Flash Sale/Price above Title */
+		.product-form {
+			display: flex !important;
+			flex-direction: column !important;
+		}
+		.product-form > * {
+			order: 4;
+		}
+		/* Ensure hidden inputs/scripts don't break flex layout */
+		.product-form > script,
+		.product-form > input[type="hidden"] {
+			display: none !important;
+		}
+		/* Keep breadcrumbs, vendor, sku at the very top if they exist */
+		.product-form .product-breadcrumbs,
+		.product-form .product-sku,
+		.product-form .product-vendor {
+			order: 0 !important;
+		}
+		/* Move Price + Flash Sale to top */
+		.product-form .product-flashsale-and-price-group {
+			order: 1 !important;
+			margin-top: -24px !important;
+			margin-bottom: 8px !important;
+		}
+		/* Title immediately below price */
+		.product-form .product-title-wrapper {
+			order: 2 !important;
+			margin-top: 0 !important;
+			margin-bottom: -4px !important; /* Reduced to pull color selector up */
+		}
+
 		.product-price .price-item--sale {
 			font-size: 20px !important;
 			white-space: nowrap !important;
@@ -255,6 +285,50 @@
 				</a>
 			{%- endif -%}
 		</div>
+
+		{%- comment -%} Custom Product Badges from Metafield {%- endcomment -%}
+		{%- assign badges_meta = product.metafields.custom.product_badges -%}
+		{%- if badges_meta != blank -%}
+			<div class="product-badges-container" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; margin-bottom: 4px; width: 100%;">
+				{%- assign badges_array = badges_meta.value -%}
+				{%- if badges_meta.type contains 'list' -%}
+					{%- assign badges_array = badges_meta.value -%}
+				{%- else -%}
+					{%- if badges_meta.value contains '•' -%}
+						{%- assign badges_array = badges_meta.value | split: '•' -%}
+					{%- else -%}
+						{%- assign badges_array = badges_meta.value | split: ',' -%}
+					{%- endif -%}
+				{%- endif -%}
+
+				{%- for badge in badges_array -%}
+					{%- assign clean_badge = badge | strip -%}
+					{%- if clean_badge != blank -%}
+						{%- assign badge_upcase = clean_badge | upcase -%}
+						{%- assign badge_icon = '' -%}
+						{%- assign display_text = clean_badge | downcase | capitalize -%}
+						
+						{%- if badge_upcase contains '3-5 DAYS' -%}
+							{%- assign badge_icon = 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/2c3d33_3.png?v=1777361764' -%}
+							{%- assign display_text = '3 - 5 days' -%}
+						{%- elsif badge_upcase contains 'SCREEN PRINT' -%}
+							{%- assign badge_icon = 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/2c3d33.png?v=1777361765' -%}
+							{%- assign display_text = 'Screen print' -%}
+						{%- elsif badge_upcase contains '100% COTTON' -%}
+							{%- assign badge_icon = 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/2c3d33_4.png?v=1777361765' -%}
+							{%- assign display_text = '100% cotton' -%}
+						{%- endif -%}
+
+						<div class="product-badge-pill" style="display: inline-flex; align-items: center; border: 1px solid rgba(44,61,51,0.6); border-radius: 24px; padding: 4px 12px; font-size: 13px; font-weight: 500; color: #2c3d33; white-space: nowrap; line-height: 1.2;">
+							{%- if badge_icon != blank -%}
+								<img src="{{ badge_icon }}" alt="{{ clean_badge }}" style="display: block; width: 18px; height: 18px; object-fit: contain; margin-right: 6px;">
+							{%- endif -%}
+							<span style="display: block; transform: translateY(1px);">{{ display_text }}</span>
+						</div>
+					{%- endif -%}
+				{%- endfor -%}
+			</div>
+		{%- endif -%}
 		<div class="injected-review-container" id="injected-review-container-{{ section.id }}" style="display: flex; align-items: center; margin-top: -2px;"></div>
 	</div>
 
