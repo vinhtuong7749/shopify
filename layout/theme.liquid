@@ -120,6 +120,30 @@
 			.choices__list--dropdown {
 				z-index: 999999 !important;
 			}
+
+			/* Soft Blurred Shadow Effect for Product Cards on Desktop */
+			@media (min-width: 990px) {
+				.product-card {
+					border: 1px solid #e5e7eb !important;
+					border-radius: 8px !important;
+					box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04) !important;
+					background-color: #ffffff !important;
+					display: flex;
+					flex-direction: column;
+					height: 100%;
+					transition: transform 0.3s ease, box-shadow 0.3s ease;
+					overflow: hidden !important;
+				}
+				.product-card:hover {
+					box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+				}
+				.product-card .product-card__main {
+					border-bottom: 1px solid #e5e7eb !important;
+				}
+				.product-card .product-card__footer {
+					padding: 16px !important;
+				}
+			}
 		</style>
 	</head>
 
