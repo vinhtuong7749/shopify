@@ -311,12 +311,18 @@
 						{%- if badge_upcase contains '3-5 DAYS' -%}
 							{%- assign badge_icon = 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/2c3d33_3.png?v=1777361764' -%}
 							{%- assign display_text = '3 - 5 days' -%}
+						{%- elsif badge_upcase contains '5-13' or badge_upcase contains '5 - 13' or badge_upcase contains '5 -13' -%}
+							{%- assign badge_icon = 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/2c3d33_3.png?v=1777361764' -%}
+							{%- assign display_text = '5 - 13 days' -%}
 						{%- elsif badge_upcase contains 'SCREEN PRINT' -%}
 							{%- assign badge_icon = 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/2c3d33.png?v=1777361765' -%}
 							{%- assign display_text = 'Screen print' -%}
 						{%- elsif badge_upcase contains '100% COTTON' -%}
 							{%- assign badge_icon = 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/2c3d33_4.png?v=1777361765' -%}
 							{%- assign display_text = '100% cotton' -%}
+						{%- elsif badge_upcase contains 'FREE RETURN' -%}
+							{%- assign badge_icon = 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/2c3d33_5.png?v=1777364332' -%}
+							{%- assign display_text = 'Free return' -%}
 						{%- endif -%}
 
 						<div class="product-badge-pill" style="display: inline-flex; align-items: center; border: 1px solid rgba(44,61,51,0.6); border-radius: 24px; padding: 4px 12px; font-size: 13px; font-weight: 500; color: #2c3d33; white-space: nowrap; line-height: 1.2;">
