@@ -109,6 +109,18 @@
 		})(window, document, "clarity", "script", "wgkwr65k4s");
 		</script>
 		{% comment %} endClarity {% endcomment %}
+		<style>
+			/* Ensure third-party app dropdowns appear above cart drawer */
+			.select2-container,
+			.select2-container--open,
+			.select2-dropdown,
+			[class*="sll-dropdown"],
+			[class*="selleasy"],
+			.sll-popup,
+			.choices__list--dropdown {
+				z-index: 999999 !important;
+			}
+		</style>
 	</head>
 
 	{%- assign rtl_langs = 'ar,arc,dv,fa,ha,he,khw,ks,ku,ps,ur,yi' | split: ',' -%}
