@@ -23,7 +23,7 @@
         "type": "smart-popup",
         "settings": {
           "enable_popup": true,
-          "delay": 3,
+          "delay": 5,
           "frequency": 1,
           "display_scope": "all",
           "show_on_home": true,

@@ -24,8 +24,8 @@
         "button_label_2": "Button label",
         "button_link_2": "",
         "button_aria_label_2": "",
-        "image_desktop": "shopify://shop_images/banner_camosignal.jpg",
-        "image_mobile": "shopify://shop_images/mobile_banner.jpg",
+        "image_desktop": "shopify://shop_images/banner_camosignal_fix-dung-luong.jpg",
+        "image_mobile": "shopify://shop_images/mobile_banner_fix.jpg",
         "show_breadcrumbs": false,
         "enable_timer": false,
         "evergreen_timer": true,
@@ -447,145 +447,6 @@
         "inner_offset_bottom_mobile": 10
       }
     },
-    "product_banner_A3ERjK": {
-      "type": "product-banner",
-      "blocks": {
-        "product_UcNwWA": {
-          "type": "product",
-          "settings": {
-            "enable_color_scheme_inheritance": true,
-            "color_scheme": "",
-            "label": "Camo Signal Stories",
-            "heading": "Built On The Ground",
-            "text": "<p>Inspired by real American terrain, this piece reflects a connection to land shaped by seasons, weather, and work. It’s designed with a grounded feel—quiet, steady, and familiar, like places that don’t need to introduce themselves.<br/><br/></p>",
-            "button_label": "Shop All",
-            "button_link": "shopify://collections",
-            "button_style": "primary",
-            "product": "black-bear-wildlife-hunting-t-shirt-1",
-            "image": "shopify://shop_images/Black_Bear_Wildlife_Hunting_T_shirt_6.jpg"
-          }
-        },
-        "product_RFGtnJ": {
-          "type": "product",
-          "settings": {
-            "enable_color_scheme_inheritance": true,
-            "color_scheme": "",
-            "label": "Built for the Wild",
-            "heading": "Naturally Worn In",
-            "text": "<p>Made on Comfort Colors®, this tee carries a garment‑dyed, vintage character that feels aged by nature, not design. The soft, broken‑in texture and muted tones echo sun, soil, and time—meant to wear naturally, season after season.</p>",
-            "button_label": "Shop All",
-            "button_link": "/",
-            "button_style": "secondary",
-            "product": "camouflage-from-1776-t-shirt",
-            "image": "shopify://shop_images/CRIMSON_1.jpg"
-          }
-        },
-        "product_rJJjt3": {
-          "type": "product",
-          "disabled": true,
-          "settings": {
-            "enable_color_scheme_inheritance": true,
-            "color_scheme": "",
-            "label": "Label",
-            "heading": "Product banner",
-            "text": "<p>Text</p>",
-            "button_label": "Shop All",
-            "button_link": "/",
-            "button_style": "secondary",
-            "product": "northeast-wildlife-nature-t-shirt-1"
-          }
-        },
-        "product_inPrrX": {
-          "type": "product",
-          "disabled": true,
-          "settings": {
-            "enable_color_scheme_inheritance": true,
-            "color_scheme": "",
-            "label": "Label",
-            "heading": "Product banner",
-            "text": "<p>Text</p>",
-            "button_label": "Shop All",
-            "button_link": "/",
-            "button_style": "secondary",
-            "product": "deer-wildlife-hunting-hoodie"
-          }
-        }
-      },
-      "block_order": [
-        "product_UcNwWA",
-        "product_RFGtnJ",
-        "product_rJJjt3",
-        "product_inPrrX"
-      ],
-      "disabled": true,
-      "name": "Product banner",
-      "settings": {
-        "container_width": "1808px",
-        "offset_top_desktop": 25,
-        "offset_bottom_desktop": 25,
-        "offset_top_mobile": 15,
-        "offset_bottom_mobile": 15
-      }
-    },
-    "video": {
-      "type": "video",
-      "blocks": {
-        "ticker_content_jVk8PL": {
-          "type": "ticker_content",
-          "settings": {
-            "block_text": "Ticker text"
-          }
-        },
-        "ticker_content_Mc3hjb": {
-          "type": "ticker_content",
-          "settings": {
-            "block_text": "Ticker text"
-          }
-        },
-        "ticker_content_TWEiBz": {
-          "type": "ticker_content",
-          "settings": {
-            "block_text": "<em>Get free</em> shipping on purchases over $100"
-          }
-        },
-        "ticker_content_waadnk": {
-          "type": "ticker_content",
-          "settings": {
-            "block_text": "Ticker text"
-          }
-        },
-        "ticker_content_FWpjny": {
-          "type": "ticker_content",
-          "settings": {
-            "block_text": "Ticker text"
-          }
-        }
-      },
-      "block_order": [
-        "ticker_content_jVk8PL",
-        "ticker_content_Mc3hjb",
-        "ticker_content_TWEiBz",
-        "ticker_content_waadnk",
-        "ticker_content_FWpjny"
-      ],
-      "disabled": true,
-      "settings": {
-        "image": "shopify://shop_images/Gemini_Generated_Image_g784aug784aug784.jpg",
-        "video_type": "html",
-        "html_video_desktop": "shopify://files/videos/Tạo_Video_Quảng_Bá_Thương_Hiệu_Camosignal.mp4",
-        "html_video_mobile": "shopify://files/videos/Tạo_Video_Quảng_Bá_Thương_Hiệu_Camosignal.mp4",
-        "external_video_url_desktop": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
-        "external_video_url_mobile": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
-        "text_color": "#ffffff",
-        "movement_speed_desktop": 30,
-        "movement_speed_mobile": 27,
-        "container_width": "inherit",
-        "offset_top_desktop": 32,
-        "offset_bottom_desktop": 32,
-        "offset_top_mobile": 15,
-        "offset_bottom_mobile": 15
-      }
-    },
     "featured_products_ENKafe": {
       "type": "featured-products",
       "settings": {
@@ -612,35 +473,6 @@
         "inner_offset_bottom": 0,
         "inner_offset_top_mobile": 0,
         "inner_offset_bottom_mobile": 0
-      }
-    },
-    "featured_products_g7L8kB": {
-      "type": "featured-products",
-      "disabled": true,
-      "settings": {
-        "enable_color_scheme_inheritance": true,
-        "color_scheme": "",
-        "heading": "",
-        "link_label": "Shop all products",
-        "link_url": "shopify://collections/all",
-        "product_list": [
-          "usa-flag-dog-camouflage-t-shirt-1",
-          "usa-flag-freedom-camouflage-sweatshirt",
-          "usa-flag-deer-camouflage-t-shirt",
-          "usa-flag-eagle-camouflage-sweatshirt"
-        ],
-        "collection": "",
-        "layout": "4",
-        "show_arrows": true,
-        "container_width": "2048px",
-        "offset_top_desktop": 0,
-        "offset_bottom_desktop": 0,
-        "offset_top_mobile": 0,
-        "offset_bottom_mobile": 15,
-        "inner_offset_top": 0,
-        "inner_offset_bottom": 30,
-        "inner_offset_top_mobile": 0,
-        "inner_offset_bottom_mobile": 15
       }
     },
     "17755869487c283f8c": {
@@ -787,10 +619,7 @@
     "hunting_collections",
     "image_with_text_URwaUB",
     "image_with_text_gRLEPG",
-    "product_banner_A3ERjK",
-    "video",
     "featured_products_ENKafe",
-    "featured_products_g7L8kB",
     "17755869487c283f8c",
     "17750267326e0f0e2a",
     "1775032435c9d00d32",

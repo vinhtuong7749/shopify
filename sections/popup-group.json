@@ -11,66 +11,6 @@
   "type": "custom.popup",
   "name": "Popups group",
   "sections": {
-    "age_check_popup": {
-      "type": "age-check-popup",
-      "disabled": true,
-      "settings": {
-        "enable_color_scheme_inheritance": true,
-        "color_scheme": "",
-        "age_check_time": "1",
-        "age_check_title": "Access to the store",
-        "age_check_text": "<p>Are you 18 years old?</p>",
-        "age_check_button_label": "Yes, I am 18 or older",
-        "age_check_button_style": "secondary",
-        "age_check_button_close_label": "No Thanks",
-        "age_check_redirect_url": ""
-      }
-    },
-    "newsletter_popup": {
-      "type": "newsletter-popup",
-      "blocks": {
-        "block_NLBBgK": {
-          "type": "block",
-          "settings": {
-            "newsletter_popup_desktop_movement_speed": 6,
-            "newsletter_popup_mobile_movement_speed": 6
-          }
-        },
-        "block_C3Jg7R": {
-          "type": "block",
-          "settings": {
-            "newsletter_popup_desktop_movement_speed": 6,
-            "newsletter_popup_mobile_movement_speed": 6
-          }
-        },
-        "block_aKXp7y": {
-          "type": "block",
-          "settings": {
-            "newsletter_popup_desktop_movement_speed": 6,
-            "newsletter_popup_mobile_movement_speed": 6
-          }
-        }
-      },
-      "block_order": [
-        "block_NLBBgK",
-        "block_C3Jg7R",
-        "block_aKXp7y"
-      ],
-      "disabled": true,
-      "settings": {
-        "enable_color_scheme_inheritance": true,
-        "color_scheme": "",
-        "newsletter_popup_cookie_time": "1",
-        "scroll_images_direction": "top",
-        "newsletter_popup_heading": "Subscribe to our newsletter",
-        "newsletter_popup_text": "Be the first to know about sales, exclusive offers and promotions.",
-        "newsletter_popup_input_placeholder": "john.smith@example.com *",
-        "newsletter_popup_input_button_submit_text": "Sign Up",
-        "newsletter_popup_button_close_label": "No Thanks",
-        "is_newsletter_popup_show_socials": true,
-        "newsletter_popup_enable_animation": true
-      }
-    },
     "177497946522d86e28": {
       "type": "_blocks",
       "blocks": {
@@ -112,8 +52,6 @@
     }
   },
   "order": [
-    "age_check_popup",
-    "newsletter_popup",
     "177497946522d86e28"
   ]
 }
