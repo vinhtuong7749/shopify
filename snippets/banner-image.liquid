@@ -92,12 +92,12 @@
 			alt="{{- image_desktop.alt | escape -}}"
 			width="1920"
 			height="640"
-			{% if section.index == 1 %}
-				fetchpriority="high"
-				loading="eager"
-			{% else %}
+			{% if enable_lazy_load %}
 				fetchpriority="high"
 				loading="lazy"
+			{% else %}
+				fetchpriority="high"
+				loading="eager"
 			{% endif %}
 			style="{{ img_focal }}"
 		>
