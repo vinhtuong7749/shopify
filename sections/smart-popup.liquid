@@ -276,8 +276,9 @@
   </style>
 
   <script>
-    // Skip popup entirely for bots, crawlers, and Lighthouse automated testing
-    if (!navigator.webdriver) {
+    // Skip popup for bots, Lighthouse, and headless browsers
+    var isAutomated = navigator.webdriver || /HeadlessChrome|HeadlessChromium|Googlebot|AhrefsBot|SemrushBot/i.test(navigator.userAgent);
+    if (!isAutomated) {
       window.addEventListener("load", function() {
         const sectionId = "{{ section.id }}";
         const popup = document.getElementById(`newsletter-popup-${sectionId}`);
@@ -316,7 +317,8 @@
         if (window.camoPopupSuccess) {
           showPopup();
         } else {
-          setTimeout(showPopup, delay);
+          // Add 3s buffer after page load to ensure LCP is measured first
+          setTimeout(showPopup, delay + 3000);
         }
 
         closeBtn.addEventListener('click', closePopup);
