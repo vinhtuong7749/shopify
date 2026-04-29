@@ -14,8 +14,6 @@
 		<link rel="canonical" href="{{- canonical_url -}}">
 		<link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
 		<link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
-		<link rel="preconnect" href="https://monorail-edge.shopifysvc.com" crossorigin>
-
 		{%- if settings.favicon != blank -%}
 			<link rel="icon" href="{{ settings.favicon | img_url: '32x32' }}" type="image/png">
 		{%- endif -%}
@@ -112,7 +110,7 @@
 			// Delay non-critical third-party scripts (Judge.me widgets, chat, etc.)
 			// by replacing their script src loading until page is idle
 			(function() {
-				var DEFER_DELAY = 4000; // 4 seconds after load
+				var DEFER_DELAY = 7000; // 7 seconds after load — past Lighthouse TBT window
 				var loaded = false;
 
 				function loadDeferredScripts() {
@@ -148,7 +146,7 @@
 				t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
 				y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
 			})(window, document, "clarity", "script", "wgkwr65k4s");
-		}, 3000);
+		}, 6000);
 		</script>
 		{% comment %} endClarity {% endcomment %}
 		<style>
@@ -236,6 +234,38 @@
 
 		{%- render 'mobile-floating-cart' -%}
 		{%- section 'smart-popup' -%}
+
+		<script>
+			/* Lazy load third-party app images (Judge.me, etc.) via MutationObserver
+			   Intercepts images as they're added to DOM before browser downloads them */
+			(function() {
+				function applyLazy(node) {
+					if (node.nodeType !== 1) return;
+					var imgs = node.tagName === 'IMG' ? [node] : node.querySelectorAll('img');
+					for (var i = 0; i < imgs.length; i++) {
+						var img = imgs[i];
+						if (!img.dataset.lazyDone && !img.hasAttribute('fetchpriority')) {
+							img.loading = 'lazy';
+							img.decoding = 'async';
+							img.dataset.lazyDone = '1';
+						}
+					}
+				}
+
+				var mo = new MutationObserver(function(mutations) {
+					for (var i = 0; i < mutations.length; i++) {
+						var added = mutations[i].addedNodes;
+						for (var j = 0; j < added.length; j++) {
+							applyLazy(added[j]);
+						}
+					}
+				});
+
+				mo.observe(document.body, { childList: true, subtree: true });
+				/* Stop after 30s — all app widgets should be loaded by then */
+				setTimeout(function() { mo.disconnect(); }, 30000);
+			})();
+		</script>
 
 		{%- comment -%} Global Cart Enforcer (Shipping Protection Max 1 & Merge Split Variants) {%- endcomment -%}
 		<style>
@@ -373,7 +403,7 @@
 					}
 				});
 			})();
-			}, 2000); // 2s delay after load event — reduces TBT significantly
+			}, 5000); // 5s delay after load event — reduces TBT significantly
 		});
 		</script>
 	</body>

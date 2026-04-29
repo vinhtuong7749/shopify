@@ -651,6 +651,49 @@
 				{{- models_json -}}
 			</script>
 		{%- endif -%}
+
+		{%- if media_layout == 'carousel' -%}
+		<style>
+			/* When a variant change is in progress, make thumbnail Swiper jump instantly */
+			.product-media--instant-thumb .swiper-wrapper {
+				transition-duration: 0ms !important;
+			}
+		</style>
+		<script>
+		(function() {
+			var sectionId = '{{- section.id -}}';
+
+			// 1. Block AJAX-based DOM replacement — carousel navigates via Slider.slideTo() already.
+			//    Replacing the DOM destroys and re-creates Swiper, causing a full flash/jump.
+			document.addEventListener('DOMContentLoaded', function() {
+				var grid = document.querySelector('[data-desktop-product-media-container-id]');
+				if (!grid) return;
+				var layout = grid.closest('[data-media-layout]');
+				if (!layout || layout.dataset.mediaLayout !== 'carousel') return;
+				grid.replaceWith = function() {};
+			});
+
+			// 2. Make thumbnails jump instantly (no scroll-through animation) when variant changes.
+			//    Swiper's thumbs sync animates from current thumb to new thumb — looks jumpy.
+			function waitForEventBus(attempts) {
+				if (window.themeCore && window.themeCore.EventBus) {
+					var container = document.querySelector('.js-product-media-container');
+					if (!container) return;
+					window.themeCore.EventBus.listen('pdp:section-' + sectionId + ':change-variant', function() {
+						container.classList.add('product-media--instant-thumb');
+						setTimeout(function() {
+							container.classList.remove('product-media--instant-thumb');
+						}, 80);
+					});
+				} else if (attempts > 0) {
+					setTimeout(function() { waitForEventBus(attempts - 1); }, 300);
+				}
+			}
+			waitForEventBus(20);
+		})();
+		</script>
+		{%- endif -%}
+
 	</div>
 {% else %}
 	{%- assign placeholder   = 'product-1' | placeholder_svg_tag: 'product-media__image product-media__image--placeholder' -%}

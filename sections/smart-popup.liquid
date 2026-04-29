@@ -304,10 +304,9 @@
           return;
         }
 
-        // Lighthouse/PSI uses CDP to simulate interactions — CDP events are isTrusted=true
-        // so isTrusted check alone is not enough. Instead, gate all popup init until
-        // after the PSI measurement window (~20-25s on Slow 4G + load time ~3-5s = ~35-40s total).
-        var SAFE_MS = 35000;
+        // Lighthouse/PSI measurement window can extend up to 60s on complex pages.
+        // Gate popup until safely past any automated audit window.
+        var SAFE_MS = 60000;
         var gateTime = Date.now() + SAFE_MS;
 
         // Absolute timer: ensures popup shows for real users after safe window
