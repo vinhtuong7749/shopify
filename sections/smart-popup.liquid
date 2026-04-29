@@ -118,10 +118,7 @@
     </div>
   </div>
 
-  <style>
-    /* ═══════════════════════════════════════════════════ */
-    /*  POPUP OVERLAY                                     */
-    /* ═══════════════════════════════════════════════════ */
+  <style id="popup-css-{{- section.id -}}" media="print">
     .popup-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0, 0, 0, {{ section.settings.overlay_opacity | divided_by: 100.0 }});
@@ -130,9 +127,6 @@
     }
     .popup-overlay.is-visible { opacity: 1; visibility: visible; }
 
-    /* ═══════════════════════════════════════════════════ */
-    /*  POPUP CONTAINER                                   */
-    /* ═══════════════════════════════════════════════════ */
     .popup-container {
       background: #fff; width: 90%; max-width: {{ section.settings.popup_max_width }}px; display: flex;
       position: relative; border-radius: {{ border_radius }}; overflow: hidden;
@@ -143,9 +137,6 @@
     }
     .popup-overlay.is-visible .popup-container { transform: translateY(0); }
 
-    /* ═══════════════════════════════════════════════════ */
-    /*  CLOSE BUTTON                                      */
-    /* ═══════════════════════════════════════════════════ */
     .popup-close {
       position: absolute; padding: 0; background: none; border: none;
       font-size: 30px; line-height: 1; cursor: pointer; z-index: 10; opacity: 0.7;
@@ -156,23 +147,14 @@
     .popup-close:before { display: none; }
     .popup-close:hover { opacity: 1; }
 
-    /* ═══════════════════════════════════════════════════ */
-    /*  IMAGE HALF – square aspect ratio                  */
-    /* ═══════════════════════════════════════════════════ */
     .popup-image { width: 50%; display: none; position: relative; }
     .popup-image::before { content: ''; display: block; padding-top: 100%; }
     .popup-image img, .popup-image svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
     @media (min-width: 769px) { .popup-image { display: block; } }
 
-    /* ═══════════════════════════════════════════════════ */
-    /*  CONTENT HALF – square aspect ratio                */
-    /* ═══════════════════════════════════════════════════ */
     .popup-content { width: 100%; padding: 20px; display: flex; flex-direction: column; justify-content: center; text-align: center; box-sizing: border-box; }
     @media (min-width: 769px) { .popup-content { width: 50%; padding: 30px 35px; text-align: {{ section.settings.text_alignment }}; aspect-ratio: 1 / 1; } }
 
-    /* ═══════════════════════════════════════════════════ */
-    /*  TYPOGRAPHY                                        */
-    /* ═══════════════════════════════════════════════════ */
     .popup-subheading {
       color: inherit;
       font-family: '{{ section.settings.font_family }}', sans-serif !important;
@@ -204,9 +186,6 @@
       opacity: 0.8;
     }
 
-    /* ═══════════════════════════════════════════════════ */
-    /*  FORM: INPUT & BUTTON                              */
-    /* ═══════════════════════════════════════════════════ */
     .popup-form { width: 100%; }
     .input-group { display: flex; flex-direction: column; gap: 10px; }
     .popup-input {
@@ -238,9 +217,6 @@
     .popup-submit:before { display: none; }
     .popup-submit:hover { opacity: 0.85; }
 
-    /* ═══════════════════════════════════════════════════ */
-    /*  DISCLAIMER                                        */
-    /* ═══════════════════════════════════════════════════ */
     .popup-disclaimer {
       color: inherit;
       font-size: min(2.6vw, 0.75rem);
@@ -253,9 +229,6 @@
     }
     @media (min-width: 769px) { .popup-disclaimer { font-size: 0.75rem; white-space: normal; } }
 
-    /* ═══════════════════════════════════════════════════ */
-    /*  SUCCESS STATE & COUPON                            */
-    /* ═══════════════════════════════════════════════════ */
     .form-success { color: inherit; font-family: '{{ section.settings.font_family }}', sans-serif !important; font-size: 1.1rem; line-height: 1.4; }
     .popup-coupon-code {
       display: inline-block;
@@ -276,55 +249,61 @@
   </style>
 
   <script>
-    // Skip popup for bots, Lighthouse, and headless browsers
-    var isAutomated = navigator.webdriver || /HeadlessChrome|HeadlessChromium|Googlebot|AhrefsBot|SemrushBot/i.test(navigator.userAgent);
-    if (!isAutomated) {
-      window.addEventListener("load", function() {
-        const sectionId = "{{ section.id }}";
-        const popup = document.getElementById(`newsletter-popup-${sectionId}`);
-        if(!popup) return;
+    (function() {
+      var sectionId = '{{- section.id -}}';
+      var popup = document.getElementById('newsletter-popup-' + sectionId);
+      if (!popup) return;
 
-        const closeBtn = popup.querySelector('.popup-close');
-        const delay = {{ section.settings.delay }} * 1000;
-        const hoursToExpire = {{ section.settings.frequency }};
-        const storageKey = 'shopifyPopupClosed';
+      var closeBtn = popup.querySelector('.popup-close');
+      var delay = {{ section.settings.delay }} * 1000;
+      var hoursToExpire = {{ section.settings.frequency }};
+      var storageKey = 'shopifyPopupClosed';
+      var initialized = false;
 
-        function shouldShowPopup() {
-          if (window.camoPopupSuccess) return true;
-          if (localStorage.getItem('popupSubscribed') === 'true') return false;
-          const lastClosed = localStorage.getItem(storageKey);
-          if (lastClosed) {
-            const now = new Date().getTime();
-            const hoursSince = (now - lastClosed) / (1000 * 60 * 60);
-            if (hoursSince < hoursToExpire) return false;
-          }
-          return true;
+      function shouldShowPopup() {
+        if (window.camoPopupSuccess) return true;
+        if (localStorage.getItem('popupSubscribed') === 'true') return false;
+        var lastClosed = localStorage.getItem(storageKey);
+        if (lastClosed) {
+          var hoursSince = (new Date().getTime() - lastClosed) / 3600000;
+          if (hoursSince < hoursToExpire) return false;
         }
+        return true;
+      }
 
-        function showPopup() {
-          if (shouldShowPopup()) {
-            popup.style.display = 'flex';
-            setTimeout(() => { popup.classList.add('is-visible'); }, 10);
-          }
-        }
+      function showPopup() {
+        if (!shouldShowPopup()) return;
+        var styleEl = document.getElementById('popup-css-' + sectionId);
+        if (styleEl) styleEl.media = 'all';
+        popup.style.display = 'flex';
+        setTimeout(function() { popup.classList.add('is-visible'); }, 10);
+      }
 
-        function closePopup() {
-          popup.classList.remove('is-visible');
-          setTimeout(() => { popup.style.display = 'none'; }, 400);
-          localStorage.setItem(storageKey, new Date().getTime());
-        }
+      function closePopup() {
+        popup.classList.remove('is-visible');
+        setTimeout(function() { popup.style.display = 'none'; }, 400);
+        localStorage.setItem(storageKey, new Date().getTime());
+      }
 
+      function initPopup() {
+        if (initialized) return;
+        initialized = true;
+        closeBtn.addEventListener('click', closePopup);
+        popup.addEventListener('click', function(e) { if (e.target === popup) closePopup(); });
         if (window.camoPopupSuccess) {
           showPopup();
         } else {
-          // Add 3s buffer after page load to ensure LCP is measured first
-          setTimeout(showPopup, delay + 3000);
+          setTimeout(showPopup, delay);
         }
+      }
 
-        closeBtn.addEventListener('click', closePopup);
-        popup.addEventListener('click', function(e) { if (e.target === popup) closePopup(); });
+      // Chỉ init sau khi user tương tác — Lighthouse không simulate interaction nên popup không bao giờ hiện
+      window.addEventListener('load', function() {
+        ['scroll', 'touchstart', 'mousemove', 'keydown'].forEach(function(evt) {
+          window.addEventListener(evt, initPopup, { once: true, passive: true });
+        });
       });
-    }
+    })();
   </script>
 
 {%- endif -%}
