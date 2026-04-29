@@ -1,4 +1,4 @@
-{%- comment -%}
+﻿{%- comment -%}
 ------------------------------------------------------------------------------
   Snippet: Product Drawers → Now renders as Inline Accordions
   Accordion items expand/collapse in-place (no side drawer)
@@ -345,17 +345,13 @@
 		{%- comment -%} SIZE CHART OVERLAY {%- endcomment -%}
 		<div id="size-chart-overlay" class="size-chart-overlay">
 			<div class="size-chart-overlay__backdrop" onclick="document.getElementById('size-chart-overlay').classList.remove('is-active'); document.body.style.overflow='';"></div>
+				<button
+					class="size-chart-overlay__close-btn"
+					type="button"
+					onclick="document.getElementById('size-chart-overlay').classList.remove('is-active'); document.body.style.overflow='';"
+					aria-label="Close"
+				>&#10005;</button>
 			<div class="size-chart-overlay__panel">
-				<div class="size-chart-overlay__header">
-					<h2 class="size-chart-overlay__title">SIZE GUIDE</h2>
-					<button class="size-chart-overlay__close" type="button" onclick="document.getElementById('size-chart-overlay').classList.remove('is-active'); document.body.style.overflow='';" aria-label="Close">
-						<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<line x1="2" y1="2" x2="18" y2="18" stroke="currentColor" stroke-width="2"/>
-							<line x1="18" y1="2" x2="2" y2="18" stroke="currentColor" stroke-width="2"/>
-						</svg>
-					</button>
-				</div>
-
 				{%- comment -%} Tabs {%- endcomment -%}
 				<div class="size-chart-overlay__tabs">
 					<button class="size-chart-overlay__tab is-active" data-tab="tshirt" type="button" onclick="switchSizeTab(this, 'tshirt')">T-Shirt</button>
@@ -539,7 +535,7 @@
 				left: 0;
 				width: 100%;
 				height: 100%;
-				z-index: 9999;
+				z-index: 999998;
 				display: flex;
 				align-items: center;
 				justify-content: center;
@@ -564,15 +560,17 @@
 			.size-chart-overlay__panel {
 				position: relative;
 				z-index: 1;
-				background: var(--color-bg-primary, #faf6ee);
+				background: #ffffff;
 				width: 94%;
 				max-width: 560px;
-				max-height: 90vh;
+				max-height: calc(100vh - 80px);
 				overflow-y: auto;
 				border-radius: 0;
 				padding: 32px 28px;
 				transform: translateY(20px);
 				transition: transform 0.3s ease;
+				margin-top: 70px;
+				margin-bottom: 10px;
 			}
 			.size-chart-overlay.is-active .size-chart-overlay__panel {
 				transform: translateY(0);
@@ -585,23 +583,56 @@
 				padding-bottom: 16px;
 				border-bottom: 2px solid var(--color-text-primary, #203224);
 			}
-			.size-chart-overlay__title {
-				font-family: 'Oswald', sans-serif;
-				font-size: 22px;
-				font-weight: 700;
-				letter-spacing: 0.1em;
-				text-transform: uppercase;
-				color: var(--color-text-primary, #203224);
-				margin: 0;
-			}
-			.size-chart-overlay__close {
-				background: none;
-				border: none;
+			/* X button cho size chart overlay — fixed để luôn hiện dù scroll */
+			.size-chart-overlay__close-btn {
+				position: fixed;
+				top: 70px;
+				right: 16px;
+				background: rgba(255,255,255,0.9) !important;
+				border: none !important;
+				border-radius: 50%;
+				padding: 0 !important;
+				margin: 0 !important;
+				min-width: 0 !important;
+				min-height: 0 !important;
+				width: 36px !important;
+				height: 36px !important;
+				font-size: 18px;
+				line-height: 1;
+				color: #203224 !important;
 				cursor: pointer;
-				padding: 4px;
-				color: var(--color-text-primary, #203224);
+				display: none;
+				align-items: center;
+				justify-content: center;
+				z-index: 999999;
+				box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 				transition: opacity 0.2s;
 			}
+			.size-chart-overlay.is-active .size-chart-overlay__close-btn {
+				display: flex !important;
+			}
+			.size-chart-overlay__close-btn::before,
+			.size-chart-overlay__close-btn::after { display: none !important; }
+			.size-chart-overlay__close-btn:hover { opacity: 0.8; }
+			/* Giữ lại style cũ cho description/shipping overlay vẫn dùng __close */
+			.size-chart-overlay__close {
+				background: none !important;
+				border: none !important;
+				cursor: pointer;
+				padding: 8px !important;
+				color: #203224 !important;
+				display: flex !important;
+				align-items: center;
+				justify-content: center;
+				min-width: 0 !important;
+				min-height: 0 !important;
+				width: 36px !important;
+				height: 36px !important;
+				opacity: 1 !important;
+			}
+			.size-chart-overlay__close::before,
+			.size-chart-overlay__close::after { display: none !important; }
+			.size-chart-overlay__close svg line { stroke: #203224 !important; }
 			.size-chart-overlay__close:hover { opacity: 0.6; }
 
 			/* Tabs */
@@ -740,6 +771,14 @@
 						overlay.classList.remove('is-active');
 						document.body.style.overflow = '';
 					}
+				}
+			});
+
+			/* Move overlay to <body> to escape stacking context from theme wrappers */
+			document.addEventListener('DOMContentLoaded', function() {
+				var overlay = document.getElementById('size-chart-overlay');
+				if (overlay && overlay.parentNode !== document.body) {
+					document.body.appendChild(overlay);
 				}
 			});
 		</script>

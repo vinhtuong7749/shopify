@@ -14,6 +14,7 @@
 		<link rel="canonical" href="{{- canonical_url -}}">
 		<link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
 		<link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+		<link rel="preconnect" href="https://monorail-edge.shopifysvc.com" crossorigin>
 
 		{%- if settings.favicon != blank -%}
 			<link rel="icon" href="{{ settings.favicon | img_url: '32x32' }}" type="image/png">
@@ -147,7 +148,7 @@
 				t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
 				y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
 			})(window, document, "clarity", "script", "wgkwr65k4s");
-		}, 6000);
+		}, 3000);
 		</script>
 		{% comment %} endClarity {% endcomment %}
 		<style>

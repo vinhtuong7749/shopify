@@ -129,8 +129,15 @@
 				{%- endcomment -%}
 				{%- capture other_options -%}
 					<fieldset class="product-options__default">
-						<legend class="legend product-options__option-label">
-							{{- option.name -}}:
+						<legend class="legend product-options__option-label{% if downcased_option == 'size' %} product-options__option-label--size{% endif %}">
+							<span>{{- option.name -}}:</span>
+							{%- if downcased_option == 'size' -%}
+								<button
+									class="product-options__size-guide-inline"
+									type="button"
+									onclick="document.getElementById('size-chart-overlay').classList.add('is-active');document.body.style.overflow='hidden';"
+								>Size guide</button>
+							{%- endif -%}
 						</legend>
 
 						{% if variants_type == "radio" %}
@@ -268,6 +275,37 @@
 {%- endunless -%}
 
 <style>
+	/* Size label row: flex để "Size:" trái, "Size guide" phải */
+	legend.product-options__option-label--size {
+		display: flex !important;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	.product-options__size-guide-inline {
+		background: none;
+		border: none;
+		padding: 0;
+		margin: 0;
+		margin-left: auto;
+		font-size: 0.8rem;
+		font-weight: 500;
+		color: #2c3d33;
+		cursor: pointer;
+		text-decoration: underline;
+		text-underline-offset: 2px;
+		letter-spacing: 0.02em;
+		line-height: 1.4;
+		min-width: 0 !important;
+		min-height: 0 !important;
+		flex-shrink: 0;
+	}
+	.product-options__size-guide-inline:hover {
+		opacity: 0.7;
+	}
+
 	/* Make color swatches round on product page */
 	.product-options .radio-option-swatch__label,
 	.product-options .radio-option-swatch__label::before,
