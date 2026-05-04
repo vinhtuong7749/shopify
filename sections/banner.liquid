@@ -6,6 +6,10 @@
 
 {%- assign banner_height_desktop 		= section.settings.desktop_image_height -%}
 {%- assign banner_height_mobile 		= section.settings.mobile_image_height -%}
+{%- if section.settings.enable_timer -%}
+	{%- assign banner_height_desktop = 'auto' -%}
+	{%- assign banner_height_mobile = 'auto' -%}
+{%- endif -%}
 {%- assign media_type 					= section.settings.media_type -%}
 {%- assign title 						= section.settings.title -%}
 {%- assign text 						= section.settings.text -%}
@@ -319,13 +323,16 @@
 						var targetTime = 0;
 
 						{% if evergreen_timer %}
-							var targetHour = {{ evergreen_reset_hour | default: 7 | json }};
-							var nextResetUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), targetHour, 0, 0, 0));
-
-							if (now.getTime() >= nextResetUTC.getTime()) {
-								nextResetUTC.setUTCDate(nextResetUTC.getUTCDate() + 1);
+							var startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+							var diffSinceStartOfDay = now.getTime() - startOfDay.getTime();
+							var periodMs = 4 * 60 * 60 * 1000; // 4 hours in milliseconds
+				
+							var nextPeriodMs = Math.ceil(diffSinceStartOfDay / periodMs) * periodMs;
+							if (nextPeriodMs === diffSinceStartOfDay) {
+								nextPeriodMs += periodMs;
 							}
-							targetTime = nextResetUTC.getTime();
+							
+							targetTime = startOfDay.getTime() + nextPeriodMs;
 						{% else %}
 							var fixedTarget = new Date(
 								{{ timer_year | default: 2024 | json }}, 
@@ -463,6 +470,7 @@
 
 	{%- capture banner_wrapper_classes -%}
 		{% if overlay %}banner__wrapper--overlayed {{-  -}} {%- endif -%}
+		{% if enable_timer %}banner__wrapper--has-timer {{-  -}} {%- endif -%}
 	{%- endcapture -%}
 
 	{%- capture media_wrapper_classes -%}
@@ -553,10 +561,7 @@
 				justify-content: var(--banner-buttons-alignment-mobile, flex-start) !important;
 				width: 100%;
 			}
-			#shopify-section-{{ section.id }} .banner__wrapper {
-				aspect-ratio: 4 / 5;
-				min-height: unset !important;
-			}
+			/* Removed forced aspect ratios to allow native theme settings (e.g., adapt to image) to work */
 			#shopify-section-{{ section.id }} .banner__wrapper .banner__media,
 			#shopify-section-{{ section.id }} .banner__wrapper .banner__media-wrapper {
 				position: absolute;
