@@ -244,30 +244,7 @@
 			{%- assign desc_content = desc_content | replace: title_em, '' -%}
 			{%- assign desc_content = desc_content | replace: product.title, '' -%}
 
-			{%- comment -%} Remove the first meaningful paragraph (already shown as short description) {%- endcomment -%}
-			{%- if desc_content contains '</p>' -%}
-				{%- assign desc_paragraphs = desc_content | split: '</p>' -%}
-				{%- assign first_real_para_index = -1 -%}
-				{%- for para in desc_paragraphs -%}
-					{%- assign para_check = para | strip_html | strip -%}
-					{%- assign para_check_size = para_check | size -%}
-					{%- if first_real_para_index == -1 and para_check_size > 10 -%}
-						{%- assign first_real_para_index = forloop.index0 -%}
-					{%- endif -%}
-				{%- endfor -%}
 
-				{%- capture desc_without_intro -%}
-					{%- for para in desc_paragraphs -%}
-						{%- if forloop.index0 != first_real_para_index -%}
-							{%- assign para_raw = para | strip -%}
-							{%- if para_raw.size > 0 -%}
-								{{ para | append: '</p>' }}
-							{%- endif -%}
-						{%- endif -%}
-					{%- endfor -%}
-				{%- endcapture -%}
-				{%- assign desc_content = desc_without_intro | strip -%}
-			{%- endif -%}
 
 			{%- comment -%} Clean up empty tags {%- endcomment -%}
 			{%- assign desc_content = desc_content | replace: '<p></p>', '' | replace: '<p> </p>', '' | strip -%}
@@ -909,6 +886,30 @@
 						<div class="product-desc-overlay__body rte">
 							{{ desc_content }}
 						</div>
+						{%- assign has_short_desc = false -%}
+						{%- for sec_block in section.blocks -%}
+							{%- if sec_block.type == 'short_description' -%}
+								{%- assign has_short_desc = true -%}
+								{%- break -%}
+							{%- endif -%}
+						{%- endfor -%}
+
+						{%- if has_short_desc -%}
+						<script>
+							document.addEventListener('DOMContentLoaded', function() {
+								var modalBody = document.querySelector('#description-overlay .product-desc-overlay__body');
+								if (modalBody) {
+									var pTags = modalBody.querySelectorAll('p');
+									for (var i = 0; i < pTags.length; i++) {
+										if (pTags[i].textContent.trim().length > 10) {
+											pTags[i].style.display = 'none';
+											break;
+										}
+									}
+								}
+							});
+						</script>
+						{%- endif -%}
 					</div>
 				</div>
 			</div>

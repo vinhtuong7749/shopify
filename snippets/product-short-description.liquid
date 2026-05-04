@@ -31,13 +31,17 @@
         {%- comment -%} Found a meaningful paragraph - extract just the <p>...</p> part {%- endcomment -%}
         {%- if para contains '<p>' or para contains '<p ' -%}
           {%- assign short_description = para | append: '</p>' -%}
-          {%- comment -%} Clean: keep only from <p> onwards {%- endcomment -%}
+          {%- comment -%} Clean: keep only from <p> to </p> {%- endcomment -%}
           {%- if short_description contains '<p>' -%}
             {%- assign p_parts = short_description | split: '<p>' -%}
-            {%- assign short_description = '<p>' | append: p_parts.last -%}
+            {%- assign text_after_p = p_parts.last -%}
+            {%- assign text_parts = text_after_p | split: '</p>' -%}
+            {%- assign short_description = '<p>' | append: text_parts.first | append: '</p>' -%}
           {%- elsif short_description contains '<p ' -%}
             {%- assign p_parts = short_description | split: '<p ' -%}
-            {%- assign short_description = '<p ' | append: p_parts.last -%}
+            {%- assign text_after_p = p_parts.last -%}
+            {%- assign text_parts = text_after_p | split: '</p>' -%}
+            {%- assign short_description = '<p ' | append: text_parts.first | append: '</p>' -%}
           {%- endif -%}
         {%- endif -%}
       {%- endif -%}
@@ -49,6 +53,6 @@
 
 {%- if short_description != blank -%}
   <div class="product-short-description rte desktop-only">
-    <p>{{ short_description | strip_html }}</p>
+    {{ short_description }}
   </div>
 {%- endif -%}
