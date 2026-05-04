@@ -165,7 +165,30 @@
         {% endif %}
         transform: translateY(150%);
         width: 260px;
-        padding: 12px;
+        padding: 10px;
+    }
+    .sales-notification-popup__header {
+        margin-bottom: 4px;
+    }
+    .sales-notification-popup__body {
+        padding: 6px;
+    }
+    .sales-notification-popup__image {
+        width: 45px;
+        max-height: 60px;
+        margin-right: 10px;
+    }
+    .sales-notification-popup__title {
+        font-size: 12px;
+        margin: 0 0 2px 0;
+        -webkit-line-clamp: 2;
+    }
+    .sales-notification-popup__price {
+        font-size: 13px;
+        margin: 0;
+    }
+    .sales-notification-popup__btn {
+        display: none !important;
     }
     .sales-notification-popup.is-visible {
         transform: translateY(0);
@@ -236,6 +259,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('salesNotificationBtnText').innerText = btnText;
 
     let notificationTimeout;
+    let nextNotificationTimer;
     
     const initialDelay = {{ section.settings.initial_delay | times: 1000 }};
     const showDuration = {{ section.settings.show_time | times: 1000 }};
@@ -259,21 +283,55 @@ document.addEventListener('DOMContentLoaded', function() {
 
         popup.classList.add('is-visible');
 
+        // Set the timestamp for the NEXT allowed notification (Current time + show time + delay between)
+        const nextTime = Date.now() + showDuration + delayBetween;
+        sessionStorage.setItem('salesNotifNextTime', nextTime);
+
         notificationTimeout = setTimeout(hideNotification, showDuration);
     }
 
     function hideNotification() {
         popup.classList.remove('is-visible');
-        setTimeout(showNotification, delayBetween + Math.floor(Math.random() * 5000));
+        nextNotificationTimer = setTimeout(showNotification, delayBetween);
     }
 
     closeBtn.addEventListener('click', function(e) {
         e.preventDefault();
         clearTimeout(notificationTimeout);
-        hideNotification();
+        clearTimeout(nextNotificationTimer);
+        popup.classList.remove('is-visible');
+        
+        // If manually closed, schedule the next one based on delayBetween
+        const nextTime = Date.now() + delayBetween;
+        sessionStorage.setItem('salesNotifNextTime', nextTime);
+        nextNotificationTimer = setTimeout(showNotification, delayBetween);
     });
 
-    setTimeout(showNotification, initialDelay);
+    {% if request.page_type == 'product' %}
+    // Use sessionStorage to persist logic across page navigation within the same session
+    const storedNextTime = sessionStorage.getItem('salesNotifNextTime');
+    
+    if (!storedNextTime) {
+        // First product page visit: Wait initialDelay (e.g., 7s)
+        // If the user navigates away before this triggers, sessionStorage remains empty
+        // and the 7s timer will restart on the next product page!
+        nextNotificationTimer = setTimeout(showNotification, initialDelay);
+    } else {
+        // A popup has already been shown in this session
+        const nextTime = parseInt(storedNextTime, 10);
+        const now = Date.now();
+        
+        if (now >= nextTime) {
+            // The wait time has already elapsed while navigating.
+            // Show with a tiny 1-second buffer so it doesn't jar the user instantly on load.
+            nextNotificationTimer = setTimeout(showNotification, 1000);
+        } else {
+            // Still waiting for the delayBetween (e.g., 5 mins) to finish.
+            const timeToWait = nextTime - now;
+            nextNotificationTimer = setTimeout(showNotification, timeToWait);
+        }
+    }
+    {% endif %}
 });
 </script>
 {%- endif -%}
