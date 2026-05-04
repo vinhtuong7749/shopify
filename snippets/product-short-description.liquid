@@ -49,6 +49,6 @@
 
 {%- if short_description != blank -%}
   <div class="product-short-description rte desktop-only">
-    {{ short_description }}
+    <p>{{ short_description | strip_html }}</p>
   </div>
 {%- endif -%}

@@ -109,7 +109,7 @@
 					{%- when 'pickup_availability' -%}
 						{%- render 'product-pickup-availability', product: product, block: block, section_id: section.id -%}
 					{%- when 'drawers' -%}
-						{%- render 'product-drawers', product: product, block: block, section: section -%}
+						{%- include 'product-drawers', product: product, block: block, section: section -%}
 					{%- when 'complementary' -%}
 						{%- render 'product-complementary', product: product, block: block, section_id: section.id -%}
 					{%- when 'sales_point' -%}
@@ -188,7 +188,7 @@
 					{%- when 'pickup_availability' -%}
 						{%- render 'product-pickup-availability', product: product, block: block, section_id: section.id -%}
 					{%- when 'drawers' -%}
-						{%- render 'product-drawers', product: product, block: block, section: section -%}
+						{%- include 'product-drawers', product: product, block: block, section: section -%}
 					{%- when 'custom_liquid' -%}
 						{%- render 'product-custom-liquid', block: block -%}
 					{%- when 'socials' -%}

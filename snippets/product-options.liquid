@@ -168,7 +168,7 @@
 										for="section-{{- section.id -}}-product-{{- product.id -}}-option-{{- handleized_option -}}-value-{{- handleized_value -}}"
 										class="radio-option__label {% if is_disabled %}is-disabled{% endif %}"
 									>
-										{{- value -}}
+										{{- value | escape -}}
 									</label>
 								</div>
 							{%- endfor -%}
@@ -275,12 +275,20 @@
 {%- endunless -%}
 
 <style>
+	/* Option label (legend) - force word wrap for very long option names */
+	legend.product-options__option-label {
+		max-width: 100%;
+		white-space: normal;
+		word-break: break-word;
+	}
+
 	/* Size label row: flex để "Size:" trái, "Size guide" phải */
 	legend.product-options__option-label--size {
 		display: flex !important;
 		align-items: center;
 		justify-content: space-between;
 		width: 100%;
+		max-width: 100%;
 		box-sizing: border-box;
 	}
 
@@ -345,11 +353,14 @@
 		border-color: #2c3d33 !important;
 	}
 
-	/* Desktop: size-grid — mỗi nút cố định 52px, 1 hàng ngang */
+	/* Ensure default options and ancestors don't overflow their container */
+	.product-options,
+	.product-options .js-product-options,
 	.product-options__default,
 	.product-options fieldset.product-options__default {
 		width: 100%;
 		max-width: 100%;
+		min-width: 0;
 		box-sizing: border-box;
 	}
 
@@ -362,17 +373,22 @@
 	}
 
 	.product-options__size-grid .radio-option {
-		flex: 0 0 auto;
+		flex: 0 1 auto;
+		max-width: 100%;
 	}
 
 	.product-options__size-grid .radio-option__label {
 		width: auto !important;
 		min-width: 52px !important;
-		height: 44px !important;
-		padding: 0 12px !important;
+		max-width: 100% !important;
+		min-height: 44px !important;
+		height: auto !important;
+		padding: 8px 12px !important;
 		font-size: 13px !important;
 		font-weight: 600 !important;
-		white-space: nowrap;
+		white-space: normal !important;
+		word-break: break-word;
+		text-align: center;
 		display: flex !important;
 		align-items: center !important;
 		justify-content: center !important;
@@ -465,10 +481,10 @@
 
 		/* Resize chiều cao cho các option khác trên mobile */
 		.product-options__size-grid.is-other-option .radio-option__label {
-			height: 40px !important;
 			min-height: 40px !important;
-			max-height: 40px !important;
+			height: auto !important;
 			border-radius: 4px !important;
+			padding: 8px 12px !important;
 		}
 	}
 </style>

@@ -239,6 +239,10 @@
 		{%- render 'product-drawers-content', product: product, section: section, blocks: blocks -%}
 	</div>
 
+	{%- if description_overlay_html != blank -%}
+		{{ description_overlay_html }}
+	{%- endif -%}
+
 	{%- for block in section.blocks -%}
 		{%- if block.type == 'back_in_stock_alert' -%}
 			{%- render 'back-in-stock-alert-popup', block: block -%}
