@@ -68,28 +68,6 @@
 			</small>
 		</div>
 
-		{%- if discount_codes.size > 0 -%}
-			<ul class="cart-discount__codes">
-				{% for discount_code in discount_codes %}
-					<li
-						class="cart-discount__pill js-cart-discount-pill"
-						aria-label="{{ 'cart.general.discount_applied' | t: code: discount_code }}"
-						data-discount-code="{{ discount_code }}"
-					>
-						<p class="cart-discount__pill-code">
-							{{ discount_code }}
-						</p>
 
-						<button
-							class="cart-discount__pill-remove focus-visible-outline js-cart-discount-pill-remove"
-							aria-label="{{ 'cart.general.remove_discount' | t: code: discount_code }}"
-							type="button"
-						>
-							{% render 'icons', icon: 'close' %}
-						</button>
-					</li>
-				{% endfor %}
-			</ul>
-		{%- endif -%}
 	</div>
 {%- endif -%}

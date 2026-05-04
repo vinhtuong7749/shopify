@@ -362,8 +362,8 @@
 	{%- endcapture -%}
 
 	{%- capture banner_content -%}
-		{%- if title != blank or text != blank or button_label_1 != blank or timer != blank -%}
-			<div class="banner__content">
+		{%- if title != blank or text != blank or button_label_1 != blank or button_label_2 != blank or timer != blank -%}
+			<div class="banner__content" {% if section.settings.banner_link != blank %}style="position: relative; z-index: 2; pointer-events: none;"{% endif %}>
 				{%- if show_section_breadcrumbs -%}
 					{%- render 'breadcrumbs', class: 'breadcrumb--banner' -%}
 				{%- endif -%}
@@ -393,7 +393,7 @@
 				{% endif %}
 
 				{% if show_button_1 or show_button_2 %}
-					<div class="banner__buttons">
+					<div class="banner__buttons" {% if section.settings.banner_link != blank %}style="position: relative; z-index: 5; pointer-events: auto;"{% endif %}>
 						{%- if show_button_1 -%}
 							{%- capture button_styles_1 -%}
 								--banner-button-background: {{- button_background_1 -}}; {{-  -}}
@@ -475,14 +475,20 @@
 	{%- endcapture -%}
 
 	<div class="banner__wrapper section-animate {{ banner_wrapper_classes | strip_newlines }}" style="{{- banner_wrapper_styles | strip_newlines -}}">
+		{%- if section.settings.banner_link != blank -%}
+			<a href="{{ section.settings.banner_link }}" class="banner__full-link" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 3;">
+				<span class="visually-hidden">{{ title | default: "Banner" }}</span>
+			</a>
+		{%- endif -%}
+
 		{%- if banner_media != blank -%}
 			<div class="banner__media-wrapper {{- media_wrapper_classes | strip_newlines -}}">
 				{{- banner_media -}}
 			</div>
 		{%- endif -%}
 
-		{%- if banner_content != blank -%}
-			<div class="banner__inner {{ aspect_ratio_class | strip_newlines }}">
+		{%- if banner_content != blank or aspect_ratio_class != blank -%}
+			<div class="banner__inner {{ aspect_ratio_class | strip_newlines }}" {% if section.settings.banner_link != blank %}style="position: relative; z-index: 4; pointer-events: none;"{% endif %}>
 				{{- banner_content -}}
 			</div>
 		{%- endif -%}
@@ -773,6 +779,12 @@
 			"type": "text",
 			"id": "button_aria_label_2",
 			"label": "Second button aria-label"
+		},
+		{
+			"type": "url",
+			"id": "banner_link",
+			"label": "Banner link",
+			"info": "Adds a clickable link to the entire banner"
 		},
 		{
 			"type": "image_picker",
