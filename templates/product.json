@@ -521,6 +521,31 @@
         "offset_top_mobile": 0,
         "offset_bottom_mobile": 0
       }
+    },
+    "sales_notification_7ymtet": {
+      "type": "sales-notification",
+      "name": "Sales Notification",
+      "settings": {
+        "enable": true,
+        "names": "sarah.j, John D., Alex M., A customer, David R., Emma W.",
+        "actions": "just purchased this product, just added this to their cart, is viewing this product",
+        "time_suffix": "minutes ago",
+        "btn_text": "View product",
+        "collection": "",
+        "font_family": "oswald_n4",
+        "bg_color": "#ffffff",
+        "text_color": "#2c3d33",
+        "btn_bg_color": "#2c3d33",
+        "btn_text_color": "#ffffff",
+        "border_color": "#eeeeee",
+        "border_width": 1,
+        "border_radius": 10,
+        "position": "left",
+        "mobile_position": "right",
+        "initial_delay": 7,
+        "show_time": 20,
+        "delay_between": 900
+      }
     }
   },
   "order": [
@@ -532,6 +557,7 @@
     "product-recommendations",
     "recently-viewed",
     "1775012941bcfca0c9",
-    "1775502196d186dc61"
+    "1775502196d186dc61",
+    "sales_notification_7ymtet"
   ]
 }

@@ -1,0 +1,447 @@
+{%- if section.settings.enable -%}
+{%- assign font = section.settings.font_family -%}
+{%- if font != blank -%}
+<style>
+  {{ font | font_face: font_display: 'swap' }}
+</style>
+{%- endif -%}
+
+<style>
+.sales-notification-popup {
+    position: fixed;
+    bottom: 20px;
+    {% if section.settings.position == 'right' %}
+    left: auto;
+    right: 20px;
+    {% else %}
+    left: 20px;
+    right: auto;
+    {% endif %}
+    background: {{ section.settings.bg_color }};
+    color: {{ section.settings.text_color }};
+    border-radius: {{ section.settings.border_radius }}px;
+    border: {{ section.settings.border_width }}px solid {{ section.settings.border_color }};
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    display: flex;
+    flex-direction: column;
+    padding: 14px;
+    width: 300px;
+    z-index: 999999;
+    transform: translateY(150%);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+    {%- if font != blank -%}
+    font-family: {{ font.family }}, {{ font.fallback_families }};
+    {%- else -%}
+    font-family: 'Oswald', var(--font-body-family, sans-serif);
+    {%- endif -%}
+}
+
+.sales-notification-popup.is-visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.sales-notification-popup__header {
+    margin-bottom: 8px;
+    padding-right: 15px;
+}
+
+.sales-notification-popup__action {
+    font-size: 13px;
+    color: {{ section.settings.text_color }};
+    opacity: 0.9;
+    margin: 0 0 2px 0;
+    line-height: 1.3;
+}
+
+.sales-notification-popup__action strong {
+    font-weight: 600;
+    opacity: 1;
+}
+
+.sales-notification-popup__time {
+    font-size: 11px;
+    color: {{ section.settings.text_color }};
+    opacity: 0.5;
+}
+
+.sales-notification-popup__body {
+    display: flex;
+    align-items: flex-start;
+    background: rgba(0,0,0,0.02);
+    padding: 8px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.2s ease;
+}
+
+.sales-notification-popup__body:hover {
+    background: rgba(0,0,0,0.05);
+}
+
+.sales-notification-popup__image {
+    width: 60px;
+    height: auto;
+    max-height: 80px;
+    object-fit: contain;
+    border-radius: 4px;
+    margin-right: 12px;
+    border: 1px solid rgba(0,0,0,0.05);
+    flex-shrink: 0;
+}
+
+.sales-notification-popup__content {
+    flex: 1;
+    min-width: 0;
+}
+
+.sales-notification-popup__title {
+    font-size: 13px;
+    color: {{ section.settings.text_color }};
+    margin: 0 0 4px 0;
+    font-weight: 500;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sales-notification-popup__price {
+    font-size: 14px;
+    color: #e53935;
+    font-weight: 700;
+    margin: 0 0 6px 0;
+}
+
+.sales-notification-popup__btn {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: {{ section.settings.btn_text_color }};
+    background-color: {{ section.settings.btn_bg_color }};
+    padding: 5px 12px;
+    border-radius: 4px;
+    transition: opacity 0.2s;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.sales-notification-popup__body:hover .sales-notification-popup__btn {
+    opacity: 0.8;
+}
+
+.sales-notification-popup__close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: {{ section.settings.text_color }};
+    opacity: 0.4;
+    line-height: 1;
+    padding: 2px;
+    transition: opacity 0.2s ease;
+}
+.sales-notification-popup__close:hover {
+    opacity: 1;
+}
+
+@media screen and (max-width: 767px) {
+    .sales-notification-popup {
+        bottom: 80px;
+        {% if section.settings.mobile_position == 'right' %}
+        left: auto;
+        right: 12px;
+        {% else %}
+        left: 12px;
+        right: auto;
+        {% endif %}
+        transform: translateY(150%);
+        width: 260px;
+        padding: 12px;
+    }
+    .sales-notification-popup.is-visible {
+        transform: translateY(0);
+    }
+}
+</style>
+
+<div class="sales-notification-popup" id="salesNotificationPopup">
+    <button class="sales-notification-popup__close" id="salesNotificationClose">&times;</button>
+    
+    <div class="sales-notification-popup__header">
+        <p class="sales-notification-popup__action"><strong id="salesNotificationName"></strong> <span id="salesNotificationActionText"></span></p>
+        <span class="sales-notification-popup__time" id="salesNotificationTime"></span>
+    </div>
+
+    <a href="#" id="salesNotificationLink" class="sales-notification-popup__body">
+        <img src="" alt="" class="sales-notification-popup__image" id="salesNotificationImage">
+        <div class="sales-notification-popup__content">
+            <p class="sales-notification-popup__title" id="salesNotificationTitle"></p>
+            <p class="sales-notification-popup__price" id="salesNotificationPrice"></p>
+            <span class="sales-notification-popup__btn" id="salesNotificationBtnText"></span>
+        </div>
+    </a>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    {% assign col = section.settings.collection %}
+    {% if col == blank %}
+        {% assign products_array = collections.all.products %}
+        {% assign products_count = collections.all.all_products_count %}
+    {% else %}
+        {% assign products_array = col.products %}
+        {% assign products_count = col.all_products_count %}
+    {% endif %}
+
+    {% assign limit = 30 %}
+    {% assign max_offset = products_count | minus: limit %}
+    {% if max_offset < 0 %}{% assign max_offset = 0 %}{% endif %}
+    {% assign random_offset = "now" | date: "%N" | modulo: max_offset | at_least: 0 %}
+
+    const products = [
+        {% for prod in products_array limit: limit offset: random_offset %}
+            {
+                title: {{ prod.title | json }},
+                url: {{ prod.url | json }},
+                image: {{ prod.featured_image | img_url: '150x' | json }},
+                price: {{ prod.price | money | json }}
+            }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+    ];
+
+    if (products.length === 0) return;
+
+    let namesStr = {{ section.settings.names | json }};
+    let actionsStr = {{ section.settings.actions | json }};
+    const timeSuffix = {{ section.settings.time_suffix | json }} || "minutes ago";
+    const btnText = {{ section.settings.btn_text | json }} || "View product";
+    
+    const names = namesStr ? namesStr.split(',').map(item => item.trim()).filter(Boolean) : ["Customer"];
+    const actions = actionsStr ? actionsStr.split(',').map(item => item.trim()).filter(Boolean) : ["just purchased this product"];
+    
+    const popup = document.getElementById('salesNotificationPopup');
+    const closeBtn = document.getElementById('salesNotificationClose');
+    
+    if (!popup || !closeBtn) return;
+
+    document.getElementById('salesNotificationBtnText').innerText = btnText;
+
+    let notificationTimeout;
+    
+    const initialDelay = {{ section.settings.initial_delay | times: 1000 }};
+    const showDuration = {{ section.settings.show_time | times: 1000 }};
+    const delayBetween = {{ section.settings.delay_between | times: 1000 }};
+
+    function showNotification() {
+        if (popup.classList.contains('is-visible')) return;
+
+        const randomProduct = products[Math.floor(Math.random() * products.length)];
+        const randomName = names[Math.floor(Math.random() * names.length)];
+        const randomAction = actions[Math.floor(Math.random() * actions.length)];
+        const randomTime = Math.floor(Math.random() * 15) + 1;
+
+        document.getElementById('salesNotificationName').innerText = randomName;
+        document.getElementById('salesNotificationActionText').innerText = randomAction;
+        document.getElementById('salesNotificationTitle').innerText = randomProduct.title;
+        document.getElementById('salesNotificationPrice').innerHTML = randomProduct.price;
+        document.getElementById('salesNotificationTime').innerText = randomTime + " " + timeSuffix;
+        document.getElementById('salesNotificationImage').src = randomProduct.image;
+        document.getElementById('salesNotificationLink').href = randomProduct.url;
+
+        popup.classList.add('is-visible');
+
+        notificationTimeout = setTimeout(hideNotification, showDuration);
+    }
+
+    function hideNotification() {
+        popup.classList.remove('is-visible');
+        setTimeout(showNotification, delayBetween + Math.floor(Math.random() * 5000));
+    }
+
+    closeBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        clearTimeout(notificationTimeout);
+        hideNotification();
+    });
+
+    setTimeout(showNotification, initialDelay);
+});
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Sales Notification",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable",
+      "label": "Enable notification",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Content Settings"
+    },
+    {
+      "type": "textarea",
+      "id": "names",
+      "label": "Random Names (comma separated)",
+      "default": "sarah.j, John D., Alex M., A customer, David R., Emma W."
+    },
+    {
+      "type": "textarea",
+      "id": "actions",
+      "label": "Random Actions (comma separated)",
+      "default": "just purchased this product, just added this to their cart, is viewing this product"
+    },
+    {
+      "type": "text",
+      "id": "time_suffix",
+      "label": "Time Suffix",
+      "default": "minutes ago"
+    },
+    {
+      "type": "text",
+      "id": "btn_text",
+      "label": "Button Text",
+      "default": "View product"
+    },
+    {
+      "type": "header",
+      "content": "Product Settings"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Select Collection",
+      "info": "Leave empty to randomly use all products in store"
+    },
+    {
+      "type": "header",
+      "content": "Appearance (Colors & Font)"
+    },
+    {
+      "type": "font_picker",
+      "id": "font_family",
+      "label": "Font Family",
+      "default": "oswald_n4"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#222222"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg_color",
+      "label": "Button Background Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "btn_text_color",
+      "label": "Button Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Appearance (Border & Layout)"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color",
+      "default": "#eeeeee"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "unit": "px",
+      "label": "Border Thickness",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "Corner Radius",
+      "default": 10
+    },
+    {
+      "type": "select",
+      "id": "position",
+      "label": "Desktop Position",
+      "options": [
+        { "value": "left", "label": "Bottom Left" },
+        { "value": "right", "label": "Bottom Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "mobile_position",
+      "label": "Mobile Position",
+      "options": [
+        { "value": "left", "label": "Bottom Left" },
+        { "value": "right", "label": "Bottom Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Timing (Seconds)"
+    },
+    {
+      "type": "number",
+      "id": "initial_delay",
+      "label": "Initial delay (seconds)",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "show_time",
+      "min": 3,
+      "max": 20,
+      "step": 1,
+      "label": "Display duration (seconds)",
+      "default": 6
+    },
+    {
+      "type": "number",
+      "id": "delay_between",
+      "label": "Delay between popups (seconds)",
+      "default": 10,
+      "info": "Enter time in seconds (e.g., 900 for 15 minutes)."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sales Notification"
+    }
+  ]
+}
+{% endschema %}

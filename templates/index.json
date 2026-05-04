@@ -263,9 +263,9 @@
         "link_url": "shopify://collections/all",
         "product_list": [
           "patriotic-moose-hunting-t-shirt-copy",
-          "patriotic-deer-hunting-t-shirt",
-          "let-freedom-ring-250th-anniversary-deer-t-shirt",
-          "let-freedom-ring-250th-anniversary-wild-turkey-t-shirt"
+          "land-of-the-free-t-shirt-1",
+          "patriotic-labrador-dogs-t-shirt-copy",
+          "red-white-whitetail-t-shirt"
         ],
         "collection": "",
         "layout": "4",
@@ -518,6 +518,7 @@
             "products": [],
             "show_media_only": true,
             "display_order": "media_first",
+            "card_grouping": "per_media",
             "columns_desktop": 3,
             "rows_desktop": 2,
             "columns_mobile": "2",

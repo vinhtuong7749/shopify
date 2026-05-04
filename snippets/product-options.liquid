@@ -319,12 +319,16 @@
 		border-radius: 50% !important;
 	}
 
-	/* Selected color swatch: outer ring border */
+	/* Increase gap between color swatches on desktop */
+	.product-options .product-options__swatch-container {
+		gap: 12px !important;
+	}
+
+	/* Selected color swatch indicator — áp dụng cả mobile lẫn desktop */
 	.product-options .radio-option-swatch .radio-input:checked + .radio-option-swatch__label {
 		outline: 2px solid #2c3d33 !important;
 		outline-offset: 3px !important;
 	}
-	/* Remove the default underline on selected swatch */
 	.product-options .radio-option-swatch .radio-input:checked + .radio-option-swatch__label::after {
 		width: 0 !important;
 	}
@@ -387,21 +391,22 @@
 	@media screen and (max-width: 767px) {
 		/* Hiển thị 7 màu trên 1 hàng (Color swatches) */
 		.product-options .product-options__swatch-container {
-			display: grid !important;
-			grid-template-columns: repeat(7, 1fr) !important;
-			gap: 12px 6px !important;
+			display: flex !important;
+			flex-wrap: wrap !important;
+			gap: 12px !important;
 			width: 100% !important;
 		}
-		
+
 		.product-options .radio-option-swatch {
-			width: 100% !important;
-			height: auto !important;
+			width: 36px !important;
+			height: 36px !important;
+			flex: 0 0 36px !important;
 			aspect-ratio: 1 / 1 !important;
 		}
-		
+
 		.product-options .radio-option-swatch__label {
-			width: 100% !important;
-			height: 100% !important;
+			width: 36px !important;
+			height: 36px !important;
 		}
 
 		/* Force parent containers trải rộng full */
