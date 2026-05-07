@@ -359,6 +359,46 @@
     },
     "hunting_collections": {
       "type": "hunting-collections",
+      "blocks": {
+        "deer": {
+          "type": "collection",
+          "settings": {
+            "collection": "deer",
+            "label": "Deer",
+            "icon": "none"
+          }
+        },
+        "turkey": {
+          "type": "collection",
+          "settings": {
+            "collection": "turkey",
+            "label": "Turkey",
+            "icon": "none"
+          }
+        },
+        "waterfowl": {
+          "type": "collection",
+          "settings": {
+            "collection": "waterfowl",
+            "label": "Waterfowl",
+            "icon": "none"
+          }
+        },
+        "fishing": {
+          "type": "collection",
+          "settings": {
+            "collection": "fishing",
+            "label": "Fishing",
+            "icon": "none"
+          }
+        }
+      },
+      "block_order": [
+        "deer",
+        "turkey",
+        "waterfowl",
+        "fishing"
+      ],
       "settings": {
         "heading": "",
         "button_label": "",
