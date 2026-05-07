@@ -335,7 +335,18 @@
 				{%- endfor -%}
 			</div>
 		{%- endif -%}
-		<div class="injected-review-container" id="injected-review-container-{{ section.id }}" style="display: flex; align-items: center; margin-top: -2px;"></div>
+		
+		<div class="product-reviews-and-sold" style="display: flex; align-items: center; gap: 6px; margin-top: 4px;">
+			{%- assign sold_count = product.metafields.custom.sold_base -%}
+			{%- if sold_count != blank -%}
+				<div class="product-sold-count" style="display: flex; align-items: center; font-family: var(--font-heading-family), 'Oswald', sans-serif; font-size: 15px; color: #2c3d33; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; transform: translateY(-1px);">
+					<span>{{ sold_count }} Sold</span>
+				</div>
+				<span style="color: #2c3d33; font-size: 14px; font-weight: 500; transform: translateY(-1px);">|</span>
+			{%- endif -%}
+			
+			<div class="injected-review-container" id="injected-review-container-{{ section.id }}" style="display: flex; align-items: center;"></div>
+		</div>
 	</div>
 
 	<script>

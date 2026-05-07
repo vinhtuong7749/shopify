@@ -55,14 +55,7 @@
           "type": "location",
           "settings": {
             "label": "HQ COORDINATES",
-            "address": "123 TACTICAL WAY, SECTOR 7G,\nINDUSTRIAL DISTRICT, TX 78701"
-          }
-        },
-        "location_2": {
-          "type": "location",
-          "settings": {
-            "label": "REGIONAL OUTPOST",
-            "address": "99 LOGISTIC HUB, BAY 14,\nWEST COAST SECTOR"
+            "address": "30 N Gould St Ste N, Sheridan, WY, 82801, US"
           }
         }
       },
@@ -70,8 +63,7 @@
         "chat",
         "email",
         "call",
-        "location_1",
-        "location_2"
+        "location_1"
       ],
       "settings": {
         "title": "CONTACT US",

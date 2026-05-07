@@ -120,22 +120,59 @@
 						{%- assign image_size_mobile = 383 -%}
 
 						{%- if enable_shopify_recommendations -%}
-							{%- if recommendations.products_count > 0 -%}
-								{%- for product in recommendations.products limit: limit -%}
-									{%- unless product.selected_or_first_available_variant.requires_shipping -%}{%- continue -%}{%- endunless -%}
-									<div class="product-recommendations__col swiper-slide js-product-recommendations-col">
-										{%- render
-											'product-card',
-											product: product,
-											size: image_size,
-											tablet_size: image_size_tablet,
-											mobile_size: image_size_mobile
-										-%}
+							{%- assign current_collection_handle = product.collections.first.handle -%}
+							{%- assign valid_collections = "" -%}
+							{%- for c in collections -%}
+								{%- if c.handle != current_collection_handle and c.all_products_count > 0 -%}
+									{%- assign valid_collections = valid_collections | append: c.handle | append: "," -%}
+								{%- endif -%}
+							{%- endfor -%}
+							{%- assign valid_collections_arr = valid_collections | split: "," -%}
+							
+							{%- assign time_seed = 'now' | date: '%s' | plus: 0 -%}
+							{%- assign selected_products = "" -%}
+							{%- assign selected_count = 0 -%}
 
-										<div class="product-recommendations__preloader-wrapper" aria-hidden="true">
-											<div class="product-recommendations__preloader"></div>
-										</div>
-									</div>
+							{%- if recommendations.performed -%}
+								{%- for i in (1..100) -%}
+									{%- if selected_count >= limit or valid_collections_arr.size == 0 -%}
+										{%- break -%}
+									{%- endif -%}
+									
+									{%- assign random_index = time_seed | plus: i | times: 13 | modulo: valid_collections_arr.size -%}
+									{%- assign random_collection_handle = valid_collections_arr[random_index] -%}
+									{%- assign rand_c = collections[random_collection_handle] -%}
+									
+									{%- assign best_product = nil -%}
+									{%- for p in rand_c.products -%}
+										{%- if p.available and p.selected_or_first_available_variant.requires_shipping -%}
+											{%- assign best_product = p -%}
+											{%- break -%}
+										{%- endif -%}
+									{%- endfor -%}
+									
+									{%- if best_product -%}
+										{%- assign product_handle = best_product.handle -%}
+										{%- assign check_handle = "," | append: product_handle | append: "," -%}
+										{%- assign current_selected = "," | append: selected_products -%}
+										{%- unless current_selected contains check_handle -%}
+											{%- assign selected_products = selected_products | append: product_handle | append: "," -%}
+											{%- assign selected_count = selected_count | plus: 1 -%}
+											<div class="product-recommendations__col swiper-slide js-product-recommendations-col">
+												{%- render
+													'product-card',
+													product: best_product,
+													size: image_size,
+													tablet_size: image_size_tablet,
+													mobile_size: image_size_mobile
+												-%}
+		
+												<div class="product-recommendations__preloader-wrapper" aria-hidden="true">
+													<div class="product-recommendations__preloader"></div>
+												</div>
+											</div>
+										{%- endunless -%}
+									{%- endif -%}
 								{%- endfor -%}
 							{%- endif -%}
 						{%- elsif product_list != blank and product_list.count > 0 -%}

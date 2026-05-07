@@ -298,29 +298,8 @@
       }
 
       window.addEventListener('load', function() {
-        // If form just submitted successfully, show immediately
-        if (window.camoPopupSuccess) {
-          initPopup();
-          return;
-        }
-
-        // Lighthouse/PSI measurement window can extend up to 60s on complex pages.
-        // Gate popup until safely past any automated audit window.
-        var SAFE_MS = 60000;
-        var gateTime = Date.now() + SAFE_MS;
-
-        // Absolute timer: ensures popup shows for real users after safe window
-        setTimeout(initPopup, SAFE_MS);
-
-        // Early user interactions after safe period also trigger popup
-        function onUserAction(evt) {
-          if (initialized) return;
-          if (evt.isTrusted === false) return;
-          if (Date.now() >= gateTime) initPopup();
-        }
-        ['pointerdown', 'click', 'touchstart', 'keydown'].forEach(function(ev) {
-          window.addEventListener(ev, onUserAction, { passive: true });
-        });
+        // Khởi tạo popup sau khi trang tải xong 1 giây để không ảnh hưởng LCP
+        setTimeout(initPopup, 1000);
       });
     })();
   </script>
