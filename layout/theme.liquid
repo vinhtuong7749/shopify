@@ -388,39 +388,37 @@
 					}
 				});
 
-				/* === Auto-apply discount code từ Popup Newsletter === */
-				(function() {
-					var discountApplied = false;
-					function tryApplyDiscount() {
-						if (discountApplied) return;
-						var code = localStorage.getItem('pending_discount');
-						if (!code) return;
-						if (!window.themeCore || !window.themeCore.CartApi) {
-							setTimeout(tryApplyDiscount, 1000);
-							return;
-						}
-						discountApplied = true;
-						/* Chỉ gọi /discount/CODE — Shopify tự lưu vào session */
-						fetch('/discount/' + encodeURIComponent(code))
-							.then(function() {
-								localStorage.removeItem('pending_discount');
-								console.log('[CamoSignal] Discount applied:', code);
-								/* Refresh cart drawer để hiển thị mã giảm giá */
-								if (window.themeCore.EventBus) {
-									window.themeCore.EventBus.emit('cart:refresh');
-								}
-							})
-							.catch(function(err) {
-								discountApplied = false;
-								console.warn('[CamoSignal] Discount error:', err);
-							});
-					}
-					/* Chỉ chạy 1 lần khi trang load, không can thiệp Add to Cart */
-					setTimeout(tryApplyDiscount, 3000);
-				})();
-
 			})();
 			}, 5000);
+		});
+		</script>
+
+		{%- comment -%} Auto-apply discount code từ Popup Newsletter — chạy độc lập, không chờ Enforcer {%- endcomment -%}
+		<script>
+		window.addEventListener('load', function() {
+			var discountApplied = false;
+			function tryApplyDiscount() {
+				if (discountApplied) return;
+				var code = localStorage.getItem('pending_discount');
+				if (!code) return;
+				discountApplied = true;
+				/* Gọi /discount/CODE — Shopify lưu vào session ngay */
+				fetch('/discount/' + encodeURIComponent(code))
+					.then(function() {
+						localStorage.removeItem('pending_discount');
+						console.log('[CamoSignal] Discount applied:', code);
+						/* Refresh cart drawer nếu đã sẵn sàng */
+						if (window.themeCore && window.themeCore.EventBus) {
+							window.themeCore.EventBus.emit('cart:refresh');
+						}
+					})
+					.catch(function(err) {
+						discountApplied = false;
+						console.warn('[CamoSignal] Discount error:', err);
+					});
+			}
+			/* Chạy sau 1 giây — đủ nhanh để áp dụng trước khi khách mở giỏ hàng */
+			setTimeout(tryApplyDiscount, 1000);
 		});
 		</script>
 	</body>
