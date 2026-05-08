@@ -1,4 +1,4 @@
-{% comment %}
+﻿{% comment %}
 	------------------------------------------------------------------------------
 	Snippet: Cart item drawer
 	Render item in the cart drawer
@@ -239,31 +239,25 @@
 								<span>{{- option.name }}</span>{% unless forloop.last %}&nbsp;|&nbsp;{% endunless %}
 							{%- endfor -%}
 						{%- endif -%}
-						
+
 						{%- if item.line_level_discount_allocations.size > 0 -%}
-							{%- if has_options -%} &nbsp;|&nbsp; {% endif -%}
-							<span style="display: flex; align-items: center; gap: 4px;">
-								{%- for discount in item.line_level_discount_allocations -%}
-									<span style="display: flex; align-items: center; gap: 4px;">
-										<span style="display: flex; align-items: center; margin-top: -1px; transform: scale(0.85); transform-origin: center;">{% render 'icons', icon: 'discount' %}</span>
-										<span>
-											{%- if discount.discount_application.title contains '10% DISCOUNT' -%}
-												[BUY 2 SAVE 10%]
-											{%- elsif discount.discount_application.title contains '15% DISCOUNT' -%}
-												[BUY 3 SAVE 15%]
-											{%- elsif discount.discount_application.title contains '20% DISCOUNT' -%}
-												[BUY 4 SAVE 20%]
-											{%- else -%}
-												{{ discount.discount_application.title }}
-											{%- endif -%}
-										</span>
-									</span>{%- unless forloop.last -%}, {% endunless -%}
-								{%- endfor -%}
-							</span>
+							{%- for discount in item.line_level_discount_allocations -%}
+								<span style="display: inline-flex; align-items: center; gap: 5px; background: #2c3d33; color: #fff; font-family: 'Oswald', var(--font-heading-family), sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; padding: 3px 10px; border-radius: 4px; line-height: 1.2; margin-left: 6px; vertical-align: middle;">
+									<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+									{%- if discount.discount_application.title contains '10% DISCOUNT' -%}
+										BUY 2 SAVE 10%
+									{%- elsif discount.discount_application.title contains '15% DISCOUNT' -%}
+										BUY 3 SAVE 15%
+									{%- elsif discount.discount_application.title contains '20% DISCOUNT' -%}
+										BUY 4 SAVE 20%
+									{%- else -%}
+										{{ discount.discount_application.title }}
+									{%- endif -%}
+								</span>
+							{%- endfor -%}
 						{%- endif -%}
 					</p>
 				{%- endif -%}
-
 				{%- if item.selling_plan_allocation != nil -%}
 					<p class="cart-item-drawer__option cart-item-drawer__option--italic">
 						{{- item.selling_plan_allocation.selling_plan.name -}}
