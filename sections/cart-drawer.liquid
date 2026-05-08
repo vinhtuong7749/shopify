@@ -63,7 +63,7 @@
 				{%- when '@app' -%}
 					{%- render block -%}
 				{%- when 'items' -%}
-					<div class="cart-drawer__section cart-drawer__section--items">
+					<div class="cart-drawer__section cart-drawer__section--items" style="margin-top: 0; padding-top: 0;">
 						<div class="cart-items">
 							<form action="{{- routes.cart_url -}}" id="cart-{{- section.id -}}" class="cart-items__form" method="post">
 								<div class="cart-items__body">
@@ -138,7 +138,7 @@
 		</div>
 
 	<div class="drawer__body cart-drawer__container js-cart-container js-scroll-lock-container" data-scrollable style="padding-top: 20px;">
-		<h2 class="drawer__title cart-drawer__title-empty h4" id="CartDrawer-{{- heading | handle -}}" style="font-family: 'Oswald', sans-serif; color: #2c3d33; font-weight: 700; text-transform: uppercase; margin: 0 16px 8px; font-size: 20px; letter-spacing: 0.5px; border-bottom: 1px solid #e0dcd2; padding-bottom: 16px; padding-right: 40px;">
+		<h2 class="drawer__title cart-drawer__title-empty h4" id="CartDrawer-{{- heading | handle -}}" style="font-family: 'Oswald', sans-serif; color: #2c3d33; font-weight: 700; text-transform: uppercase; margin: 0 16px 8px; font-size: 20px; letter-spacing: 0.5px; padding-bottom: 0; padding-right: 40px;">
 			{{- heading -}}
 		</h2>
 		<div class="cart-drawer__content js-cart-content">
@@ -149,10 +149,14 @@
 					<div id="cart-drawer-main-content">
 						{%- comment -%} Shipping bar at top {%- endcomment -%}
 						{%- if shipping_bar_content != '' -%}
-							<div class="cart-drawer__section cart-drawer__section--shipping" style="padding: 10px 16px; margin: 16px 16px 8px; background: #2c3d33; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+							<div class="cart-drawer__section cart-drawer__section--shipping" style="padding: 10px 16px; margin: 8px 16px 8px; background: #2c3d33; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
 								{{- shipping_bar_content -}}
 							</div>
 						{%- endif -%}
+
+						<div class="cart-drawer__custom-banner" style="margin: 0 16px 0;">
+							<img src="https://cdn.shopify.com/s/files/1/0741/7987/0911/files/banner-gio-hang.jpg?v=1778237632" alt="Special Offer" style="width: 100%; height: auto; border-radius: 6px; display: block;" loading="lazy">
+						</div>
 
 						{{- content -}}
 

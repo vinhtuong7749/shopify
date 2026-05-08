@@ -112,6 +112,7 @@
 		class="product-card__image-wrapper-link"
 		aria-label="{{- product.title | default: "Product preset title" | escape -}}"
 	>
+		
 		{% if is_show_first_media_image %}
 			{%- assign hover_image = product.metafields.product_card.hover_image | default: product.images[1] -%}
 
@@ -293,6 +294,7 @@
 				class="product-card__image-wrapper-link"
 				aria-label="{{- product.title | default: "Product preset title" | escape -}}"
 			>
+				
 				<div
 					class="product-card__image-wrapper product-card__image-wrapper--{{ aspect_ratio }}{% if hover_image != blank and image_on_hover_enabled == true %} product-card__image-wrapper--with-hover{% endif %} is-active{% unless product.has_only_default_variant or product.variants.size == 1 %} js-product-card-images-wrapper{% endunless -%}"
 					{%- unless product.has_only_default_variant -%}
@@ -421,6 +423,11 @@
 
 		<div class="product-card__price" style="font-family: 'Oswald', sans-serif; font-size: 13px; color: #2c3d33; margin-bottom: 12px;">
 			{%- render 'price', product: product, show_unit_price: show_unit_price, currency_code_enabled: currency_code_enabled, hide_from_price: true -%}
+			<!-- Start of Judge.me code -->
+      <div style='{{ jm_style }}' class='jdgm-widget jdgm-preview-badge' data-id='{{ product.id }}' data-auto-install='false'>
+        {{ product.metafields.judgeme.badge }}
+      </div>
+      <!-- End of Judge.me code -->
 		</div>
 
 		{%- if product.quantity_price_breaks_configured? -%}

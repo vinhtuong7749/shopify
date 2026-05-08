@@ -98,6 +98,7 @@
 		border: 1.5px solid #3a7d6a !important;
 		border-radius: 10px !important;
 		background: rgba(58, 125, 106, 0.06) !important;
+		position: relative !important;
 	}
 
 	.cart-item-drawer--protection .sp-card__icon {
@@ -121,6 +122,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1px;
+		padding-right: 8px;
 	}
 	.cart-item-drawer--protection .sp-card__title {
 		font-family: 'Oswald', sans-serif;
@@ -143,9 +145,9 @@
 	.cart-item-drawer--protection .sp-card__right {
 		flex-shrink: 0;
 		display: flex;
-		flex-direction: column;
-		align-items: flex-end;
-		gap: 4px;
+		align-items: center;
+		justify-content: flex-end;
+		padding-right: 12px;
 	}
 	.cart-item-drawer--protection .sp-card__price {
 		font-family: 'Oswald', sans-serif;
@@ -154,9 +156,14 @@
 		color: #2c3d33;
 	}
 	.cart-item-drawer--protection .sp-card__remove {
+		position: absolute;
+		top: 6px;
+		right: 6px;
 		display: flex;
 		align-items: center;
-		gap: 0;
+		justify-content: center;
+		width: 20px;
+		height: 20px;
 		font-size: 10px;
 		color: #888;
 		text-decoration: none;
