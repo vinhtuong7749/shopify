@@ -96,6 +96,9 @@
               <script>
                 window.camoPopupSuccess = true;
                 localStorage.setItem('popupSubscribed', 'true');
+                {%- if section.settings.coupon_code != blank -%}
+                localStorage.setItem('pending_discount', '{{ section.settings.coupon_code }}');
+                {%- endif -%}
               </script>
             {%- else -%}
               <div class="input-group">
@@ -122,7 +125,7 @@
     .popup-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0, 0, 0, {{ section.settings.overlay_opacity | divided_by: 100.0 }});
-      z-index: 99999; display: flex; justify-content: center; align-items: center;
+      z-index: 2147483647 !important; display: flex; justify-content: center; align-items: center;
       opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s ease;
     }
     .popup-overlay.is-visible { opacity: 1; visibility: visible; }
@@ -288,6 +291,10 @@
       function initPopup() {
         if (initialized) return;
         initialized = true;
+        
+        // Di chuyển popup ra body để thoát khỏi stacking context của các thẻ cha (tránh bị Cart Drawer đè lên)
+        document.body.appendChild(popup);
+
         closeBtn.addEventListener('click', closePopup);
         popup.addEventListener('click', function(e) { if (e.target === popup) closePopup(); });
         if (window.camoPopupSuccess) {

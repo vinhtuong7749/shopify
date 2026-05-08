@@ -267,13 +267,14 @@
 			})();
 		</script>
 
-		{%- comment -%} Global Cart Enforcer (Shipping Protection Max 1 & Merge Split Variants) {%- endcomment -%}
+		{%- comment -%} Global Cart Enforcer (Shipping Protection Max 1 & Merge Split Variants) + Auto-apply Discount {%- endcomment -%}
 		<style>
 			html.is-cart-merging .cart-drawer__items,
 			html.is-cart-merging .cart-item,
 			html.is-cart-merging .cart-items {
-				opacity: 0.2 !important;
+				opacity: 0.5 !important;
 				pointer-events: none !important;
+				transition: opacity 0.15s ease;
 			}
 		</style>
 		<script>
@@ -284,7 +285,10 @@
 				var isEnforcing = false;
 
 				function enforceCartRules(callback) {
-					if (isEnforcing) return;
+					if (isEnforcing) {
+						if (callback) callback();
+						return;
+					}
 					isEnforcing = true;
 					var xhr = new XMLHttpRequest();
 					xhr.open('GET', '/cart.js', true);
@@ -312,14 +316,15 @@
 								if (variants[item.variant_id]) {
 									needsUpdate = true;
 									variants[item.variant_id].qty += item.quantity;
-									updates[item.key] = 0; // Remove the duplicate
-									updates[variants[item.variant_id].key] = variants[item.variant_id].qty; // Apply sum to the first occurrence
+									updates[item.key] = 0;
+									updates[variants[item.variant_id].key] = variants[item.variant_id].qty;
 								} else {
 									variants[item.variant_id] = { key: item.key, qty: item.quantity };
 								}
 							}
 
 							if (needsUpdate) {
+								/* Chỉ mờ giỏ hàng khi THẬT SỰ cần update */
 								document.documentElement.classList.add('is-cart-merging');
 								var fix = new XMLHttpRequest();
 								fix.open('POST', '/cart/update.js', true);
@@ -329,10 +334,9 @@
 									if (callback && typeof callback === 'function') {
 										callback();
 									} else {
-										/* Refresh the cart drawer/page via AJAX */
 										if (window.themeCore && window.themeCore.EventBus) {
 											window.themeCore.EventBus.emit("cart:refresh");
-											setTimeout(function() { document.documentElement.classList.remove('is-cart-merging'); }, 600);
+											setTimeout(function() { document.documentElement.classList.remove('is-cart-merging'); }, 400);
 										} else {
 											window.location.reload();
 										}
@@ -359,35 +363,17 @@
 					xhr.send();
 				}
 
-				/* Check cart on init (now delayed until after load) */
+				/* Check cart on init (chỉ 1 lần khi trang load) */
 				enforceCartRules();
 
-				/* Intercept fetch for cart update/change requests to enforce after any modification */
-				var origFetch = window.fetch;
-				window.fetch = function() {
-					var url = arguments[0];
-					if (typeof url === 'string' && (url.indexOf('/cart/update') !== -1 || url.indexOf('/cart/change') !== -1 || url.indexOf('/cart/add') !== -1)) {
-						document.documentElement.classList.add('is-cart-merging');
-						return origFetch.apply(this, arguments).then(function(res) {
-							var cloned = res.clone();
-							setTimeout(function() { enforceCartRules(); }, 50); // fast trigger
-							return res;
-						}).catch(function(err) {
-							document.documentElement.classList.remove('is-cart-merging');
-							throw err;
-						});
-					}
-					return origFetch.apply(this, arguments);
-				};
-
-				/* Intercept checkout form submission to guarantee rules before proceeding to checkout */
+				/* Intercept checkout form submission */
 				document.addEventListener('submit', function(e) {
 					var isCheckout = false;
 					if (e.target && e.target.action && e.target.action.indexOf('/cart') !== -1) {
 						if (e.submitter && (e.submitter.name === 'checkout' || e.submitter.value === 'Checkout' || e.submitter.innerText === 'Checkout')) {
 							isCheckout = true;
 						} else if (e.target.querySelector('[name="checkout"]')) {
-							isCheckout = true; // Fallback
+							isCheckout = true;
 						}
 					}
 
@@ -397,13 +383,44 @@
 						document.documentElement.classList.add('is-cart-merging');
 						enforceCartRules(function() {
 							document.documentElement.classList.remove('is-cart-merging');
-							/* Submit programmatically bypassing the event listener so it doesn't loop */
 							HTMLFormElement.prototype.submit.call(form);
 						});
 					}
 				});
+
+				/* === Auto-apply discount code từ Popup Newsletter === */
+				(function() {
+					var discountApplied = false;
+					function tryApplyDiscount() {
+						if (discountApplied) return;
+						var code = localStorage.getItem('pending_discount');
+						if (!code) return;
+						if (!window.themeCore || !window.themeCore.CartApi) {
+							setTimeout(tryApplyDiscount, 1000);
+							return;
+						}
+						discountApplied = true;
+						/* Chỉ gọi /discount/CODE — Shopify tự lưu vào session */
+						fetch('/discount/' + encodeURIComponent(code))
+							.then(function() {
+								localStorage.removeItem('pending_discount');
+								console.log('[CamoSignal] Discount applied:', code);
+								/* Refresh cart drawer để hiển thị mã giảm giá */
+								if (window.themeCore.EventBus) {
+									window.themeCore.EventBus.emit('cart:refresh');
+								}
+							})
+							.catch(function(err) {
+								discountApplied = false;
+								console.warn('[CamoSignal] Discount error:', err);
+							});
+					}
+					/* Chỉ chạy 1 lần khi trang load, không can thiệp Add to Cart */
+					setTimeout(tryApplyDiscount, 3000);
+				})();
+
 			})();
-			}, 5000); // 5s delay after load event — reduces TBT significantly
+			}, 5000);
 		});
 		</script>
 	</body>
