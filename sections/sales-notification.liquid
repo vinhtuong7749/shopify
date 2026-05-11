@@ -35,6 +35,8 @@
     {%- else -%}
     font-family: 'Oswald', var(--font-body-family, sans-serif);
     {%- endif -%}
+    pointer-events: auto !important;
+    touch-action: manipulation;
 }
 
 .sales-notification-popup.is-visible {
@@ -148,6 +150,8 @@
     line-height: 1;
     padding: 2px;
     transition: opacity 0.2s ease;
+    pointer-events: auto !important;
+    touch-action: manipulation;
 }
 .sales-notification-popup__close:hover {
     opacity: 1;
@@ -256,6 +260,21 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (!popup || !closeBtn) return;
 
+    // Di chuyển popup ra body để thoát khỏi shopify-section wrapper
+    // (Cart Drawer gán inert lên wrapper cha, nên popup bên trong bị vô hiệu hóa)
+    document.body.appendChild(popup);
+
+    // Ngăn Cart Drawer vô hiệu hóa notification qua thuộc tính inert
+    // (Cart Drawer dùng data-shadow-root + trapFocus sẽ gán inert lên tất cả con trực tiếp của body)
+    var inertObserver = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.attributeName === 'inert' && popup.hasAttribute('inert')) {
+          popup.removeAttribute('inert');
+        }
+      });
+    });
+    inertObserver.observe(popup, { attributes: true, attributeFilter: ['inert'] });
+
     document.getElementById('salesNotificationBtnText').innerText = btnText;
 
     let notificationTimeout;
@@ -297,6 +316,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     closeBtn.addEventListener('click', function(e) {
         e.preventDefault();
+        e.stopPropagation();
         clearTimeout(notificationTimeout);
         clearTimeout(nextNotificationTimer);
         popup.classList.remove('is-visible');

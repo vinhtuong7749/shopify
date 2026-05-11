@@ -104,6 +104,16 @@
 		}
 	}
 
+	/* User request: Green text color when header is transparent */
+	.header[data-header-transparent] .header-menu__item,
+	.header[data-header-transparent] .header__icon,
+	.header[data-header-transparent] .header__heading-link,
+	.header-section.header-section--transparent-mobile .header[data-header-transparent-mobile] .header__icon,
+	.header-section.header-section--transparent-mobile .header[data-header-transparent-mobile] .header__burger-mobile-menu-button,
+	.header-section.header-section--transparent-mobile .header[data-header-transparent-mobile] .header__heading-link {
+		color: #2c3d33 !important;
+	}
+
 	/* Layout overrides to prevent overflow and force center align */
 	@media (min-width: 1200px) {
 		.header-container, .header__container {

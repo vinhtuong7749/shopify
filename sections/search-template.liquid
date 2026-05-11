@@ -100,7 +100,92 @@
 
 	<div class="search__container">
 		<div class="search__header">
-			<h1 class="h1 search__title">
+			<style>
+				@media screen and (min-width: 992px) {
+					.search__grid[data-type="product"] {
+						display: grid !important;
+						grid-template-columns: repeat(4, 1fr) !important;
+						gap: 28px 12px !important;
+					}
+					.search__grid[data-type="product"] .search__item {
+						width: 100% !important;
+						max-width: 100% !important;
+					}
+				}
+				
+				.search__header {
+					text-align: center;
+					margin-top: -60px !important;
+				}
+				.search__title {
+					margin-bottom: 16px !important;
+					margin-top: 0 !important;
+				}
+				.search__form {
+					max-width: 700px;
+					margin: 0 auto 40px;
+				}
+				.search__form-controls {
+					display: flex !important;
+					align-items: stretch !important;
+					border: 2px solid #2c3d33 !important;
+					border-radius: 50px !important;
+					background: #2c3d33 !important;
+					overflow: visible !important;
+				}
+				.search__input-wrapper {
+					flex-grow: 1;
+					background: #fff !important;
+					border-radius: 50px 0 0 50px !important;
+					overflow: hidden;
+				}
+				.search__input {
+					width: 100%;
+					border: none !important;
+					background: transparent !important;
+					padding: 16px 24px !important;
+					font-size: 16px !important;
+					outline: none !important;
+					box-shadow: none !important;
+					color: #2c3d33 !important;
+				}
+				.search__input::placeholder {
+					color: #7a8c82 !important;
+				}
+				.search__submit {
+					background: #2c3d33 !important;
+					color: #fff !important;
+					border: 2px solid #2c3d33 !important;
+					padding: 0 38px !important;
+					border-radius: 0 50px 50px 0 !important;
+					margin: -2px -2px -2px 0 !important;
+					min-height: auto !important;
+					font-weight: 700 !important;
+					text-transform: uppercase !important;
+					letter-spacing: 1px !important;
+					display: flex !important;
+					align-items: center !important;
+					justify-content: center !important;
+					transition: all 0.3s ease !important;
+					box-shadow: none !important;
+					outline: none !important;
+					z-index: 2;
+				}
+				.search__submit::after, .search__submit::before {
+					display: none !important;
+					box-shadow: none !important;
+				}
+				.search__submit:hover {
+					background: #1f2b24 !important;
+					border-color: #1f2b24 !important;
+				}
+				.search__submit svg {
+					margin-right: 8px;
+					width: 18px;
+					height: 18px;
+				}
+			</style>
+			<h1 class="h3 search__title">
 				{%- if heading != blank -%}
 					{{- heading -}}
 				{%- else -%}
@@ -153,7 +238,7 @@
 				</form>
 
 				{%- if search.performed -%}
-					<div class="search__types-wrapper js-search-types-wrapper js-element-to-scroll">
+					<div class="search__types-wrapper js-search-types-wrapper js-element-to-scroll" style="display: none !important;">
 						<div class="search__types">
 							<a
 								class="search__type-button button-link {% if search.types.size == 1 and search.types contains 'product' %} is-active {% endif %} js-search-type-link"

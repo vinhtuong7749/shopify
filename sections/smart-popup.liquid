@@ -127,6 +127,8 @@
       background: rgba(0, 0, 0, {{ section.settings.overlay_opacity | divided_by: 100.0 }});
       z-index: 2147483647 !important; display: flex; justify-content: center; align-items: center;
       opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s ease;
+      pointer-events: auto !important;
+      touch-action: manipulation;
     }
     .popup-overlay.is-visible { opacity: 1; visibility: visible; }
 
@@ -137,6 +139,7 @@
       transform: translateY(20px); transition: transform 0.4s ease;
       min-height: 0px !important;
       font-family: '{{ section.settings.font_family }}', sans-serif !important;
+      pointer-events: auto !important;
     }
     .popup-overlay.is-visible .popup-container { transform: translateY(0); }
 
@@ -146,6 +149,7 @@
       width: 40px !important; height: 40px !important;
       min-width: 0px !important; min-height: 0px !important;
       right: 5px; top: 5px;
+      pointer-events: auto !important;
     }
     .popup-close:before { display: none; }
     .popup-close:hover { opacity: 1; }
@@ -202,6 +206,7 @@
       box-sizing: border-box;
       outline: none;
       font-size: 1rem;
+      pointer-events: auto !important;
     }
     .popup-submit {
       font-family: '{{ section.settings.font_family }}', sans-serif !important;
@@ -216,6 +221,7 @@
       transition: opacity 0.3s ease;
       width: 100%;
       font-size: 1rem;
+      pointer-events: auto !important;
     }
     .popup-submit:before { display: none; }
     .popup-submit:hover { opacity: 0.85; }
@@ -294,6 +300,17 @@
         
         // Di chuyển popup ra body để thoát khỏi stacking context của các thẻ cha (tránh bị Cart Drawer đè lên)
         document.body.appendChild(popup);
+
+        // Ngăn Cart Drawer vô hiệu hóa popup qua thuộc tính inert
+        // (Cart Drawer dùng data-shadow-root + trapFocus sẽ gán inert lên tất cả con trực tiếp của body)
+        var inertObserver = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.attributeName === 'inert' && popup.hasAttribute('inert')) {
+              popup.removeAttribute('inert');
+            }
+          });
+        });
+        inertObserver.observe(popup, { attributes: true, attributeFilter: ['inert'] });
 
         closeBtn.addEventListener('click', closePopup);
         popup.addEventListener('click', function(e) { if (e.target === popup) closePopup(); });

@@ -14,6 +14,96 @@
 
 {%- render 'adastra' with '/src/styles/filter-list.scss' -%}
 
+<style>
+.filter-list--swatch {
+	display: flex !important;
+	flex-wrap: wrap !important;
+	gap: 14px !important;
+	padding-top: 10px !important;
+	flex-direction: row !important;
+	align-items: center !important;
+}
+
+ul.filter-list--swatch > li.filter-list__item {
+	margin: 0 !important;
+	width: auto !important;
+	min-width: 0 !important;
+	max-width: none !important;
+	flex: 0 0 auto !important;
+	display: inline-flex !important;
+	align-items: center !important;
+}
+
+ul.filter-list.filter-list--top-bar.filter-list--swatch > li.filter-list__item:nth-child(n) {
+	order: 0 !important;
+	width: auto !important;
+	flex: 0 0 auto !important;
+}
+
+.custom-color-swatch {
+	display: inline-block !important;
+	width: 36px !important;
+	height: 36px !important;
+	border-radius: 50% !important; /* Circle shape */
+	border: 2px solid transparent !important;
+	position: relative;
+	cursor: pointer;
+	padding: 0 !important;
+	margin: 0 !important;
+	box-shadow: 0 0 0 1px #e2e8f0 !important;
+	transition: all 0.2s ease !important;
+}
+
+.custom-color-swatch::before {
+	content: '' !important;
+	position: absolute !important;
+	top: 50% !important;
+	left: 50% !important;
+	width: calc(100% - 6px) !important;
+	height: calc(100% - 6px) !important;
+	transform: translate(-50%, -50%) !important;
+	border-radius: 50% !important;
+	background-color: var(--swatch-color, #fff) !important;
+	background-image: var(--swatch-image, none) !important;
+	background-size: cover !important;
+	border: 1px solid rgba(0,0,0,0.1) !important;
+	box-sizing: border-box !important;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+.custom-color-swatch:hover {
+	transform: scale(1.1);
+	box-shadow: 0 0 0 1px #2c3d33 !important;
+}
+
+input.filter-list__checkbox:checked ~ .custom-color-swatch {
+	border-color: #2c3d33 !important;
+	box-shadow: 0 0 0 2px #2c3d33 !important;
+	transform: scale(1.1);
+}
+
+input.filter-list__checkbox:checked ~ .custom-color-swatch::after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 12px;
+	height: 12px;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+	background-size: contain;
+	background-repeat: no-repeat;
+	filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.6));
+	z-index: 2;
+}
+
+/* Hide original square or label text */
+.custom-color-swatch .checkbox__label-image {
+	display: none !important;
+}
+</style>
+
 {%- assign sorted_values = filter.values -%}
 {%- assign swatch_option = settings.color_swatches_option | default: 'Color' | downcase -%}
 {%- assign swatches 	 = swatch_option | split: ',' -%}
@@ -85,7 +175,7 @@
 					{%- endif -%}
 				{%- endcapture -%}
 				<label
-					class="checkbox__label checkbox__label--swatch"
+					class="checkbox__label checkbox__label--swatch custom-color-swatch"
 					for="Filter-{{ section.id }}-{{- filter.param_name | escape -}}-{{- forloop.index -}}-{{- id -}}"
 					style="{{ swatch_style }}"
 					title="{{ filter_value_label | escape }}"
