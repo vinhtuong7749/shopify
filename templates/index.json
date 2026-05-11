@@ -436,6 +436,7 @@
     },
     "image_with_text_URwaUB": {
       "type": "image-with-text",
+      "disabled": true,
       "name": "Image with text",
       "settings": {
         "enable_color_scheme_inheritance": true,
@@ -476,6 +477,7 @@
     },
     "image_with_text_gRLEPG": {
       "type": "image-with-text",
+      "disabled": true,
       "name": "Image with text",
       "settings": {
         "enable_color_scheme_inheritance": true,
@@ -512,6 +514,92 @@
         "inner_offset_bottom": 30,
         "inner_offset_top_mobile": 10,
         "inner_offset_bottom_mobile": 10
+      }
+    },
+    "custom_promo_section_ch7Hd4": {
+      "type": "custom-promo-section",
+      "blocks": {
+        "card_HrTjtR": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/deer_hunting_image.jpg",
+            "title": "Naturally worn in",
+            "text": "<p>Inspired by real American terrain, this piece reflects a connection to land shaped by seasons, weather, and work. It’s designed with a grounded feel - quiet, steady, and familiar, like places that don’t need to introduce themselves.</p>",
+            "meta_1": "",
+            "meta_2": "",
+            "link": "",
+            "custom_width": 480,
+            "custom_width_mobile": 260,
+            "card_bg_color": "",
+            "card_title_color": "",
+            "card_text_color": ""
+          }
+        },
+        "card_eHrGf7": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/duck_hunting_image.jpg",
+            "title": "Built on the ground",
+            "text": "<p>Inspired by real American terrain, this piece reflects a connection to land shaped by seasons, weather, and work. It’s designed with a grounded feel - quiet, steady, and familiar, like places that don’t need to introduce themselves.</p>",
+            "meta_1": "",
+            "meta_2": "",
+            "link": "",
+            "custom_width": 480,
+            "custom_width_mobile": 260,
+            "card_bg_color": "",
+            "card_title_color": "",
+            "card_text_color": ""
+          }
+        }
+      },
+      "block_order": [
+        "card_HrTjtR",
+        "card_eHrGf7"
+      ],
+      "name": "Custom Promo Banner",
+      "settings": {
+        "section_bg_image": "shopify://shop_images/background-camo_b4a4d157-3814-4e1c-a704-f0da0866d23e.jpg",
+        "section_bg_image_mobile": "shopify://shop_images/background-camo-mobile.jpg",
+        "section_bg_color": "rgba(0,0,0,0)",
+        "banner_title": "WILD GAME\nRECIPES",
+        "banner_title_font": "heading",
+        "banner_title_size": 100,
+        "banner_title_color": "#ffffff",
+        "banner_text": "<p>Exclusive collection of tasty wild game recipes</p>",
+        "banner_text_size": 16,
+        "banner_text_color": "#faf6ee",
+        "banner_btn_text": "",
+        "banner_btn_bg": "#e6a822",
+        "banner_btn_text_color": "#000000",
+        "banner_link": "",
+        "enable_arrows": true,
+        "card_width": 320,
+        "card_image_height": 220,
+        "card_padding": 24,
+        "card_bg_color": "#dfdbce",
+        "card_title_font": "heading",
+        "card_title_size": 20,
+        "card_title_color": "#2c3d33",
+        "card_text_font": "oswald",
+        "card_text_size": 14,
+        "card_text_color": "#444444",
+        "banner_title_size_mobile": 36,
+        "banner_text_size_mobile": 15,
+        "card_width_mobile": 260,
+        "card_image_height_mobile": 150,
+        "card_title_size_mobile": 18,
+        "card_text_size_mobile": 13,
+        "enable_color_scheme_inheritance": true,
+        "color_scheme": "",
+        "container_width": "inherit",
+        "offset_top_desktop": 60,
+        "offset_bottom_desktop": 60,
+        "offset_top_mobile": 15,
+        "offset_bottom_mobile": 15,
+        "inner_offset_top": 80,
+        "inner_offset_bottom": 80,
+        "inner_offset_top_mobile": 20,
+        "inner_offset_bottom_mobile": 20
       }
     },
     "featured_products_ENKafe": {
@@ -602,6 +690,7 @@
     "hunting_collections",
     "image_with_text_URwaUB",
     "image_with_text_gRLEPG",
+    "custom_promo_section_ch7Hd4",
     "featured_products_ENKafe",
     "17755869487c283f8c"
   ]
