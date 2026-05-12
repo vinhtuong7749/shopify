@@ -18,10 +18,11 @@
 .filter-list--swatch {
 	display: flex !important;
 	flex-wrap: wrap !important;
-	gap: 14px !important;
-	padding-top: 10px !important;
+	gap: 10px !important;
+	padding: 6px 2px 4px !important;
 	flex-direction: row !important;
 	align-items: center !important;
+	overflow: visible !important;
 }
 
 ul.filter-list--swatch > li.filter-list__item {
@@ -41,66 +42,75 @@ ul.filter-list.filter-list--top-bar.filter-list--swatch > li.filter-list__item:n
 }
 
 .custom-color-swatch {
-	display: inline-block !important;
-	width: 36px !important;
-	height: 36px !important;
-	border-radius: 50% !important; /* Circle shape */
-	border: 2px solid transparent !important;
-	position: relative;
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	width: 32px !important;
+	height: 32px !important;
+	min-width: 32px !important;
+	min-height: 32px !important;
+	border-radius: 50% !important;
+	border: 0 !important;
+	position: relative !important;
 	cursor: pointer;
 	padding: 0 !important;
 	margin: 0 !important;
-	box-shadow: 0 0 0 1px #e2e8f0 !important;
-	transition: all 0.2s ease !important;
+	box-sizing: border-box !important;
+	box-shadow: none !important;
+	overflow: visible !important;
+	transition: none !important;
 }
 
-.custom-color-swatch::before {
-	content: '' !important;
-	position: absolute !important;
-	top: 50% !important;
-	left: 50% !important;
-	width: calc(100% - 6px) !important;
-	height: calc(100% - 6px) !important;
-	transform: translate(-50%, -50%) !important;
+.custom-color-swatch::before,
+.custom-color-swatch::after {
+	display: none !important;
+	content: none !important;
+}
+
+.custom-color-swatch__fill {
+	position: relative;
+	display: block;
+	width: 28px;
+	height: 28px;
 	border-radius: 50% !important;
-	background-color: var(--swatch-color, #fff) !important;
-	background-image: var(--swatch-image, none) !important;
-	background-size: cover !important;
+	background-color: var(--swatch-color, #fff);
+	background-image: var(--swatch-image, none);
+	background-size: cover;
+	background-position: center;
 	border: 1px solid rgba(0,0,0,0.1) !important;
 	box-sizing: border-box !important;
-	margin: 0 !important;
-	padding: 0 !important;
 }
 
-.custom-color-swatch:hover {
-	transform: scale(1.1);
-	box-shadow: 0 0 0 1px #2c3d33 !important;
-}
-
-input.filter-list__checkbox:checked ~ .custom-color-swatch {
-	border-color: #2c3d33 !important;
-	box-shadow: 0 0 0 2px #2c3d33 !important;
-	transform: scale(1.1);
-}
-
-input.filter-list__checkbox:checked ~ .custom-color-swatch::after {
-	content: '';
+.custom-color-swatch__fill::after {
+	content: "";
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	transform: translate(-50%, -50%);
+	display: none;
 	width: 12px;
 	height: 12px;
+	transform: translate(-50%, -50%);
 	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
 	background-size: contain;
 	background-repeat: no-repeat;
-	filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.6));
+	filter: drop-shadow(0 1px 1px rgba(0,0,0,0.65));
 	z-index: 2;
 }
 
-/* Hide original square or label text */
-.custom-color-swatch .checkbox__label-image {
-	display: none !important;
+.custom-color-swatch:hover .custom-color-swatch__fill {
+	box-shadow: inset 0 0 0 1px #2c3d33 !important;
+}
+
+input.filter-list__checkbox:checked + .custom-color-swatch {
+	box-shadow: none !important;
+}
+
+input.filter-list__checkbox:checked + .custom-color-swatch .custom-color-swatch__fill {
+	box-shadow: inset 0 0 0 2px #2c3d33 !important;
+}
+
+input.filter-list__checkbox:checked + .custom-color-swatch .custom-color-swatch__fill::after {
+	display: block;
 }
 </style>
 
@@ -180,7 +190,7 @@ input.filter-list__checkbox:checked ~ .custom-color-swatch::after {
 					style="{{ swatch_style }}"
 					title="{{ filter_value_label | escape }}"
 				>
-					<span class="checkbox__label-image"></span>
+					<span class="custom-color-swatch__fill" aria-hidden="true"></span>
 					<span class="visually-hidden">{{- filter_value_label | escape }} ({{- filter_value.count -}})</span>
 				</label>
 			{%- elsif filter.presentation == "image" -%}

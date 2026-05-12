@@ -2909,7 +2909,7 @@ const ProductCard = () => {
       setTimeout(() => {
         togglePreloader(button, false);
       }, 500);
-      await window.themeCore.CartApi.makeRequest(window.themeCore.CartApi.actions.GET_CART);
+      window.themeCore.CartApi.makeRequest(window.themeCore.CartApi.actions.GET_CART, { noOpen: true, noRefresh: true });
     } catch (error) {
       onQuantityError(error);
       setTimeout(() => {
@@ -3477,7 +3477,7 @@ const QuickView = () => {
       window.themeCore.EventBus.emit(`Toggle:quick-view:close`);
       window.themeCore.EventBus.emit(`Overlay:quick-view:close`);
     }
-    window.themeCore.CartApi.makeRequest(window.themeCore.CartApi.actions.GET_CART);
+    window.themeCore.CartApi.makeRequest(window.themeCore.CartApi.actions.GET_CART, { noOpen: true, noRefresh: true });
   }
   function changeErrorMessage(message = "") {
     formError.innerText = message;
@@ -9245,6 +9245,7 @@ const CartApi = () => {
       if (!items || !Array.isArray(items)) {
         throw new Error(`Cart API::ERROR::'${actions.ADD_TO_CART_MANY}' - param 'items' must be an array, current value is ${items}!`);
       }
+      const renderedSections = sections || getCartSectionIds();
       return fetch("/cart/add.js", {
         method: "POST",
         headers: {
@@ -9252,7 +9253,7 @@ const CartApi = () => {
         },
         body: JSON.stringify({
           items: items.map((item) => transformLineItemProps(item)),
-          sections
+          sections: renderedSections
         })
       }).then((response) => {
         if (response.ok) {
@@ -9372,12 +9373,42 @@ const CartApi = () => {
       }));
     }
   };
+  function getCartSectionIds() {
+    return [...document.querySelectorAll('[data-section-type="cart-template"]')].map((section) => section.dataset.sectionId).filter(Boolean).join(",");
+  }
+  function getCurrentCartItemCount() {
+    const currentCart = window.themeCore.cartObject;
+    if (currentCart && Number.isFinite(Number(currentCart.item_count))) {
+      return Number(currentCart.item_count);
+    }
+    const counter = document.querySelector("[data-cart-count]");
+    const count = counter ? Number(counter.getAttribute("data-cart-count")) : 0;
+    return Number.isFinite(count) ? count : 0;
+  }
+  function getAddedQuantity(params) {
+    return params.filter((param) => {
+      if (param && param.hasOwnProperty("id") && param.hasOwnProperty("quantity")) {
+        return true;
+      }
+      if (Array.isArray(param)) {
+        return param.every((item) => item && item.hasOwnProperty("id") && item.hasOwnProperty("quantity"));
+      }
+      return false;
+    }).flatMap((param) => param).reduce((total, item) => total + Number(item.quantity || 1), 0);
+  }
+  function normalizeCartResponse(action, data, params) {
+    const isAddAction = action === actions.ADD_TO_CART || action === actions.ADD_TO_CART_MANY;
+    if (isAddAction && data && !data.hasOwnProperty("item_count")) {
+      data.item_count = getCurrentCartItemCount() + getAddedQuantity(params);
+    }
+    return data;
+  }
   function makeRequest(action, ...params) {
     if (!Object.keys(api).includes(action)) {
       throw new Error(`Cart API::ERROR::makeQuery - unavailable action type - ${action}`);
     }
     return api[action](...params).then((response) => {
-      const data = response.data;
+      const data = normalizeCartResponse(action, response.data, params);
       setTimeout(() => {
         window.themeCore.cartObject = data;
         window.themeCore.EventBus.emit("cart:updated", {
@@ -9722,7 +9753,7 @@ const AddToCart = () => {
             params.properties["_Pre-order"] = "true";
           }
           await window.themeCore.CartApi.makeRequest(window.themeCore.CartApi.actions.ADD_TO_CART, params);
-          await window.themeCore.CartApi.makeRequest(window.themeCore.CartApi.actions.GET_CART);
+          window.themeCore.CartApi.makeRequest(window.themeCore.CartApi.actions.GET_CART, { noOpen: true, noRefresh: true });
         } catch (error) {
           const CartNotificationError = window.themeCore.CartNotificationError;
           CartNotificationError.addNotification(error.description);

@@ -191,7 +191,7 @@ const ProductCardWithForm = () => {
     event.preventDefault();
     const errorMessage = await addToCart(variantId, minQuantity, productCard);
     changeErrorMessage(form, errorMessage);
-    window.themeCore.CartApi.makeRequest(window.themeCore.CartApi.actions.GET_CART);
+    window.themeCore.CartApi.makeRequest(window.themeCore.CartApi.actions.GET_CART, { noOpen: true, noRefresh: true });
     window.themeCore.EventBus.emit("product-card-form-end-request", event);
     if (!errorMessage) {
       return;

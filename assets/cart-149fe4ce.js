@@ -492,6 +492,9 @@ const Cart = () => {
     if (data) {
       resource = data.sections;
     }
+    if (data && data.params && data.params.some((param) => param && param.noRefresh)) {
+      return;
+    }
     if (!hasErrors) {
       refreshSections(resource).then(() => {
         handleDiscountErrors(data);

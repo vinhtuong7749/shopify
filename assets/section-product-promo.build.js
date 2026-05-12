@@ -55,7 +55,7 @@ const ProductPromo = () => {
         id: variantId,
         quantity: 1
       });
-      await window.themeCore.CartApi.makeRequest(window.themeCore.CartApi.actions.GET_CART);
+      window.themeCore.CartApi.makeRequest(window.themeCore.CartApi.actions.GET_CART, { noOpen: true, noRefresh: true });
     } catch (error) {
       onQuantityError(error);
     }

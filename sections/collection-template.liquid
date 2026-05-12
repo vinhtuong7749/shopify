@@ -41,6 +41,47 @@
 	.collection__header-product-count {
 		display: none !important;
 	}
+
+	@media screen and (max-width: 767px) {
+		.collection {
+			margin-top: 0 !important;
+			padding-top: 0 !important;
+		}
+		.collection .collection__container {
+			row-gap: 14px !important;
+		}
+		.collection .collection__header {
+			margin-top: 0 !important;
+			padding-top: 0 !important;
+			margin-bottom: 0 !important;
+			padding-bottom: 0 !important;
+		}
+		.collection .collection__header-main {
+			border-top: 0 !important;
+			border-bottom: 1px solid rgba(44,61,51,0.12) !important;
+			padding-top: 10px !important;
+			padding-bottom: 10px !important;
+		}
+		.collection .collection__header-container {
+			padding-top: 0 !important;
+			padding-bottom: 0 !important;
+		}
+		.collection .collection__header-controls {
+			row-gap: 0 !important;
+		}
+		.collection .collection__header-controls-wrapper {
+			min-height: 32px !important;
+			row-gap: 0 !important;
+			align-items: center !important;
+		}
+		.collection .collection__header-filter-button {
+			margin: 0 !important;
+		}
+		.collection .collection__body {
+			margin-top: 0 !important;
+			padding-top: 0 !important;
+		}
+	}
 {%- endstyle -%}
 
 {%- assign show_grid_selector			= false -%}
@@ -733,9 +774,10 @@
 			flex-direction: row !important;
 			flex-wrap: wrap !important;
 			gap: 12px 10px !important;
-			padding: 0 !important;
+			padding: 4px 0 !important;
 			margin: 0 !important;
 			list-style: none !important;
+			overflow: visible !important;
 		}
 		.product-filters ul.filter-list--swatch li.filter-list__item {
 			width: auto !important;
@@ -743,7 +785,8 @@
 			min-width: 0 !important;
 			margin: 0 !important;
 			padding: 0 !important;
-			display: inline-block !important;
+			display: inline-flex !important;
+			align-items: center !important;
 		}
 		.product-filters .checkbox__label--swatch {
 			border-radius: 50% !important;
@@ -786,6 +829,45 @@
 		}
 		.product-filters .checkbox__input:checked + .checkbox__label--swatch::after {
 			display: none !important;
+		}
+
+		/* Custom color swatches keep the selected ring inside the chip to avoid clipping. */
+		.product-filters .checkbox__label--swatch.custom-color-swatch {
+			display: inline-flex !important;
+			align-items: center !important;
+			justify-content: center !important;
+			width: 32px !important;
+			height: 32px !important;
+			min-width: 32px !important;
+			min-height: 32px !important;
+			padding: 0 !important;
+			border: 0 !important;
+			box-shadow: none !important;
+			overflow: visible !important;
+			background: transparent !important;
+		}
+		.product-filters .checkbox__label--swatch.custom-color-swatch::before,
+		.product-filters .checkbox__label--swatch.custom-color-swatch::after,
+		.product-filters .checkbox__input:checked + .checkbox__label--swatch.custom-color-swatch::before,
+		.product-filters .checkbox__input:checked + .checkbox__label--swatch.custom-color-swatch::after {
+			display: none !important;
+			content: none !important;
+		}
+		.product-filters .checkbox__label--swatch.custom-color-swatch .custom-color-swatch__fill {
+			display: block !important;
+			width: 28px !important;
+			height: 28px !important;
+			border-radius: 50% !important;
+		}
+		.product-filters .checkbox__input:checked + .checkbox__label--swatch.custom-color-swatch {
+			border: 0 !important;
+			box-shadow: none !important;
+		}
+		.product-filters .checkbox__input:checked + .checkbox__label--swatch.custom-color-swatch .custom-color-swatch__fill {
+			box-shadow: inset 0 0 0 2px #2c3d33 !important;
+		}
+		.product-filters .checkbox__input:checked + .checkbox__label--swatch.custom-color-swatch .custom-color-swatch__fill::after {
+			display: block !important;
 		}
 		
 		/* Custom static checkboxes (e.g ALL, BRAND, CLOTHING) */

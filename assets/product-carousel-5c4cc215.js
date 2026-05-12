@@ -645,7 +645,7 @@ const ProductForm = () => {
     quantityWidgetEl && quantityWidgetEl.setValue(0);
     submit.forEach((button) => button.classList.remove(classes.loading));
     resetRecipientForm(formElement);
-    window.themeCore.CartApi.makeRequest(window.themeCore.CartApi.actions.GET_CART);
+    window.themeCore.CartApi.makeRequest(window.themeCore.CartApi.actions.GET_CART, { noOpen: true, noRefresh: true });
   }
   function onFormSubmitError(error, form) {
     if (!form) {

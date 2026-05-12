@@ -138,11 +138,11 @@
 			</button>
 		</div>
 
-	<div class="drawer__body cart-drawer__container js-cart-container js-scroll-lock-container" data-scrollable style="padding-top: 20px;">
+	<div class="drawer__body cart-drawer__container js-cart-container" style="padding-top: 20px;">
 		<h2 class="drawer__title cart-drawer__title-empty h4" id="CartDrawer-{{- heading | handle -}}" style="font-family: 'Oswald', sans-serif; color: #2c3d33; font-weight: 700; text-transform: uppercase; margin: 0 16px 8px; font-size: 20px; letter-spacing: 0.5px; padding-bottom: 0; padding-right: 40px;">
 			{{- heading -}}
 		</h2>
-		<div class="cart-drawer__content js-cart-content">
+		<div class="cart-drawer__content js-cart-content js-scroll-lock-container" data-scrollable>
 			{%- if cart.empty? -%}
 				{%- render 'cart-empty' -%}
 			{%- else -%}
@@ -181,7 +181,7 @@
 			</div>
 
 			{%- if footer != '' -%}
-				<div class="drawer__footer cart-drawer__footer js-cart-footer" style="display: contents;">
+				<div class="drawer__footer cart-drawer__footer js-cart-footer">
 					{{- footer -}}
 				</div>
 			{%- endif -%}
@@ -195,6 +195,10 @@
 			flex-direction: column !important;
 			justify-content: flex-start !important;
 			align-items: stretch !important;
+			height: 100% !important;
+			min-height: 0 !important;
+			padding-bottom: 0 !important;
+			overflow: hidden !important;
 		}
 
 		#CartDrawer .drawer__title {
@@ -205,9 +209,45 @@
 			display: flex !important;
 			flex-direction: column !important;
 			justify-content: flex-start !important;
-			flex: 0 0 auto !important;
+			flex: 1 1 auto !important;
+			min-height: 0 !important;
 			margin-top: 0 !important;
 			padding-top: 0 !important;
+			overflow-x: hidden !important;
+			overflow-y: auto !important;
+			-webkit-overflow-scrolling: touch !important;
+			overscroll-behavior: contain !important;
+		}
+
+		#CartDrawer .cart-drawer__footer {
+			display: block !important;
+			flex: 0 0 auto !important;
+			position: relative !important;
+			bottom: auto !important;
+			z-index: 30 !important;
+			margin-top: 0 !important;
+			padding: 0 !important;
+			background: #ffffff !important;
+			border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+			box-shadow: 0 -12px 24px rgba(255, 255, 255, 0.95) !important;
+		}
+
+		#CartDrawer .cart-drawer__footer .cart-footer,
+		#CartDrawer .cart-drawer__footer .cart-footer__main {
+			display: flex !important;
+			flex-direction: column !important;
+			padding: 0 !important;
+			background: #ffffff !important;
+		}
+
+		#CartDrawer .cart-drawer__footer .cart-footer__ctas {
+			margin-top: 0 !important;
+			border-top: 0 !important;
+		}
+
+		#CartDrawer .cart-drawer__payment-icons {
+			background: #ffffff !important;
+			padding-bottom: max(16px, env(safe-area-inset-bottom)) !important;
 		}
 
 		#CartDrawer #cart-drawer-main-content {
