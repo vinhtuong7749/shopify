@@ -125,6 +125,7 @@
 	role="dialog"
 	aria-labelledby="CartDrawer-{{- heading | handle -}}"
 	style="background-color: #ffffff !important; --color-background: #ffffff !important; --color-background-popup-drawer: #ffffff !important;"
+	data-cart-drawer-fix
 >
 	<div class="drawer__header js-cart-header" style="position: absolute; top: 12px; right: 12px; z-index: 50; border: none; padding: 0; margin: 0; background: transparent;">
 			<button
@@ -187,6 +188,45 @@
 		</div>
 
 		{%- render 'preloader' -%}
+
+	<style>
+		#CartDrawer.cart-drawer .cart-drawer__container {
+			display: flex !important;
+			flex-direction: column !important;
+			justify-content: flex-start !important;
+			align-items: stretch !important;
+		}
+
+		#CartDrawer .drawer__title {
+			flex: 0 0 auto !important;
+		}
+
+		#CartDrawer .cart-drawer__content {
+			display: flex !important;
+			flex-direction: column !important;
+			justify-content: flex-start !important;
+			flex: 0 0 auto !important;
+			margin-top: 0 !important;
+			padding-top: 0 !important;
+		}
+
+		#CartDrawer #cart-drawer-main-content {
+			display: flex !important;
+			flex-direction: column !important;
+			justify-content: flex-start !important;
+			margin-top: 0 !important;
+			padding-top: 0 !important;
+		}
+
+		#CartDrawer .cart-drawer__section.cart-drawer__section--shipping {
+			margin: 8px 16px 8px !important;
+		}
+
+		#CartDrawer .cart-drawer__custom-banner,
+		#CartDrawer .cart-drawer__section.cart-drawer__section--items {
+			margin-top: 0 !important;
+		}
+	</style>
 	</section>
 
 	{%- if upsell_products != blank -%}
@@ -194,6 +234,23 @@
 	{%- endif -%}
 
 	{%- render 'adastra' with '/src/scripts/cart-drawer.js' -%}
+
+	{%- if cart.item_count > 0 -%}
+		<script>
+			(function() {
+				function autoOpenCartDrawer() {
+					if (window.themeCore && window.themeCore.EventBus) {
+						window.themeCore.EventBus.emit('cart:drawer:open');
+					}
+				}
+				if (window.themeCore && window.themeCore.loaded) {
+					autoOpenCartDrawer();
+				} else {
+					document.addEventListener('theme:all:loaded', autoOpenCartDrawer, { once: true });
+				}
+			})();
+		</script>
+	{%- endif -%}
 {%- endif -%}
 
 {% schema %}
