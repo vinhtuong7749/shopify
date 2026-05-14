@@ -30,7 +30,6 @@
 {%- assign container 					= section.settings.container_width -%}
 {%- assign product_list 				= collection -%}
 {%- assign filters_empty		 		= false -%}
-{%- assign filters_size 				= product_list.filters.size -%}
 
 {%- assign grid_banner 					= section.blocks | where: 'type', 'grid-banner' | first -%}
 {%- assign blocks_sidebar_banner 		= section.blocks | where: 'type', 'sidebar-banner' -%}
@@ -60,7 +59,7 @@
 
 {%- assign active_filters_size = 0 -%}
 
-{%- for filter in collections['usa'].filters -%}
+{%- for filter in collection.filters -%}
 	{%- case filter.type -%}
 		{%- when 'list' or 'boolean' -%}
 			{%- assign active_filters_size = active_filters_size | plus: filter.active_values.size -%}
@@ -189,7 +188,7 @@
 
 
 		<div class="collection__body">
-			{%- paginate collections['usa'].products by paginate_by, window_size: 2 -%}
+			{%- paginate collection.products by paginate_by, window_size: 2 -%}
 				<div
 					class="collection__grid-wrapper js-grid-wrapper"
 					aria-busy="false"
@@ -197,7 +196,7 @@
 					data-grid-col-tablet="2"
 					data-grid-col-mobile="{{- mobile_grid -}}"
 				>
-					{%- for product in collections['usa'].products -%}
+					{%- for product in collection.products -%}
 						{%- unless product.selected_or_first_available_variant.requires_shipping -%}
 							{%- continue -%}
 						{%- endunless -%}
@@ -207,7 +206,7 @@
 						{%- assign is_lazy = true -%}
 
 						{%- if grid_banner_position -%}
-							{%- assign products_on_page = collections['usa'].products.size -%}
+							{%- assign products_on_page = collection.products.size -%}
 
 							{%- if grid_banner_position > products_on_page -%}
 								{%- assign grid_banner_last_position = true -%}
@@ -372,7 +371,7 @@
 
 			{%- capture collection_empty_classes -%}
 				collection__coming-soon js-template-empty-title {{-  -}}
-				{% if collections['usa'].products.size > 0 %} is-hidden {%- endif -%}
+				{% if collection.products.size > 0 %} is-hidden {%- endif -%}
 			{%- endcapture -%}
 
 			<div class="{{- collection_empty_classes | strip_newlines -}}">

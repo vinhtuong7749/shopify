@@ -150,8 +150,8 @@
       },
       "block_order": [
         "row-direct",
-        "row-collections",
-        "row-commitment"
+        "row-commitment",
+        "row-collections"
       ],
       "settings": {
         "label": "",

@@ -470,8 +470,7 @@
 }
 
 .about-editorial-structure__sub {
-  display: flex;
-  flex-direction: column;
+  display: block;
 }
 
 .about-editorial-structure__sub--divided {
@@ -481,13 +480,27 @@
 }
 
 .about-editorial-structure__sub-label {
-  margin: 0 0 12px;
-  color: var(--ae-ink-faint);
+  display: inline;
+  margin: 0 6px 0 0;
+  color: var(--ae-ink);
   font-size: 0.78rem;
-  font-weight: 500;
+  font-weight: 700;
   line-height: 1.4;
   letter-spacing: 0.5px;
   text-transform: uppercase;
+}
+
+.about-editorial-structure__sub-label::after {
+  content: ":";
+}
+
+.about-editorial-structure__sub .about-editorial-structure__card-text {
+  display: inline;
+}
+
+.about-editorial-structure__sub .about-editorial-structure__card-text p {
+  display: inline;
+  margin: 0;
 }
 
 .about-editorial-structure__sub .about-editorial-pills {
