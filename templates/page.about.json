@@ -9,259 +9,166 @@
  */
 {
   "sections": {
-    "hero-banner": {
-      "type": "banner",
+    "editorial-hero": {
+      "type": "about-editorial-hero",
       "settings": {
-        "desktop_image_height": "auto",
-        "mobile_image_height": "400px",
-        "media_type": "image",
-        "title": "Built on understanding, <em>not attention.</em>",
-        "text": "It began with the land — the woods, the fields, and open prairies, in mountain backcountry and brush country, along marsh edges and the quiet places where hunting isn't a sport, but a way of reading the ground you grew up on.",
-        "button_label_1": "",
-        "button_link_1": "",
-        "button_aria_label_1": "",
-        "button_label_2": "",
-        "button_link_2": "",
-        "button_aria_label_2": "",
-        "image_desktop": "shopify://shop_images/1_ko_text.png",
-        "image_mobile": "shopify://shop_images/1_ko_text.png",
-        "show_breadcrumbs": false,
-        "enable_timer": false,
-        "timer_month": "0",
-        "timer_day": "1",
-        "timer_hour": "0",
-        "timer_timezone": "+0",
-        "timer_background": "rgba(255,255,255, 0.12)",
-        "timer_color": "#ffffff",
-        "external_video_url_desktop": "",
-        "external_video_url_mobile": "",
-        "content_alignment": "right",
-        "content_alignment_mobile": "right",
-        "block_alignment": "flex-end",
-        "block_alignment_vertical": "flex-end",
-        "block_alignment_vertical_mob": "flex-end",
-        "section_background": "#1a1a1a",
-        "overlay": "rgba(0, 0, 0, 0.55)",
-        "text_color": "#ffffff",
-        "button_background_1": "#ffffff",
-        "button_color_1": "#000000",
-        "button_border_1": "#ffffff",
-        "button_background_hover_1": "#000000",
-        "button_color_hover_1": "#ffffff",
-        "button_border_hover_1": "#ffffff",
-        "button_background_2": "#ffffff",
-        "button_color_2": "#000000",
-        "button_border_2": "#ffffff",
-        "button_background_hover_2": "#000000",
-        "button_color_hover_2": "#ffffff",
-        "button_border_hover_2": "#ffffff",
+        "eyebrow": "About Camo Signal",
+        "heading_line_1": "Raised",
+        "heading_line_2": "here.",
+        "heading_accent": "Stood here.",
+        "description": "<p>Built for those who hunt, protect, and live by their values - quietly, proudly.</p>",
+        "show_scroll_label": false,
+        "scroll_label": "Scroll",
+        "bg_image": "",
+        "bg_image_mobile": "",
+        "bg_image_url": "https://cdn.shopify.com/s/files/1/0741/7987/0911/files/banner-aboutus.jpg?v=1778740853",
+        "bg_image_url_mobile": "https://cdn.shopify.com/s/files/1/0741/7987/0911/files/banner-aboutus-mobile.jpg?v=1778740853",
+        "overlay_opacity": 55,
+        "cream_color": "#F5F0E8",
+        "earth_color": "#C4B89A",
+        "moss_color": "#1E2E24",
         "container_width": "100%",
-        "offset_top_desktop": 0,
-        "offset_bottom_desktop": 0,
-        "offset_top_mobile": 0,
-        "offset_bottom_mobile": 0
+        "min_height_desktop": 760,
+        "min_height_mobile": 620
       }
     },
-    "story-belief": {
-      "type": "richtext",
+    "identity": {
+      "type": "about-editorial-identity",
       "settings": {
-        "enable_color_scheme_inheritance": true,
-        "color_scheme": "",
-        "heading": "Hunting culture isn't defined by gear or noise.",
-        "label": "OUR BELIEF",
-        "text_content": "<p>It's defined by patience, responsibility, and knowing when not to move. By people who learned early that the land comes first — and respect is earned quietly.</p><p>At Camo Signal, camo isn't used to hide. It's a signal. A signal to those who understand the terrain, the seasons, and the signs left behind. We design for people who recognize footprints before animals, silence before motion, and place before self.</p>",
-        "text_alignment": "left",
-        "enable_read_more": false,
-        "read_more_text": "Show more",
-        "show_less_text": "Show less",
-        "link_text": "",
-        "link": "",
-        "container_width": "inherit",
-        "offset_top_desktop": 40,
-        "offset_bottom_desktop": 0,
-        "offset_top_mobile": 30,
-        "offset_bottom_mobile": 0,
-        "inner_offset_top": 48,
-        "inner_offset_bottom": 48,
-        "inner_offset_top_mobile": 32,
-        "inner_offset_bottom_mobile": 32
+        "label": "01 - Who We Are",
+        "heading": "We Are\nCamo",
+        "heading_accent": "Signal.",
+        "body": "<p>Camo Signal was born in the kind of places where hunting season is not a hobby. It is family tradition. It is responsibility. It is patience. Where camo never meant performance - it meant discipline.</p><p>At Camo Signal, camo is not used to hide. It is a signal. A signal to those who understand terrain, seasons, and the signs left behind. To those who notice tracks before antlers. Silence before motion. Place before self.</p>",
+        "quote": "<p>Camo is not used to hide.<br>It is a signal.</p>",
+        "background_color": "#FFFFFF",
+        "ink_color": "#2C3D33",
+        "ink_light_color": "#4A6156",
+        "bark_color": "#8B6F4E",
+        "earth_color": "#C4B89A",
+        "container_width": "100%",
+        "padding_top_desktop": 64,
+        "padding_bottom_desktop": 64,
+        "padding_top_mobile": 40,
+        "padding_bottom_mobile": 40
       }
     },
-    "story-image-text": {
-      "type": "image-with-text",
-      "settings": {
-        "enable_color_scheme_inheritance": true,
-        "color_scheme": "",
-        "images_layout": "one_image",
-        "enable_images_animation": false,
-        "scroll_images_direction": "top",
-        "image_position": "left",
-        "text_alignment": "left",
-        "label": "THE SIGNAL",
-        "heading": "Camo isn't used to hide. <em>It's a signal.</em>",
-        "text_content": "<p>A signal to those who understand the terrain, the seasons, and the signs left behind. We design for people who recognize footprints before animals, silence before motion, and place before self.</p>",
-        "button_label": "SHOP THE COLLECTION",
-        "button_aria_label": "",
-        "button_url": "",
-        "button_style": "primary",
-        "fist_col_movement_speed": 20,
-        "first_col_image_1": "shopify://shop_images/Deer_Wildlife_Hunting_T_shirt_8.jpg",
-        "first_col_image_2": "shopify://shop_images/Southwest_Wildlife_Nature_T_shirt_4.jpg",
-        "first_col_image_3": "shopify://shop_images/Deer_Wildlife_Hunting_T_shirt_6.jpg",
-        "second_col_movement_speed": 20,
-        "image_aspect_ratio": "4 / 3",
-        "container_width": "inherit",
-        "offset_top_desktop": 0,
-        "offset_bottom_desktop": 0,
-        "offset_top_mobile": 0,
-        "offset_bottom_mobile": 0,
-        "inner_offset_top": 30,
-        "inner_offset_bottom": 30,
-        "inner_offset_top_mobile": 30,
-        "inner_offset_bottom_mobile": 30
-      }
-    },
-    "story-origins": {
-      "type": "image-with-text",
-      "settings": {
-        "enable_color_scheme_inheritance": true,
-        "color_scheme": "",
-        "images_layout": "one_image",
-        "enable_images_animation": false,
-        "scroll_images_direction": "top",
-        "image_position": "right",
-        "text_alignment": "left",
-        "label": "THE ORIGINS",
-        "heading": "Inspired by real hunting grounds.",
-        "text_content": "<p>Our products are inspired by real hunting grounds — Forest & Hardwood regions, Midwest edges... places shaped by generations of hunters who stayed, learned, and passed on knowledge rather than trophies.</p><p>This brand isn't here to chase trends or shout messages. It's here for those who see meaning in subtlety, depth in restraint, and pride in staying true to the ground that raised them.</p>",
-        "button_label": "",
-        "button_aria_label": "",
-        "button_url": "",
-        "button_style": "primary",
-        "fist_col_movement_speed": 20,
-        "first_col_image_1": "shopify://shop_images/Deer_Wildlife_Hunting_T_shirt_7.jpg",
-        "second_col_movement_speed": 20,
-        "image_aspect_ratio": "4 / 3",
-        "container_width": "inherit",
-        "offset_top_desktop": 0,
-        "offset_bottom_desktop": 0,
-        "offset_top_mobile": 0,
-        "offset_bottom_mobile": 0,
-        "inner_offset_top": 30,
-        "inner_offset_bottom": 30,
-        "inner_offset_top_mobile": 30,
-        "inner_offset_bottom_mobile": 30
-      }
-    },
-    "story-signal-pillars": {
-      "type": "about-principles",
+    "reasons": {
+      "type": "about-editorial-why",
       "blocks": {
-        "pillar-terrain": {
-          "type": "signal_pillar",
+        "reason-land": {
+          "type": "reason",
           "settings": {
-            "card_title": "THE TERRAIN",
-            "card_text": "<p>Recognizing footprints before animals. Understanding the ground beneath your feet before the game above the ridge. This is where design starts.</p>",
-            "card_footnote": ""
+            "number": "01",
+            "title": "Where It Starts: The Land",
+            "text": "<p>Everything begins with real ground - the woods and hardwoods, Midwest edges, brush country, marsh lines, and the quiet spaces in between. Places shaped by generations who stayed, learned, and passed down knowledge rather than trophies.</p>"
           }
         },
-        "pillar-seasons": {
-          "type": "signal_pillar",
+        "reason-seasons": {
+          "type": "reason",
           "settings": {
-            "card_title": "THE SEASONS",
-            "card_text": "<p>Forest & Hardwood regions, Midwest edges, brush country — places shaped by generations of hunters who stayed and learned.</p>",
-            "card_footnote": ""
+            "number": "02",
+            "title": "How We Build: The Seasons",
+            "text": "<p>The world changes with the calendar - light shifts, colors change, movement feels different. So our designs follow the rhythm of the season, not the rhythm of trends.</p>"
           }
         },
-        "pillar-signs": {
-          "type": "signal_pillar",
+        "reason-signal": {
+          "type": "reason",
           "settings": {
-            "card_title": "THE SIGNS",
-            "card_text": "<p>Silence before motion. Place before self. We design for people who pass on knowledge rather than trophies.</p>",
-            "card_footnote": ""
+            "number": "03",
+            "title": "What We Make: The Signal",
+            "text": "<p>We translate those environments into apparel you can live in - not just wear. Everyday staples like tees and headwear, made to feel right from the first wear and hold up over time.</p><ul><li>Screen-printed tees on soft, breathable cotton, built for everyday comfort</li><li>Durable printing methods designed to keep color and quality consistent</li><li>Embroidered headwear with breathable mesh and a practical, comfortable fit</li></ul>"
           }
         }
       },
       "block_order": [
-        "pillar-terrain",
-        "pillar-seasons",
-        "pillar-signs"
+        "reason-land",
+        "reason-seasons",
+        "reason-signal"
       ],
       "settings": {
-        "enable_color_scheme_inheritance": false,
-        "color_scheme": "",
-        "section_number": "",
-        "section_label": "",
-        "heading": "We design for those who read the land.",
-        "subtext": "<p>A signal to those who understand the terrain, the seasons, and the signs left behind.</p>",
-        "columns_desktop": 3,
-        "enable_card_borders": true,
-        "text_alignment": "left",
-        "container_width": "inherit",
-        "offset_top_desktop": 20,
-        "offset_bottom_desktop": 20,
-        "offset_top_mobile": 20,
-        "offset_bottom_mobile": 20
+        "label": "02 - Why we built this",
+        "heading": "Land. Seasons.",
+        "heading_accent": "Signal.",
+        "background_color": "#3D5244",
+        "cream_color": "#F5F0E8",
+        "body_text_color": "#B5AB95",
+        "earth_color": "#C4B89A",
+        "card_background_color": "#425849",
+        "card_background_hover_color": "#475F4F",
+        "container_width": "100%",
+        "padding_top_desktop": 64,
+        "padding_bottom_desktop": 64,
+        "padding_top_mobile": 40,
+        "padding_bottom_mobile": 40
       }
     },
-    "closing-banner": {
-      "type": "banner",
+    "structure": {
+      "type": "about-editorial-structure",
+      "blocks": {
+        "row-direct": {
+          "type": "row",
+          "settings": {
+            "row_label": "Direct Model",
+            "title_1": "Why Direct-to-Customer",
+            "text_1": "<p>We sell directly through our online store so we can stay close to what matters: design integrity, consistent quality, and real support. Clear sizing guidance, straightforward product details, and a process that respects your time.</p>",
+            "pills_1": "",
+            "title_2": "",
+            "text_2": "",
+            "pills_2": ""
+          }
+        },
+        "row-collections": {
+          "type": "row",
+          "settings": {
+            "row_label": "Collections",
+            "title_1": "Shop by Hunt",
+            "text_1": "<p>Each design follows the rhythm of the season - turkey hunts in spring, deer in fall, waterfowl on cold mornings, fishing through the summer. Pick the world you spend time in.</p>",
+            "pills_1": "Turkey|/collections/turkey, Deer|/collections/deer, Waterfowl|/collections/waterfowl, Fishing|/collections/fishing",
+            "title_2": "Shop by Style",
+            "text_2": "<p>Curated lines built around a moment, a place, or a feeling. Updated as the seasons shift.</p>",
+            "pills_2": "New Arrivals|/collections/new-arrivals, Camo|/collections/camo, USA|/collections/usa"
+          }
+        },
+        "row-commitment": {
+          "type": "row",
+          "settings": {
+            "row_label": "Commitment",
+            "title_1": "Our Commitment",
+            "text_1": "<p>If something is not right, we will make it right. We stand behind our products with a simple return commitment - because trust should feel as solid as the ground you stand on.</p><p><em>Camo Signal is not here to explain hunting culture. It is here for those who live it. Wear who you are.</em></p>",
+            "pills_1": "",
+            "title_2": "",
+            "text_2": "",
+            "pills_2": ""
+          }
+        }
+      },
+      "block_order": [
+        "row-direct",
+        "row-collections",
+        "row-commitment"
+      ],
       "settings": {
-        "desktop_image_height": "400px",
-        "mobile_image_height": "300px",
-        "media_type": "image",
-        "title": "Camo Signal doesn't try to explain hunting culture.",
-        "text": "It assumes you already understand it.",
-        "button_label_1": "SHOP NOW",
-        "button_link_1": "",
-        "button_aria_label_1": "",
-        "button_label_2": "",
-        "button_link_2": "",
-        "button_aria_label_2": "",
-        "image_desktop": "shopify://shop_images/Gemini_Generated_Image_g784aug784aug784.jpg",
-        "show_breadcrumbs": false,
-        "enable_timer": false,
-        "timer_month": "0",
-        "timer_day": "1",
-        "timer_hour": "0",
-        "timer_timezone": "+0",
-        "timer_background": "rgba(255,255,255, 0.12)",
-        "timer_color": "#ffffff",
-        "external_video_url_desktop": "",
-        "external_video_url_mobile": "",
-        "content_alignment": "center",
-        "content_alignment_mobile": "center",
-        "block_alignment": "center",
-        "block_alignment_vertical": "center",
-        "block_alignment_vertical_mob": "center",
-        "section_background": "#1a1a1a",
-        "overlay": "rgba(0, 0, 0, 0.65)",
-        "text_color": "#ffffff",
-        "button_background_1": "#ffffff",
-        "button_color_1": "#1a1a1a",
-        "button_border_1": "#ffffff",
-        "button_background_hover_1": "#1a1a1a",
-        "button_color_hover_1": "#ffffff",
-        "button_border_hover_1": "#ffffff",
-        "button_background_2": "#ffffff",
-        "button_color_2": "#000000",
-        "button_border_2": "#ffffff",
-        "button_background_hover_2": "#000000",
-        "button_color_hover_2": "#ffffff",
-        "button_border_hover_2": "#ffffff",
+        "label": "03 - How we operate",
+        "heading": "Our Business",
+        "heading_accent": "Model.",
+        "background_color": "#FFFFFF",
+        "ink_color": "#2C3D33",
+        "ink_light_color": "#4A6156",
+        "ink_faint_color": "#7A9080",
+        "bark_color": "#8B6F4E",
+        "earth_color": "#C4B89A",
         "container_width": "100%",
-        "offset_top_desktop": 0,
-        "offset_bottom_desktop": 0,
-        "offset_top_mobile": 0,
-        "offset_bottom_mobile": 0
+        "padding_top_desktop": 64,
+        "padding_bottom_desktop": 64,
+        "padding_top_mobile": 40,
+        "padding_bottom_mobile": 40
       }
     }
   },
   "order": [
-    "hero-banner",
-    "story-belief",
-    "story-image-text",
-    "story-origins",
-    "story-signal-pillars",
-    "closing-banner"
+    "editorial-hero",
+    "identity",
+    "reasons",
+    "structure"
   ]
 }

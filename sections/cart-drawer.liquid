@@ -21,6 +21,74 @@
 	{%- assign cart_button_label 				= section.settings.cart_button_label -%}
 	{%- assign upsell_heading 					= section.settings.upsell_heading | default: default_upsell_heading -%}
 	{%- assign upsell_products 					= section.settings.upsell_products -%}
+	{%- assign drawer_background_color			= section.settings.drawer_background_color | default: '#ffffff' -%}
+	{%- assign footer_background_color			= section.settings.footer_background_color | default: '#ffffff' -%}
+	{%- assign footer_border_color				= section.settings.footer_border_color | default: 'rgba(0, 0, 0, 0.06)' -%}
+	{%- assign footer_shadow					= section.settings.footer_shadow | default: '0 -12px 24px rgba(255, 255, 255, 0.95)' -%}
+	{%- assign title_color						= section.settings.title_color | default: '#2c3d33' -%}
+	{%- assign title_font_size					= section.settings.title_font_size | default: 20 -%}
+	{%- assign title_font_weight				= section.settings.title_font_weight | default: '700' -%}
+	{%- assign title_text_transform				= section.settings.title_text_transform | default: 'uppercase' -%}
+	{%- assign title_letter_spacing				= section.settings.title_letter_spacing | default: '0.5px' -%}
+	{%- assign title_margin_horizontal			= section.settings.title_margin_horizontal | default: 16 -%}
+	{%- assign title_margin_bottom				= section.settings.title_margin_bottom | default: 8 -%}
+	{%- assign title_padding_right				= section.settings.title_padding_right | default: 40 -%}
+	{%- assign drawer_top_padding				= section.settings.drawer_top_padding | default: 20 -%}
+	{%- assign show_custom_banner				= section.settings.show_custom_banner -%}
+	{%- assign custom_banner_image				= section.settings.custom_banner_image -%}
+	{%- assign custom_banner_image_url			= section.settings.custom_banner_image_url | default: 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/banner-gio-hang.jpg?v=1778237632' -%}
+	{%- assign custom_banner_alt				= section.settings.custom_banner_alt | default: 'Special Offer' -%}
+	{%- assign custom_banner_link				= section.settings.custom_banner_link -%}
+	{%- assign custom_banner_margin_top			= section.settings.custom_banner_margin_top | default: 0 -%}
+	{%- assign custom_banner_margin_horizontal	= section.settings.custom_banner_margin_horizontal | default: 16 -%}
+	{%- assign custom_banner_margin_bottom		= section.settings.custom_banner_margin_bottom | default: 0 -%}
+	{%- assign custom_banner_radius				= section.settings.custom_banner_radius | default: 6 -%}
+	{%- assign show_upsell						= section.settings.show_upsell -%}
+	{%- assign upsell_margin_top				= section.settings.upsell_margin_top | default: 12 -%}
+	{%- assign upsell_margin_horizontal			= section.settings.upsell_margin_horizontal | default: 16 -%}
+	{%- assign upsell_margin_bottom				= section.settings.upsell_margin_bottom | default: 24 -%}
+	{%- assign upsell_heading_background		= section.settings.upsell_heading_background | default: '#0d1f6b' -%}
+	{%- assign upsell_heading_color				= section.settings.upsell_heading_color | default: '#ffffff' -%}
+	{%- assign upsell_heading_font_size			= section.settings.upsell_heading_font_size | default: 16 -%}
+	{%- assign upsell_heading_font_weight		= section.settings.upsell_heading_font_weight | default: '700' -%}
+	{%- assign upsell_heading_padding			= section.settings.upsell_heading_padding | default: 12 -%}
+	{%- assign upsell_heading_radius			= section.settings.upsell_heading_radius | default: 0 -%}
+	{%- assign upsell_content_padding_vertical	= section.settings.upsell_content_padding_vertical | default: 12 -%}
+	{%- assign show_auto_open					= section.settings.show_auto_open -%}
+
+	{%- capture cart_drawer_vars -%}
+		--cart-drawer-bg: {{ drawer_background_color }};{{-  -}}
+		--cart-drawer-footer-bg: {{ footer_background_color }};{{-  -}}
+		--cart-drawer-footer-border-color: {{ footer_border_color }};{{-  -}}
+		--cart-drawer-footer-shadow: {{ footer_shadow }};{{-  -}}
+		--cart-drawer-footer-padding: {{ section.settings.footer_padding_top | default: 20 }}px {{ section.settings.footer_padding_horizontal | default: 24 }}px {{ section.settings.footer_padding_bottom | default: 16 }}px;{{-  -}}
+		--cart-drawer-payment-padding-bottom: {{ section.settings.payment_icons_padding_bottom | default: 24 }}px;{{-  -}}
+		--cart-drawer-title-color: {{ title_color }};{{-  -}}
+		--cart-drawer-checkout-bg: {{ section.settings.checkout_button_background | default: '#0d1f6b' }};{{-  -}}
+		--cart-drawer-checkout-color: {{ section.settings.checkout_button_color | default: '#ffffff' }};{{-  -}}
+		--cart-drawer-checkout-border: {{ section.settings.checkout_button_border_color | default: '#0d1f6b' }};{{-  -}}
+		--cart-drawer-checkout-radius: {{ section.settings.checkout_button_radius | default: 6 }}px;{{-  -}}
+		--cart-drawer-checkout-font-size: {{ section.settings.checkout_button_font_size | default: 16 }}px;{{-  -}}
+		--cart-drawer-checkout-padding: {{ section.settings.checkout_button_padding_vertical | default: 14 }}px {{ section.settings.checkout_button_padding_horizontal | default: 14 }}px;{{-  -}}
+		--cart-drawer-subtotal-color: {{ section.settings.subtotal_text_color | default: '#000000' }};{{-  -}}
+		--cart-drawer-subtotal-price-color: {{ section.settings.subtotal_price_color | default: '#c0392b' }};{{-  -}}
+		--cart-drawer-compare-price-color: {{ section.settings.compare_price_color | default: '#999999' }};{{-  -}}
+		--cart-drawer-discount-badge-bg: {{ section.settings.discount_badge_background | default: '#2c3d33' }};{{-  -}}
+		--cart-drawer-discount-badge-color: {{ section.settings.discount_badge_color | default: '#ffffff' }};{{-  -}}
+		--cart-upsell-card-bg: {{ section.settings.upsell_card_background | default: '#ffffff' }};{{-  -}}
+		--cart-upsell-card-border: {{ section.settings.upsell_card_border_color | default: 'rgba(44,61,51,0.12)' }};{{-  -}}
+		--cart-upsell-card-border-hover: {{ section.settings.upsell_card_border_hover_color | default: '#2c3d33' }};{{-  -}}
+		--cart-upsell-title-color: {{ section.settings.upsell_card_title_color | default: '#2c3d33' }};{{-  -}}
+		--cart-upsell-price-color: {{ section.settings.upsell_card_price_color | default: '#2c3d33' }};{{-  -}}
+		--cart-upsell-sale-price-color: {{ section.settings.upsell_card_sale_price_color | default: '#b52a2a' }};{{-  -}}
+		--cart-upsell-button-bg: {{ section.settings.upsell_button_background | default: '#0d1f6b' }};{{-  -}}
+		--cart-upsell-button-color: {{ section.settings.upsell_button_color | default: '#ffffff' }};{{-  -}}
+		--cart-upsell-button-hover-bg: {{ section.settings.upsell_button_hover_background | default: '#1e2d24' }};{{-  -}}
+		--cart-protection-border-color: {{ section.settings.protection_border_color | default: '#3a7d6a' }};{{-  -}}
+		--cart-protection-background: {{ section.settings.protection_background | default: 'rgba(58, 125, 106, 0.06)' }};{{-  -}}
+		--cart-protection-title-color: {{ section.settings.protection_title_color | default: '#2c3d33' }};{{-  -}}
+		--cart-protection-text-color: {{ section.settings.protection_text_color | default: '#6b7f75' }};{{-  -}}
+	{%- endcapture -%}
 
 	{%- if enable_color_scheme_inheritance -%}
 		{%- assign color_scheme = settings.main_color_scheme -%}
@@ -44,14 +112,20 @@
 				{%- assign congratulatory_image = block.settings.icon -%}
 				{%- assign bar_color = block.settings.bar_color -%}
 				{%- assign fill_color = block.settings.fill_color -%}
-				{%- render 'cart-shipping',
-					amount: amount,
-					message: message,
-					congratulatory_message: congratulatory_message,
-					congratulatory_image: congratulatory_image,
-					bar_color: bar_color,
-					fill_color: fill_color
-				-%}
+				<div class="cart-drawer__section cart-drawer__section--shipping" style="padding: {{ block.settings.wrapper_padding_vertical | default: 10 }}px {{ block.settings.wrapper_padding_horizontal | default: 16 }}px; margin: {{ block.settings.wrapper_margin_top | default: 8 }}px {{ block.settings.wrapper_margin_horizontal | default: 16 }}px {{ block.settings.wrapper_margin_bottom | default: 8 }}px; background: {{ block.settings.wrapper_background | default: '#2c3d33' }}; border-radius: {{ block.settings.wrapper_border_radius | default: 6 }}px; box-shadow: {{ block.settings.wrapper_shadow | default: '0 4px 6px rgba(0,0,0,0.05)' }};">
+					{%- render 'cart-shipping',
+						amount: amount,
+						message: message,
+						congratulatory_message: congratulatory_message,
+						congratulatory_image: congratulatory_image,
+						bar_color: bar_color,
+						fill_color: fill_color,
+						label_color: block.settings.label_color,
+						label_font_size: block.settings.label_font_size,
+						label_letter_spacing: block.settings.label_letter_spacing,
+						label_text_transform: block.settings.label_text_transform
+					-%}
+				</div>
 				{%- assign shipping_included = true -%}
 			{%- endif -%}
 		{%- endfor -%}
@@ -124,7 +198,7 @@
 	data-shadow-root
 	role="dialog"
 	aria-labelledby="CartDrawer-{{- heading | handle -}}"
-	style="background-color: #ffffff !important; --color-background: #ffffff !important; --color-background-popup-drawer: #ffffff !important;"
+	style="{{ cart_drawer_vars }} background-color: var(--cart-drawer-bg) !important; --color-background: var(--cart-drawer-bg) !important; --color-background-popup-drawer: var(--cart-drawer-bg) !important;"
 	data-cart-drawer-fix
 >
 	<div class="drawer__header js-cart-header" style="position: absolute; top: 12px; right: 12px; z-index: 50; border: none; padding: 0; margin: 0; background: transparent;">
@@ -138,8 +212,8 @@
 			</button>
 		</div>
 
-	<div class="drawer__body cart-drawer__container js-cart-container" style="padding-top: 20px;">
-		<h2 class="drawer__title cart-drawer__title-empty h4" id="CartDrawer-{{- heading | handle -}}" style="font-family: 'Oswald', sans-serif; color: #2c3d33; font-weight: 700; text-transform: uppercase; margin: 0 16px 8px; font-size: 20px; letter-spacing: 0.5px; padding-bottom: 0; padding-right: 40px;">
+	<div class="drawer__body cart-drawer__container js-cart-container" style="padding-top: {{ drawer_top_padding }}px;">
+		<h2 class="drawer__title cart-drawer__title-empty h4" id="CartDrawer-{{- heading | handle -}}" style="font-family: 'Oswald', sans-serif; color: {{ title_color }}; font-weight: {{ title_font_weight }}; text-transform: {{ title_text_transform }}; margin: 0 {{ title_margin_horizontal }}px {{ title_margin_bottom }}px; font-size: {{ title_font_size }}px; letter-spacing: {{ title_letter_spacing }}; padding-bottom: 0; padding-right: {{ title_padding_right }}px;">
 			{{- heading -}}
 		</h2>
 		<div class="cart-drawer__content js-cart-content js-scroll-lock-container" data-scrollable>
@@ -150,14 +224,30 @@
 					<div id="cart-drawer-main-content">
 						{%- comment -%} Shipping bar at top {%- endcomment -%}
 						{%- if shipping_bar_content != '' -%}
-							<div class="cart-drawer__section cart-drawer__section--shipping" style="padding: 10px 16px; margin: 8px 16px 8px; background: #2c3d33; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-								{{- shipping_bar_content -}}
-							</div>
+							{{- shipping_bar_content -}}
 						{%- endif -%}
 
-						<div class="cart-drawer__custom-banner" style="margin: 0 16px 0;">
-							<img src="https://cdn.shopify.com/s/files/1/0741/7987/0911/files/banner-gio-hang.jpg?v=1778237632" alt="Special Offer" style="width: 100%; height: auto; border-radius: 6px; display: block;" loading="lazy">
-						</div>
+						{%- if show_custom_banner -%}
+							{%- assign custom_banner_src = custom_banner_image_url -%}
+							{%- if custom_banner_image != blank -%}
+								{%- assign custom_banner_src = custom_banner_image | image_url: width: 900 -%}
+								{%- assign custom_banner_alt = custom_banner_image.alt | default: custom_banner_alt -%}
+							{%- endif -%}
+
+							{%- if custom_banner_src != blank -%}
+								<div class="cart-drawer__custom-banner" style="margin: {{ custom_banner_margin_top }}px {{ custom_banner_margin_horizontal }}px {{ custom_banner_margin_bottom }}px;">
+									{%- if custom_banner_link != blank -%}
+										<a href="{{ custom_banner_link }}" class="cart-drawer__custom-banner-link">
+									{%- endif -%}
+
+									<img src="{{ custom_banner_src }}" alt="{{ custom_banner_alt | escape }}" style="width: 100%; height: auto; border-radius: {{ custom_banner_radius }}px; display: block;" loading="lazy">
+
+									{%- if custom_banner_link != blank -%}
+										</a>
+									{%- endif -%}
+								</div>
+							{%- endif -%}
+						{%- endif -%}
 
 						{{- content -}}
 
@@ -167,10 +257,10 @@
 						{%- endcapture -%}
 						
 						{%- assign clean_html = internal_upsell_html | strip -%}
-						{%- if upsell_products != blank and clean_html != '' -%}
-							<div class="cart-drawer__section cart-drawer__section--upsell" style="margin: 12px 16px 24px;">
-								<h3 style="background: #0d1f6b; color: #fff; padding: 12px; margin: 0; font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 700; text-transform: none; text-align: center; letter-spacing: 0.5px;">{{ upsell_heading }}</h3>
-								<div style="padding: 12px 0;">
+						{%- if show_upsell and upsell_products != blank and clean_html != '' -%}
+							<div class="cart-drawer__section cart-drawer__section--upsell" style="margin: {{ upsell_margin_top }}px {{ upsell_margin_horizontal }}px {{ upsell_margin_bottom }}px;">
+								<h3 style="background: {{ upsell_heading_background }}; color: {{ upsell_heading_color }}; padding: {{ upsell_heading_padding }}px; margin: 0; font-family: 'Oswald', sans-serif; font-size: {{ upsell_heading_font_size }}px; font-weight: {{ upsell_heading_font_weight }}; text-transform: none; text-align: center; letter-spacing: 0.5px; border-radius: {{ upsell_heading_radius }}px;">{{ upsell_heading }}</h3>
+								<div style="padding: {{ upsell_content_padding_vertical }}px 0;">
 									{{- internal_upsell_html -}}
 								</div>
 							</div>
@@ -227,9 +317,9 @@
 			z-index: 30 !important;
 			margin-top: 0 !important;
 			padding: 0 !important;
-			background: #ffffff !important;
-			border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
-			box-shadow: 0 -12px 24px rgba(255, 255, 255, 0.95) !important;
+			background: var(--cart-drawer-footer-bg) !important;
+			border-top: 1px solid var(--cart-drawer-footer-border-color) !important;
+			box-shadow: var(--cart-drawer-footer-shadow) !important;
 		}
 
 		#CartDrawer .cart-drawer__footer .cart-footer,
@@ -237,7 +327,7 @@
 			display: flex !important;
 			flex-direction: column !important;
 			padding: 0 !important;
-			background: #ffffff !important;
+			background: var(--cart-drawer-footer-bg) !important;
 		}
 
 		#CartDrawer .cart-drawer__footer .cart-footer__ctas {
@@ -246,7 +336,7 @@
 		}
 
 		#CartDrawer .cart-drawer__payment-icons {
-			background: #ffffff !important;
+			background: var(--cart-drawer-footer-bg) !important;
 			padding-bottom: max(16px, env(safe-area-inset-bottom)) !important;
 		}
 
@@ -269,13 +359,13 @@
 	</style>
 	</section>
 
-	{%- if upsell_products != blank -%}
+	{%- if show_upsell and upsell_products != blank -%}
 		{%- render 'adastra' with '/src/scripts/component-product-card-with-form.js' -%}
 	{%- endif -%}
 
 	{%- render 'adastra' with '/src/scripts/cart-drawer.js' -%}
 
-	{%- if cart.item_count > 0 -%}
+	{%- if show_auto_open and cart.item_count > 0 -%}
 		<script>
 			(function() {
 				function autoOpenCartDrawer() {
@@ -316,6 +406,30 @@
 			"default": "scheme-1"
 		},
 		{
+			"type": "color",
+			"id": "drawer_background_color",
+			"label": "Drawer background",
+			"default": "#ffffff"
+		},
+		{
+			"type": "color",
+			"id": "footer_background_color",
+			"label": "Footer background",
+			"default": "#ffffff"
+		},
+		{
+			"type": "text",
+			"id": "footer_border_color",
+			"label": "Footer border color",
+			"default": "rgba(0, 0, 0, 0.06)"
+		},
+		{
+			"type": "text",
+			"id": "footer_shadow",
+			"label": "Footer shadow",
+			"default": "0 -12px 24px rgba(255, 255, 255, 0.95)"
+		},
+		{
 			"type": "header",
 			"content": "Cart drawer settings"
 		},
@@ -332,6 +446,12 @@
 			"default": true
 		},
 		{
+			"type": "checkbox",
+			"id": "show_auto_open",
+			"label": "Auto-open drawer when cart has items",
+			"default": true
+		},
+		{
 			"type": "text",
 			"id": "cart_button_label",
 			"label": "View cart label",
@@ -339,7 +459,176 @@
 		},
 		{
 			"type": "header",
+			"content": "Title style"
+		},
+		{
+			"type": "color",
+			"id": "title_color",
+			"label": "Title color",
+			"default": "#2c3d33"
+		},
+		{
+			"type": "range",
+			"id": "title_font_size",
+			"min": 12,
+			"max": 36,
+			"step": 1,
+			"unit": "px",
+			"label": "Title font size",
+			"default": 20
+		},
+		{
+			"type": "select",
+			"id": "title_font_weight",
+			"label": "Title font weight",
+			"options": [
+				{ "value": "400", "label": "Regular" },
+				{ "value": "500", "label": "Medium" },
+				{ "value": "600", "label": "Semi bold" },
+				{ "value": "700", "label": "Bold" },
+				{ "value": "800", "label": "Extra bold" }
+			],
+			"default": "700"
+		},
+		{
+			"type": "select",
+			"id": "title_text_transform",
+			"label": "Title text transform",
+			"options": [
+				{ "value": "none", "label": "None" },
+				{ "value": "uppercase", "label": "Uppercase" },
+				{ "value": "lowercase", "label": "Lowercase" },
+				{ "value": "capitalize", "label": "Capitalize" }
+			],
+			"default": "uppercase"
+		},
+		{
+			"type": "text",
+			"id": "title_letter_spacing",
+			"label": "Title letter spacing",
+			"default": "0.5px"
+		},
+		{
+			"type": "range",
+			"id": "drawer_top_padding",
+			"min": 0,
+			"max": 80,
+			"step": 1,
+			"unit": "px",
+			"label": "Drawer top padding",
+			"default": 20
+		},
+		{
+			"type": "range",
+			"id": "title_margin_horizontal",
+			"min": 0,
+			"max": 40,
+			"step": 1,
+			"unit": "px",
+			"label": "Title horizontal margin",
+			"default": 16
+		},
+		{
+			"type": "range",
+			"id": "title_margin_bottom",
+			"min": 0,
+			"max": 40,
+			"step": 1,
+			"unit": "px",
+			"label": "Title bottom margin",
+			"default": 8
+		},
+		{
+			"type": "range",
+			"id": "title_padding_right",
+			"min": 0,
+			"max": 80,
+			"step": 1,
+			"unit": "px",
+			"label": "Title right padding",
+			"default": 40
+		},
+		{
+			"type": "header",
+			"content": "Custom banner"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_custom_banner",
+			"label": "Show custom banner",
+			"default": true
+		},
+		{
+			"type": "image_picker",
+			"id": "custom_banner_image",
+			"label": "Banner image"
+		},
+		{
+			"type": "text",
+			"id": "custom_banner_image_url",
+			"label": "Fallback banner image URL",
+			"default": "https://cdn.shopify.com/s/files/1/0741/7987/0911/files/banner-gio-hang.jpg?v=1778237632"
+		},
+		{
+			"type": "text",
+			"id": "custom_banner_alt",
+			"label": "Banner alt text",
+			"default": "Special Offer"
+		},
+		{
+			"type": "url",
+			"id": "custom_banner_link",
+			"label": "Banner link"
+		},
+		{
+			"type": "range",
+			"id": "custom_banner_margin_top",
+			"min": 0,
+			"max": 60,
+			"step": 1,
+			"unit": "px",
+			"label": "Banner top margin",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "custom_banner_margin_horizontal",
+			"min": 0,
+			"max": 40,
+			"step": 1,
+			"unit": "px",
+			"label": "Banner horizontal margin",
+			"default": 16
+		},
+		{
+			"type": "range",
+			"id": "custom_banner_margin_bottom",
+			"min": 0,
+			"max": 60,
+			"step": 1,
+			"unit": "px",
+			"label": "Banner bottom margin",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "custom_banner_radius",
+			"min": 0,
+			"max": 24,
+			"step": 1,
+			"unit": "px",
+			"label": "Banner radius",
+			"default": 6
+		},
+		{
+			"type": "header",
 			"content": "Upsell settings"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_upsell",
+			"label": "Show upsell products",
+			"default": true
 		},
 		{
 			"type": "text",
@@ -352,6 +641,401 @@
 			"id": "upsell_products",
 			"label": "Products",
 			"limit": 14
+		},
+		{
+			"type": "range",
+			"id": "upsell_margin_top",
+			"min": 0,
+			"max": 60,
+			"step": 1,
+			"unit": "px",
+			"label": "Upsell top margin",
+			"default": 12
+		},
+		{
+			"type": "range",
+			"id": "upsell_margin_horizontal",
+			"min": 0,
+			"max": 40,
+			"step": 1,
+			"unit": "px",
+			"label": "Upsell horizontal margin",
+			"default": 16
+		},
+		{
+			"type": "range",
+			"id": "upsell_margin_bottom",
+			"min": 0,
+			"max": 80,
+			"step": 1,
+			"unit": "px",
+			"label": "Upsell bottom margin",
+			"default": 24
+		},
+		{
+			"type": "color",
+			"id": "upsell_heading_background",
+			"label": "Upsell heading background",
+			"default": "#0d1f6b"
+		},
+		{
+			"type": "color",
+			"id": "upsell_heading_color",
+			"label": "Upsell heading text",
+			"default": "#ffffff"
+		},
+		{
+			"type": "range",
+			"id": "upsell_heading_font_size",
+			"min": 12,
+			"max": 28,
+			"step": 1,
+			"unit": "px",
+			"label": "Upsell heading font size",
+			"default": 16
+		},
+		{
+			"type": "select",
+			"id": "upsell_heading_font_weight",
+			"label": "Upsell heading weight",
+			"options": [
+				{ "value": "400", "label": "Regular" },
+				{ "value": "500", "label": "Medium" },
+				{ "value": "600", "label": "Semi bold" },
+				{ "value": "700", "label": "Bold" },
+				{ "value": "800", "label": "Extra bold" }
+			],
+			"default": "700"
+		},
+		{
+			"type": "range",
+			"id": "upsell_heading_padding",
+			"min": 0,
+			"max": 32,
+			"step": 1,
+			"unit": "px",
+			"label": "Upsell heading padding",
+			"default": 12
+		},
+		{
+			"type": "range",
+			"id": "upsell_heading_radius",
+			"min": 0,
+			"max": 24,
+			"step": 1,
+			"unit": "px",
+			"label": "Upsell heading radius",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "upsell_content_padding_vertical",
+			"min": 0,
+			"max": 40,
+			"step": 1,
+			"unit": "px",
+			"label": "Upsell content vertical padding",
+			"default": 12
+		},
+		{
+			"type": "header",
+			"content": "Upsell product card"
+		},
+		{
+			"type": "color",
+			"id": "upsell_card_background",
+			"label": "Card background",
+			"default": "#ffffff"
+		},
+		{
+			"type": "text",
+			"id": "upsell_card_border_color",
+			"label": "Card border color",
+			"default": "rgba(44,61,51,0.12)"
+		},
+		{
+			"type": "color",
+			"id": "upsell_card_border_hover_color",
+			"label": "Card hover border",
+			"default": "#2c3d33"
+		},
+		{
+			"type": "color",
+			"id": "upsell_card_title_color",
+			"label": "Card title color",
+			"default": "#2c3d33"
+		},
+		{
+			"type": "color",
+			"id": "upsell_card_price_color",
+			"label": "Card price color",
+			"default": "#2c3d33"
+		},
+		{
+			"type": "color",
+			"id": "upsell_card_sale_price_color",
+			"label": "Card sale price color",
+			"default": "#b52a2a"
+		},
+		{
+			"type": "color",
+			"id": "upsell_button_background",
+			"label": "Add button background",
+			"default": "#0d1f6b"
+		},
+		{
+			"type": "color",
+			"id": "upsell_button_color",
+			"label": "Add button text",
+			"default": "#ffffff"
+		},
+		{
+			"type": "color",
+			"id": "upsell_button_hover_background",
+			"label": "Add button hover background",
+			"default": "#1e2d24"
+		},
+		{
+			"type": "header",
+			"content": "Footer and checkout"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_discount_form",
+			"label": "Show discount form",
+			"default": false
+		},
+		{
+			"type": "checkbox",
+			"id": "show_cart_note",
+			"label": "Show cart note",
+			"default": false
+		},
+		{
+			"type": "checkbox",
+			"id": "show_benefits",
+			"label": "Show benefit blocks",
+			"default": false
+		},
+		{
+			"type": "checkbox",
+			"id": "show_payment_icons",
+			"label": "Show payment icons",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "show_dynamic_checkout_buttons",
+			"label": "Show dynamic checkout buttons",
+			"default": false
+		},
+		{
+			"type": "range",
+			"id": "footer_padding_top",
+			"min": 0,
+			"max": 60,
+			"step": 1,
+			"unit": "px",
+			"label": "Footer top padding",
+			"default": 20
+		},
+		{
+			"type": "range",
+			"id": "footer_padding_horizontal",
+			"min": 0,
+			"max": 60,
+			"step": 1,
+			"unit": "px",
+			"label": "Footer horizontal padding",
+			"default": 24
+		},
+		{
+			"type": "range",
+			"id": "footer_padding_bottom",
+			"min": 0,
+			"max": 60,
+			"step": 1,
+			"unit": "px",
+			"label": "Footer bottom padding",
+			"default": 16
+		},
+		{
+			"type": "range",
+			"id": "payment_icons_padding_bottom",
+			"min": 0,
+			"max": 80,
+			"step": 1,
+			"unit": "px",
+			"label": "Payment icons bottom padding",
+			"default": 24
+		},
+		{
+			"type": "text",
+			"id": "subtotal_label",
+			"label": "Subtotal label",
+			"default": "Subtotal"
+		},
+		{
+			"type": "text",
+			"id": "subtotal_item_singular",
+			"label": "Singular item label",
+			"default": "item"
+		},
+		{
+			"type": "text",
+			"id": "subtotal_item_plural",
+			"label": "Plural item label",
+			"default": "items"
+		},
+		{
+			"type": "color",
+			"id": "subtotal_text_color",
+			"label": "Subtotal text color",
+			"default": "#000000"
+		},
+		{
+			"type": "color",
+			"id": "subtotal_price_color",
+			"label": "Subtotal price color",
+			"default": "#c0392b"
+		},
+		{
+			"type": "color",
+			"id": "compare_price_color",
+			"label": "Compare price color",
+			"default": "#999999"
+		},
+		{
+			"type": "text",
+			"id": "checkout_button_label",
+			"label": "Checkout button label",
+			"default": "Checkout"
+		},
+		{
+			"type": "color",
+			"id": "checkout_button_background",
+			"label": "Checkout button background",
+			"default": "#0d1f6b"
+		},
+		{
+			"type": "color",
+			"id": "checkout_button_color",
+			"label": "Checkout button text",
+			"default": "#ffffff"
+		},
+		{
+			"type": "color",
+			"id": "checkout_button_border_color",
+			"label": "Checkout button border",
+			"default": "#0d1f6b"
+		},
+		{
+			"type": "range",
+			"id": "checkout_button_radius",
+			"min": 0,
+			"max": 24,
+			"step": 1,
+			"unit": "px",
+			"label": "Checkout button radius",
+			"default": 6
+		},
+		{
+			"type": "range",
+			"id": "checkout_button_font_size",
+			"min": 12,
+			"max": 24,
+			"step": 1,
+			"unit": "px",
+			"label": "Checkout button font size",
+			"default": 16
+		},
+		{
+			"type": "range",
+			"id": "checkout_button_padding_vertical",
+			"min": 6,
+			"max": 28,
+			"step": 1,
+			"unit": "px",
+			"label": "Checkout button vertical padding",
+			"default": 14
+		},
+		{
+			"type": "range",
+			"id": "checkout_button_padding_horizontal",
+			"min": 6,
+			"max": 40,
+			"step": 1,
+			"unit": "px",
+			"label": "Checkout button horizontal padding",
+			"default": 14
+		},
+		{
+			"type": "header",
+			"content": "Discount badges"
+		},
+		{
+			"type": "color",
+			"id": "discount_badge_background",
+			"label": "Badge background",
+			"default": "#2c3d33"
+		},
+		{
+			"type": "color",
+			"id": "discount_badge_color",
+			"label": "Badge text",
+			"default": "#ffffff"
+		},
+		{
+			"type": "text",
+			"id": "discount_label_buy_2",
+			"label": "Buy 2 label",
+			"default": "BUY 2 SAVE 10%"
+		},
+		{
+			"type": "text",
+			"id": "discount_label_buy_3",
+			"label": "Buy 3 label",
+			"default": "BUY 3 SAVE 15%"
+		},
+		{
+			"type": "text",
+			"id": "discount_label_buy_4",
+			"label": "Buy 4 label",
+			"default": "BUY 4 SAVE 20%"
+		},
+		{
+			"type": "header",
+			"content": "Shipping protection card"
+		},
+		{
+			"type": "text",
+			"id": "protection_subtitle",
+			"label": "Protection subtitle",
+			"default": "Protect your order from loss/damage."
+		},
+		{
+			"type": "color",
+			"id": "protection_border_color",
+			"label": "Protection border",
+			"default": "#3a7d6a"
+		},
+		{
+			"type": "text",
+			"id": "protection_background",
+			"label": "Protection background",
+			"default": "rgba(58, 125, 106, 0.06)"
+		},
+		{
+			"type": "color",
+			"id": "protection_title_color",
+			"label": "Protection title color",
+			"default": "#2c3d33"
+		},
+		{
+			"type": "color",
+			"id": "protection_text_color",
+			"label": "Protection text color",
+			"default": "#6b7f75"
 		}
 	],
 	"blocks": [
@@ -409,6 +1093,124 @@
 					"id": "fill_color",
 					"label": "Progress bar fill color",
 					"default": "#FFD875"
+				},
+				{
+					"type": "header",
+					"content": "Wrapper"
+				},
+				{
+					"type": "color",
+					"id": "wrapper_background",
+					"label": "Wrapper background",
+					"default": "#2c3d33"
+				},
+				{
+					"type": "range",
+					"id": "wrapper_border_radius",
+					"min": 0,
+					"max": 24,
+					"step": 1,
+					"unit": "px",
+					"label": "Wrapper radius",
+					"default": 6
+				},
+				{
+					"type": "text",
+					"id": "wrapper_shadow",
+					"label": "Wrapper shadow",
+					"default": "0 4px 6px rgba(0,0,0,0.05)"
+				},
+				{
+					"type": "range",
+					"id": "wrapper_padding_vertical",
+					"min": 0,
+					"max": 40,
+					"step": 1,
+					"unit": "px",
+					"label": "Vertical padding",
+					"default": 10
+				},
+				{
+					"type": "range",
+					"id": "wrapper_padding_horizontal",
+					"min": 0,
+					"max": 40,
+					"step": 1,
+					"unit": "px",
+					"label": "Horizontal padding",
+					"default": 16
+				},
+				{
+					"type": "range",
+					"id": "wrapper_margin_top",
+					"min": 0,
+					"max": 40,
+					"step": 1,
+					"unit": "px",
+					"label": "Top margin",
+					"default": 8
+				},
+				{
+					"type": "range",
+					"id": "wrapper_margin_horizontal",
+					"min": 0,
+					"max": 40,
+					"step": 1,
+					"unit": "px",
+					"label": "Horizontal margin",
+					"default": 16
+				},
+				{
+					"type": "range",
+					"id": "wrapper_margin_bottom",
+					"min": 0,
+					"max": 40,
+					"step": 1,
+					"unit": "px",
+					"label": "Bottom margin",
+					"default": 8
+				},
+				{
+					"type": "header",
+					"content": "Label"
+				},
+				{
+					"type": "color",
+					"id": "label_color",
+					"label": "Label color",
+					"default": "#ffffff"
+				},
+				{
+					"type": "range",
+					"id": "label_font_size",
+					"min": 10,
+					"max": 24,
+					"step": 1,
+					"unit": "px",
+					"label": "Label font size",
+					"default": 13
+				},
+				{
+					"type": "range",
+					"id": "label_letter_spacing",
+					"min": 0,
+					"max": 4,
+					"step": 1,
+					"unit": "px",
+					"label": "Label letter spacing",
+					"default": 1
+				},
+				{
+					"type": "select",
+					"id": "label_text_transform",
+					"label": "Label text transform",
+					"options": [
+						{ "value": "none", "label": "None" },
+						{ "value": "uppercase", "label": "Uppercase" },
+						{ "value": "lowercase", "label": "Lowercase" },
+						{ "value": "capitalize", "label": "Capitalize" }
+					],
+					"default": "uppercase"
 				}
 			]
 		},

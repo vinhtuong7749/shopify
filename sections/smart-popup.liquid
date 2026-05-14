@@ -80,8 +80,10 @@
             </div>
           {%- endif -%}
 
-          {% form 'customer', class: 'popup-form' %}
+          {%- assign popup_form_id = 'camo-popup-contact-form-' | append: section.id -%}
+          {% form 'customer', class: 'popup-form js-camo-popup-form', id: popup_form_id %}
             <input type="hidden" name="contact[tags]" value="newsletter, popup, apparel">
+            <input type="hidden" name="contact[accepts_marketing]" value="true">
             {%- if form.posted_successfully? -%}
               <div class="form-success-wrapper" style="text-align: center; margin: 15px 0;">
                 <div class="form-success">
@@ -102,14 +104,20 @@
               </script>
             {%- else -%}
               <div class="input-group">
-                <input type="email" inputmode="email" name="contact[email]" class="popup-input" value="{{ form.email }}" placeholder="{{ section.settings.input_placeholder }}" autocomplete="email" autocorrect="off" autocapitalize="off" required>
-                <button type="submit" class="popup-submit">
+                <label class="visually-hidden" for="camo-popup-email-{{ section.id }}">
+                  {{ section.settings.input_placeholder }}
+                </label>
+                <input id="camo-popup-email-{{ section.id }}" type="email" inputmode="email" name="contact[email]" class="popup-input" value="{{ form.email }}" placeholder="{{ section.settings.input_placeholder }}" autocomplete="email" autocorrect="off" autocapitalize="off" required>
+                <button type="submit" name="commit" class="popup-submit">
                   {{ section.settings.btn_label }}
                 </button>
               </div>
               {%- if form.errors -%}
                 <div class="form-error">{{ form.errors | default_errors }}</div>
               {%- endif -%}
+              <div class="form-error js-camo-popup-submit-error" role="alert" hidden>
+                We could not verify this signup. Please allow the verification check or try again in another browser.
+              </div>
             {%- endif -%}
           {% endform %}
           
@@ -264,10 +272,14 @@
       if (!popup) return;
 
       var closeBtn = popup.querySelector('.popup-close');
+      var form = popup.querySelector('.js-camo-popup-form');
+      var submitButton = form ? form.querySelector('[type="submit"]') : null;
+      var submitError = popup.querySelector('.js-camo-popup-submit-error');
       var delay = {{ section.settings.delay }} * 1000;
       var hoursToExpire = {{ section.settings.frequency }};
       var storageKey = 'shopifyPopupClosed';
       var initialized = false;
+      var submitTimer = null;
 
       function shouldShowPopup() {
         if (window.camoPopupSuccess) return true;
@@ -294,6 +306,18 @@
         localStorage.setItem(storageKey, new Date().getTime());
       }
 
+      function handleSubmit() {
+        if (submitError) submitError.hidden = true;
+        if (submitButton) submitButton.setAttribute('aria-busy', 'true');
+        if (submitTimer) clearTimeout(submitTimer);
+
+        submitTimer = setTimeout(function() {
+          if (!popup.isConnected || !popup.classList.contains('is-visible')) return;
+          if (submitButton) submitButton.removeAttribute('aria-busy');
+          if (submitError) submitError.hidden = false;
+        }, 8000);
+      }
+
       function initPopup() {
         if (initialized) return;
         initialized = true;
@@ -314,6 +338,7 @@
 
         closeBtn.addEventListener('click', closePopup);
         popup.addEventListener('click', function(e) { if (e.target === popup) closePopup(); });
+        if (form) form.addEventListener('submit', handleSubmit);
         if (window.camoPopupSuccess) {
           showPopup();
         } else {

@@ -56,6 +56,11 @@
 	{%- assign is_transparent_header_mobile = true -%}
 {%- endif -%}
 
+{%- if template.name == "page" and template.suffix == "about" -%}
+	{%- assign is_transparent_header = true -%}
+	{%- assign is_transparent_header_mobile = true -%}
+{%- endif -%}
+
 {%- if enable_transparent_header_collection and template.name == "collection" -%}
 	{%- assign is_transparent_header = false -%}
 {%- endif -%}
@@ -113,6 +118,18 @@
 	.header-section.header-section--transparent-mobile .header[data-header-transparent-mobile] .header__heading-link {
 		color: #2c3d33 !important;
 	}
+
+	{%- if template.name == "page" and template.suffix == "about" -%}
+	/* About page: white header text + icons over banner — only at top (not scrolled) */
+	.header-section--top-position .header[data-header-transparent] .header-menu__item,
+	.header-section--top-position .header[data-header-transparent] .header__icon,
+	.header-section--top-position .header[data-header-transparent] .header__heading-link,
+	.header-section--top-position.header-section--transparent-mobile .header[data-header-transparent-mobile] .header__icon,
+	.header-section--top-position.header-section--transparent-mobile .header[data-header-transparent-mobile] .header__burger-mobile-menu-button,
+	.header-section--top-position.header-section--transparent-mobile .header[data-header-transparent-mobile] .header__heading-link {
+		color: #ffffff !important;
+	}
+	{%- endif -%}
 
 	/* Layout overrides to prevent overflow and force center align */
 	@media (min-width: 1200px) {

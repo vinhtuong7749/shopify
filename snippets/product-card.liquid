@@ -576,6 +576,24 @@
 	}
 
 	/* Regular price — dark */
+	@media screen and (min-width: 768px) {
+		.product-card__price .price.price--on-sale .price__sale {
+			align-items: baseline !important;
+			gap: 6px !important;
+		}
+
+		.product-card__price .price.price--on-sale .price__sale .price-item--sale {
+			font-size: 16px !important;
+			line-height: 1.1 !important;
+		}
+
+		.product-card__price .price.price--on-sale .price__sale .price-item--regular {
+			font-size: 15px !important;
+			line-height: 1.1 !important;
+			text-decoration: line-through !important;
+		}
+	}
+
 	.product-card__price .price-item--regular {
 		color: #2c3d33 !important;
 	}

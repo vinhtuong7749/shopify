@@ -147,16 +147,6 @@
             "offset_bottom_mobile": 8
           }
         },
-        "sales_point_cDLqCC": {
-          "type": "sales_point",
-          "settings": {
-            "sales_point_text": "PICKUP AVAILABLE AT THIRD LOCATION STOREUSUALLY READY IN 2-4 DAYS",
-            "offset_top_desktop": 8,
-            "offset_bottom_desktop": 8,
-            "offset_top_mobile": 8,
-            "offset_bottom_mobile": 8
-          }
-        },
         "sales_point_zx6rLq": {
           "type": "sales_point",
           "settings": {
@@ -215,7 +205,6 @@
         "selleasy_lb_upsell_widget_cpal_JbWLNH",
         "drawers",
         "pickup_availability",
-        "sales_point_cDLqCC",
         "sales_point_zx6rLq",
         "sales_point_qQppAg",
         "socials",

@@ -8,7 +8,7 @@
 	------------------------------------------------------------------------------
 {% endcomment %}
 
-{%- if false and settings.show_cart_discounts -%}
+{%- if show_discount_form -%}
 	{% liquid
 		assign discount_codes = cart.cart_level_discount_applications | where: 'type', 'discount_code' | map: 'title'
 		for item in cart.items
