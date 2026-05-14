@@ -35,22 +35,22 @@
 				<h2 class="about-editorial-heading">
 					{{ section.settings.heading | escape | newline_to_br }}
 					{%- if section.settings.heading_accent != blank -%}
-						<br><em>{{ section.settings.heading_accent | escape }}</em>
+						<em>{{ section.settings.heading_accent | escape }}</em>
 					{%- endif -%}
 				</h2>
+
+				{%- if section.settings.quote != blank -%}
+					<blockquote class="about-editorial-quote about-editorial-quote--tagline">
+						<span class="about-editorial-quote__mark">"</span>
+						<div class="about-editorial-quote__text rte">{{ section.settings.quote }}</div>
+					</blockquote>
+				{%- endif -%}
 			</div>
 
 			{%- if section.settings.body != blank -%}
 				<div class="about-editorial-body rte">{{ section.settings.body }}</div>
 			{%- endif -%}
 		</div>
-
-		{%- if section.settings.quote != blank -%}
-			<blockquote class="about-editorial-quote">
-				<span class="about-editorial-quote__mark">"</span>
-				<div class="about-editorial-quote__text rte">{{ section.settings.quote }}</div>
-			</blockquote>
-		{%- endif -%}
 	</div>
 </section>
 

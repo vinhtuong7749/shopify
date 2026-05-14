@@ -16,7 +16,7 @@
         "heading_line_1": "Raised",
         "heading_line_2": "here.",
         "heading_accent": "Stood here.",
-        "description": "<p>Built for those who hunt, protect, and live by their values - quietly, proudly.</p>",
+        "description": "<p>Built for those who hunt, protect, and live by their values — quietly, proudly.</p>",
         "show_scroll_label": false,
         "scroll_label": "Scroll",
         "bg_image": "",
@@ -35,11 +35,11 @@
     "identity": {
       "type": "about-editorial-identity",
       "settings": {
-        "label": "01 - Who We Are",
+        "label": "",
         "heading": "We Are\nCamo",
         "heading_accent": "Signal.",
-        "body": "<p>Camo Signal was born in the kind of places where hunting season is not a hobby. It is family tradition. It is responsibility. It is patience. Where camo never meant performance - it meant discipline.</p><p>At Camo Signal, camo is not used to hide. It is a signal. A signal to those who understand terrain, seasons, and the signs left behind. To those who notice tracks before antlers. Silence before motion. Place before self.</p>",
-        "quote": "<p>Camo is not used to hide.<br>It is a signal.</p>",
+        "body": "<p>Camo Signal was born in the kind of places where hunting season isn't a hobby. It's family tradition. It's responsibility. It's patience. Where camo never meant performance — it meant discipline.</p><p>At Camo Signal, camo isn't used to hide. It's a signal. A signal to those who understand terrain, seasons, and the signs left behind. To those who notice tracks before antlers. Silence before motion. Place before self.</p>",
+        "quote": "<p>Camo isn't used to hide. It's a signal.</p>",
         "background_color": "#FFFFFF",
         "ink_color": "#2C3D33",
         "ink_light_color": "#4A6156",
@@ -60,7 +60,7 @@
           "settings": {
             "number": "01",
             "title": "Where It Starts: The Land",
-            "text": "<p>Everything begins with real ground - the woods and hardwoods, Midwest edges, brush country, marsh lines, and the quiet spaces in between. Places shaped by generations who stayed, learned, and passed down knowledge rather than trophies.</p>"
+            "text": "<p>Everything begins with real ground — the woods and hardwoods, Midwest edges, brush country, marsh lines, and the quiet spaces in between. Places shaped by generations who stayed, learned, and passed down knowledge rather than trophies.</p>"
           }
         },
         "reason-seasons": {
@@ -68,7 +68,7 @@
           "settings": {
             "number": "02",
             "title": "How We Build: The Seasons",
-            "text": "<p>The world changes with the calendar - light shifts, colors change, movement feels different. So our designs follow the rhythm of the season, not the rhythm of trends.</p>"
+            "text": "<p>The world changes with the calendar, light shifts, colors change, movement feels different. So our designs follow the rhythm of the season — not the rhythm of trends.</p>"
           }
         },
         "reason-signal": {
@@ -76,7 +76,7 @@
           "settings": {
             "number": "03",
             "title": "What We Make: The Signal",
-            "text": "<p>We translate those environments into apparel you can live in - not just wear. Everyday staples like tees and headwear, made to feel right from the first wear and hold up over time.</p><ul><li>Screen-printed tees on soft, breathable cotton, built for everyday comfort</li><li>Durable printing methods designed to keep color and quality consistent</li><li>Embroidered headwear with breathable mesh and a practical, comfortable fit</li></ul>"
+            "text": "<p>We translate those environments into apparel you can live in — not just wear. Everyday staples like tees and headwear, made to feel right from the first wear and hold up over time.</p><ul><li>Screen-printed tees on soft, breathable cotton options, built for everyday comfort</li><li>Durable printing methods designed to keep color and quality consistent</li><li>Embroidered headwear with breathable mesh and a practical, comfortable fit</li></ul>"
           }
         }
       },
@@ -86,7 +86,7 @@
         "reason-signal"
       ],
       "settings": {
-        "label": "02 - Why we built this",
+        "label": "",
         "heading": "Land. Seasons.",
         "heading_accent": "Signal.",
         "background_color": "#3D5244",
@@ -109,9 +109,11 @@
           "type": "row",
           "settings": {
             "row_label": "Direct Model",
-            "title_1": "Why Direct-to-Customer",
+            "title_1": "Why <em>Direct-to-</em>Customer",
             "text_1": "<p>We sell directly through our online store so we can stay close to what matters: design integrity, consistent quality, and real support. Clear sizing guidance, straightforward product details, and a process that respects your time.</p>",
             "pills_1": "",
+            "quote": "",
+            "subtitle_1": "",
             "title_2": "",
             "text_2": "",
             "pills_2": ""
@@ -121,9 +123,11 @@
           "type": "row",
           "settings": {
             "row_label": "Collections",
-            "title_1": "Shop by Hunt",
-            "text_1": "<p>Each design follows the rhythm of the season - turkey hunts in spring, deer in fall, waterfowl on cold mornings, fishing through the summer. Pick the world you spend time in.</p>",
+            "title_1": "Shop by <em>Hunt</em> or Style",
+            "subtitle_1": "Shop by Hunt",
+            "text_1": "<p>Each design follows the rhythm of the season - turkey in spring, deer in fall, waterfowl on cold mornings, fishing through the summer. Pick the world you spend time in.</p>",
             "pills_1": "Turkey|/collections/turkey, Deer|/collections/deer, Waterfowl|/collections/waterfowl, Fishing|/collections/fishing",
+            "quote": "",
             "title_2": "Shop by Style",
             "text_2": "<p>Curated lines built around a moment, a place, or a feeling. Updated as the seasons shift.</p>",
             "pills_2": "New Arrivals|/collections/new-arrivals, Camo|/collections/camo, USA|/collections/usa"
@@ -133,9 +137,11 @@
           "type": "row",
           "settings": {
             "row_label": "Commitment",
-            "title_1": "Our Commitment",
-            "text_1": "<p>If something is not right, we will make it right. We stand behind our products with a simple return commitment - because trust should feel as solid as the ground you stand on.</p><p><em>Camo Signal is not here to explain hunting culture. It is here for those who live it. Wear who you are.</em></p>",
+            "title_1": "Our <em>Commitment</em>",
+            "text_1": "<p>If something isn't right, we'll make it right. We stand behind our products with a simple return commitment.</p>",
             "pills_1": "",
+            "quote": "<p>Trust should feel as solid as the ground you stand on.</p>",
+            "subtitle_1": "",
             "title_2": "",
             "text_2": "",
             "pills_2": ""
@@ -148,9 +154,12 @@
         "row-commitment"
       ],
       "settings": {
-        "label": "03 - How we operate",
+        "label": "",
         "heading": "Our Business",
         "heading_accent": "Model.",
+        "tagline": "Every decision starts with the hunter in the field — not in a boardroom.",
+        "footer_quote": "<p>Camo Signal isn't here to explain hunting culture.<br>It's here for those who live it.</p>",
+        "footer_cta": "Wear who you are.",
         "background_color": "#FFFFFF",
         "ink_color": "#2C3D33",
         "ink_light_color": "#4A6156",
