@@ -138,23 +138,10 @@
 		{%- endif -%}
 
 		<button
-			type="submit"
+			type="button"
 			class="cart-footer__button button button--secondary button--block js-checkout-button"
-			name="checkout"
-			form="cart-{{- section.id -}}"
 			style="width: 100%; background: var(--cart-drawer-checkout-bg, #0d1f6b) !important; border-color: var(--cart-drawer-checkout-border, #0d1f6b) !important; color: var(--cart-drawer-checkout-color, #ffffff) !important; font-family: 'Oswald', sans-serif !important; text-transform: uppercase; font-size: var(--cart-drawer-checkout-font-size, 16px); font-weight: 600; padding: var(--cart-drawer-checkout-padding, 14px); margin-bottom: 8px; border-radius: var(--cart-drawer-checkout-radius, 6px) !important;"
-			onclick="
-				var form = document.getElementById('cart-{{- section.id -}}');
-				if (form) {
-					event.preventDefault();
-					var input = document.createElement('input');
-					input.type = 'hidden';
-					input.name = 'checkout';
-					input.value = {{ checkout_button | strip_html | json }};
-					form.appendChild(input);
-					form.submit();
-				}
-			"
+			onclick="window.location.href = '/checkout';"
 		>
 			<span data-text="{{- checkout_button | strip_html -}}">
 				<span>{{ checkout_button }}</span>

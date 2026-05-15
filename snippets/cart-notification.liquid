@@ -51,18 +51,11 @@
 				{{- 'cart.notifications.view_cart' | t -}}
 			</a>
 
-			<form
-				action="{{- routes.cart_url -}}"
-				method="post"
-				id="cart-notification-form"
-				class="cart-notification__form"
-			>
-				<button class="button button--secondary cart-notification__cta" name="checkout" type="submit">
-					<span data-text="{{- 'cart.general.checkout' | t | escape -}}">
-						<span>{{- 'cart.general.checkout' | t -}}</span>
-					</span>
-				</button>
-			</form>
+			<a href="/checkout" class="button button--secondary cart-notification__cta">
+				<span data-text="{{- 'cart.general.checkout' | t | escape -}}">
+					<span>{{- 'cart.general.checkout' | t -}}</span>
+				</span>
+			</a>
 		</div>
 	</div>
 </div>

@@ -271,7 +271,9 @@
 {%- endcapture -%}
 
 <div class="product-card js-product-card"
-	{% if product != blank %} data-existing-product{% endif -%}
+	{% if product != blank %}
+		data-existing-product
+	{% endif -%}
 	{% if product.template_suffix == 'pre-order' %} data-preorder{% endif %}
 >
 	<div class="product-card__main" data-product-card-handle="{{- product.handle -}}">
