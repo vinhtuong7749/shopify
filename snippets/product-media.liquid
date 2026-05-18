@@ -60,6 +60,7 @@
 	>
 		<div class="product-media__grid js-product-media-grid-desktop" data-desktop-product-media-container-id="{{- section.id -}}">
 			{%- assign featured_media = product.selected_or_first_available_variant.featured_media | default: product.featured_media -%}
+			{%- assign thumbnail_aspect_ratio = featured_media.preview_image.aspect_ratio | default: 1 -%}
 			{%- assign is_paused_class = "is-paused-video js-paused-video" -%}
 			{%- assign no_media_class_paused = false -%}
 
@@ -478,6 +479,7 @@
 					{% for media in product.media %}
 						<button class="swiper-slide product-media__slider-thumbnails-slide"
 								data-slide-index="{{ forloop.index0 }}"
+								style="--thumbnail-aspect-ratio: {{ thumbnail_aspect_ratio }};"
 						>
 							{%- case media.media_type -%}
 								{%- when 'image' -%}

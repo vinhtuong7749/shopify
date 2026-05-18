@@ -38,42 +38,42 @@
 
 	<picture>
 		<source
-			srcset="{{- image | image_url: width: base375, height: base375, crop: 'center' }} 1x, {{ image | image_url: width: base375_2x, height: base375_2x, crop: 'center' }} 2x"
+			srcset="{{- image | image_url: width: base375 }} 1x, {{ image | image_url: width: base375_2x }} 2x"
 			media="(max-width: 375px)"
 			width="{{ base375 }}"
 			height="{{ base375 }}"
 		>
 
 		<source
-			srcset="{{- image | image_url: width: base420, height: base420, crop: 'center' }} 1x, {{ image | image_url: width: base420_2x, height: base420_2x, crop: 'center' }} 2x"
+			srcset="{{- image | image_url: width: base420 }} 1x, {{ image | image_url: width: base420_2x }} 2x"
 			media="(max-width: 420px)"
 			width="{{ base420 }}"
 			height="{{ base420 }}"
 		>
 
 		<source
-			srcset="{{- image | image_url: width: base575, height: base575, crop: 'center' }} 1x, {{ image | image_url: width: base575_2x, height: base575_2x, crop: 'center' }} 2x"
+			srcset="{{- image | image_url: width: base575 }} 1x, {{ image | image_url: width: base575_2x }} 2x"
 			media="(max-width: 575px)"
 			width="{{ base575 }}"
 			height="{{ base575 }}"
 		>
 
 		<source
-			srcset="{{- image | image_url: width: base767, height: base767, crop: 'center' }} 1x, {{ image | image_url: width: base767_2x, height: base767_2x, crop: 'center' }} 2x"
+			srcset="{{- image | image_url: width: base767 }} 1x, {{ image | image_url: width: base767_2x }} 2x"
 			media="(max-width: 767px)"
 			width="{{ base767 }}"
 			height="{{ base767 }}"
 		>
 
 		<source
-			srcset="{{- image | image_url: width: base1199, height: base1199, crop: 'center' }} 1x, {{ image | image_url: width: base1199_2x, height: base1199_2x, crop: 'center' }} 2x"
+			srcset="{{- image | image_url: width: base1199 }} 1x, {{ image | image_url: width: base1199_2x }} 2x"
 			media="(max-width: 1199px)"
 			width="{{ base1199 }}"
 			height="{{ base1199 }}"
 		>
 
 		<source
-			srcset="{{- image | image_url: width: base1440, height: base1440, crop: 'center' }} 1x, {{ image | image_url: width: base1440_2x, height: base1440_2x, crop: 'center' }} 2x"
+			srcset="{{- image | image_url: width: base1440 }} 1x, {{ image | image_url: width: base1440_2x }} 2x"
 			media="(max-width: 1440px)"
 			width="{{ base1440 }}"
 			height="{{ base1440 }}"
@@ -81,8 +81,8 @@
 
 		<img
 			class="product-media__image"
-			srcset="{{- image | image_url: width: base_default, height: base_default, crop: 'center' }} 1x, {{ image | image_url: width: base_default_2x, height: base_default_2x, crop: 'center' }} 2x"
-			src="{{- image | image_url: width: base_default, height: base_default, crop: 'center' }}"
+			srcset="{{- image | image_url: width: base_default }} 1x, {{ image | image_url: width: base_default_2x }} 2x"
+			src="{{- image | image_url: width: base_default }}"
 			{% if is_lazy %}
 				loading="lazy"
 			{% endif %}
