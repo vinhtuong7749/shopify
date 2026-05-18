@@ -3,7 +3,7 @@
   Block 1: Clothing (text links)
   Block 2: Hunting (with icons)
   Block 3: Terrain (images only, no text) - uses collections directly
-  Block 4: Seasonal (Independence Day, Signature)
+  Block 4: Seasonal (Independence Day, Independence Day Women's)
 {%- endcomment -%}
 
 <div
@@ -74,7 +74,7 @@
 		</div>
 
 		<!-- Block 3: TERRAIN (images only, no text) -->
-		<!-- Uses collection sub-links, excluding independence/signature -->
+		<!-- Uses collection sub-links, excluding independence/signature/women -->
 		<div class="mega-block mega-block--terrain">
 			<h3 class="mega-block__heading">Terrain</h3>
 			<div class="mega-terrain-list">
@@ -108,30 +108,44 @@
 			<h3 class="mega-block__heading">Seasonal</h3>
 			<div class="mega-seasonal-list">
 				{%- comment -%}
-					Try menu sub-links first (items containing independence/signature).
+					Try menu sub-links first (items containing independence/signature/women).
 					If none found, use hardcoded fallbacks.
 				{%- endcomment -%}
+				{%- assign womens_col = collections['independence-day-womens'] -%}
+				{%- if womens_col == blank -%}
+					{%- assign womens_col = collections['independence-day-women-s'] -%}
+				{%- endif -%}
 				{%- assign has_seasonal_links = false -%}
 				{%- for link in first_level_link.links -%}
 					{%- assign link_title_lower = link.title | downcase -%}
 					{%- if link_title_lower contains 'independence' or link_title_lower contains 'signature' -%}
 						{%- assign has_seasonal_links = true -%}
+						{%- assign seasonal_title = link.title -%}
+						{%- assign seasonal_url = link.url -%}
 						{%- assign scol = link.object -%}
 						{%- assign simg = scol.image | default: scol.products.first.featured_image -%}
-						<a href="{{ link.url }}" class="mega-seasonal-item">
+						{%- if link_title_lower contains 'signature' -%}
+							{%- assign seasonal_title = "Independence Day Women's" -%}
+							{%- if womens_col != blank -%}
+								{%- assign seasonal_url = womens_col.url -%}
+								{%- assign simg = womens_col.image | default: womens_col.products.first.featured_image -%}
+							{%- else -%}
+								{%- assign seasonal_url = '/collections/independence-day-womens' -%}
+							{%- endif -%}
+						{%- endif -%}
+						<a href="{{ seasonal_url }}" class="mega-seasonal-item">
 							{%- if simg != blank -%}
 								<div class="mega-seasonal-img-wrap">
-									<img src="{{ simg | img_url: '300x' }}" alt="{{ link.title | escape }}" class="mega-seasonal-img" loading="lazy">
+									<img src="{{ simg | img_url: '300x' }}" alt="{{ seasonal_title | escape }}" class="mega-seasonal-img" loading="lazy">
 								</div>
 							{%- endif -%}
-							<span class="mega-seasonal-label">{{ link.title }}</span>
+							<span class="mega-seasonal-label">{{ seasonal_title }}</span>
 						</a>
 					{%- endif -%}
 				{%- endfor -%}
 
 				{%- unless has_seasonal_links -%}
 					{%- comment -%} Fallback: hardcoded seasonal items {%- endcomment -%}
-					{%- assign sig_col = collections['camo'] -%}
 					{%- assign ind_col = collections['usa'] -%}
 
 					{%- if ind_col != blank -%}
@@ -146,17 +160,21 @@
 						</a>
 					{%- endif -%}
 
-					{%- if sig_col != blank -%}
-						<a href="{{ sig_col.url }}" class="mega-seasonal-item">
-							{%- assign sig_img = sig_col.image | default: sig_col.products.first.featured_image -%}
-							{%- if sig_img != blank -%}
+					{%- assign womens_url = '/collections/independence-day-womens' -%}
+					{%- if womens_col != blank -%}
+						{%- assign womens_url = womens_col.url -%}
+					{%- endif -%}
+					<a href="{{ womens_url }}" class="mega-seasonal-item">
+						{%- if womens_col != blank -%}
+							{%- assign womens_img = womens_col.image | default: womens_col.products.first.featured_image -%}
+							{%- if womens_img != blank -%}
 								<div class="mega-seasonal-img-wrap">
-									<img src="{{ sig_img | img_url: '300x' }}" alt="Signature" class="mega-seasonal-img" loading="lazy">
+									<img src="{{ womens_img | img_url: '300x' }}" alt="Independence Day Women's" class="mega-seasonal-img" loading="lazy">
 								</div>
 							{%- endif -%}
-							<span class="mega-seasonal-label">Signature</span>
-						</a>
-					{%- endif -%}
+						{%- endif -%}
+						<span class="mega-seasonal-label">Independence Day Women's</span>
+					</a>
 				{%- endunless -%}
 			</div>
 		</div>

@@ -208,19 +208,32 @@
 
 								{%- comment -%} ── SEASONAL ── {%- endcomment -%}
 								<li class="header-mobile__mega-heading">Seasonal</li>
+								{%- assign mob_womens_col = collections['independence-day-womens'] -%}
+								{%- if mob_womens_col == blank -%}
+									{%- assign mob_womens_col = collections['independence-day-women-s'] -%}
+								{%- endif -%}
 								{%- assign mob_has_seasonal = false -%}
 								{%- for link in first_level_link.links -%}
 									{%- assign ms_lower = link.title | downcase -%}
 									{%- if ms_lower contains 'independence' or ms_lower contains 'signature' -%}
 										{%- assign mob_has_seasonal = true -%}
+										{%- assign mob_seasonal_title = link.title -%}
+										{%- assign mob_seasonal_url = link.url -%}
+										{%- if ms_lower contains 'signature' -%}
+											{%- assign mob_seasonal_title = "Independence Day Women's" -%}
+											{%- if mob_womens_col != blank -%}
+												{%- assign mob_seasonal_url = mob_womens_col.url -%}
+											{%- else -%}
+												{%- assign mob_seasonal_url = '/collections/independence-day-womens' -%}
+											{%- endif -%}
+										{%- endif -%}
 										<li class="header-mobile__dropdown-item">
-											<a class="header-mobile__dropdown-link" href="{{ link.url }}"><span>{{ link.title }}</span></a>
+											<a class="header-mobile__dropdown-link" href="{{ mob_seasonal_url }}"><span>{{ mob_seasonal_title }}</span></a>
 										</li>
 									{%- endif -%}
 								{%- endfor -%}
 								{%- unless mob_has_seasonal -%}
 									{%- assign m_ind_col = collections['usa'] -%}
-									{%- assign m_sig_col = collections['camo'] -%}
 									{%- if m_ind_col != blank -%}
 										{%- assign m_ind_empty = false -%}
 										{%- if m_ind_col.products_count == 0 -%}{%- assign m_ind_empty = true -%}{%- endif -%}
@@ -228,13 +241,16 @@
 											<a class="header-mobile__dropdown-link{% if m_ind_empty %} header-mobile__dropdown-link--disabled{% endif %}" href="{{ m_ind_col.url }}"><span>Independence Day{%- if m_ind_empty -%}<em class="header-mobile__coming-soon"> — Coming Soon</em>{%- endif -%}</span></a>
 										</li>
 									{%- endif -%}
-									{%- if m_sig_col != blank -%}
-										{%- assign m_sig_empty = false -%}
-										{%- if m_sig_col.products_count == 0 -%}{%- assign m_sig_empty = true -%}{%- endif -%}
-										<li class="header-mobile__dropdown-item">
-											<a class="header-mobile__dropdown-link{% if m_sig_empty %} header-mobile__dropdown-link--disabled{% endif %}" href="{{ m_sig_col.url }}"><span>Signature{%- if m_sig_empty -%}<em class="header-mobile__coming-soon"> — Coming Soon</em>{%- endif -%}</span></a>
-										</li>
+									{%- assign m_womens_url = '/collections/independence-day-womens' -%}
+									{%- assign m_womens_empty = false -%}
+									{%- if mob_womens_col != blank -%}
+										{%- assign m_womens_url = mob_womens_col.url -%}
+										{%- if mob_womens_col.products_count == 0 -%}{%- assign m_womens_empty = true -%}{%- endif -%}
 									{%- endif -%}
+									<li class="header-mobile__dropdown-item">
+										<a class="header-mobile__dropdown-link{% if m_womens_empty %} header-mobile__dropdown-link--disabled{% endif %}" href="{{ m_womens_url }}"><span>Independence Day Women's{%- if m_womens_empty -%}<em class="header-mobile__coming-soon"> — Coming Soon</em>{%- endif -%}</span></a>
+									</li>
+									{%- assign mob_has_seasonal = true -%}
 								{%- endunless -%}
 
 											{%- elsif is_support_link -%}
