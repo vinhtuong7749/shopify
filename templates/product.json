@@ -440,6 +440,8 @@
         "enable_color_scheme_inheritance": true,
         "color_scheme": "",
         "heading": "Customer Favorites",
+        "heading_font_size_desktop": 36,
+        "heading_font_size_mobile": 25,
         "products_to_show": 4,
         "enable_shopify_recommendations": true,
         "collection": "",

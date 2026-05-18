@@ -283,8 +283,48 @@ document.addEventListener('DOMContentLoaded', function() {
     const initialDelay = {{ section.settings.initial_delay | times: 1000 }};
     const showDuration = {{ section.settings.show_time | times: 1000 }};
     const delayBetween = {{ section.settings.delay_between | times: 1000 }};
+    const shouldRunNotifications = {% if request.page_type == 'product' %}true{% else %}false{% endif %};
+    const mobileCartDrawerMedia = window.matchMedia('(max-width: 767px)');
+
+    function isMobileCartDrawerOpen() {
+        const cartDrawer = document.getElementById('CartDrawer');
+        return mobileCartDrawerMedia.matches && cartDrawer && cartDrawer.classList.contains('is-active');
+    }
+
+    function scheduleNextNotification(delay) {
+        clearTimeout(nextNotificationTimer);
+        nextNotificationTimer = setTimeout(showNotification, delay);
+    }
+
+    function suppressNotificationInMobileCartDrawer() {
+        if (!isMobileCartDrawerOpen()) return;
+
+        clearTimeout(notificationTimeout);
+        popup.classList.remove('is-visible');
+    }
+
+    function handleCartDrawerOpen() {
+        if (!mobileCartDrawerMedia.matches) return;
+
+        clearTimeout(nextNotificationTimer);
+        suppressNotificationInMobileCartDrawer();
+    }
+
+    function handleCartDrawerClose() {
+        if (!mobileCartDrawerMedia.matches || !shouldRunNotifications) return;
+
+        scheduleNextNotification(delayBetween);
+    }
 
     function showNotification() {
+        if (!shouldRunNotifications) return;
+
+        if (isMobileCartDrawerOpen()) {
+            suppressNotificationInMobileCartDrawer();
+            scheduleNextNotification(delayBetween);
+            return;
+        }
+
         if (popup.classList.contains('is-visible')) return;
 
         const randomProduct = products[Math.floor(Math.random() * products.length)];
@@ -311,7 +351,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function hideNotification() {
         popup.classList.remove('is-visible');
-        nextNotificationTimer = setTimeout(showNotification, delayBetween);
+        scheduleNextNotification(delayBetween);
+    }
+
+    function bindCartDrawerEvents() {
+        if (!window.themeCore || !window.themeCore.EventBus) return;
+
+        window.themeCore.EventBus.listen('Toggle:CartDrawer:open', handleCartDrawerOpen);
+        window.themeCore.EventBus.listen('Toggle:CartDrawer:close', handleCartDrawerClose);
+    }
+
+    if (window.themeCore && window.themeCore.EventBus) {
+        bindCartDrawerEvents();
+    } else {
+        document.addEventListener('theme:all:loaded', bindCartDrawerEvents, { once: true });
+    }
+
+    if (mobileCartDrawerMedia.addEventListener) {
+        mobileCartDrawerMedia.addEventListener('change', suppressNotificationInMobileCartDrawer);
+    } else if (mobileCartDrawerMedia.addListener) {
+        mobileCartDrawerMedia.addListener(suppressNotificationInMobileCartDrawer);
     }
 
     closeBtn.addEventListener('click', function(e) {
@@ -324,7 +383,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // If manually closed, schedule the next one based on delayBetween
         const nextTime = Date.now() + delayBetween;
         sessionStorage.setItem('salesNotifNextTime', nextTime);
-        nextNotificationTimer = setTimeout(showNotification, delayBetween);
+        scheduleNextNotification(delayBetween);
     });
 
     {% if request.page_type == 'product' %}
@@ -335,7 +394,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // First product page visit: Wait initialDelay (e.g., 7s)
         // If the user navigates away before this triggers, sessionStorage remains empty
         // and the 7s timer will restart on the next product page!
-        nextNotificationTimer = setTimeout(showNotification, initialDelay);
+        scheduleNextNotification(initialDelay);
     } else {
         // A popup has already been shown in this session
         const nextTime = parseInt(storedNextTime, 10);
@@ -344,11 +403,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (now >= nextTime) {
             // The wait time has already elapsed while navigating.
             // Show with a tiny 1-second buffer so it doesn't jar the user instantly on load.
-            nextNotificationTimer = setTimeout(showNotification, 1000);
+            scheduleNextNotification(1000);
         } else {
             // Still waiting for the delayBetween (e.g., 5 mins) to finish.
             const timeToWait = nextTime - now;
-            nextNotificationTimer = setTimeout(showNotification, timeToWait);
+            scheduleNextNotification(timeToWait);
         }
     }
     {% endif %}
