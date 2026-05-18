@@ -126,6 +126,7 @@
 									{%- for s_label in seasonal_labels -%}
 										{%- assign s_check = s_label | downcase -%}
 										{%- assign s_available = false -%}
+										{%- assign s_checked = false -%}
 										{%- assign s_submit_value = s_label -%}
 										{%- assign exact_matched = false -%}
 										{%- for filter in product_list.filters -%}
@@ -135,19 +136,36 @@
 													{%- if val_down == s_check -%}
 														{%- assign s_submit_value = value.value -%}
 														{%- if value.count > 0 or value.active -%}{%- assign s_available = true -%}{%- endif -%}
+														{%- if value.active -%}{%- assign s_checked = true -%}{%- endif -%}
 														{%- assign exact_matched = true -%}
 														{%- break -%}
 													{%- elsif val_down contains s_check and exact_matched == false -%}
 														{%- assign s_submit_value = value.value -%}
 														{%- if value.count > 0 or value.active -%}{%- assign s_available = true -%}{%- endif -%}
+														{%- if value.active -%}{%- assign s_checked = true -%}{%- endif -%}
 													{%- endif -%}
 												{%- endfor -%}
 											{%- endif -%}
 										{%- endfor -%}
+										{%- assign collection_handle_down = collection.handle | downcase -%}
+										{%- assign collection_title_down = collection.title | downcase -%}
+										{%- if s_check == 'independence day' -%}
+											{%- if collection_handle_down == 'usa' or collection_handle_down == 'independence-day' or collection_title_down contains 'independence day' -%}
+												{%- assign s_checked = true -%}
+											{%- endif -%}
+										{%- elsif s_check == 'signature' -%}
+											{%- if collection_handle_down == 'signature' or collection_title_down contains 'signature' -%}
+												{%- assign s_checked = true -%}
+											{%- endif -%}
+										{%- elsif s_check == 'new arrivals' -%}
+											{%- if collection_handle_down == 'new-arrivals' -%}
+												{%- assign s_checked = true -%}
+											{%- endif -%}
+										{%- endif -%}
 										<li class="filter-list__item">
 											<a
 												href="javascript:void(0);"
-												class="filter-list__collection-link js-custom-filter-link{% unless s_available %} filter-list__collection-link--disabled{% endunless %}"
+												class="filter-list__collection-link js-custom-filter-link{% if s_checked %} filter-list__collection-link--active{% endif %}{% unless s_available %} filter-list__collection-link--disabled{% endunless %}"
 												data-filter-param="{{ param_seasonal }}"
 												data-filter-value="{{ s_submit_value | escape }}"
 											>

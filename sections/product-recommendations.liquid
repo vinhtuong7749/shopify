@@ -8,6 +8,13 @@
 {%- render 'adastra' with '/src/styles/featured-products.scss' -%}
 {%- render 'adastra' with '/src/styles/product-card.scss' -%}
 
+{%- assign desktop_limit = section.settings.products_to_show | default: 4 | plus: 0 -%}
+{%- assign mobile_limit = section.settings.products_to_show_mobile | default: 6 | plus: 0 -%}
+{%- assign limit = desktop_limit -%}
+{%- if mobile_limit > limit -%}
+	{%- assign limit = mobile_limit -%}
+{%- endif -%}
+
 {%- style -%}
 	#shopify-section-{{- section.id -}} {
 		container-type: inline-size;
@@ -29,6 +36,24 @@
 	#shopify-section-{{- section.id -}} .featured-products__header.product-recommendations__header h2 {
 		font-size: var(--product-recommendations-heading-size-desktop, {{- section.settings.heading_font_size_desktop | default: 36 -}}px) !important;
 	}
+
+	@media screen and (min-width: 768px) {
+		#shopify-section-{{- section.id -}} .product-recommendations__slide--desktop-hidden {
+			display: none !important;
+		}
+	}
+
+	{%- if mobile_limit > desktop_limit -%}
+		@media screen and (min-width: 768px) {
+			#shopify-section-{{- section.id -}} .featured-products__buttons-wrapper {
+				display: none !important;
+			}
+
+			#shopify-section-{{- section.id -}} .featured-products__slider {
+				cursor: default !important;
+			}
+		}
+	{%- endif -%}
 
 	@media screen and (max-width: 767px) {
 		#shopify-section-{{- section.id -}} {
@@ -116,9 +141,22 @@
 		}
 
 		#shopify-section-{{- section.id -}} .featured-products__col {
+			display: block !important;
 			margin: 0 !important;
 			min-width: 0 !important;
 			flex-shrink: 0 !important;
+		}
+
+		#shopify-section-{{- section.id -}} .product-recommendations__slide--desktop-hidden {
+			display: block !important;
+		}
+
+		#shopify-section-{{- section.id -}} .product-recommendations__slide--mobile-hidden {
+			display: none !important;
+		}
+
+		#shopify-section-{{- section.id -}} .featured-products__col:nth-child(n+{{ mobile_limit | plus: 1 }}) {
+			display: none !important;
 		}
 
 		#shopify-section-{{- section.id -}} .featured-products__slider:not(.swiper-initialized) .featured-products__col {
@@ -162,8 +200,14 @@
 
 		#shopify-section-{{- section.id -}} .product-recommendations__mobile-pagination,
 		#shopify-section-{{- section.id -}} .product-recommendations__mobile-pagination.swiper-pagination-bullets,
-		#shopify-section-{{- section.id -}} .product-recommendations__mobile-pagination.swiper-pagination-horizontal {
+		#shopify-section-{{- section.id -}} .product-recommendations__mobile-pagination.swiper-pagination-horizontal,
+		#shopify-section-{{- section.id -}} .product-recommendations .swiper-pagination {
 			display: none !important;
+			height: 0 !important;
+			margin: 0 !important;
+			padding: 0 !important;
+			visibility: hidden !important;
+			pointer-events: none !important;
 		}
 
 		#shopify-section-{{- section.id -}} .product-recommendations__mobile-pagination .swiper-pagination-bullet {
@@ -297,7 +341,6 @@
 {%- assign enable_color_scheme_inheritance = section.settings.enable_color_scheme_inheritance -%}
 {%- assign color_scheme 				   = section.settings.color_scheme -%}
 {%- assign heading    					   = section.settings.heading -%}
-{%- assign limit      					   = section.settings.products_to_show -%}
 
 {%- if enable_color_scheme_inheritance -%}
 	{%- assign color_scheme = settings.main_color_scheme -%}
@@ -322,6 +365,12 @@
 	if enable_shopify_recommendations or product_list.count > 1
 		assign slider_enabled = true
 	endif
+
+	assign desktop_slider_enabled = slider_enabled
+
+	if mobile_limit > desktop_limit
+		assign desktop_slider_enabled = false
+	endif
 -%}
 
 {%- capture styles -%}
@@ -335,11 +384,13 @@
 {%- endcapture -%}
 
 <section
-	class="featured-products product-recommendations section-animate featured-products--layout-4 color-{{ color_scheme.id | default: color_scheme }} js-animate{% if slider_enabled %} js-featured-products{% endif %}{% if request.visual_preview_mode or section.index == 1 %} animated{% endif %}"
+	class="featured-products product-recommendations section-animate featured-products--layout-4 color-{{ color_scheme.id | default: color_scheme }} js-animate{% if desktop_slider_enabled %} js-featured-products{% endif %}{% if request.visual_preview_mode or section.index == 1 %} animated{% endif %}"
 	id="{{- section.id -}}"
 	style="{{- styles -}}"
 	data-product-id="{{- product.id -}}"
 	data-limit="{{- limit -}}"
+	data-desktop-limit="{{- desktop_limit -}}"
+	data-mobile-limit="{{- mobile_limit -}}"
 >
 	<div class="container">
 		<div class="featured-products__header product-recommendations__header">
@@ -402,7 +453,7 @@
 										{%- endif -%}
 										{%- assign selected_products = selected_products | append: product_handle | append: "," -%}
 										{%- assign selected_count = selected_count | plus: 1 -%}
-										<div class="featured-products__col swiper-slide js-featured-products-slide">
+										<div class="featured-products__col swiper-slide js-featured-products-slide{% if selected_count > desktop_limit %} product-recommendations__slide--desktop-hidden{% endif %}{% if selected_count > mobile_limit %} product-recommendations__slide--mobile-hidden{% endif %}">
 											{%- render
 												'product-card',
 												product: related_product,
@@ -430,7 +481,7 @@
 								{%- endif -%}
 
 								{%- assign display_count = display_count | plus: 1 -%}
-								<div class="featured-products__col swiper-slide js-featured-products-slide">
+								<div class="featured-products__col swiper-slide js-featured-products-slide{% if display_count > desktop_limit %} product-recommendations__slide--desktop-hidden{% endif %}{% if display_count > mobile_limit %} product-recommendations__slide--mobile-hidden{% endif %}">
 									{%- render
 										'product-card',
 										product: product,
@@ -448,7 +499,7 @@
 						{{- slides -}}
 					{%- else -%}
 						{%- for i in (1..limit) -%}
-							<div class="featured-products__col swiper-slide js-featured-products-slide">
+							<div class="featured-products__col swiper-slide js-featured-products-slide{% if i > desktop_limit %} product-recommendations__slide--desktop-hidden{% endif %}{% if i > mobile_limit %} product-recommendations__slide--mobile-hidden{% endif %}">
 								{%- render 'product-card', product: nil -%}
 							</div>
 						{%- endfor -%}
@@ -480,10 +531,42 @@
 			if (heading) {
 				heading.style.setProperty('font-size', shouldUseMobileLayout ? mobileHeadingSize : desktopHeadingSize, 'important');
 			}
+
+			applyResponsiveProductLimit();
+		}
+
+		function applyResponsiveProductLimit() {
+			var section = document.getElementById('{{ section.id }}');
+			if (!section) return;
+
+			var activeLimit = mobileQuery.matches
+				? parseInt(section.getAttribute('data-mobile-limit'), 10)
+				: parseInt(section.getAttribute('data-desktop-limit'), 10);
+			var slides = section.querySelectorAll('.js-featured-products-slide');
+			var slider = section.querySelector('.js-featured-products-slider');
+
+			if (!activeLimit || !slides.length) return;
+
+			slides.forEach(function(slide, index) {
+				var shouldHide = index >= activeLimit;
+
+				if (shouldHide) {
+					slide.style.setProperty('display', 'none', 'important');
+					slide.setAttribute('aria-hidden', 'true');
+				} else {
+					slide.style.removeProperty('display');
+					slide.removeAttribute('aria-hidden');
+				}
+			});
+
+			if (slider && slider.swiper && typeof slider.swiper.update === 'function') {
+				slider.swiper.update();
+			}
 		}
 
 		function initMobileRecommendationsSlider() {
 			updateResponsiveHeadingLayout();
+			applyResponsiveProductLimit();
 
 			if (!mobileQuery.matches) return;
 
@@ -493,12 +576,11 @@
 			section.classList.remove('js-featured-products');
 
 			var slider = section.querySelector('.js-featured-products-slider');
-			var pagination = section.querySelector('.js-product-recommendations-mobile-pagination');
 			var prevButton = section.querySelector('.js-featured-products-slider-button-prev');
 			var nextButton = section.querySelector('.js-featured-products-slider-button-next');
 			var Swiper = window.themeCore && window.themeCore.utils && window.themeCore.utils.Swiper;
 
-			if (!slider || !pagination) return;
+			if (!slider) return;
 			if (slider.swiper) return;
 
 			if (!Swiper) {
@@ -514,19 +596,16 @@
 			new Swiper(slider, {
 				grabCursor: true,
 				slidesPerView: 2,
-				slidesPerGroup: 1,
+				slidesPerGroup: 2,
 				spaceBetween: 12,
 				navigation: {
 					prevEl: prevButton,
 					nextEl: nextButton
 				},
-				pagination: {
-					el: pagination,
-					clickable: true
-				},
 				on: {
 					init: function() {
 						section.classList.add('is-initialized');
+						applyResponsiveProductLimit();
 					}
 				}
 			});
@@ -621,7 +700,16 @@
 			"max": 12,
 			"step": 1,
 			"default": 4,
-			"label": "Products to show"
+			"label": "Products to show on desktop"
+		},
+		{
+			"type": "range",
+			"id": "products_to_show_mobile",
+			"min": 1,
+			"max": 12,
+			"step": 1,
+			"default": 6,
+			"label": "Products to show on mobile"
 		},
 		{
 			"type": "checkbox",

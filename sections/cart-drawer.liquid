@@ -340,6 +340,25 @@
 			padding-bottom: max(16px, env(safe-area-inset-bottom)) !important;
 		}
 
+		@media screen and (max-width: 767px) {
+			#CartDrawer .cart-drawer__payment-icons {
+				flex-wrap: nowrap !important;
+				gap: 5px !important;
+				overflow: hidden !important;
+				padding-left: 12px !important;
+				padding-right: 12px !important;
+				white-space: nowrap !important;
+			}
+
+			#CartDrawer .cart-drawer__payment-icons .icon {
+				flex: 0 1 auto !important;
+				width: min(36px, 8.2vw) !important;
+				min-width: 0 !important;
+				max-width: 36px !important;
+				height: auto !important;
+			}
+		}
+
 		#CartDrawer #cart-drawer-main-content {
 			display: flex !important;
 			flex-direction: column !important;
@@ -356,6 +375,23 @@
 		#CartDrawer .cart-drawer__section.cart-drawer__section--items {
 			margin-top: 0 !important;
 		}
+
+		@media screen and (max-width: 767px) {
+			body.is-cart-drawer-open #ShopifyChat,
+			body.is-cart-drawer-open #shopify-chat,
+			body.is-cart-drawer-open [id*="shopify-chat"],
+			body.is-cart-drawer-open [class*="shopify-chat"],
+			body.is-cart-drawer-open iframe#dummy-chat-button-iframe,
+			body.is-cart-drawer-open iframe[title*="chat" i],
+			body.is-cart-drawer-open iframe[src*="shopifychat" i],
+			body.is-cart-drawer-open iframe[src*="inbox.shopify" i],
+			body.is-cart-drawer-open iframe[src*="chat" i] {
+				opacity: 0 !important;
+				visibility: hidden !important;
+				pointer-events: none !important;
+				transform: translateY(120%) !important;
+			}
+		}
 	</style>
 	</section>
 
@@ -364,6 +400,47 @@
 	{%- endif -%}
 
 	{%- render 'adastra' with '/src/scripts/cart-drawer.js' -%}
+
+	<script>
+		(function() {
+			function setCartDrawerChatState(isOpen) {
+				document.body.classList.toggle('is-cart-drawer-open', isOpen);
+			}
+
+			function syncCartDrawerChatState() {
+				var cartDrawer = document.getElementById('CartDrawer');
+				setCartDrawerChatState(!!(cartDrawer && cartDrawer.classList.contains('is-active')));
+			}
+
+			function bindCartDrawerChatEvents() {
+				if (!window.themeCore || !window.themeCore.EventBus) return;
+
+				window.themeCore.EventBus.listen('Toggle:CartDrawer:open', function() {
+					setCartDrawerChatState(true);
+				});
+
+				window.themeCore.EventBus.listen('Toggle:CartDrawer:close', function() {
+					setCartDrawerChatState(false);
+				});
+
+				window.themeCore.EventBus.listen('cart:drawer:open', function() {
+					setCartDrawerChatState(true);
+				});
+
+				window.themeCore.EventBus.listen('cart:drawer:close', function() {
+					setCartDrawerChatState(false);
+				});
+
+				syncCartDrawerChatState();
+			}
+
+			if (window.themeCore && window.themeCore.EventBus) {
+				bindCartDrawerChatEvents();
+			} else {
+				document.addEventListener('theme:all:loaded', bindCartDrawerChatEvents, { once: true });
+			}
+		})();
+	</script>
 
 	{%- if show_auto_open and cart.item_count > 0 -%}
 		<script>
