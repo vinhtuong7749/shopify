@@ -74,10 +74,8 @@
 
 							{%- comment -%} ── Build availability lookups (same as sidebar) ── {%- endcomment -%}
 							{%- assign available_hunting_values = '' -%}
-							{%- assign available_terrain_values = '' -%}
 							{%- assign available_seasonal_values = '' -%}
 							{%- assign param_hunting = 'filter.p.m.custom.hunting' -%}
-							{%- assign param_terrain = 'filter.p.m.custom.terrain' -%}
 							{%- assign param_seasonal = 'filter.p.m.custom.seasonal' -%}
 							{%- for filter in product_list.filters -%}
 								{%- assign param_down = filter.param_name | downcase -%}
@@ -86,13 +84,6 @@
 									{%- for fv in filter.values -%}
 										{%- if fv.count > 0 or fv.active -%}
 											{%- assign available_hunting_values = available_hunting_values | append: fv.label | append: '|||' -%}
-										{%- endif -%}
-									{%- endfor -%}
-								{%- elsif param_down contains 'terrain' -%}
-									{%- assign param_terrain = filter.param_name -%}
-									{%- for fv in filter.values -%}
-										{%- if fv.count > 0 or fv.active -%}
-											{%- assign available_terrain_values = available_terrain_values | append: fv.label | append: '|||' -%}
 										{%- endif -%}
 									{%- endfor -%}
 								{%- elsif param_down contains 'seasonal' -%}
@@ -234,48 +225,6 @@
 													{%- unless s_available -%}<span class="filter-list__coming-soon" style="color:#7a8a7e;"> — <em>Coming Soon</em></span>{%- endunless -%}
 												</label>
 											</li>
-										{%- endfor -%}
-										</ul>
-									</div>
-								</div>
-							</div>
-
-							{%- comment -%} ── TERRAIN ── {%- endcomment -%}
-							<div id="filter-{{ section.id }}-terrain-{{- id -}}" class="accordion__item product-filters__form-item js-accordion-item js-filter-item js-custom-accordion" data-filter-group="{{ param_terrain }}">
-								<h3 class="accordion__title">
-									<button class="focus-visible-outline accordion__control product-filters__form-item-toggle-button js-accordion-control js-custom-accordion-btn" type="button" aria-expanded="false">
-										<span typeof="product-filters__form-item-toggle-title">
-											TERRAIN
-											<span class="js-custom-counter" style="display:none;"></span>
-										</span>
-										{%- render 'icons', icon: 'arrow-down' -%}
-									</button>
-								</h3>
-								<div class="accordion__content accordion__content--animate js-accordion-content js-custom-accordion-content" style="height: 0;">
-									<div class="js-accordion-inner product-filters__form-item-content">
-										<ul class="filter-list filter-list--sidebar filter-list--collection-custom js-filter-list">
-										{%- assign terrain_labels = "Grassland & Prairie,Marsh & Wetland,Desert & Brush Country,Forest & Hardwood,Mountainous Terrain" | split: "," -%}
-										{%- for t_label in terrain_labels -%}
-											{%- assign t_check = t_label | append: '|||' -%}
-											{%- assign t_available = false -%}
-											{%- if available_terrain_values contains t_check -%}{%- assign t_available = true -%}{%- endif -%}
-											{%- assign t_checked = false -%}
-											{%- assign target_down = t_label | downcase -%}
-										{%- for filter in product_list.filters -%}
-											{%- if filter.param_name == param_terrain -%}
-												{%- for value in filter.active_values -%}
-													{%- assign val_down = value.label | downcase -%}
-													{%- if val_down == target_down -%}{%- assign t_checked = true -%}{%- endif -%}
-												{%- endfor -%}
-											{%- endif -%}
-										{%- endfor -%}
-										<li class="filter-list__item">
-											<input class="checkbox__input visually-hidden filter-list__checkbox" type="checkbox" name="{{ param_terrain }}" value="{{ t_label }}" id="FilterDrawer-{{ section.id }}-terrain-{{ forloop.index }}-{{ id }}"{% if t_checked %} checked{% endif %}{% unless t_available %} disabled{% endunless %}>
-											<label class="checkbox__label{% unless t_available %} is-disabled{% endunless %}" for="FilterDrawer-{{ section.id }}-terrain-{{ forloop.index }}-{{ id }}" {% unless t_available %}style="pointer-events: none; opacity: 0.6;"{% endunless %}>
-												{{ t_label }}
-												{%- unless t_available -%}<span class="filter-list__coming-soon" style="color:#7a8a7e;"> — <em>Coming Soon</em></span>{%- endunless -%}
-											</label>
-										</li>
 										{%- endfor -%}
 										</ul>
 									</div>

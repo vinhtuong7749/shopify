@@ -40,6 +40,10 @@
 						{%- endif -%}
 
 						{%- assign downcased_label = filter.label | downcase -%}
+						{%- assign downcased_param = filter.param_name | downcase -%}
+						{%- if downcased_param contains 'terrain' or downcased_label contains 'terrain' -%}
+							{%- continue -%}
+						{%- endif -%}
 						{%- if filter.param_name contains 'availab' or downcased_label contains 'availab' or downcased_label contains 'tình trạng' or filter.type == 'boolean' -%}
 							{%- continue -%}
 						{%- endif -%}

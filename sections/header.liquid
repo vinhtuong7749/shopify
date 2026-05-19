@@ -270,7 +270,7 @@
 		cursor: pointer;
 		vertical-align: middle;
 		min-width: auto !important;
-		transition: transform 0.15s ease;
+		transition: opacity 0.15s ease;
 	}
 
 	.header-menu__item--arrow svg {
@@ -282,8 +282,9 @@
 		opacity: 0.7;
 	}
 
-	.header-menu__item--arrow[aria-expanded="true"] {
-		transform: rotate(180deg);
+	.header-menu__item--arrow[aria-expanded="true"],
+	.header-menu__item--arrow[aria-expanded="true"] svg {
+		transform: none;
 	}
 
 	/* When link is separate from arrow, keep tight */
