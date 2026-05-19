@@ -659,13 +659,13 @@ html.no-js .product .product__container.need-animate {
 }
 .product-badges {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 10px;
+  left: 10px;
   z-index: var(--layer-raised);
   display: flex;
   flex-direction: column;
-  padding: 4px;
-  gap: 2px;
+  padding: 0;
+  gap: 4px;
 }
 .product-badges:has(> .badge:only-child.is-hidden) {
   display: none;
@@ -683,9 +683,28 @@ html.no-js .product .product__container.need-animate {
   color: var(--color-label-base);
 }
 .badge.badge--sale-percentage {
-  border: 1px solid var(--color-background-label-sale-percentage);
-  background-color: var(--color-background-label-sale-percentage);
-  color: var(--color-label-sale-percentage);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: auto;
+	min-width: 74px;
+	min-height: 28px;
+	padding: 6px 14px;
+	border: 0;
+	border-radius: 999px;
+	background-color: #e21b23;
+	color: #ffffff;
+	font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+	font-size: 15px;
+	font-weight: 500;
+	line-height: 1;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.16);
+}
+.badge.badge--sale-percentage .badge__sale-visual {
+	display: inline-flex;
+	align-items: center;
 }
 .badge.badge--sold-out {
   border: 1px solid var(--color-border-label-sold-out);
@@ -707,6 +726,12 @@ html.no-js .product .product__container.need-animate {
     padding: 11px 8px;
     font-size: calc(var(--body-font-size) * 0.875);
   }
+	.badge.badge--sale-percentage {
+		min-width: 80px;
+		min-height: 30px;
+		padding: 7px 15px;
+		font-size: 16px;
+	}
 }
 .product-vendor {
   padding-top: var(--offset-top-mobile);

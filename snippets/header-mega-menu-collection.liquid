@@ -9,11 +9,15 @@
 	class="header-mega-desktop js-header-dropdown-menu"
 >
 	{%- if is_shop_menu -%}
+		{%- assign shop_men_url = '/collections/all' -%}
+		{%- assign shop_tshirt_url = '/collections/all?filter.p.product_type=Type1&filter.p.product_type=3D+Tshirt&filter.p.product_type=T-Shirt' -%}
+		{%- assign shop_longsleeve_url = '/collections/all?filter.p.product_type=Long-sleeve' -%}
+		{%- assign shop_hat_url = '/collections/all?filter.p.product_type=Hat' -%}
 		<div class="header-mega-desktop__inner mega-shop">
 			<div class="mega-block mega-block--gender">
 				<ul class="mega-block__list mega-gender-list">
 					<li>
-						<a href="/collections/all" class="mega-block__link mega-gender-link">
+						<a href="{{ shop_men_url }}" class="mega-block__link mega-gender-link">
 							For Men
 						</a>
 					</li>
@@ -89,7 +93,10 @@
 								</a>
 								<div class="mega-shop-product__footer">
 									<a href="{{ shop_men_product.url }}" class="mega-shop-product__title">{{ shop_men_product.title | escape }}</a>
-									<div class="mega-shop-product__meta">For Men</div>
+									<a href="{{ shop_men_url }}" class="mega-shop-product__meta mega-shop-product__meta-link" aria-label="View all For Men">
+										<span>For Men</span>
+										<span class="mega-shop-product__view-all">View All <span aria-hidden="true">→</span></span>
+									</a>
 								</div>
 							</div>
 						{%- endif -%}
@@ -105,7 +112,10 @@
 								</a>
 								<div class="mega-shop-product__footer">
 									<a href="{{ shop_women_product.url }}" class="mega-shop-product__title">{{ shop_women_product.title | escape }}</a>
-									<div class="mega-shop-product__meta">For Women</div>
+									<a href="{{ shop_womens_url }}" class="mega-shop-product__meta mega-shop-product__meta-link" aria-label="View all For Women">
+										<span>For Women</span>
+										<span class="mega-shop-product__view-all">View All <span aria-hidden="true">→</span></span>
+									</a>
 								</div>
 							</div>
 						{%- endif -%}
@@ -115,9 +125,9 @@
 
 			<div class="mega-block mega-block--clothing">
 				<ul class="mega-block__list mega-shop-clothing-nav">
-					<li><a href="/collections/all?filter.p.product_type=Type1&filter.p.product_type=3D+Tshirt&filter.p.product_type=T-Shirt" class="mega-block__link">T-Shirts</a></li>
-					<li><a href="/collections/all?filter.p.product_type=Long-sleeve" class="mega-block__link">Long-Sleeve</a></li>
-					<li><a href="/collections/all?filter.p.product_type=Hat" class="mega-block__link">Hats</a></li>
+					<li><a href="{{ shop_tshirt_url }}" class="mega-block__link">T-Shirts</a></li>
+					<li><a href="{{ shop_longsleeve_url }}" class="mega-block__link">Long-Sleeve</a></li>
+					<li><a href="{{ shop_hat_url }}" class="mega-block__link">Hats</a></li>
 				</ul>
 
 				{%- assign shop_product_logic = section.settings.shop_mega_product_logic | default: 'manual_fallback' -%}
@@ -187,7 +197,10 @@
 								</a>
 								<div class="mega-shop-product__footer">
 									<a href="{{ shop_tshirt_product.url }}" class="mega-shop-product__title">{{ shop_tshirt_product.title | escape }}</a>
-									<div class="mega-shop-product__meta">T-Shirt</div>
+									<a href="{{ shop_tshirt_url }}" class="mega-shop-product__meta mega-shop-product__meta-link" aria-label="View all T-Shirts">
+										<span>T-Shirt</span>
+										<span class="mega-shop-product__view-all">View All <span aria-hidden="true">→</span></span>
+									</a>
 								</div>
 							</div>
 						{%- endif -%}
@@ -203,7 +216,10 @@
 								</a>
 								<div class="mega-shop-product__footer">
 									<a href="{{ shop_longsleeve_product.url }}" class="mega-shop-product__title">{{ shop_longsleeve_product.title | escape }}</a>
-									<div class="mega-shop-product__meta">Long-Sleeve</div>
+									<a href="{{ shop_longsleeve_url }}" class="mega-shop-product__meta mega-shop-product__meta-link" aria-label="View all Long-Sleeve">
+										<span>Long-Sleeve</span>
+										<span class="mega-shop-product__view-all">View All <span aria-hidden="true">→</span></span>
+									</a>
 								</div>
 							</div>
 						{%- endif -%}
@@ -219,7 +235,10 @@
 								</a>
 								<div class="mega-shop-product__footer">
 									<a href="{{ shop_hat_product.url }}" class="mega-shop-product__title">{{ shop_hat_product.title | escape }}</a>
-									<div class="mega-shop-product__meta">Hat</div>
+									<a href="{{ shop_hat_url }}" class="mega-shop-product__meta mega-shop-product__meta-link" aria-label="View all Hats">
+										<span>Hat</span>
+										<span class="mega-shop-product__view-all">View All <span aria-hidden="true">→</span></span>
+									</a>
 								</div>
 							</div>
 						{%- endif -%}
@@ -626,6 +645,31 @@
 	letter-spacing: 0.04em;
 	text-transform: uppercase;
 	color: #5a6e5f;
+}
+
+.mega-shop-product__meta-link {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	text-decoration: none;
+}
+
+.mega-shop-product__view-all {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 10px;
+	font-weight: 500;
+	letter-spacing: 0.06em;
+	color: #2C3D33;
+	white-space: nowrap;
+	transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.mega-shop-product__meta-link:hover .mega-shop-product__view-all {
+	color: #1a1a1a;
+	transform: translateX(2px);
 }
 
 .mega-hunting-list {

@@ -423,7 +423,7 @@
 	"products": {
 		"product": {
 			"sold_out": "Agotado",
-			"sale_percentage_label": "{{number}}% Rebajas",
+			"sale_percentage_label": "{{number}}% OFF",
 			"unavailable": "No disponible",
 			"quantity": "Cantidad",
 			"increments_of": "Incrementos de {{number}}",

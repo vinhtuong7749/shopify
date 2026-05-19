@@ -51,8 +51,10 @@
 					{{- 'products.product.product_label' | t -}}:
 				</span>
 
-				<span data-sale-percentage>
-					{{- "products.product.sale_percentage_label" | t: number: sale_percentage_value -}}
+				<span class="badge__sale-visual" aria-hidden="true">
+					<span class="badge__sale-text" data-sale-percentage>
+						{{- "products.product.sale_percentage_label" | t: number: sale_percentage_value -}}
+					</span>
 				</span>
 			</li>
 		{%- endif -%}
