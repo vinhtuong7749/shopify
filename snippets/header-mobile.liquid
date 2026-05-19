@@ -162,7 +162,6 @@
 									<div class="header-mobile__dropdown-content">
 										<ul class="header-mobile__dropdown-list">
 											{%- if is_shop_link -%}
-												<li class="header-mobile__mega-heading">Gender</li>
 												<li class="header-mobile__dropdown-item">
 													<a class="header-mobile__dropdown-link" href="/collections/all"><span>For Men</span></a>
 												</li>
@@ -177,50 +176,39 @@
 													{%- endif -%}
 													<a class="header-mobile__dropdown-link" href="{{ mob_shop_womens_url }}"><span>For Women</span></a>
 												</li>
-
-												<li class="header-mobile__mega-heading">Clothing</li>
 												<li class="header-mobile__dropdown-item">
 													<a class="header-mobile__dropdown-link" href="/collections/all?filter.p.product_type=Type1&filter.p.product_type=3D+Tshirt&filter.p.product_type=T-Shirt"><span>T-Shirts</span></a>
 												</li>
 												<li class="header-mobile__dropdown-item">
-													<a class="header-mobile__dropdown-link" href="/collections/all?filter.p.product_type=Hat"><span>Hats</span></a>
+													<a class="header-mobile__dropdown-link" href="/collections/all?filter.p.product_type=Long-sleeve"><span>Long-Sleeve</span></a>
 												</li>
 												<li class="header-mobile__dropdown-item">
-													<a class="header-mobile__dropdown-link" href="/collections/all?filter.p.product_type=Long-sleeve"><span>Long-Sleeve</span></a>
+													<a class="header-mobile__dropdown-link" href="/collections/all?filter.p.product_type=Hat"><span>Hats</span></a>
 												</li>
 											{%- elsif is_collection_link -%}
 												{%- comment -%} ── FEATURED ── {%- endcomment -%}
-												<li class="header-mobile__mega-heading">Featured</li>
+												<li class="header-mobile__mega-group">
+													<button class="header-mobile__mega-toggle" type="button" aria-expanded="false" onclick="event.preventDefault(); event.stopPropagation(); var content = this.nextElementSibling; if (content &amp;&amp; content.classList.contains('header-mobile__mega-panel')) { var isOpen = this.getAttribute('aria-expanded') === 'true'; this.setAttribute('aria-expanded', !isOpen); content.classList.toggle('is-open', !isOpen); }">
+														<span>Featured</span>
+														<span class="header-mobile__mega-plus" aria-hidden="true"></span>
+													</button>
+													<ul class="header-mobile__mega-panel">
 												<li class="header-mobile__dropdown-item"><a class="header-mobile__dropdown-link" href="/collections/best-sellers"><span>Best Seller</span></a></li>
 								{% comment %}<li class="header-mobile__dropdown-item"><a class="header-mobile__dropdown-link" href="/collections/all?filter.p.product_type=Sweatshirt"><span>Sweatshirts</span></a></li>{% endcomment %}
 								{% comment %}<li class="header-mobile__dropdown-item"><a class="header-mobile__dropdown-link" href="/collections/all?filter.p.product_type=Hoodie"><span>Hoodies</span></a></li>{% endcomment %}
 								<li class="header-mobile__dropdown-item"><a class="header-mobile__dropdown-link" href="/collections/new-arrivals"><span>New Arrivals</span></a></li>
 								<li class="header-mobile__dropdown-item"><a class="header-mobile__dropdown-link" href="/collections/independence-day"><span>Independence Day</span></a></li>
 								<li class="header-mobile__dropdown-item"><a class="header-mobile__dropdown-link" href="/collections/turkey"><span>Turkey</span></a></li>
-
-												{%- comment -%} ── HUNTING ── {%- endcomment -%}
-												<li class="header-mobile__mega-heading">Hunting</li>
-												{%- assign mob_hunt_handles = "turkey,deer,fishing,waterfowl" | split: "," -%}
-												{%- assign mob_hunt_labels = "Turkey,Deer,Fishing,Waterfowl" | split: "," -%}
-												{%- for mh in mob_hunt_handles -%}
-													{%- assign mh_col = collections[mh] -%}
-													{%- assign mh_label = mob_hunt_labels[forloop.index0] -%}
-													{%- assign mh_empty = false -%}
-													{%- if mh_col == blank or mh_col.products_count == 0 -%}
-														{%- assign mh_empty = true -%}
-													{%- endif -%}
-													<li class="header-mobile__dropdown-item">
-														<a class="header-mobile__dropdown-link header-mobile__hunt-link{% if mh_empty %} header-mobile__dropdown-link--disabled{% endif %}" href="/collections/{{ mh }}">
-															{%- if mh_col.image != blank -%}
-																<img src="{{ mh_col.image | img_url: '80x80', crop: 'center' }}" alt="{{ mh_label }}" width="80" height="80" loading="lazy" class="header-mobile__hunt-icon">
-															{%- endif -%}
-															<span>{{ mh_label }}{%- if mh_empty -%}<em class="header-mobile__coming-soon"> — Coming Soon</em>{%- endif -%}</span>
-														</a>
-													</li>
-												{%- endfor -%}
+													</ul>
+												</li>
 
 												{%- comment -%} ── TERRAIN (image + name, vertical) ── {%- endcomment -%}
-								<li class="header-mobile__mega-heading">Independence Day</li>
+								<li class="header-mobile__mega-group">
+									<button class="header-mobile__mega-toggle" type="button" aria-expanded="false" onclick="event.preventDefault(); event.stopPropagation(); var content = this.nextElementSibling; if (content &amp;&amp; content.classList.contains('header-mobile__mega-panel')) { var isOpen = this.getAttribute('aria-expanded') === 'true'; this.setAttribute('aria-expanded', !isOpen); content.classList.toggle('is-open', !isOpen); }">
+										<span>Independence Day</span>
+										<span class="header-mobile__mega-plus" aria-hidden="true"></span>
+									</button>
+									<ul class="header-mobile__mega-panel">
 								{%- assign mob_terrain_handles = "dog-250,deer-250,eagle-250,liberty-250,independence-day-womens" | split: "," -%}
 								{%- assign mob_terrain_labels = "DOG 250,Deer 250,Eagle 250,Liberty 250,Women's" | split: "," -%}
 								{%- for mth in mob_terrain_handles -%}
@@ -265,15 +253,53 @@
 											{%- assign mt_empty = true -%}
 										{%- endif -%}
 									{%- endif -%}
+									{%- if mt_c != blank -%}
+										{%- assign mt_label = mt_c.title -%}
+									{%- endif -%}
 									<li class="header-mobile__dropdown-item">
 										<a class="header-mobile__dropdown-link{% if mt_empty %} header-mobile__dropdown-link--disabled{% endif %}" href="{{ mt_url }}">
 											<span>{{ mt_label }}{%- if mt_empty -%}<em class="header-mobile__coming-soon"> — Coming Soon</em>{%- endif -%}</span>
 										</a>
 									</li>
 								{%- endfor -%}
+									</ul>
+								</li>
+
+												{%- comment -%} ── HUNTING ── {%- endcomment -%}
+												<li class="header-mobile__mega-group">
+													<button class="header-mobile__mega-toggle" type="button" aria-expanded="false" onclick="event.preventDefault(); event.stopPropagation(); var content = this.nextElementSibling; if (content &amp;&amp; content.classList.contains('header-mobile__mega-panel')) { var isOpen = this.getAttribute('aria-expanded') === 'true'; this.setAttribute('aria-expanded', !isOpen); content.classList.toggle('is-open', !isOpen); }">
+														<span>Hunting</span>
+														<span class="header-mobile__mega-plus" aria-hidden="true"></span>
+													</button>
+													<ul class="header-mobile__mega-panel">
+												{%- assign mob_hunt_handles = "turkey,deer,fishing,waterfowl" | split: "," -%}
+												{%- assign mob_hunt_labels = "Turkey,Deer,Fishing,Waterfowl" | split: "," -%}
+												{%- for mh in mob_hunt_handles -%}
+													{%- assign mh_col = collections[mh] -%}
+													{%- assign mh_label = mob_hunt_labels[forloop.index0] -%}
+													{%- assign mh_empty = false -%}
+													{%- if mh_col == blank or mh_col.products_count == 0 -%}
+														{%- assign mh_empty = true -%}
+													{%- endif -%}
+													<li class="header-mobile__dropdown-item">
+														<a class="header-mobile__dropdown-link header-mobile__hunt-link{% if mh_empty %} header-mobile__dropdown-link--disabled{% endif %}" href="/collections/{{ mh }}">
+															{%- if mh_col.image != blank -%}
+																<img src="{{ mh_col.image | img_url: '80x80', crop: 'center' }}" alt="{{ mh_label }}" width="80" height="80" loading="lazy" class="header-mobile__hunt-icon">
+															{%- endif -%}
+															<span>{{ mh_label }}{%- if mh_empty -%}<em class="header-mobile__coming-soon"> — Coming Soon</em>{%- endif -%}</span>
+														</a>
+													</li>
+												{%- endfor -%}
+													</ul>
+												</li>
 
 								{%- comment -%} ── SEASONAL ── {%- endcomment -%}
-								<li class="header-mobile__mega-heading">Father Day</li>
+								<li class="header-mobile__mega-group">
+									<button class="header-mobile__mega-toggle" type="button" aria-expanded="false" onclick="event.preventDefault(); event.stopPropagation(); var content = this.nextElementSibling; if (content &amp;&amp; content.classList.contains('header-mobile__mega-panel')) { var isOpen = this.getAttribute('aria-expanded') === 'true'; this.setAttribute('aria-expanded', !isOpen); content.classList.toggle('is-open', !isOpen); }">
+										<span>Seasonal</span>
+										<span class="header-mobile__mega-plus" aria-hidden="true"></span>
+									</button>
+									<ul class="header-mobile__mega-panel">
 								{%- assign mob_father_col = collections['father-day'] -%}
 								{%- if mob_father_col == blank -%}
 									{%- assign mob_father_col = collections['fathers-day'] -%}
@@ -286,13 +312,28 @@
 									{%- assign mob_father_url = mob_father_col.url -%}
 								{%- endif -%}
 								{%- assign mob_father_img = mob_father_col.image | default: mob_father_col.products.first.featured_image -%}
-								<li class="header-mobile__dropdown-item header-mobile__father-item">
-									<a class="header-mobile__dropdown-link header-mobile__father-link" href="{{ mob_father_url }}">
-										{%- if mob_father_img != blank -%}
-											<img src="{{ mob_father_img | image_url: width: 640 }}" alt="Father Day" width="640" height="427" loading="lazy" class="header-mobile__father-image">
-										{%- endif -%}
+								<li class="header-mobile__dropdown-item header-mobile__seasonal-item header-mobile__father-item">
+									<a class="header-mobile__dropdown-link header-mobile__seasonal-link header-mobile__father-link" href="{{ mob_father_url }}">
 										<span>Father Day</span>
 									</a>
+								</li>
+								{%- assign mob_seasonal_ind_col = collections['usa'] -%}
+								{%- if mob_seasonal_ind_col == blank -%}
+									{%- assign mob_seasonal_ind_col = collections['independence-day'] -%}
+								{%- endif -%}
+								{%- assign mob_seasonal_ind_url = '/collections/usa' -%}
+								{%- assign mob_seasonal_ind_title = 'Independence Day' -%}
+								{%- if mob_seasonal_ind_col != blank -%}
+									{%- assign mob_seasonal_ind_url = mob_seasonal_ind_col.url -%}
+									{%- assign mob_seasonal_ind_title = mob_seasonal_ind_col.title -%}
+								{%- endif -%}
+								{%- assign mob_seasonal_ind_img = mob_seasonal_ind_col.image -%}
+								<li class="header-mobile__dropdown-item header-mobile__seasonal-item">
+									<a class="header-mobile__dropdown-link header-mobile__seasonal-link" href="{{ mob_seasonal_ind_url }}">
+										<span>{{ mob_seasonal_ind_title | escape }}</span>
+									</a>
+								</li>
+									</ul>
 								</li>
 								{%- if false -%}
 								{%- assign mob_womens_col = collections['independence-day-womens'] -%}
@@ -560,7 +601,7 @@
 	transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .header-mobile__dropdown-content.is-open {
-	max-height: 2000px;
+	max-height: 3200px;
 	transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .header-mobile__dropdown-list {
@@ -704,6 +745,80 @@
 	margin-top: 0;
 	padding-top: 8px;
 }
+
+.header-mobile__mega-group {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.header-mobile__mega-toggle {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	gap: 16px;
+	padding: 14px 0 10px !important;
+	margin-top: 8px !important;
+	background: none;
+	border: 0;
+	border-bottom: 1.5px solid #2C3D33;
+	font-family: 'Oswald', sans-serif !important;
+	font-weight: 600 !important;
+	font-size: 20px !important;
+	text-transform: uppercase !important;
+	letter-spacing: 0.05em !important;
+	line-height: 1.2;
+	color: #2C3D33 !important;
+	text-align: left;
+	cursor: pointer;
+}
+
+.header-mobile__mega-group:first-child .header-mobile__mega-toggle {
+	margin-top: 0 !important;
+}
+
+.header-mobile__mega-panel {
+	list-style: none;
+	max-height: 0;
+	overflow: hidden;
+	margin: 0;
+	padding: 0;
+	transition: max-height 0.28s ease;
+}
+
+.header-mobile__mega-panel.is-open {
+	max-height: 1200px;
+}
+
+.header-mobile__mega-plus {
+	position: relative;
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	flex: 0 0 14px;
+}
+
+.header-mobile__mega-plus::before,
+.header-mobile__mega-plus::after {
+	content: "";
+	position: absolute;
+	top: 50%;
+	left: 0;
+	width: 14px;
+	height: 1.5px;
+	background: #2C3D33;
+	transform: translateY(-50%);
+	transition: opacity 0.2s ease;
+}
+
+.header-mobile__mega-plus::after {
+	transform: translateY(-50%) rotate(90deg);
+}
+
+.header-mobile__mega-toggle[aria-expanded="true"] .header-mobile__mega-plus::after {
+	opacity: 0;
+}
 .header-mobile__dropdown-list::-webkit-scrollbar { display: none; }
 .header-mobile__dropdown-item .header-mobile__dropdown-link,
 .header-mobile__dropdown-item .header-mobile__dropdown-link span {
@@ -811,26 +926,34 @@
 	flex-shrink: 0;
 }
 
+.header-mobile__seasonal-item,
 .header-mobile__father-item {
 	border-bottom: none !important;
 }
 
+.header-mobile__seasonal-link,
 .header-mobile__father-link {
 	display: flex !important;
 	flex-direction: column;
 	align-items: flex-start;
-	gap: 10px;
+	gap: 8px;
 	padding: 12px 0 14px !important;
 }
 
-.header-mobile__father-image {
-	width: 100%;
-	height: auto;
+.header-mobile__seasonal-image-wrap {
+	width: 76%;
 	aspect-ratio: 4 / 3;
-	object-fit: cover;
 	display: block;
+	overflow: hidden;
 	border-radius: 6px;
 	background: #f7f4ef;
+}
+
+.header-mobile__seasonal-image {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
 }
 
 /* Terrain row: horizontal image grid */

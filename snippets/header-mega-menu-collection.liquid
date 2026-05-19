@@ -1,7 +1,7 @@
 {%- comment -%}
 	Mega Menu Collection
 	- SHOP: Gender + Clothing + product cards
-	- COLLECTION: Featured + Hunting + Independence Day + Father Day
+	- COLLECTION: Featured + Independence Day + Hunting + Seasonal
 {%- endcomment -%}
 
 <div
@@ -11,9 +11,12 @@
 	{%- if is_shop_menu -%}
 		<div class="header-mega-desktop__inner mega-shop">
 			<div class="mega-block mega-block--gender">
-				<h3 class="mega-block__heading">Gender</h3>
 				<ul class="mega-block__list mega-gender-list">
-					<li><a href="/collections/all" class="mega-block__link">For Men</a></li>
+					<li>
+						<a href="/collections/all" class="mega-block__link mega-gender-link">
+							For Men
+						</a>
+					</li>
 					<li>
 						{%- assign shop_womens_col = collections['independence-day-womens'] -%}
 						{%- if shop_womens_col == blank -%}
@@ -23,17 +26,98 @@
 						{%- if shop_womens_col != blank -%}
 							{%- assign shop_womens_url = shop_womens_col.url -%}
 						{%- endif -%}
-						<a href="{{ shop_womens_url }}" class="mega-block__link">For Women</a>
+						<a href="{{ shop_womens_url }}" class="mega-block__link mega-gender-link">
+							For Women
+						</a>
 					</li>
 				</ul>
+
+				{%- assign shop_gender_product_logic = section.settings.shop_mega_product_logic | default: 'manual_fallback' -%}
+				{%- assign shop_gender_show_products = true -%}
+				{%- if section.settings.shop_mega_show_products == false -%}
+					{%- assign shop_gender_show_products = false -%}
+				{%- endif -%}
+
+				{%- assign shop_men_product = blank -%}
+				{%- assign shop_women_product = blank -%}
+
+				{%- if shop_gender_product_logic != 'auto' -%}
+					{%- assign shop_men_product = section.settings.shop_mega_men_product -%}
+					{%- assign shop_women_product = section.settings.shop_mega_women_product -%}
+				{%- endif -%}
+
+				{%- assign shop_gender_should_auto_fill = false -%}
+				{%- if shop_gender_product_logic == 'auto' -%}
+					{%- assign shop_gender_should_auto_fill = true -%}
+				{%- elsif shop_gender_product_logic == 'manual_fallback' -%}
+					{%- if shop_men_product == blank or shop_women_product == blank -%}
+						{%- assign shop_gender_should_auto_fill = true -%}
+					{%- endif -%}
+				{%- endif -%}
+
+				{%- if shop_gender_should_auto_fill -%}
+					{%- if shop_men_product == blank -%}
+						{%- for product in collections['all'].products -%}
+							{%- assign shop_men_product = product -%}
+							{%- break -%}
+						{%- endfor -%}
+					{%- endif -%}
+
+					{%- if shop_women_product == blank and shop_womens_col != blank -%}
+						{%- for product in shop_womens_col.products -%}
+							{%- assign shop_women_product = product -%}
+							{%- break -%}
+						{%- endfor -%}
+					{%- endif -%}
+				{%- endif -%}
+
+				{%- assign shop_has_gender_products = false -%}
+				{%- if shop_men_product != blank or shop_women_product != blank -%}
+					{%- assign shop_has_gender_products = true -%}
+				{%- endif -%}
+
+				{%- if shop_gender_show_products and shop_has_gender_products -%}
+					<div class="mega-shop-products mega-gender-products">
+						{%- if shop_men_product != blank -%}
+							<div class="mega-shop-product product-card">
+								<a href="{{ shop_men_product.url }}" class="mega-shop-product__image-link" aria-label="{{ shop_men_product.title | escape }}">
+									<span class="mega-shop-product__media">
+										{%- if shop_men_product.featured_image != blank -%}
+											<img src="{{ shop_men_product.featured_image | image_url: width: 800 }}" alt="{{ shop_men_product.featured_image.alt | default: shop_men_product.title | escape }}" class="mega-shop-product__image" width="800" height="1000" loading="lazy">
+										{%- endif -%}
+									</span>
+								</a>
+								<div class="mega-shop-product__footer">
+									<a href="{{ shop_men_product.url }}" class="mega-shop-product__title">{{ shop_men_product.title | escape }}</a>
+									<div class="mega-shop-product__meta">For Men</div>
+								</div>
+							</div>
+						{%- endif -%}
+
+						{%- if shop_women_product != blank -%}
+							<div class="mega-shop-product product-card">
+								<a href="{{ shop_women_product.url }}" class="mega-shop-product__image-link" aria-label="{{ shop_women_product.title | escape }}">
+									<span class="mega-shop-product__media">
+										{%- if shop_women_product.featured_image != blank -%}
+											<img src="{{ shop_women_product.featured_image | image_url: width: 800 }}" alt="{{ shop_women_product.featured_image.alt | default: shop_women_product.title | escape }}" class="mega-shop-product__image" width="800" height="1000" loading="lazy">
+										{%- endif -%}
+									</span>
+								</a>
+								<div class="mega-shop-product__footer">
+									<a href="{{ shop_women_product.url }}" class="mega-shop-product__title">{{ shop_women_product.title | escape }}</a>
+									<div class="mega-shop-product__meta">For Women</div>
+								</div>
+							</div>
+						{%- endif -%}
+					</div>
+				{%- endif -%}
 			</div>
 
 			<div class="mega-block mega-block--clothing">
-				<h3 class="mega-block__heading">Clothing</h3>
 				<ul class="mega-block__list mega-shop-clothing-nav">
 					<li><a href="/collections/all?filter.p.product_type=Type1&filter.p.product_type=3D+Tshirt&filter.p.product_type=T-Shirt" class="mega-block__link">T-Shirts</a></li>
-					<li><a href="/collections/all?filter.p.product_type=Hat" class="mega-block__link">Hats</a></li>
 					<li><a href="/collections/all?filter.p.product_type=Long-sleeve" class="mega-block__link">Long-Sleeve</a></li>
+					<li><a href="/collections/all?filter.p.product_type=Hat" class="mega-block__link">Hats</a></li>
 				</ul>
 
 				{%- assign shop_product_logic = section.settings.shop_mega_product_logic | default: 'manual_fallback' -%}
@@ -108,22 +192,6 @@
 							</div>
 						{%- endif -%}
 
-						{%- if shop_hat_product != blank -%}
-							<div class="mega-shop-product product-card">
-								<a href="{{ shop_hat_product.url }}" class="mega-shop-product__image-link" aria-label="{{ shop_hat_product.title | escape }}">
-									<span class="mega-shop-product__media">
-										{%- if shop_hat_product.featured_image != blank -%}
-											<img src="{{ shop_hat_product.featured_image | image_url: width: 800 }}" alt="{{ shop_hat_product.featured_image.alt | default: shop_hat_product.title | escape }}" class="mega-shop-product__image" width="800" height="1000" loading="lazy">
-										{%- endif -%}
-									</span>
-								</a>
-								<div class="mega-shop-product__footer">
-									<a href="{{ shop_hat_product.url }}" class="mega-shop-product__title">{{ shop_hat_product.title | escape }}</a>
-									<div class="mega-shop-product__meta">Hat</div>
-								</div>
-							</div>
-						{%- endif -%}
-
 						{%- if shop_longsleeve_product != blank -%}
 							<div class="mega-shop-product product-card">
 								<a href="{{ shop_longsleeve_product.url }}" class="mega-shop-product__image-link" aria-label="{{ shop_longsleeve_product.title | escape }}">
@@ -136,6 +204,22 @@
 								<div class="mega-shop-product__footer">
 									<a href="{{ shop_longsleeve_product.url }}" class="mega-shop-product__title">{{ shop_longsleeve_product.title | escape }}</a>
 									<div class="mega-shop-product__meta">Long-Sleeve</div>
+								</div>
+							</div>
+						{%- endif -%}
+
+						{%- if shop_hat_product != blank -%}
+							<div class="mega-shop-product product-card">
+								<a href="{{ shop_hat_product.url }}" class="mega-shop-product__image-link" aria-label="{{ shop_hat_product.title | escape }}">
+									<span class="mega-shop-product__media">
+										{%- if shop_hat_product.featured_image != blank -%}
+											<img src="{{ shop_hat_product.featured_image | image_url: width: 800 }}" alt="{{ shop_hat_product.featured_image.alt | default: shop_hat_product.title | escape }}" class="mega-shop-product__image" width="800" height="1000" loading="lazy">
+										{%- endif -%}
+									</span>
+								</a>
+								<div class="mega-shop-product__footer">
+									<a href="{{ shop_hat_product.url }}" class="mega-shop-product__title">{{ shop_hat_product.title | escape }}</a>
+									<div class="mega-shop-product__meta">Hat</div>
 								</div>
 							</div>
 						{%- endif -%}
@@ -210,26 +294,34 @@
 				<div class="mega-terrain-list mega-independence-list">
 					{%- assign dog_250_col = collections['dog-250'] -%}
 					{%- assign dog_250_url = '/collections/dog-250' -%}
+					{%- assign dog_250_title = 'Dog 250' -%}
 					{%- if dog_250_col != blank -%}
 						{%- assign dog_250_url = dog_250_col.url -%}
+						{%- assign dog_250_title = dog_250_col.title -%}
 					{%- endif -%}
 
 					{%- assign deer_250_col = collections['deer-250'] -%}
 					{%- assign deer_250_url = '/collections/deer-250' -%}
+					{%- assign deer_250_title = 'Deer 250' -%}
 					{%- if deer_250_col != blank -%}
 						{%- assign deer_250_url = deer_250_col.url -%}
+						{%- assign deer_250_title = deer_250_col.title -%}
 					{%- endif -%}
 
 					{%- assign eagle_250_col = collections['eagle-250'] -%}
 					{%- assign eagle_250_url = '/collections/eagle-250' -%}
+					{%- assign eagle_250_title = 'Eagle 250' -%}
 					{%- if eagle_250_col != blank -%}
 						{%- assign eagle_250_url = eagle_250_col.url -%}
+						{%- assign eagle_250_title = eagle_250_col.title -%}
 					{%- endif -%}
 
 					{%- assign liberty_250_col = collections['liberty-250'] -%}
 					{%- assign liberty_250_url = '/collections/liberty-250' -%}
+					{%- assign liberty_250_title = 'Liberty 250' -%}
 					{%- if liberty_250_col != blank -%}
 						{%- assign liberty_250_url = liberty_250_col.url -%}
+						{%- assign liberty_250_title = liberty_250_col.title -%}
 					{%- endif -%}
 
 					{%- assign womens_col = collections['independence-day-womens'] -%}
@@ -237,20 +329,22 @@
 						{%- assign womens_col = collections['independence-day-women-s'] -%}
 					{%- endif -%}
 					{%- assign womens_url = '/collections/independence-day-womens' -%}
+					{%- assign womens_title = "Women's" -%}
 					{%- if womens_col != blank -%}
 						{%- assign womens_url = womens_col.url -%}
+						{%- assign womens_title = womens_col.title -%}
 					{%- endif -%}
 
-					<a href="{{ dog_250_url }}" class="mega-block__link">DOG 250</a>
-					<a href="{{ deer_250_url }}" class="mega-block__link">Deer 250</a>
-					<a href="{{ eagle_250_url }}" class="mega-block__link">Eagle 250</a>
-					<a href="{{ liberty_250_url }}" class="mega-block__link">Liberty 250</a>
-					<a href="{{ womens_url }}" class="mega-block__link">Women's</a>
+					<a href="{{ dog_250_url }}" class="mega-block__link">{{ dog_250_title | escape }}</a>
+					<a href="{{ deer_250_url }}" class="mega-block__link">{{ deer_250_title | escape }}</a>
+					<a href="{{ eagle_250_url }}" class="mega-block__link">{{ eagle_250_title | escape }}</a>
+					<a href="{{ liberty_250_url }}" class="mega-block__link">{{ liberty_250_title | escape }}</a>
+					<a href="{{ womens_url }}" class="mega-block__link">{{ womens_title | escape }}</a>
 				</div>
 			</div>
 
 			<div class="mega-block mega-block--father-day">
-				<h3 class="mega-block__heading">Father Day</h3>
+				<h3 class="mega-block__heading">Seasonal</h3>
 				<div class="mega-seasonal-list mega-father-day-list">
 					{%- assign father_col = collections['father-day'] -%}
 					{%- if father_col == blank -%}
@@ -264,6 +358,7 @@
 						{%- assign father_url = father_col.url -%}
 					{%- endif -%}
 					{%- assign father_img = father_col.image | default: father_col.products.first.featured_image -%}
+
 					<a href="{{ father_url }}" class="mega-seasonal-item mega-father-day-card">
 						<div class="mega-seasonal-img-wrap">
 							{%- if father_img != blank -%}
@@ -273,6 +368,29 @@
 							{%- endif -%}
 						</div>
 						<span class="mega-seasonal-label">Father Day</span>
+					</a>
+
+					{%- assign seasonal_ind_col = collections['usa'] -%}
+					{%- if seasonal_ind_col == blank -%}
+						{%- assign seasonal_ind_col = collections['independence-day'] -%}
+					{%- endif -%}
+					{%- assign seasonal_ind_url = '/collections/usa' -%}
+					{%- assign seasonal_ind_title = 'Independence Day' -%}
+					{%- if seasonal_ind_col != blank -%}
+						{%- assign seasonal_ind_url = seasonal_ind_col.url -%}
+						{%- assign seasonal_ind_title = seasonal_ind_col.title -%}
+					{%- endif -%}
+					{%- assign seasonal_ind_img = seasonal_ind_col.image -%}
+
+					<a href="{{ seasonal_ind_url }}" class="mega-seasonal-item">
+						<div class="mega-seasonal-img-wrap">
+							{%- if seasonal_ind_img != blank -%}
+								<img src="{{ seasonal_ind_img | image_url: width: 360 }}" alt="{{ seasonal_ind_title | escape }}" class="mega-seasonal-img" width="360" height="240" loading="lazy">
+							{%- else -%}
+								<div class="mega-terrain-placeholder mega-seasonal-placeholder">ID</div>
+							{%- endif -%}
+						</div>
+						<span class="mega-seasonal-label">{{ seasonal_ind_title | escape }}</span>
 					</a>
 				</div>
 			</div>
@@ -314,9 +432,9 @@
 
 .mega-shop {
 	display: grid !important;
-	grid-template-columns: 220px minmax(0, 676px);
-	gap: 48px;
-	max-width: 1120px;
+	grid-template-columns: minmax(0, 444px) minmax(0, 676px);
+	gap: 40px;
+	max-width: 1230px;
 	margin: 0 auto;
 	align-items: start;
 	justify-content: start;
@@ -329,6 +447,18 @@
 	max-width: 1200px;
 	margin: 0 auto;
 	align-items: start;
+}
+
+.mega-4block .mega-block--independence {
+	order: 2;
+}
+
+.mega-4block .mega-block--hunting {
+	order: 3;
+}
+
+.mega-4block .mega-block--father-day {
+	order: 4;
 }
 
 .mega-block__heading {
@@ -368,25 +498,40 @@
 	color: #000;
 }
 
+.mega-shop .mega-block--gender .mega-block__list,
 .mega-shop .mega-block--clothing .mega-block__list {
 	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 212px));
 	justify-content: start;
-	gap: 20px;
+	gap: 40px;
 	margin-bottom: 24px;
+}
+
+.mega-shop .mega-block--gender .mega-block__list {
+	grid-template-columns: repeat(2, minmax(0, 212px));
+}
+
+.mega-shop .mega-block--clothing .mega-block__list {
+	grid-template-columns: repeat(3, minmax(0, 212px));
 }
 
 .mega-gender-list .mega-block__link,
 .mega-shop-clothing-nav .mega-block__link {
-	color: #2C3D33;
-	font-size: 14px;
-	font-weight: 500;
+	display: block;
+	padding-bottom: 12px;
+	border-bottom: 2px solid #2C3D33;
+	font-family: 'Oswald', sans-serif;
+	font-size: 15px;
+	font-weight: 600;
 	line-height: 1;
+	letter-spacing: 2.5px;
+	text-transform: uppercase;
+	color: #2C3D33;
+	text-align: center;
 }
 
-.mega-shop-clothing-nav .mega-block__link {
-	display: block;
-	text-align: center;
+.mega-gender-list .mega-block__link:hover,
+.mega-shop-clothing-nav .mega-block__link:hover {
+	color: #2C3D33;
 }
 
 .mega-featured-list,
@@ -407,7 +552,11 @@
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 212px));
 	justify-content: start;
-	gap: 20px;
+	gap: 40px;
+}
+
+.mega-gender-products {
+	grid-template-columns: repeat(2, minmax(0, 212px));
 }
 
 .mega-shop-product.product-card {
@@ -542,7 +691,7 @@
 .mega-seasonal-list {
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: 10px;
 }
 
 .mega-seasonal-item {
@@ -551,7 +700,7 @@
 }
 
 .mega-seasonal-img-wrap {
-	width: 100%;
+	width: 76%;
 	aspect-ratio: 4 / 3;
 	border: 1px solid rgba(44, 61, 51, 0.18);
 	border-radius: 8px;

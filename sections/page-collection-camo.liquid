@@ -18,6 +18,12 @@
 			padding-bottom: {{- section.settings.offset_bottom_desktop -}}px;
 		}
 	}
+
+	@media screen and (max-width: 767px) {
+		.collection .collection__header-filter-button {
+			display: none !important;
+		}
+	}
 {%- endstyle -%}
 
 {%- assign show_grid_selector			= false -%}
