@@ -106,13 +106,21 @@
 							<li class="header-mobile__menu-item-wrapper" style="--animation-delay: {{ animation_delay }}s">
 
 								{%- assign link_title_down = first_level_link.title | downcase -%}
+								{%- assign mobile_display_title = first_level_link.title -%}
 								{%- assign dest_url = first_level_link.url -%}
 								{%- if link_title_down == 'new arrivals' -%}
 									{%- assign dest_url = '/collections/new-arrivals' -%}
 								{%- endif -%}
 
+								{%- assign is_shop_link = false -%}
+								{%- if link_title_down == 'home' or link_title_down contains 'shop' -%}
+									{%- assign is_shop_link = true -%}
+									{%- assign mobile_display_title = 'SHOP' -%}
+									{%- assign dest_url = '/collections/all' -%}
+								{%- endif -%}
+
 								{%- assign is_collection_link = false -%}
-								{%- if link_title_down contains 'collection' or link_title_down contains 'shop' -%}
+								{%- if link_title_down contains 'collection' or is_shop_link -%}
 									{%- assign is_collection_link = true -%}
 								{%- endif -%}
 								{%- assign is_support_link = false -%}
@@ -128,15 +136,15 @@
 										{%- assign dest_url = '/collections/all' -%}
 									{%- endif -%}
 
-									<div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+									<div class="header-mobile__menu-item-row" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
 										<a
 											class="button-link header-mobile__menu-item header-mobile__menu-item--main"
 											href="{{- dest_url -}}"
 											style="white-space: nowrap; flex: 1 0 auto; text-align: left;"
 											{% if first_level_link.current %}aria-current="page"{% endif %}
 										>
-											<span data-text="{{- first_level_link.title | escape -}}">
-												<span>{{- first_level_link.title | escape -}}</span>
+											<span data-text="{{- mobile_display_title | escape -}}">
+												<span>{{- mobile_display_title | escape -}}</span>
 											</span>
 										</a>
 										<button
@@ -153,19 +161,134 @@
 
 									<div class="header-mobile__dropdown-content">
 										<ul class="header-mobile__dropdown-list">
-											{%- if is_collection_link -%}
-												{%- comment -%} ── CLOTHING ── {%- endcomment -%}
+											{%- if is_shop_link -%}
+												<li class="header-mobile__mega-heading">Gender</li>
+												<li class="header-mobile__dropdown-item">
+													<a class="header-mobile__dropdown-link" href="/collections/all"><span>For Men</span></a>
+												</li>
+												<li class="header-mobile__dropdown-item">
+													{%- assign mob_shop_womens_col = collections['independence-day-womens'] -%}
+													{%- if mob_shop_womens_col == blank -%}
+														{%- assign mob_shop_womens_col = collections['independence-day-women-s'] -%}
+													{%- endif -%}
+													{%- assign mob_shop_womens_url = '/collections/independence-day-womens' -%}
+													{%- if mob_shop_womens_col != blank -%}
+														{%- assign mob_shop_womens_url = mob_shop_womens_col.url -%}
+													{%- endif -%}
+													<a class="header-mobile__dropdown-link" href="{{ mob_shop_womens_url }}"><span>For Women</span></a>
+												</li>
+
 												<li class="header-mobile__mega-heading">Clothing</li>
-												<li class="header-mobile__dropdown-item"><a class="header-mobile__dropdown-link" href="/collections/all?filter.p.product_type=Type1&filter.p.product_type=3D+Tshirt&filter.p.product_type=T-Shirt"><span>T-Shirts</span></a></li>
+												<li class="header-mobile__shop-clothing-row">
+													{%- assign mob_clothing_menu = linklists['collection-clothing'] -%}
+													{%- if mob_clothing_menu != blank and mob_clothing_menu.links.size > 0 -%}
+														{%- for clink in mob_clothing_menu.links -%}
+															<a class="header-mobile__dropdown-link" href="{{ clink.url }}"><span>{{ clink.title }}</span></a>
+														{%- endfor -%}
+													{%- else -%}
+														<a class="header-mobile__dropdown-link" href="/collections/all?filter.p.product_type=Type1&filter.p.product_type=3D+Tshirt&filter.p.product_type=T-Shirt"><span>T-Shirts</span></a>
+														{% comment %}<a class="header-mobile__dropdown-link" href="/collections/all?filter.p.product_type=Sweatshirt"><span>Sweatshirts</span></a>{% endcomment %}
+														{% comment %}<a class="header-mobile__dropdown-link" href="/collections/all?filter.p.product_type=Hoodie"><span>Hoodies</span></a>{% endcomment %}
+														<a class="header-mobile__dropdown-link" href="/collections/all?filter.p.product_type=Long-sleeve"><span>Long-Sleeve</span></a>
+														<a class="header-mobile__dropdown-link" href="/collections/all?filter.p.product_type=Hat"><span>Hats</span></a>
+													{%- endif -%}
+												</li>
+
+												{%- assign mob_shop_product_logic = section.settings.shop_mega_product_logic | default: 'manual_fallback' -%}
+												{%- assign mob_shop_show_products = true -%}
+												{%- if section.settings.shop_mega_show_products == false -%}
+													{%- assign mob_shop_show_products = false -%}
+												{%- endif -%}
+
+												{%- assign mob_shop_tshirt_product = blank -%}
+												{%- assign mob_shop_longsleeve_product = blank -%}
+												{%- assign mob_shop_hat_product = blank -%}
+
+												{%- if mob_shop_product_logic != 'auto' -%}
+													{%- assign mob_shop_hat_product = section.settings.shop_mega_hat_product -%}
+													{%- assign mob_shop_tshirt_product = section.settings.shop_mega_tshirt_product -%}
+													{%- assign mob_shop_longsleeve_product = section.settings.shop_mega_longsleeve_product -%}
+												{%- endif -%}
+
+												{%- assign mob_shop_should_auto_fill = false -%}
+												{%- if mob_shop_product_logic == 'auto' -%}
+													{%- assign mob_shop_should_auto_fill = true -%}
+												{%- elsif mob_shop_product_logic == 'manual_fallback' -%}
+													{%- if mob_shop_tshirt_product == blank or mob_shop_longsleeve_product == blank or mob_shop_hat_product == blank -%}
+														{%- assign mob_shop_should_auto_fill = true -%}
+													{%- endif -%}
+												{%- endif -%}
+
+												{%- if mob_shop_should_auto_fill -%}
+													{%- for product in collections['all'].products -%}
+														{%- assign mob_shop_product_type = product.type | downcase | strip -%}
+														{%- if mob_shop_tshirt_product == blank -%}
+															{%- if mob_shop_product_type == 'type1' or mob_shop_product_type contains 't-shirt' or mob_shop_product_type contains 'tshirt' -%}
+																{%- assign mob_shop_tshirt_product = product -%}
+															{%- endif -%}
+														{%- endif -%}
+														{%- if mob_shop_longsleeve_product == blank -%}
+															{%- if mob_shop_product_type contains 'long' and mob_shop_product_type contains 'sleeve' -%}
+																{%- assign mob_shop_longsleeve_product = product -%}
+															{%- endif -%}
+														{%- endif -%}
+														{%- if mob_shop_hat_product == blank -%}
+															{%- if mob_shop_product_type == 'hat' or mob_shop_product_type contains 'hat' -%}
+																{%- assign mob_shop_hat_product = product -%}
+															{%- endif -%}
+														{%- endif -%}
+														{%- if mob_shop_tshirt_product != blank and mob_shop_longsleeve_product != blank and mob_shop_hat_product != blank -%}
+															{%- break -%}
+														{%- endif -%}
+													{%- endfor -%}
+												{%- endif -%}
+
+												{%- assign mob_shop_has_products = false -%}
+												{%- if mob_shop_tshirt_product != blank or mob_shop_longsleeve_product != blank or mob_shop_hat_product != blank -%}
+													{%- assign mob_shop_has_products = true -%}
+												{%- endif -%}
+
+												{%- if mob_shop_show_products and mob_shop_has_products -%}
+													<li class="header-mobile__shop-products">
+														{%- if mob_shop_hat_product != blank -%}
+															<a href="{{ mob_shop_hat_product.url }}" class="header-mobile__shop-product">
+																{%- if mob_shop_hat_product.featured_image != blank -%}
+																	<img src="{{ mob_shop_hat_product.featured_image | image_url: width: 240 }}" alt="{{ mob_shop_hat_product.featured_image.alt | default: mob_shop_hat_product.title | escape }}" class="header-mobile__shop-product-image" width="96" height="96" loading="lazy">
+																{%- endif -%}
+															</a>
+														{%- endif -%}
+
+														{%- if mob_shop_tshirt_product != blank -%}
+															<a href="{{ mob_shop_tshirt_product.url }}" class="header-mobile__shop-product">
+																{%- if mob_shop_tshirt_product.featured_image != blank -%}
+																	<img src="{{ mob_shop_tshirt_product.featured_image | image_url: width: 240 }}" alt="{{ mob_shop_tshirt_product.featured_image.alt | default: mob_shop_tshirt_product.title | escape }}" class="header-mobile__shop-product-image" width="96" height="96" loading="lazy">
+																{%- endif -%}
+															</a>
+														{%- endif -%}
+
+														{%- if mob_shop_longsleeve_product != blank -%}
+															<a href="{{ mob_shop_longsleeve_product.url }}" class="header-mobile__shop-product">
+																{%- if mob_shop_longsleeve_product.featured_image != blank -%}
+																	<img src="{{ mob_shop_longsleeve_product.featured_image | image_url: width: 240 }}" alt="{{ mob_shop_longsleeve_product.featured_image.alt | default: mob_shop_longsleeve_product.title | escape }}" class="header-mobile__shop-product-image" width="96" height="96" loading="lazy">
+																{%- endif -%}
+															</a>
+														{%- endif -%}
+													</li>
+												{%- endif -%}
+											{%- elsif is_collection_link -%}
+												{%- comment -%} ── FEATURED ── {%- endcomment -%}
+												<li class="header-mobile__mega-heading">Featured</li>
+												<li class="header-mobile__dropdown-item"><a class="header-mobile__dropdown-link" href="/collections/best-sellers"><span>Best Seller</span></a></li>
 								{% comment %}<li class="header-mobile__dropdown-item"><a class="header-mobile__dropdown-link" href="/collections/all?filter.p.product_type=Sweatshirt"><span>Sweatshirts</span></a></li>{% endcomment %}
 								{% comment %}<li class="header-mobile__dropdown-item"><a class="header-mobile__dropdown-link" href="/collections/all?filter.p.product_type=Hoodie"><span>Hoodies</span></a></li>{% endcomment %}
-								<li class="header-mobile__dropdown-item"><a class="header-mobile__dropdown-link" href="/collections/all?filter.p.product_type=Long-sleeve"><span>Long-Sleeve</span></a></li>
-								<li class="header-mobile__dropdown-item"><a class="header-mobile__dropdown-link" href="/collections/all?filter.p.product_type=Hat"><span>Hats</span></a></li>
+								<li class="header-mobile__dropdown-item"><a class="header-mobile__dropdown-link" href="/collections/new-arrivals"><span>New Arrivals</span></a></li>
+								<li class="header-mobile__dropdown-item"><a class="header-mobile__dropdown-link" href="/collections/independence-day"><span>Independence Day</span></a></li>
+								<li class="header-mobile__dropdown-item"><a class="header-mobile__dropdown-link" href="/collections/turkey"><span>Turkey</span></a></li>
 
 												{%- comment -%} ── HUNTING ── {%- endcomment -%}
 												<li class="header-mobile__mega-heading">Hunting</li>
-												{%- assign mob_hunt_handles = "deer,turkey,waterfowl,fishing" | split: "," -%}
-												{%- assign mob_hunt_labels = "Deer,Turkey,Waterfowl,Fishing" | split: "," -%}
+												{%- assign mob_hunt_handles = "turkey,deer,fishing,waterfowl" | split: "," -%}
+												{%- assign mob_hunt_labels = "Turkey,Deer,Fishing,Waterfowl" | split: "," -%}
 												{%- for mh in mob_hunt_handles -%}
 													{%- assign mh_col = collections[mh] -%}
 													{%- assign mh_label = mob_hunt_labels[forloop.index0] -%}
@@ -176,7 +299,7 @@
 													<li class="header-mobile__dropdown-item">
 														<a class="header-mobile__dropdown-link header-mobile__hunt-link{% if mh_empty %} header-mobile__dropdown-link--disabled{% endif %}" href="/collections/{{ mh }}">
 															{%- if mh_col.image != blank -%}
-																<img src="{{ mh_col.image | img_url: '80x80', crop: 'center' }}" alt="{{ mh_label }}" loading="lazy" class="header-mobile__hunt-icon">
+																<img src="{{ mh_col.image | img_url: '80x80', crop: 'center' }}" alt="{{ mh_label }}" width="80" height="80" loading="lazy" class="header-mobile__hunt-icon">
 															{%- endif -%}
 															<span>{{ mh_label }}{%- if mh_empty -%}<em class="header-mobile__coming-soon"> — Coming Soon</em>{%- endif -%}</span>
 														</a>
@@ -184,22 +307,80 @@
 												{%- endfor -%}
 
 												{%- comment -%} ── TERRAIN (image + name, vertical) ── {%- endcomment -%}
-								<li class="header-mobile__mega-heading">Terrain</li>
-								{%- assign mob_terrain_handles = "forest-hardwood,desert-brush-country,grassland-prairie,marsh-wetland,mountainous-terrain" | split: "," -%}
-								{%- assign mob_terrain_labels = "Forest & Hardwood,Desert & Brush Country,Grassland & Prairie,Marsh & Wetland,Mountainous Terrain" | split: "," -%}
+								<li class="header-mobile__mega-heading">Independence Day</li>
+								{%- assign mob_terrain_handles = "dog-250,deer-250,eagle-250,liberty-250,independence-day-womens" | split: "," -%}
+								{%- assign mob_terrain_labels = "DOG 250,Deer 250,Eagle 250,Liberty 250,Women's" | split: "," -%}
 								{%- for mth in mob_terrain_handles -%}
 									{%- assign mt_c = collections[mth] -%}
+									{%- assign mt_url = '' -%}
+									{%- assign mt_image_col = mt_c -%}
 									{%- assign mt_label = mob_terrain_labels[forloop.index0] -%}
 									{%- assign mt_empty = false -%}
-									{%- if mt_c == blank or mt_c.products_count == 0 -%}
+									{%- if mth == 'dog-250' -%}
+										{%- assign mt_dog_250_col = collections['dog-250'] -%}
+										{%- assign mt_dog_col = collections['dog'] -%}
+										{%- assign mt_labrador_dog_col = collections['labrador-dog'] -%}
+										{%- assign mt_url = '/collections/dog-250' -%}
+										{%- if mt_dog_250_col != blank -%}
+											{%- assign mt_c = mt_dog_250_col -%}
+											{%- assign mt_image_col = mt_dog_250_col -%}
+											{%- assign mt_url = mt_dog_250_col.url -%}
+										{%- elsif mt_dog_col != blank and mt_labrador_dog_col != blank -%}
+											{%- assign mt_c = mt_dog_col -%}
+											{%- assign mt_image_col = mt_dog_col -%}
+											{%- assign mt_url = routes.search_url | append: '?q=dog&type=product' -%}
+										{%- elsif mt_dog_col != blank -%}
+											{%- assign mt_c = mt_dog_col -%}
+											{%- assign mt_image_col = mt_dog_col -%}
+											{%- assign mt_url = mt_dog_col.url -%}
+										{%- elsif mt_labrador_dog_col != blank -%}
+											{%- assign mt_c = mt_labrador_dog_col -%}
+											{%- assign mt_image_col = mt_labrador_dog_col -%}
+											{%- assign mt_url = mt_labrador_dog_col.url -%}
+										{%- endif -%}
+										{%- if mt_image_col.image == blank and mt_labrador_dog_col != blank -%}
+											{%- assign mt_image_col = mt_labrador_dog_col -%}
+										{%- endif -%}
 										{%- assign mt_empty = true -%}
+										{%- if mt_dog_250_col != blank and mt_dog_250_col.products_count > 0 -%}
+											{%- assign mt_empty = false -%}
+										{%- endif -%}
+										{%- if mt_dog_col != blank and mt_dog_col.products_count > 0 -%}
+											{%- assign mt_empty = false -%}
+										{%- endif -%}
+										{%- if mt_labrador_dog_col != blank and mt_labrador_dog_col.products_count > 0 -%}
+											{%- assign mt_empty = false -%}
+										{%- endif -%}
+									{%- elsif mth == 'independence-day-womens' -%}
+										{%- assign mt_womens_col = collections['independence-day-womens'] -%}
+										{%- if mt_womens_col == blank -%}
+											{%- assign mt_womens_col = collections['independence-day-women-s'] -%}
+										{%- endif -%}
+										{%- assign mt_url = '/collections/independence-day-womens' -%}
+										{%- if mt_womens_col != blank -%}
+											{%- assign mt_c = mt_womens_col -%}
+											{%- assign mt_image_col = mt_womens_col -%}
+											{%- assign mt_url = mt_womens_col.url -%}
+										{%- endif -%}
+										{%- if mt_womens_col == blank or mt_womens_col.products_count == 0 -%}
+											{%- assign mt_empty = true -%}
+										{%- endif -%}
+									{%- else -%}
+										{%- if mt_c != blank -%}
+											{%- assign mt_url = mt_c.url -%}
+										{%- else -%}
+											{%- assign mt_url = '/collections/' | append: mth -%}
+										{%- endif -%}
+										{%- if mt_c == blank or mt_c.products_count == 0 -%}
+											{%- assign mt_empty = true -%}
+										{%- endif -%}
 									{%- endif -%}
 									<li class="header-mobile__dropdown-item">
-										<a class="header-mobile__dropdown-link header-mobile__hunt-link{% if mt_empty %} header-mobile__dropdown-link--disabled{% endif %}" href="{%- if mt_c != blank -%}{{ mt_c.url }}{%- else -%}/collections/{{ mth }}{%- endif -%}">
-											{%- if mt_c.image != blank -%}
-												<img src="{{ mt_c.image | img_url: '80x80', crop: 'center' }}" alt="{{ mt_label }}" loading="lazy" class="header-mobile__hunt-icon" style="border-radius:4px;">
-											{%- elsif mt_c.products.first.featured_image != blank -%}
-												<img src="{{ mt_c.products.first.featured_image | img_url: '80x80', crop: 'center' }}" alt="{{ mt_label }}" loading="lazy" class="header-mobile__hunt-icon" style="border-radius:4px;">
+										<a class="header-mobile__dropdown-link header-mobile__hunt-link{% if mt_empty %} header-mobile__dropdown-link--disabled{% endif %}" href="{{ mt_url }}">
+											{%- if mt_image_col.image != blank -%}
+												<img src="{{ mt_image_col.image | img_url: '80x80', crop: 'center' }}" alt="{{ mt_label }}" width="80" height="80" loading="lazy" class="header-mobile__hunt-icon" style="border-radius:4px;">
+											{%- elsif mt_image_col.products.first.featured_image != blank -%}
+												<img src="{{ mt_image_col.products.first.featured_image | img_url: '80x80', crop: 'center' }}" alt="{{ mt_label }}" width="80" height="80" loading="lazy" class="header-mobile__hunt-icon" style="border-radius:4px;">
 											{%- endif -%}
 											<span>{{ mt_label }}{%- if mt_empty -%}<em class="header-mobile__coming-soon"> — Coming Soon</em>{%- endif -%}</span>
 										</a>
@@ -207,7 +388,9 @@
 								{%- endfor -%}
 
 								{%- comment -%} ── SEASONAL ── {%- endcomment -%}
-								<li class="header-mobile__mega-heading">Seasonal</li>
+								<li class="header-mobile__mega-heading">Father Day</li>
+								<li class="header-mobile__dropdown-item"><a class="header-mobile__dropdown-link" href="/collections/father-day"><span>Father Day</span></a></li>
+								{%- if false -%}
 								{%- assign mob_womens_col = collections['independence-day-womens'] -%}
 								{%- if mob_womens_col == blank -%}
 									{%- assign mob_womens_col = collections['independence-day-women-s'] -%}
@@ -252,6 +435,7 @@
 									</li>
 									{%- assign mob_has_seasonal = true -%}
 								{%- endunless -%}
+								{%- endif -%}
 
 											{%- elsif is_support_link -%}
 												{%- comment -%} Custom order: Contact, Shipping, Refund, Privacy, Terms {%- endcomment -%}
@@ -313,8 +497,8 @@
 										href="{{- dest_url -}}"
 										{% if first_level_link.current %}aria-current="page"{% endif %}
 									>
-										<span data-text="{{- first_level_link.title | escape -}}">
-											<span>{{- first_level_link.title | escape -}}</span>
+										<span data-text="{{- mobile_display_title | escape -}}">
+											<span>{{- mobile_display_title | escape -}}</span>
 										</span>
 									</a>
 								{%- endif -%}
@@ -446,6 +630,14 @@
 .header-mobile .header-mobile__menu-item {
 	font-size: calc(var(--body-font-size) * 1.15) !important;
 	font-weight: 400 !important;
+}
+
+.header-mobile__menu-item-row {
+	box-sizing: border-box;
+}
+
+.header-mobile__menu > .header-mobile__menu-item-wrapper:first-child .header-mobile__menu-item-row {
+	padding-right: 56px;
 }
 
 /* === Accordion Dropdown === */
@@ -633,6 +825,73 @@
 	font-weight: 400;
 	color: #8a9a8e;
 	margin-left: 4px;
+}
+
+.header-mobile__gender-row {
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 8px;
+	padding: 8px 0 4px !important;
+	margin: 0 !important;
+}
+
+.header-mobile__gender-title {
+	display: inline-flex;
+	font-family: 'Oswald', sans-serif !important;
+	font-size: 12px !important;
+	font-weight: 500 !important;
+	text-transform: uppercase !important;
+	letter-spacing: 0.06em !important;
+	color: #2C3D33 !important;
+	text-decoration: none;
+	margin-bottom: 0;
+}
+
+.header-mobile__shop-clothing-row {
+	list-style: none;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 18px;
+	padding: 8px 0 10px !important;
+	margin: 0 !important;
+	border-bottom: 1px solid rgba(44,61,51,0.12);
+}
+
+.header-mobile__shop-clothing-row .header-mobile__dropdown-link {
+	display: inline-flex !important;
+	padding: 0 !important;
+	font-size: 14px !important;
+	line-height: 1.4 !important;
+}
+
+.header-mobile__shop-products {
+	list-style: none;
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 10px;
+	padding: 10px 0 4px !important;
+	margin: 0 !important;
+}
+
+.header-mobile__shop-product {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-decoration: none;
+	color: #2C3D33;
+	min-height: 96px;
+}
+
+.header-mobile__shop-product-image {
+	width: 100%;
+	max-width: 96px;
+	height: 96px;
+	object-fit: contain;
+	border-radius: 0;
+	background: transparent;
 }
 
 /* Hunting links with icons */

@@ -1,191 +1,305 @@
 {%- comment -%}
-  Mega Menu Collection - 4-Block Layout
-  Block 1: Clothing (text links)
-  Block 2: Hunting (with icons)
-  Block 3: Terrain (images only, no text) - uses collections directly
-  Block 4: Seasonal (Independence Day, Independence Day Women's)
+	Mega Menu Collection
+	- SHOP: Gender + Clothing + product cards
+	- COLLECTION: Featured + Hunting + Independence Day + Father Day
 {%- endcomment -%}
 
 <div
 	id="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
 	class="header-mega-desktop js-header-dropdown-menu"
 >
-	<div class="header-mega-desktop__inner mega-4block">
-		<!-- Block 1: CLOTHING (Dynamic via linklist 'collection-clothing') -->
-		<div class="mega-block mega-block--clothing">
-			<h3 class="mega-block__heading">Clothing</h3>
-			<ul class="mega-block__list">
-				{%- assign clothing_menu = linklists['collection-clothing'] -%}
-				{%- if clothing_menu != blank and clothing_menu.links.size > 0 -%}
-					{%- comment -%}
-						Dynamic: đọc từ Shopify Admin > Navigation > "collection-clothing"
-						Để thêm product type mới: vào Admin > Navigation > Collection Clothing > Add menu item
-					{%- endcomment -%}
-					{%- for clink in clothing_menu.links -%}
-						<li><a href="{{ clink.url }}" class="mega-block__link">{{ clink.title }}</a></li>
-					{%- endfor -%}
-				{%- else -%}
-					{%- comment -%} Fallback hardcoded — dùng khi linklist chưa được tạo {%- endcomment -%}
-					<li><a href="/collections/all?filter.p.product_type=Type1&filter.p.product_type=3D+Tshirt&filter.p.product_type=T-Shirt" class="mega-block__link">T-Shirts</a></li>
-					{% comment %}<li><a href="/collections/all?filter.p.product_type=Sweatshirt" class="mega-block__link">Sweatshirts</a></li>{% endcomment %}
-					{% comment %}<li><a href="/collections/all?filter.p.product_type=Hoodie" class="mega-block__link">Hoodies</a></li>{% endcomment %}
-					<li><a href="/collections/all?filter.p.product_type=Long-sleeve" class="mega-block__link">Long-Sleeve</a></li>
-					<li><a href="/collections/all?filter.p.product_type=Hat" class="mega-block__link">Hats</a></li>
-				{%- endif -%}
-			</ul>
-		</div>
-
-		<!-- Block 2: HUNTING (with images) -->
-		<div class="mega-block mega-block--hunting">
-			<h3 class="mega-block__heading">Hunting</h3>
-			<div class="mega-hunting-list">
-				{%- assign hunting_handles = "deer,turkey,waterfowl,fishing" | split: "," -%}
-				{%- assign hunting_labels = "Deer,Turkey,Waterfowl,Fishing" | split: "," -%}
-				{%- for handle in hunting_handles -%}
-					{%- assign h_col = collections[handle] -%}
-					{%- assign h_label = hunting_labels[forloop.index0] -%}
-					{%- assign h_has_products = false -%}
-					{%- if h_col != blank and h_col.products_count > 0 -%}
-						{%- assign h_has_products = true -%}
-					{%- endif -%}
-					<a href="/collections/{{ handle }}" class="mega-hunting-item{% unless h_has_products %} mega-hunting-item--disabled{% endunless %}"{% unless h_has_products %} tabindex="-1"{% endunless %}>
-						<span class="mega-hunting-icon-wrap">
-							{%- if h_col.image != blank -%}
-								<img src="{{ h_col.image | img_url: '120x120', crop: 'center' }}" alt="{{ h_label }}" class="mega-hunting-icon" loading="lazy">
-							{%- else -%}
-								<span class="mega-hunting-icon-svg">
-									{%- case handle -%}
-										{%- when 'deer' -%}
-											<svg viewBox="0 0 64 64" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M22 8l-4-6h-2l3 8-5-3-2 2 7 5h-3l-1 2 5 3v5c-4 2-8 6-8 12v10c0 1 1 2 2 2h6l1-10 3-4h18l3 4 1 10h6c1 0 2-1 2-2V36c0-6-4-10-8-12v-5l5-3-1-2h-3l7-5-2-2-5 3 3-8h-2l-4 6-5-4h-6l-5 4z"/></svg>
-										{%- when 'turkey' -%}
-											<svg viewBox="0 0 64 64" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18 14c-6 4-10 12-6 22l8 6 4-2v8l-2 10h4l3-10 3 10h4l-2-10v-8l6 4 6-2c4-4 6-10 4-16-2-4-6-8-10-10l-2 4c-2-2-4-2-6-2h-4c-2 0-4 0-6 2l-1-6z"/><circle cx="38" cy="14" r="5"/><path d="M42 12l6-2 2 2-6 4z"/></svg>
-										{%- when 'waterfowl' -%}
-											<svg viewBox="0 0 64 64" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6 30c2-8 10-14 18-14h4l2-4 4-2 6 2-2 4h4c8 2 14 8 16 16 0 2-2 4-4 4l-12-4-8-2-12 4-8 2c-4 0-6-2-8-6z"/><path d="M20 38l-4 16h4l4-12 4 12h4l-4-16z"/></svg>
-										{%- when 'fishing' -%}
-											<svg viewBox="0 0 64 64" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M8 32c4-12 16-18 28-14l8-8 4 4-8 8c4 12-2 24-14 28-4 0-8-2-12-6s-6-8-6-12zm12 0a4 4 0 108 0 4 4 0 00-8 0z"/><path d="M46 14l6-6 4 4-6 6z"/></svg>
-									{%- endcase -%}
-								</span>
-							{%- endif -%}
-						</span>
-						<span class="mega-hunting-label">{{ h_label | upcase }}{%- unless h_has_products -%}<em class="mega-block__coming-soon"> — Coming Soon</em>{%- endunless -%}</span>
-					</a>
-				{%- endfor -%}
+	{%- if is_shop_menu -%}
+		<div class="header-mega-desktop__inner mega-shop">
+			<div class="mega-block mega-block--gender">
+				<h3 class="mega-block__heading">Gender</h3>
+				<ul class="mega-block__list mega-gender-list">
+					<li><a href="/collections/all" class="mega-block__link">For Men</a></li>
+					<li>
+						{%- assign shop_womens_col = collections['independence-day-womens'] -%}
+						{%- if shop_womens_col == blank -%}
+							{%- assign shop_womens_col = collections['independence-day-women-s'] -%}
+						{%- endif -%}
+						{%- assign shop_womens_url = '/collections/independence-day-womens' -%}
+						{%- if shop_womens_col != blank -%}
+							{%- assign shop_womens_url = shop_womens_col.url -%}
+						{%- endif -%}
+						<a href="{{ shop_womens_url }}" class="mega-block__link">For Women</a>
+					</li>
+				</ul>
 			</div>
-		</div>
 
-		<!-- Block 3: TERRAIN (images only, no text) -->
-		<!-- Uses collection sub-links, excluding independence/signature/women -->
-		<div class="mega-block mega-block--terrain">
-			<h3 class="mega-block__heading">Terrain</h3>
-			<div class="mega-terrain-list">
-				{%- assign terrain_handles = "forest-hardwood,desert-brush-country,grassland-prairie,marsh-wetland,mountainous-terrain" | split: "," -%}
-				{%- assign terrain_labels = "Forest & Hardwood,Desert & Brush Country,Grassland & Prairie,Marsh & Wetland,Mountainous Terrain" | split: "," -%}
-				{%- for th in terrain_handles -%}
-					{%- assign t_col = collections[th] -%}
-					{%- assign t_label = terrain_labels[forloop.index0] -%}
-					{%- assign t_has_products = false -%}
-					{%- if t_col != blank and t_col.products_count > 0 -%}
-						{%- assign t_has_products = true -%}
+			<div class="mega-block mega-block--clothing">
+				<h3 class="mega-block__heading">Clothing</h3>
+				<ul class="mega-block__list mega-shop-clothing-nav">
+					{%- assign clothing_menu = linklists['collection-clothing'] -%}
+					{%- if clothing_menu != blank and clothing_menu.links.size > 0 -%}
+						{%- for clink in clothing_menu.links -%}
+							<li><a href="{{ clink.url }}" class="mega-block__link">{{ clink.title }}</a></li>
+						{%- endfor -%}
+					{%- else -%}
+						<li><a href="/collections/all?filter.p.product_type=Type1&filter.p.product_type=3D+Tshirt&filter.p.product_type=T-Shirt" class="mega-block__link">T-Shirts</a></li>
+						<li><a href="/collections/all?filter.p.product_type=Long-sleeve" class="mega-block__link">Long-Sleeve</a></li>
+						<li><a href="/collections/all?filter.p.product_type=Hat" class="mega-block__link">Hats</a></li>
 					{%- endif -%}
-					<a href="{%- if t_col != blank -%}{{ t_col.url }}{%- else -%}/collections/{{ th }}{%- endif -%}" class="mega-terrain-item{% unless t_has_products %} mega-terrain-item--disabled{% endunless %}"{% unless t_has_products %} tabindex="-1"{% endunless %}>
-						<span class="mega-terrain-img-wrap">
-							{%- if t_col.image != blank -%}
-								<img src="{{ t_col.image | img_url: '120x120', crop: 'center' }}" alt="{{ t_label }}" class="mega-terrain-img" loading="lazy">
-							{%- elsif t_col.products.first.featured_image != blank -%}
-								<img src="{{ t_col.products.first.featured_image | img_url: '120x120', crop: 'center' }}" alt="{{ t_label }}" class="mega-terrain-img" loading="lazy">
-							{%- else -%}
-								<div class="mega-terrain-placeholder">{{ t_label | truncate: 2, '' }}</div>
-							{%- endif -%}
-						</span>
-						<span class="mega-terrain-label">{{ t_label | upcase }}{%- unless t_has_products -%}<em class="mega-block__coming-soon"> — Coming Soon</em>{%- endunless -%}</span>
-					</a>
-				{%- endfor -%}
-			</div>
-		</div>
+				</ul>
 
-		<!-- Block 4: SEASONAL -->
-		<div class="mega-block mega-block--seasonal">
-			<h3 class="mega-block__heading">Seasonal</h3>
-			<div class="mega-seasonal-list">
-				{%- comment -%}
-					Try menu sub-links first (items containing independence/signature/women).
-					If none found, use hardcoded fallbacks.
-				{%- endcomment -%}
-				{%- assign womens_col = collections['independence-day-womens'] -%}
-				{%- if womens_col == blank -%}
-					{%- assign womens_col = collections['independence-day-women-s'] -%}
+				{%- assign shop_product_logic = section.settings.shop_mega_product_logic | default: 'manual_fallback' -%}
+				{%- assign shop_show_products = true -%}
+				{%- if section.settings.shop_mega_show_products == false -%}
+					{%- assign shop_show_products = false -%}
 				{%- endif -%}
-				{%- assign has_seasonal_links = false -%}
-				{%- for link in first_level_link.links -%}
-					{%- assign link_title_lower = link.title | downcase -%}
-					{%- if link_title_lower contains 'independence' or link_title_lower contains 'signature' -%}
-						{%- assign has_seasonal_links = true -%}
-						{%- assign seasonal_title = link.title -%}
-						{%- assign seasonal_url = link.url -%}
-						{%- assign scol = link.object -%}
-						{%- assign simg = scol.image | default: scol.products.first.featured_image -%}
-						{%- if link_title_lower contains 'signature' -%}
-							{%- assign seasonal_title = "Independence Day Women's" -%}
-							{%- if womens_col != blank -%}
-								{%- assign seasonal_url = womens_col.url -%}
-								{%- assign simg = womens_col.image | default: womens_col.products.first.featured_image -%}
-							{%- else -%}
-								{%- assign seasonal_url = '/collections/independence-day-womens' -%}
+
+				{%- assign shop_tshirt_product = blank -%}
+				{%- assign shop_longsleeve_product = blank -%}
+				{%- assign shop_hat_product = blank -%}
+
+				{%- if shop_product_logic != 'auto' -%}
+					{%- assign shop_hat_product = section.settings.shop_mega_hat_product -%}
+					{%- assign shop_tshirt_product = section.settings.shop_mega_tshirt_product -%}
+					{%- assign shop_longsleeve_product = section.settings.shop_mega_longsleeve_product -%}
+				{%- endif -%}
+
+				{%- assign shop_should_auto_fill = false -%}
+				{%- if shop_product_logic == 'auto' -%}
+					{%- assign shop_should_auto_fill = true -%}
+				{%- elsif shop_product_logic == 'manual_fallback' -%}
+					{%- if shop_tshirt_product == blank or shop_longsleeve_product == blank or shop_hat_product == blank -%}
+						{%- assign shop_should_auto_fill = true -%}
+					{%- endif -%}
+				{%- endif -%}
+
+				{%- if shop_should_auto_fill -%}
+					{%- for product in collections['all'].products -%}
+						{%- assign shop_product_type = product.type | downcase | strip -%}
+						{%- if shop_hat_product == blank -%}
+							{%- if shop_product_type == 'hat' or shop_product_type contains 'hat' -%}
+								{%- assign shop_hat_product = product -%}
 							{%- endif -%}
 						{%- endif -%}
-						<a href="{{ seasonal_url }}" class="mega-seasonal-item">
-							{%- if simg != blank -%}
-								<div class="mega-seasonal-img-wrap">
-									<img src="{{ simg | img_url: '300x' }}" alt="{{ seasonal_title | escape }}" class="mega-seasonal-img" loading="lazy">
-								</div>
+						{%- if shop_tshirt_product == blank -%}
+							{%- if shop_product_type == 'type1' or shop_product_type contains 't-shirt' or shop_product_type contains 'tshirt' -%}
+								{%- assign shop_tshirt_product = product -%}
 							{%- endif -%}
-							<span class="mega-seasonal-label">{{ seasonal_title }}</span>
-						</a>
-					{%- endif -%}
-				{%- endfor -%}
-
-				{%- unless has_seasonal_links -%}
-					{%- comment -%} Fallback: hardcoded seasonal items {%- endcomment -%}
-					{%- assign ind_col = collections['usa'] -%}
-
-					{%- if ind_col != blank -%}
-						<a href="{{ ind_col.url }}" class="mega-seasonal-item">
-							{%- assign ind_img = ind_col.image | default: ind_col.products.first.featured_image -%}
-							{%- if ind_img != blank -%}
-								<div class="mega-seasonal-img-wrap">
-									<img src="{{ ind_img | img_url: '300x' }}" alt="Independence Day" class="mega-seasonal-img" loading="lazy">
-								</div>
+						{%- endif -%}
+						{%- if shop_longsleeve_product == blank -%}
+							{%- if shop_product_type contains 'long' and shop_product_type contains 'sleeve' -%}
+								{%- assign shop_longsleeve_product = product -%}
 							{%- endif -%}
-							<span class="mega-seasonal-label">Independence Day</span>
-						</a>
+						{%- endif -%}
+						{%- if shop_tshirt_product != blank and shop_longsleeve_product != blank and shop_hat_product != blank -%}
+							{%- break -%}
+						{%- endif -%}
+					{%- endfor -%}
+				{%- endif -%}
+
+				{%- assign shop_has_products = false -%}
+				{%- if shop_tshirt_product != blank or shop_longsleeve_product != blank or shop_hat_product != blank -%}
+					{%- assign shop_has_products = true -%}
+				{%- endif -%}
+
+				{%- if shop_show_products and shop_has_products -%}
+					<div class="mega-shop-products">
+						{%- if shop_hat_product != blank -%}
+							<div class="mega-shop-product product-card">
+								<a href="{{ shop_hat_product.url }}" class="mega-shop-product__image-link" aria-label="{{ shop_hat_product.title | escape }}">
+									<span class="mega-shop-product__media">
+										{%- if shop_hat_product.featured_image != blank -%}
+											<img src="{{ shop_hat_product.featured_image | image_url: width: 800 }}" alt="{{ shop_hat_product.featured_image.alt | default: shop_hat_product.title | escape }}" class="mega-shop-product__image" width="800" height="1000" loading="lazy">
+										{%- endif -%}
+									</span>
+								</a>
+								<div class="mega-shop-product__footer">
+									<a href="{{ shop_hat_product.url }}" class="mega-shop-product__title">{{ shop_hat_product.title | escape }}</a>
+									<div class="mega-shop-product__meta">Hat</div>
+								</div>
+							</div>
+						{%- endif -%}
+
+						{%- if shop_tshirt_product != blank -%}
+							<div class="mega-shop-product product-card">
+								<a href="{{ shop_tshirt_product.url }}" class="mega-shop-product__image-link" aria-label="{{ shop_tshirt_product.title | escape }}">
+									<span class="mega-shop-product__media">
+										{%- if shop_tshirt_product.featured_image != blank -%}
+											<img src="{{ shop_tshirt_product.featured_image | image_url: width: 800 }}" alt="{{ shop_tshirt_product.featured_image.alt | default: shop_tshirt_product.title | escape }}" class="mega-shop-product__image" width="800" height="1000" loading="lazy">
+										{%- endif -%}
+									</span>
+								</a>
+								<div class="mega-shop-product__footer">
+									<a href="{{ shop_tshirt_product.url }}" class="mega-shop-product__title">{{ shop_tshirt_product.title | escape }}</a>
+									<div class="mega-shop-product__meta">T-Shirt</div>
+								</div>
+							</div>
+						{%- endif -%}
+
+						{%- if shop_longsleeve_product != blank -%}
+							<div class="mega-shop-product product-card">
+								<a href="{{ shop_longsleeve_product.url }}" class="mega-shop-product__image-link" aria-label="{{ shop_longsleeve_product.title | escape }}">
+									<span class="mega-shop-product__media">
+										{%- if shop_longsleeve_product.featured_image != blank -%}
+											<img src="{{ shop_longsleeve_product.featured_image | image_url: width: 800 }}" alt="{{ shop_longsleeve_product.featured_image.alt | default: shop_longsleeve_product.title | escape }}" class="mega-shop-product__image" width="800" height="1000" loading="lazy">
+										{%- endif -%}
+									</span>
+								</a>
+								<div class="mega-shop-product__footer">
+									<a href="{{ shop_longsleeve_product.url }}" class="mega-shop-product__title">{{ shop_longsleeve_product.title | escape }}</a>
+									<div class="mega-shop-product__meta">Long-Sleeve</div>
+								</div>
+							</div>
+						{%- endif -%}
+					</div>
+				{%- endif -%}
+			</div>
+		</div>
+	{%- else -%}
+		<div class="header-mega-desktop__inner mega-4block">
+			<div class="mega-block mega-block--featured">
+				<h3 class="mega-block__heading">Featured</h3>
+				<ul class="mega-block__list mega-featured-list">
+					{%- assign best_col = collections['best-sellers'] -%}
+					{%- if best_col == blank -%}
+						{%- assign best_col = collections['best-seller'] -%}
+					{%- endif -%}
+					{%- assign best_url = '/collections/best-sellers' -%}
+					{%- if best_col != blank -%}
+						{%- assign best_url = best_col.url -%}
 					{%- endif -%}
 
+					{%- assign new_col = collections['new-arrivals'] -%}
+					{%- assign new_url = '/collections/new-arrivals' -%}
+					{%- if new_col != blank -%}
+						{%- assign new_url = new_col.url -%}
+					{%- endif -%}
+
+					{%- assign ind_feature_col = collections['independence-day'] -%}
+					{%- if ind_feature_col == blank -%}
+						{%- assign ind_feature_col = collections['usa'] -%}
+					{%- endif -%}
+					{%- assign ind_feature_url = '/collections/independence-day' -%}
+					{%- if ind_feature_col != blank -%}
+						{%- assign ind_feature_url = ind_feature_col.url -%}
+					{%- endif -%}
+
+					<li><a href="{{ best_url }}" class="mega-block__link">Best Seller</a></li>
+					<li><a href="{{ new_url }}" class="mega-block__link">New Arrivals</a></li>
+					<li><a href="{{ ind_feature_url }}" class="mega-block__link">Independence Day</a></li>
+					<li><a href="/collections/turkey" class="mega-block__link">Turkey</a></li>
+				</ul>
+			</div>
+
+			<div class="mega-block mega-block--hunting">
+				<h3 class="mega-block__heading">Hunting</h3>
+				<div class="mega-hunting-list">
+					{%- assign hunting_handles = "turkey,deer,fishing,waterfowl" | split: "," -%}
+					{%- assign hunting_labels = "Turkey,Deer,Fishing,Waterfowl" | split: "," -%}
+					{%- for handle in hunting_handles -%}
+						{%- assign h_col = collections[handle] -%}
+						{%- assign h_label = hunting_labels[forloop.index0] -%}
+						{%- assign h_has_products = false -%}
+						{%- if h_col != blank and h_col.products_count > 0 -%}
+							{%- assign h_has_products = true -%}
+						{%- endif -%}
+						<a href="{%- if h_col != blank -%}{{ h_col.url }}{%- else -%}/collections/{{ handle }}{%- endif -%}" class="mega-hunting-item{% unless h_has_products %} mega-hunting-item--disabled{% endunless %}"{% unless h_has_products %} tabindex="-1"{% endunless %}>
+							<span class="mega-hunting-icon-wrap">
+								{%- if h_col.image != blank -%}
+									<img src="{{ h_col.image | image_url: width: 120, height: 120, crop: 'center' }}" alt="{{ h_label }}" class="mega-hunting-icon" width="120" height="120" loading="lazy">
+								{%- else -%}
+									<span class="mega-hunting-placeholder">{{ h_label | slice: 0 }}</span>
+								{%- endif -%}
+							</span>
+							<span class="mega-hunting-label">{{ h_label | upcase }}{%- unless h_has_products -%}<em class="mega-block__coming-soon"> - Coming Soon</em>{%- endunless -%}</span>
+						</a>
+					{%- endfor -%}
+				</div>
+			</div>
+
+			<div class="mega-block mega-block--independence">
+				<h3 class="mega-block__heading">Independence Day</h3>
+				<div class="mega-terrain-list mega-independence-list">
+					{%- assign dog_250_col = collections['dog-250'] -%}
+					{%- assign dog_col = collections['dog'] -%}
+					{%- assign labrador_dog_col = collections['labrador-dog'] -%}
+					{%- assign dog_250_url = '/collections/dog-250' -%}
+					{%- if dog_250_col != blank -%}
+						{%- assign dog_250_url = dog_250_col.url -%}
+					{%- elsif dog_col != blank and labrador_dog_col != blank -%}
+						{%- assign dog_250_url = routes.search_url | append: '?q=dog&type=product' -%}
+					{%- elsif dog_col != blank -%}
+						{%- assign dog_250_url = dog_col.url -%}
+					{%- elsif labrador_dog_col != blank -%}
+						{%- assign dog_250_url = labrador_dog_col.url -%}
+					{%- endif -%}
+
+					{%- assign deer_250_col = collections['deer-250'] -%}
+					{%- assign deer_250_url = '/collections/deer-250' -%}
+					{%- if deer_250_col != blank -%}
+						{%- assign deer_250_url = deer_250_col.url -%}
+					{%- endif -%}
+
+					{%- assign eagle_250_col = collections['eagle-250'] -%}
+					{%- assign eagle_250_url = '/collections/eagle-250' -%}
+					{%- if eagle_250_col != blank -%}
+						{%- assign eagle_250_url = eagle_250_col.url -%}
+					{%- endif -%}
+
+					{%- assign liberty_250_col = collections['liberty-250'] -%}
+					{%- assign liberty_250_url = '/collections/liberty-250' -%}
+					{%- if liberty_250_col != blank -%}
+						{%- assign liberty_250_url = liberty_250_col.url -%}
+					{%- endif -%}
+
+					{%- assign womens_col = collections['independence-day-womens'] -%}
+					{%- if womens_col == blank -%}
+						{%- assign womens_col = collections['independence-day-women-s'] -%}
+					{%- endif -%}
 					{%- assign womens_url = '/collections/independence-day-womens' -%}
 					{%- if womens_col != blank -%}
 						{%- assign womens_url = womens_col.url -%}
 					{%- endif -%}
-					<a href="{{ womens_url }}" class="mega-seasonal-item">
-						{%- if womens_col != blank -%}
-							{%- assign womens_img = womens_col.image | default: womens_col.products.first.featured_image -%}
-							{%- if womens_img != blank -%}
-								<div class="mega-seasonal-img-wrap">
-									<img src="{{ womens_img | img_url: '300x' }}" alt="Independence Day Women's" class="mega-seasonal-img" loading="lazy">
-								</div>
+
+					<a href="{{ dog_250_url }}" class="mega-block__link">DOG 250</a>
+					<a href="{{ deer_250_url }}" class="mega-block__link">Deer 250</a>
+					<a href="{{ eagle_250_url }}" class="mega-block__link">Eagle 250</a>
+					<a href="{{ liberty_250_url }}" class="mega-block__link">Liberty 250</a>
+					<a href="{{ womens_url }}" class="mega-block__link">Women's</a>
+				</div>
+			</div>
+
+			<div class="mega-block mega-block--father-day">
+				<h3 class="mega-block__heading">Father Day</h3>
+				<div class="mega-seasonal-list mega-father-day-list">
+					{%- assign father_col = collections['father-day'] -%}
+					{%- if father_col == blank -%}
+						{%- assign father_col = collections['fathers-day'] -%}
+					{%- endif -%}
+					{%- if father_col == blank -%}
+						{%- assign father_col = collections['father-s-day'] -%}
+					{%- endif -%}
+					{%- assign father_url = '/collections/father-day' -%}
+					{%- if father_col != blank -%}
+						{%- assign father_url = father_col.url -%}
+					{%- endif -%}
+					{%- assign father_img = father_col.image | default: father_col.products.first.featured_image -%}
+					<a href="{{ father_url }}" class="mega-seasonal-item mega-father-day-card">
+						<div class="mega-seasonal-img-wrap">
+							{%- if father_img != blank -%}
+								<img src="{{ father_img | image_url: width: 360 }}" alt="Father Day" class="mega-seasonal-img" width="360" height="240" loading="lazy">
+							{%- else -%}
+								<div class="mega-terrain-placeholder mega-father-day-placeholder">FD</div>
 							{%- endif -%}
-						{%- endif -%}
-						<span class="mega-seasonal-label">Independence Day Women's</span>
+						</div>
+						<span class="mega-seasonal-label">Father Day</span>
 					</a>
-				{%- endunless -%}
+				</div>
 			</div>
 		</div>
-	</div>
+	{%- endif -%}
 </div>
 
 <style>
-/* ── Mega Menu: positioning ── */
 .header-menu__item-wrapper:has(.header-mega-desktop) {
 	position: static !important;
 }
+
 .header-menu__list-nested-wrapper:has(.header-mega-desktop) {
 	position: static !important;
 }
@@ -195,18 +309,14 @@
 	top: var(--header-offset-bottom, 70px);
 	left: 0;
 	width: 100vw;
-	background: #ffffff;
-	border-top: none;
-	box-shadow: 0 15px 40px rgba(0,0,0,0.10);
+	background: #fff;
+	box-shadow: 0 15px 40px rgba(0, 0, 0, 0.10);
 	padding: 36px 40px;
 	opacity: 0;
 	visibility: hidden;
 	z-index: 100;
 	transform: translateY(-8px);
-	transition:
-		opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-		visibility 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-		transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+	transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 	pointer-events: none;
 }
 
@@ -217,11 +327,20 @@
 	pointer-events: auto;
 }
 
-/* ── 4-Block Grid Layout ── */
+.mega-shop {
+	display: grid !important;
+	grid-template-columns: 220px minmax(0, 676px);
+	gap: 48px;
+	max-width: 1120px;
+	margin: 0 auto;
+	align-items: start;
+	justify-content: start;
+}
+
 .mega-4block {
 	display: grid !important;
-	grid-template-columns: 0.8fr 1.2fr 2fr 1.2fr;
-	gap: 32px;
+	grid-template-columns: 0.95fr 1.2fr 1.1fr 1.35fr;
+	gap: 34px;
 	max-width: 1200px;
 	margin: 0 auto;
 	align-items: start;
@@ -230,16 +349,15 @@
 .mega-block__heading {
 	font-family: 'Oswald', sans-serif;
 	font-weight: 700;
-	font-size: 13px;
+	font-size: 15px;
 	text-transform: uppercase;
 	letter-spacing: 2.5px;
 	color: #1a1a1a;
-	margin: 0 0 20px 0;
+	margin: 0 0 20px;
 	padding-bottom: 12px;
 	border-bottom: 2px solid #1a1a1a;
 }
 
-/* ── Block 1: Clothing ── */
 .mega-block__list {
 	list-style: none;
 	padding: 0;
@@ -252,7 +370,7 @@
 .mega-block__link {
 	font-family: 'Oswald', sans-serif;
 	font-weight: 400;
-	font-size: 14px;
+	font-size: 16px;
 	color: #555;
 	text-decoration: none;
 	transition: color 0.2s ease;
@@ -264,203 +382,232 @@
 .mega-block__link:hover {
 	color: #000;
 }
-.mega-block__link--disabled {
-	opacity: 0.45;
-	cursor: default;
-	pointer-events: none;
-}
-.mega-block__coming-soon {
-	font-size: 10px;
-	font-style: italic;
-	font-weight: 400;
-	color: #8a9a8e;
-	margin-left: 4px;
-	letter-spacing: 0.02em;
+
+.mega-shop .mega-block--clothing .mega-block__list {
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px 30px;
+	margin-bottom: 24px;
 }
 
-/* ── Block 2: Hunting ── */
+.mega-gender-list .mega-block__link,
+.mega-shop-clothing-nav .mega-block__link {
+	color: #2C3D33;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 1;
+}
+
+.mega-featured-list,
+.mega-independence-list {
+	align-items: flex-start;
+	gap: 12px;
+}
+
+.mega-featured-list .mega-block__link,
+.mega-independence-list .mega-block__link {
+	color: #2C3D33;
+	font-size: 15px;
+	font-weight: 400;
+	line-height: 1.4;
+}
+
+.mega-shop-products {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 212px));
+	justify-content: start;
+	gap: 20px;
+}
+
+.mega-shop-product.product-card {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	overflow: hidden;
+	border: 1px solid rgba(44, 61, 51, 0.18);
+	border-radius: 8px;
+	background: #fff;
+	box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+.mega-shop-product__image-link {
+	display: block;
+	text-decoration: none;
+	background: #f7f4ef;
+	border-bottom: 1px solid rgba(44, 61, 51, 0.12);
+}
+
+.mega-shop-product__media {
+	display: block;
+	width: 100%;
+	aspect-ratio: 4 / 5;
+	overflow: hidden;
+	background: #f7f4ef;
+}
+
+.mega-shop-product__image {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	display: block;
+	transition: transform 0.25s ease;
+}
+
+.mega-shop-product:hover .mega-shop-product__image {
+	transform: scale(1.02);
+}
+
+.mega-shop-product__footer {
+	padding: 14px 14px 13px;
+	min-height: 78px;
+}
+
+.mega-shop-product__title {
+	display: block;
+	margin: 0 0 6px;
+	font-family: 'Oswald', sans-serif;
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 1.25;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: #2c3d33;
+	text-decoration: none;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.mega-shop-product__meta {
+	font-family: 'Oswald', sans-serif;
+	font-size: 13px;
+	font-weight: 400;
+	line-height: 1.2;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: #5a6e5f;
+}
+
 .mega-hunting-list {
 	display: flex;
 	flex-direction: column;
-	gap: 18px;
+	gap: 12px;
 }
 
 .mega-hunting-item {
 	display: flex;
 	align-items: center;
-	gap: 16px;
+	gap: 12px;
+	color: #2C3D33;
 	text-decoration: none;
-	transition: opacity 0.2s ease;
 }
 
-.mega-hunting-item:hover {
-	opacity: 0.7;
-}
 .mega-hunting-item--disabled {
-	opacity: 0.4;
-	pointer-events: none;
+	opacity: 0.45;
 	cursor: default;
 }
 
 .mega-hunting-icon-wrap {
 	width: 52px;
 	height: 52px;
+	flex: 0 0 52px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	flex-shrink: 0;
 }
 
 .mega-hunting-icon {
-	width: 52px;
-	height: 52px;
+	width: 46px;
+	height: 46px;
 	object-fit: contain;
 }
 
-.mega-hunting-icon-svg {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 48px;
-	height: 48px;
-	color: #1a1a1a;
-}
-
-.mega-hunting-icon-svg svg {
-	width: 100%;
-	height: 100%;
+.mega-hunting-placeholder {
+	font-family: 'Oswald', sans-serif;
+	font-size: 15px;
+	font-weight: 600;
+	color: #2C3D33;
 }
 
 .mega-hunting-label {
 	font-family: 'Oswald', sans-serif;
-	font-weight: 400;
 	font-size: 14px;
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
-	color: #1a1a1a;
-}
-
-/* ── Block 3: Terrain ── */
-.mega-terrain-list {
-	display: flex;
-	flex-direction: column;
-	gap: 14px;
-}
-
-.mega-terrain-item {
-	display: flex;
-	align-items: center;
-	gap: 14px;
-	text-decoration: none;
-	transition: opacity 0.2s ease;
-}
-
-.mega-terrain-item:hover {
-	opacity: 0.7;
-}
-.mega-terrain-item--disabled {
-	opacity: 0.4;
-	pointer-events: none;
-	cursor: default;
-}
-
-.mega-terrain-img-wrap {
-	width: 52px;
-	height: 52px;
-	border-radius: 6px;
-	overflow: hidden;
-	flex-shrink: 0;
-}
-
-.mega-terrain-img {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-}
-
-.mega-terrain-placeholder {
-	width: 100%;
-	height: 100%;
-	background: #e8e4dc;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-family: 'Oswald', sans-serif;
-	font-size: 12px;
-	font-weight: 700;
-	color: #999;
+	font-weight: 500;
+	letter-spacing: 0.06em;
 	text-transform: uppercase;
 }
 
-.mega-terrain-label {
-	font-family: 'Oswald', sans-serif;
+.mega-block__coming-soon {
+	font-size: 10px;
+	font-style: normal;
 	font-weight: 400;
-	font-size: 14px;
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
-	color: #1a1a1a;
+	color: #8a9a8e;
+	margin-left: 4px;
+	text-transform: none;
+	letter-spacing: 0.02em;
 }
 
-/* ── Block 4: Seasonal ── */
+.mega-terrain-list,
 .mega-seasonal-list {
 	display: flex;
 	flex-direction: column;
-	gap: 20px;
+	gap: 12px;
 }
 
 .mega-seasonal-item {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
 	text-decoration: none;
-	transition: opacity 0.2s ease;
-}
-
-.mega-seasonal-item:hover {
-	opacity: 0.8;
+	color: #2C3D33;
 }
 
 .mega-seasonal-img-wrap {
 	width: 100%;
+	aspect-ratio: 4 / 3;
+	border: 1px solid rgba(44, 61, 51, 0.18);
+	border-radius: 8px;
 	overflow: hidden;
-	border-radius: 6px;
+	background: #f7f4ef;
 }
 
 .mega-seasonal-img {
 	width: 100%;
-	height: auto;
+	height: 100%;
+	object-fit: cover;
 	display: block;
-	transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+	transition: transform 0.25s ease;
 }
 
 .mega-seasonal-item:hover .mega-seasonal-img {
-	transform: scale(1.05);
+	transform: scale(1.03);
 }
 
 .mega-seasonal-label {
+	display: block;
+	margin-top: 8px;
 	font-family: 'Oswald', sans-serif;
-	font-weight: 400;
 	font-size: 14px;
+	font-weight: 500;
+	letter-spacing: 0.06em;
 	text-transform: uppercase;
-	letter-spacing: 0.04em;
-	color: #1a1a1a;
 }
 
-/* ── Stagger animation ── */
-@keyframes megaBlockFadeIn {
-	from { opacity: 0; transform: translateY(12px); }
-	to { opacity: 1; transform: translateY(0); }
+.mega-terrain-placeholder,
+.mega-father-day-placeholder {
+	width: 100%;
+	height: 100%;
+	min-height: 120px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: 'Oswald', sans-serif;
+	font-size: 18px;
+	font-weight: 600;
+	color: #2C3D33;
 }
 
-.header-mega-desktop.is-active .mega-block {
-	animation: megaBlockFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-.header-mega-desktop.is-active .mega-block:nth-child(1) { animation-delay: 0.03s; }
-.header-mega-desktop.is-active .mega-block:nth-child(2) { animation-delay: 0.07s; }
-.header-mega-desktop.is-active .mega-block:nth-child(3) { animation-delay: 0.11s; }
-.header-mega-desktop.is-active .mega-block:nth-child(4) { animation-delay: 0.15s; }
-
-.mega-block {
-	opacity: 0;
+@media (max-width: 1199px) {
+	.header-mega-desktop {
+		display: none !important;
+	}
 }
 </style>

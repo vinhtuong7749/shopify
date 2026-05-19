@@ -33,13 +33,21 @@
 
 			<li class="header-menu__item-wrapper">
 				{%- assign link_title_down = first_level_link.title | downcase -%}
+				{%- assign header_display_title = first_level_link.title -%}
 				{%- assign header_link_url = first_level_link.url -%}
 				{%- if link_title_down == 'new arrivals' -%}
 					{%- assign header_link_url = '/collections/new-arrivals' -%}
 				{%- endif -%}
 				
+				{%- assign is_shop_menu = false -%}
+				{%- if link_title_down == 'home' or link_title_down contains 'shop' -%}
+					{%- assign is_shop_menu = true -%}
+					{%- assign header_display_title = 'SHOP' -%}
+					{%- assign header_link_url = '/collections/all' -%}
+				{%- endif -%}
+
 				{%- assign is_mega_menu = false -%}
-				{%- if link_title_down contains 'collection' or link_title_down contains 'shop' -%}
+				{%- if link_title_down contains 'collection' or is_shop_menu -%}
 					{%- assign is_mega_menu = true -%}
 				{%- endif -%}
 				{%- assign is_support_menu = false -%}
@@ -55,9 +63,9 @@
 							aria-current="page"
 						{% endif %}
 					>
-						<span data-text="{{- first_level_link.title | escape -}}">
+						<span data-text="{{- header_display_title | escape -}}">
 							<span>
-								{{- first_level_link.title | escape -}}
+								{{- header_display_title | escape -}}
 							</span>
 						</span>
 					</a>
@@ -70,9 +78,9 @@
 								aria-current="page"
 							{% endif %}
 						>
-							<span data-text="{{- first_level_link.title | escape -}}">
+							<span data-text="{{- header_display_title | escape -}}">
 								<span>
-									{{- first_level_link.title | escape -}}
+									{{- header_display_title | escape -}}
 								</span>
 							</span>
 						</a>
@@ -82,7 +90,7 @@
 							data-target="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
 							aria-controls="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
 							aria-expanded="false"
-							aria-label="{{- first_level_link.title | escape }} submenu"
+							aria-label="{{- header_display_title | escape }} submenu"
 						>
 							{%- render 'icons', icon: 'arrow-down' -%}
 						</button>
@@ -94,9 +102,9 @@
 							aria-controls="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
 							aria-expanded="false"
 						>
-							<span data-text="{{- first_level_link.title | escape -}}">
+							<span data-text="{{- header_display_title | escape -}}">
 								<span>
-									{{- first_level_link.title | escape -}}
+									{{- header_display_title | escape -}}
 								</span>
 							</span>
 
@@ -106,7 +114,7 @@
 
 					<div class="header-menu__list-nested-wrapper js-header-dropdown-menu-wrapper" data-target-nested-wrapper="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}">
 						{%- if is_mega_menu -%}
-							{%- render 'header-mega-menu-collection', first_level_link: first_level_link, first_level_index: first_level_index -%}
+							{%- render 'header-mega-menu-collection', first_level_link: first_level_link, first_level_index: first_level_index, is_shop_menu: is_shop_menu -%}
 						{%- else -%}
 						<ul
 							id="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
@@ -283,9 +291,9 @@
 							aria-current="page"
 						{% endif %}
 					>
-						<span data-text="{{- first_level_link.title | escape -}}">
+						<span data-text="{{- header_display_title | escape -}}">
 							<span>
-								{{- first_level_link.title | escape -}}
+								{{- header_display_title | escape -}}
 							</span>
 						</span>
 					</a>

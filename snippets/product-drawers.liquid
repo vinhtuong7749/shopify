@@ -61,6 +61,18 @@
 {%- assign size_guide_button_placement 		  = section.settings.size_guide_button_placement -%}
 {%- assign size_guide_button_text_translation = "products.drawers.size_guide" | t -%}
 {%- assign size_guide_button_text			  = section.settings.size_guide_button_text | default: size_guide_button_text_translation -%}
+{%- assign size_chart_product_type = product.type | downcase | strip -%}
+{%- assign size_chart_mode = 'all' -%}
+
+{%- if size_chart_product_type == 'hat' -%}
+	{%- assign size_chart_mode = 'all' -%}
+{%- elsif size_chart_product_type contains 'long' and size_chart_product_type contains 'sleeve' -%}
+	{%- assign size_chart_mode = 'longsleeve' -%}
+{%- elsif size_chart_product_type contains 'hoodie' or size_chart_product_type contains 'sweatshirt' -%}
+	{%- assign size_chart_mode = 'hoodie' -%}
+{%- elsif size_chart_product_type == 'type1' or size_chart_product_type contains 't-shirt' or size_chart_product_type contains 'tshirt' -%}
+	{%- assign size_chart_mode = 'tshirt' -%}
+{%- endif -%}
 
 {%- if section.settings.show_size_guide
 	and size_guide_page != blank
@@ -298,15 +310,20 @@
 				>&#10005;</button>
 			<div class="size-chart-overlay__panel">
 				{%- comment -%} Tabs {%- endcomment -%}
-				<div class="size-chart-overlay__tabs">
-					<button class="size-chart-overlay__tab is-active" data-tab="tshirt" type="button" onclick="switchSizeTab(this, 'tshirt')">T-Shirt</button>
-					<button class="size-chart-overlay__tab" data-tab="hoodie" type="button" onclick="switchSizeTab(this, 'hoodie')">Hoodie & Sweatshirt</button>
-					<button class="size-chart-overlay__tab" data-tab="longsleeve3d" type="button" onclick="switchSizeTab(this, 'longsleeve3d')">Long Sleeve 3D</button>
-					<button class="size-chart-overlay__tab" data-tab="longsleeve" type="button" onclick="switchSizeTab(this, 'longsleeve')">Long Sleeve</button>
+				<div class="size-chart-overlay__tabs{% unless size_chart_mode == 'all' %} size-chart-overlay__tabs--single{% endunless %}">
+					{%- if size_chart_mode == 'all' or size_chart_mode == 'tshirt' -%}
+						<button class="size-chart-overlay__tab is-active" data-tab="tshirt" type="button" onclick="switchSizeTab(this, 'tshirt')">T-Shirt</button>
+					{%- endif -%}
+					{%- if size_chart_mode == 'all' or size_chart_mode == 'hoodie' -%}
+						<button class="size-chart-overlay__tab{% if size_chart_mode == 'hoodie' %} is-active{% endif %}" data-tab="hoodie" type="button" onclick="switchSizeTab(this, 'hoodie')">Hoodie & Sweatshirt</button>
+					{%- endif -%}
+					{%- if size_chart_mode == 'all' or size_chart_mode == 'longsleeve' -%}
+						<button class="size-chart-overlay__tab{% if size_chart_mode == 'longsleeve' %} is-active{% endif %}" data-tab="longsleeve" type="button" onclick="switchSizeTab(this, 'longsleeve')">Long Sleeve</button>
+					{%- endif -%}
 				</div>
 
 				{%- comment -%} T-Shirt Size Chart {%- endcomment -%}
-				<div class="size-chart-overlay__content" id="size-tab-tshirt">
+				<div class="size-chart-overlay__content" id="size-tab-tshirt"{% unless size_chart_mode == 'all' or size_chart_mode == 'tshirt' %} style="display:none;"{% endunless %}>
 					<div class="size-chart-overlay__unit-tabs" role="tablist" aria-label="T-Shirt measurement unit">
 						<button class="size-chart-overlay__unit-tab is-active" type="button" onclick="switchSizeUnit(this, 'in')">In</button>
 						<button class="size-chart-overlay__unit-tab" type="button" onclick="switchSizeUnit(this, 'cm')">Cm</button>
@@ -416,7 +433,7 @@
 				</div>
 
 				{%- comment -%} Hoodie & Sweatshirt Size Chart {%- endcomment -%}
-				<div class="size-chart-overlay__content" id="size-tab-hoodie" style="display:none;">
+				<div class="size-chart-overlay__content" id="size-tab-hoodie"{% unless size_chart_mode == 'hoodie' %} style="display:none;"{% endunless %}>
 					<div class="size-chart-overlay__unit-tabs" role="tablist" aria-label="Hoodie and Sweatshirt measurement unit">
 						<button class="size-chart-overlay__unit-tab is-active" type="button" onclick="switchSizeUnit(this, 'in')">In</button>
 						<button class="size-chart-overlay__unit-tab" type="button" onclick="switchSizeUnit(this, 'cm')">Cm</button>
@@ -476,78 +493,41 @@
 				</div>
 
 			{%- comment -%} Long Sleeve Size Chart {%- endcomment -%}
-			<div class="size-chart-overlay__content" id="size-tab-longsleeve3d" style="display:none;">
-				<div class="size-chart-overlay__unit-tabs" role="tablist" aria-label="Long Sleeve 3D measurement unit">
-					<button class="size-chart-overlay__unit-tab is-active" type="button" onclick="switchSizeUnit(this, 'in')">In</button>
-					<button class="size-chart-overlay__unit-tab" type="button" onclick="switchSizeUnit(this, 'cm')">Cm</button>
-				</div>
-
-				<div class="size-chart-overlay__unit-panel is-active" data-unit-panel="in">
-				<p class="size-chart-overlay__note">All measurements are in <strong>inches</strong>. Sizes may vary slightly (&plusmn;0.5") due to the manufacturing process.</p>
-				<div class="size-chart-overlay__table-wrap">
-					<table class="size-chart-overlay__table">
-						<thead>
-							<tr>
-								<th>Size</th>
-								<th>Length (in)</th>
-								<th>Sleeve (in)</th>
-								<th>Shoulder (in)</th>
-								<th>Chest (in)</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr><td>XS</td><td>27 1/2</td><td>33</td><td>14 3/4</td><td>34</td></tr>
-							<tr><td>S</td><td>28</td><td>34</td><td>16</td><td>37</td></tr>
-							<tr><td>M</td><td>28 3/4</td><td>35</td><td>17 1/4</td><td>40</td></tr>
-							<tr><td>L</td><td>29 1/2</td><td>36</td><td>18 1/2</td><td>43</td></tr>
-							<tr><td>XL</td><td>30 1/4</td><td>37</td><td>19 3/4</td><td>46</td></tr>
-							<tr><td>2XL</td><td>30 3/4</td><td>38</td><td>21</td><td>49</td></tr>
-							<tr><td>3XL</td><td>31 1/2</td><td>39</td><td>22 1/4</td><td>52</td></tr>
-							<tr><td>4XL</td><td>32 1/4</td><td>40</td><td>23 1/2</td><td>55</td></tr>
-							<tr><td>5XL</td><td>33</td><td>41</td><td>24 3/4</td><td>58</td></tr>
-						</tbody>
-					</table>
-				</div>
-				</div>
-
-				<div class="size-chart-overlay__unit-panel" data-unit-panel="cm">
-				<div class="size-chart-overlay__table-wrap">
-					<p class="size-chart-overlay__note">Measurements in <strong>centimeters (cm)</strong>.</p>
-					<table class="size-chart-overlay__table">
-						<thead>
-							<tr>
-								<th>Size</th>
-								<th>Length (cm)</th>
-								<th>Sleeve (cm)</th>
-								<th>Shoulder (cm)</th>
-								<th>Chest (cm)</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr><td>XS</td><td>69.9</td><td>83.8</td><td>37.5</td><td>86.4</td></tr>
-							<tr><td>S</td><td>71.1</td><td>86.4</td><td>40.6</td><td>94.0</td></tr>
-							<tr><td>M</td><td>73.0</td><td>88.9</td><td>43.8</td><td>101.6</td></tr>
-							<tr><td>L</td><td>74.9</td><td>91.4</td><td>47.0</td><td>109.2</td></tr>
-							<tr><td>XL</td><td>76.8</td><td>94.0</td><td>50.2</td><td>116.8</td></tr>
-							<tr><td>2XL</td><td>78.1</td><td>96.5</td><td>53.3</td><td>124.5</td></tr>
-							<tr><td>3XL</td><td>80.0</td><td>99.1</td><td>56.5</td><td>132.1</td></tr>
-							<tr><td>4XL</td><td>81.9</td><td>101.6</td><td>59.7</td><td>139.7</td></tr>
-							<tr><td>5XL</td><td>83.8</td><td>104.1</td><td>62.9</td><td>147.3</td></tr>
-						</tbody>
-					</table>
-				</div>
-				</div>
-			</div>
-
-
-			{%- comment -%} Long Sleeve Size Chart {%- endcomment -%}
-			<div class="size-chart-overlay__content" id="size-tab-longsleeve" style="display:none;">
+			<div class="size-chart-overlay__content" id="size-tab-longsleeve"{% unless size_chart_mode == 'longsleeve' %} style="display:none;"{% endunless %}>
 				<div class="size-chart-overlay__unit-tabs" role="tablist" aria-label="Long Sleeve measurement unit">
 					<button class="size-chart-overlay__unit-tab is-active" type="button" onclick="switchSizeUnit(this, 'in')">In</button>
 					<button class="size-chart-overlay__unit-tab" type="button" onclick="switchSizeUnit(this, 'cm')">Cm</button>
 				</div>
 
 				<div class="size-chart-overlay__unit-panel is-active" data-unit-panel="in">
+					<h3 class="size-chart-overlay__subtitle">Long Sleeve 3D Size Chart</h3>
+					<p class="size-chart-overlay__note">Measurements are in <strong>inches</strong>. Sizes may vary slightly (&plusmn;0.5") due to the manufacturing process.</p>
+					<div class="size-chart-overlay__table-wrap">
+						<table class="size-chart-overlay__table">
+							<thead>
+								<tr>
+									<th>Size</th>
+									<th>Length (in)</th>
+									<th>Sleeve (in)</th>
+									<th>Shoulder (in)</th>
+									<th>Chest (in)</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr><td>XS</td><td>27 1/2</td><td>33</td><td>14 3/4</td><td>34</td></tr>
+								<tr><td>S</td><td>28</td><td>34</td><td>16</td><td>37</td></tr>
+								<tr><td>M</td><td>28 3/4</td><td>35</td><td>17 1/4</td><td>40</td></tr>
+								<tr><td>L</td><td>29 1/2</td><td>36</td><td>18 1/2</td><td>43</td></tr>
+								<tr><td>XL</td><td>30 1/4</td><td>37</td><td>19 3/4</td><td>46</td></tr>
+								<tr><td>2XL</td><td>30 3/4</td><td>38</td><td>21</td><td>49</td></tr>
+								<tr><td>3XL</td><td>31 1/2</td><td>39</td><td>22 1/4</td><td>52</td></tr>
+								<tr><td>4XL</td><td>32 1/4</td><td>40</td><td>23 1/2</td><td>55</td></tr>
+								<tr><td>5XL</td><td>33</td><td>41</td><td>24 3/4</td><td>58</td></tr>
+							</tbody>
+						</table>
+					</div>
+
+					<h3 class="size-chart-overlay__subtitle size-chart-overlay__subtitle--section">Long Sleeve Size Chart</h3>
 					<p class="size-chart-overlay__note">Measurements are in <strong>inches</strong>. Sizes may vary slightly due to the manufacturing process.</p>
 					<div class="size-chart-overlay__table-wrap">
 						<table class="size-chart-overlay__table">
@@ -572,6 +552,34 @@
 				</div>
 
 				<div class="size-chart-overlay__unit-panel" data-unit-panel="cm">
+					<h3 class="size-chart-overlay__subtitle">Long Sleeve 3D Size Chart</h3>
+					<p class="size-chart-overlay__note">Measurements are in <strong>centimeters (cm)</strong>.</p>
+					<div class="size-chart-overlay__table-wrap">
+						<table class="size-chart-overlay__table">
+							<thead>
+								<tr>
+									<th>Size</th>
+									<th>Length (cm)</th>
+									<th>Sleeve (cm)</th>
+									<th>Shoulder (cm)</th>
+									<th>Chest (cm)</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr><td>XS</td><td>69.9</td><td>83.8</td><td>37.5</td><td>86.4</td></tr>
+								<tr><td>S</td><td>71.1</td><td>86.4</td><td>40.6</td><td>94.0</td></tr>
+								<tr><td>M</td><td>73.0</td><td>88.9</td><td>43.8</td><td>101.6</td></tr>
+								<tr><td>L</td><td>74.9</td><td>91.4</td><td>47.0</td><td>109.2</td></tr>
+								<tr><td>XL</td><td>76.8</td><td>94.0</td><td>50.2</td><td>116.8</td></tr>
+								<tr><td>2XL</td><td>78.1</td><td>96.5</td><td>53.3</td><td>124.5</td></tr>
+								<tr><td>3XL</td><td>80.0</td><td>99.1</td><td>56.5</td><td>132.1</td></tr>
+								<tr><td>4XL</td><td>81.9</td><td>101.6</td><td>59.7</td><td>139.7</td></tr>
+								<tr><td>5XL</td><td>83.8</td><td>104.1</td><td>62.9</td><td>147.3</td></tr>
+							</tbody>
+						</table>
+					</div>
+
+					<h3 class="size-chart-overlay__subtitle size-chart-overlay__subtitle--section">Long Sleeve Size Chart</h3>
 					<p class="size-chart-overlay__note">Measurements are in <strong>centimeters (cm)</strong>. Sizes may vary slightly due to the manufacturing process.</p>
 					<div class="size-chart-overlay__table-wrap">
 						<table class="size-chart-overlay__table">
@@ -740,6 +748,9 @@
 			.size-chart-overlay__tabs::-webkit-scrollbar {
 				display: none;
 			}
+			.size-chart-overlay__tabs--single {
+				display: none;
+			}
 			.size-chart-overlay__tab {
 				flex: 0 0 auto;
 				background: none;
@@ -756,6 +767,17 @@
 				position: relative;
 				transition: background 0.2s, color 0.2s, box-shadow 0.2s;
 			}
+			.size-chart-overlay__tab + .size-chart-overlay__tab::before {
+				content: '';
+				position: absolute;
+				top: 50%;
+				left: -2px;
+				width: 1px;
+				height: 22px;
+				background: #d2dbd1;
+				transform: translateY(-50%);
+				pointer-events: none;
+			}
 			.size-chart-overlay__tab::after {
 				display: none;
 			}
@@ -765,37 +787,41 @@
 				box-shadow: 0 8px 18px rgba(32, 50, 36, 0.24);
 			}
 			.size-chart-overlay__tab:hover { color: var(--color-text-primary, #203224); }
-			.size-chart-overlay__tab.is-active:hover { color: #ffffff; }
+			.size-chart-overlay__tab.is-active:hover {
+				background: var(--color-text-primary, #203224);
+				color: #ffffff;
+			}
 			.size-chart-overlay__unit-tabs {
 				display: flex;
 				align-items: center;
-				gap: 4px;
+				gap: 0;
 				width: fit-content;
 				margin: 0 auto 28px;
-				padding: 4px;
-				border: 1px solid #e0ddd5;
-				border-radius: 8px;
-				background: #f8f7f3;
+				padding: 0;
+				overflow: hidden;
+				border: 1px solid var(--color-text-primary, #203224);
+				border-radius: 999px;
+				background: #ffffff;
 			}
 			.size-chart-overlay__unit-tab {
-				min-width: 64px;
-				padding: 8px 16px;
+				min-width: 60px;
+				padding: 9px 18px;
 				background: transparent;
 				border: none;
-				border-radius: 5px;
-				color: var(--color-text-secondary, #666);
+				border-radius: 0;
+				color: var(--color-text-primary, #203224);
 				cursor: pointer;
 				font-family: 'Oswald', sans-serif;
-				font-size: 11px;
+				font-size: 10px;
 				font-weight: 600;
-				letter-spacing: 0.06em;
+				letter-spacing: 0.14em;
 				line-height: 1;
 				text-transform: uppercase;
 				transition: background 0.2s, color 0.2s;
 			}
 			.size-chart-overlay__unit-tab.is-active {
 				background: var(--color-text-primary, #203224);
-				color: #faf6ee;
+				color: #ffffff;
 			}
 			.size-chart-overlay__unit-panel {
 				display: none;
@@ -891,26 +917,33 @@
 				.size-chart-overlay__title { font-size: 18px; }
 				.size-chart-overlay__tabs {
 					display: grid;
-					grid-template-columns: repeat(2, minmax(0, 1fr));
+					grid-template-columns: repeat(3, minmax(0, 1fr));
 					gap: 4px;
 					width: 100%;
-					max-width: 420px;
+					max-width: none;
 					margin-bottom: 24px;
 					margin-left: auto;
 					margin-right: auto;
 					overflow: visible;
 					border-radius: 18px;
 				}
+				.size-chart-overlay__tabs--single {
+					display: none;
+				}
 				.size-chart-overlay__tab {
 					display: flex;
 					align-items: center;
 					justify-content: center;
-					min-height: 34px;
-					padding: 8px 6px;
+					min-height: 40px;
+					padding: 8px 4px;
 					font-size: 10px;
 					line-height: 1.2;
 					text-align: center;
 					white-space: normal;
+				}
+				.size-chart-overlay__tab + .size-chart-overlay__tab::before {
+					left: -3px;
+					height: 24px;
 				}
 				.size-chart-overlay__unit-tabs {
 					display: flex;
