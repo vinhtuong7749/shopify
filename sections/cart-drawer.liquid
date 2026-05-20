@@ -35,10 +35,6 @@
 	{%- assign title_padding_right				= section.settings.title_padding_right | default: 40 -%}
 	{%- assign drawer_top_padding				= section.settings.drawer_top_padding | default: 20 -%}
 	{%- assign show_custom_banner				= section.settings.show_custom_banner -%}
-	{%- assign custom_banner_image				= section.settings.custom_banner_image -%}
-	{%- assign custom_banner_image_url			= section.settings.custom_banner_image_url | default: 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/banner-gio-hang.jpg?v=1778237632' -%}
-	{%- assign custom_banner_alt				= section.settings.custom_banner_alt | default: 'Special Offer' -%}
-	{%- assign custom_banner_link				= section.settings.custom_banner_link -%}
 	{%- assign custom_banner_margin_top			= section.settings.custom_banner_margin_top | default: 0 -%}
 	{%- assign custom_banner_margin_horizontal	= section.settings.custom_banner_margin_horizontal | default: 16 -%}
 	{%- assign custom_banner_margin_bottom		= section.settings.custom_banner_margin_bottom | default: 0 -%}
@@ -92,6 +88,22 @@
 
 	{%- if enable_color_scheme_inheritance -%}
 		{%- assign color_scheme = settings.main_color_scheme -%}
+	{%- endif -%}
+
+	{%- assign discount_eligible_item_count = 0 -%}
+	{%- for item in cart.items -%}
+		{%- unless item.product.handle == 'shipping-protection-apparel' -%}
+			{%- assign discount_eligible_item_count = discount_eligible_item_count | plus: item.quantity -%}
+		{%- endunless -%}
+	{%- endfor -%}
+
+	{%- assign active_discount_tier = 0 -%}
+	{%- if discount_eligible_item_count >= 4 -%}
+		{%- assign active_discount_tier = 4 -%}
+	{%- elsif discount_eligible_item_count >= 3 -%}
+		{%- assign active_discount_tier = 3 -%}
+	{%- elsif discount_eligible_item_count >= 2 -%}
+		{%- assign active_discount_tier = 2 -%}
 	{%- endif -%}
 
 	{%- if show_cart_items_count -%}
@@ -228,25 +240,52 @@
 						{%- endif -%}
 
 						{%- if show_custom_banner -%}
-							{%- assign custom_banner_src = custom_banner_image_url -%}
-							{%- if custom_banner_image != blank -%}
-								{%- assign custom_banner_src = custom_banner_image | image_url: width: 900 -%}
-								{%- assign custom_banner_alt = custom_banner_image.alt | default: custom_banner_alt -%}
-							{%- endif -%}
-
-							{%- if custom_banner_src != blank -%}
-								<div class="cart-drawer__custom-banner" style="margin: {{ custom_banner_margin_top }}px {{ custom_banner_margin_horizontal }}px {{ custom_banner_margin_bottom }}px;">
-									{%- if custom_banner_link != blank -%}
-										<a href="{{ custom_banner_link }}" class="cart-drawer__custom-banner-link">
-									{%- endif -%}
-
-									<img src="{{ custom_banner_src }}" alt="{{ custom_banner_alt | escape }}" style="width: 100%; height: auto; border-radius: {{ custom_banner_radius }}px; display: block;" loading="lazy">
-
-									{%- if custom_banner_link != blank -%}
-										</a>
-									{%- endif -%}
+							<div
+								class="cart-drawer__tier-offers"
+								data-cart-tier="{{ active_discount_tier }}"
+								data-cart-eligible-items="{{ discount_eligible_item_count }}"
+								style="--tier-offers-radius: {{ custom_banner_radius }}px; margin: {{ custom_banner_margin_top }}px {{ custom_banner_margin_horizontal }}px {{ custom_banner_margin_bottom }}px;"
+								aria-label="Cart discount milestones"
+							>
+								<div class="cart-tier-offer{% if active_discount_tier == 2 %} is-active{% elsif active_discount_tier > 0 %} is-muted{% endif %}" data-tier="2">
+									<span class="cart-tier-offer__label">
+										<span class="cart-tier-offer__word">BUY</span>
+										<span class="cart-tier-offer__quantity">2</span>
+										<span class="cart-tier-offer__word">SAVE</span>
+									</span>
+									<span class="cart-tier-offer__divider" aria-hidden="true"></span>
+									<span class="cart-tier-offer__value">
+										<span class="cart-tier-offer__amount">10</span><span class="cart-tier-offer__percent">%</span>
+									</span>
+									<span class="cart-tier-offer__outline" aria-hidden="true"></span>
 								</div>
-							{%- endif -%}
+
+								<div class="cart-tier-offer{% if active_discount_tier == 3 %} is-active{% elsif active_discount_tier > 0 %} is-muted{% endif %}" data-tier="3">
+									<span class="cart-tier-offer__label">
+										<span class="cart-tier-offer__word">BUY</span>
+										<span class="cart-tier-offer__quantity">3</span>
+										<span class="cart-tier-offer__word">SAVE</span>
+									</span>
+									<span class="cart-tier-offer__divider" aria-hidden="true"></span>
+									<span class="cart-tier-offer__value">
+										<span class="cart-tier-offer__amount">15</span><span class="cart-tier-offer__percent">%</span>
+									</span>
+									<span class="cart-tier-offer__outline" aria-hidden="true"></span>
+								</div>
+
+								<div class="cart-tier-offer{% if active_discount_tier == 4 %} is-active{% elsif active_discount_tier > 0 %} is-muted{% endif %}" data-tier="4">
+									<span class="cart-tier-offer__label">
+										<span class="cart-tier-offer__word">BUY</span>
+										<span class="cart-tier-offer__quantity">4</span>
+										<span class="cart-tier-offer__word">SAVE</span>
+									</span>
+									<span class="cart-tier-offer__divider" aria-hidden="true"></span>
+									<span class="cart-tier-offer__value">
+										<span class="cart-tier-offer__amount">20</span><span class="cart-tier-offer__percent">%</span>
+									</span>
+									<span class="cart-tier-offer__outline" aria-hidden="true"></span>
+								</div>
+							</div>
 						{%- endif -%}
 
 						{{- content -}}
@@ -372,8 +411,203 @@
 		}
 
 		#CartDrawer .cart-drawer__custom-banner,
+		#CartDrawer .cart-drawer__tier-offers,
 		#CartDrawer .cart-drawer__section.cart-drawer__section--items {
 			margin-top: 0 !important;
+		}
+
+		#CartDrawer .cart-drawer__tier-offers {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 6px;
+		}
+
+		#CartDrawer .cart-tier-offer {
+			position: relative;
+			isolation: isolate;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: flex-start;
+			height: 60px;
+			min-height: 0;
+			padding: 5px 6px 4px;
+			overflow: hidden;
+			border: 0;
+			border-radius: min(var(--tier-offers-radius, 6px), 5px);
+			background: #263d30;
+			color: #ffda69;
+			box-shadow: none;
+			text-align: center;
+			transition: opacity 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease;
+		}
+
+		#CartDrawer .cart-tier-offer::before,
+		#CartDrawer .cart-tier-offer::after {
+			content: "";
+			position: absolute;
+			top: 24px;
+			z-index: 4;
+			width: 12px;
+			height: 12px;
+			border-radius: 999px;
+			background: var(--cart-drawer-bg, #ffffff);
+			transform: translateY(-50%);
+		}
+
+		#CartDrawer .cart-tier-offer::before {
+			left: -6px;
+		}
+
+		#CartDrawer .cart-tier-offer::after {
+			right: -6px;
+		}
+
+		#CartDrawer .cart-tier-offer__outline {
+			position: absolute;
+			inset: 0;
+			z-index: 5;
+			pointer-events: none;
+			background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 182 60' preserveAspectRatio='none'%3E%3Cpath d='M5 1 H177 Q181 1 181 5 V18 Q176 24 181 30 V55 Q181 59 177 59 H5 Q1 59 1 55 V30 Q6 24 1 18 V5 Q1 1 5 1 Z' fill='none' stroke='%23ffda69' stroke-opacity='.92' stroke-width='1.1' stroke-dasharray='2.1 2.1' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+		}
+
+		#CartDrawer .cart-tier-offer__label,
+		#CartDrawer .cart-tier-offer__value {
+			position: relative;
+			z-index: 3;
+			text-transform: uppercase;
+			line-height: 1;
+			text-shadow: 0 1px 0 rgba(0, 0, 0, 0.18);
+		}
+
+		#CartDrawer .cart-tier-offer__label {
+			display: inline-flex;
+			width: 100%;
+			align-items: baseline;
+			justify-content: center;
+			gap: 6px;
+			margin-bottom: 4px;
+			font-family: 'Myriad Pro', 'Myriad', 'Oswald', sans-serif;
+			font-size: 15px;
+			font-style: normal;
+			font-weight: 700;
+			letter-spacing: 1.05px;
+			transform: scaleX(1.08);
+			transform-origin: center;
+			white-space: nowrap;
+		}
+
+		#CartDrawer .cart-tier-offer__word {
+			display: inline-block;
+			min-width: 0;
+			font-style: normal;
+			text-align: center;
+		}
+
+		#CartDrawer .cart-tier-offer__quantity {
+			display: inline-block;
+			min-width: 0;
+			font-size: 1.16em;
+			font-style: italic;
+			line-height: 0.9;
+			text-align: center;
+		}
+
+		#CartDrawer .cart-tier-offer__divider {
+			position: absolute;
+			top: 24px;
+			left: -8px;
+			right: -8px;
+			z-index: 1;
+			height: 1px;
+			background-image: repeating-linear-gradient(
+				90deg,
+				rgba(255, 218, 105, 0.82) 0 4px,
+				transparent 4px 7px
+			);
+			transform: scaleY(0.55);
+			transform-origin: center;
+		}
+
+		#CartDrawer .cart-tier-offer__value {
+			display: inline-flex;
+			width: 100%;
+			align-items: flex-end;
+			justify-content: center;
+			gap: 0;
+			margin-top: 0;
+			font-family: 'Urban Shadow', 'Oswald', sans-serif;
+			font-size: clamp(30px, 5.8vw, 34px);
+			font-style: normal;
+			font-weight: 800;
+			letter-spacing: 0;
+			line-height: 0.86;
+			transform: translateY(0);
+		}
+
+		#CartDrawer .cart-tier-offer__amount {
+			display: inline-block;
+			margin-right: 2px;
+			letter-spacing: 1.25px;
+			line-height: 0.86;
+			transform: scaleX(1.08);
+			transform-origin: center bottom;
+		}
+
+		#CartDrawer .cart-tier-offer__percent {
+			padding-bottom: 0;
+			font-family: inherit;
+			font-size: 1em;
+			font-weight: 800;
+			line-height: 0.86;
+			transform: scaleX(0.78);
+			transform-origin: center bottom;
+		}
+
+		#CartDrawer .cart-tier-offer.is-active {
+			border-color: #ffda69;
+			background: #263d30;
+			color: #ffdf74;
+			box-shadow: none;
+		}
+
+		#CartDrawer .cart-tier-offer.is-active .cart-tier-offer__value {
+			text-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+		}
+
+		#CartDrawer .cart-tier-offer.is-muted {
+			opacity: 0.38;
+			filter: saturate(0.55);
+			box-shadow: none;
+		}
+
+		@media screen and (max-width: 480px) {
+			#CartDrawer .cart-drawer__tier-offers {
+				gap: 5px;
+			}
+
+			#CartDrawer .cart-tier-offer {
+				height: 56px;
+				padding-left: 4px;
+				padding-right: 4px;
+			}
+
+			#CartDrawer .cart-tier-offer::before,
+			#CartDrawer .cart-tier-offer::after {
+				top: 22px;
+			}
+
+			#CartDrawer .cart-tier-offer__label {
+				font-size: 13.2px;
+			}
+
+			#CartDrawer .cart-tier-offer__divider {
+				top: 22px;
+			}
+
+			#CartDrawer .cart-tier-offer__value {
+				font-size: clamp(27px, 7.2vw, 30px);
+			}
 		}
 
 		@media screen and (max-width: 767px) {
@@ -627,35 +861,13 @@
 		},
 		{
 			"type": "header",
-			"content": "Custom banner"
+			"content": "Discount tier banner"
 		},
 		{
 			"type": "checkbox",
 			"id": "show_custom_banner",
-			"label": "Show custom banner",
+			"label": "Show discount tier banner",
 			"default": true
-		},
-		{
-			"type": "image_picker",
-			"id": "custom_banner_image",
-			"label": "Banner image"
-		},
-		{
-			"type": "text",
-			"id": "custom_banner_image_url",
-			"label": "Fallback banner image URL",
-			"default": "https://cdn.shopify.com/s/files/1/0741/7987/0911/files/banner-gio-hang.jpg?v=1778237632"
-		},
-		{
-			"type": "text",
-			"id": "custom_banner_alt",
-			"label": "Banner alt text",
-			"default": "Special Offer"
-		},
-		{
-			"type": "url",
-			"id": "custom_banner_link",
-			"label": "Banner link"
 		},
 		{
 			"type": "range",
@@ -664,7 +876,7 @@
 			"max": 60,
 			"step": 1,
 			"unit": "px",
-			"label": "Banner top margin",
+			"label": "Tier banner top margin",
 			"default": 0
 		},
 		{
@@ -674,7 +886,7 @@
 			"max": 40,
 			"step": 1,
 			"unit": "px",
-			"label": "Banner horizontal margin",
+			"label": "Tier banner horizontal margin",
 			"default": 16
 		},
 		{
@@ -684,7 +896,7 @@
 			"max": 60,
 			"step": 1,
 			"unit": "px",
-			"label": "Banner bottom margin",
+			"label": "Tier banner bottom margin",
 			"default": 0
 		},
 		{
@@ -694,7 +906,7 @@
 			"max": 24,
 			"step": 1,
 			"unit": "px",
-			"label": "Banner radius",
+			"label": "Tier card radius",
 			"default": 6
 		},
 		{
