@@ -37,6 +37,10 @@
 	{%- assign show_payment_icons = false -%}
 {%- endif -%}
 
+{%- if cart_drawer == true -%}
+	{%- assign show_payment_icons = false -%}
+{%- endif -%}
+
 {%- assign subtotal_label = section.settings.subtotal_label | default: 'Subtotal' -%}
 {%- assign subtotal_item_singular = section.settings.subtotal_item_singular | default: 'item' -%}
 {%- assign subtotal_item_plural = section.settings.subtotal_item_plural | default: 'items' -%}
@@ -266,4 +270,3 @@
 		</div>
 	</div>
 {% endif %}
-

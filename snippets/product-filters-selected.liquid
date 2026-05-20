@@ -15,7 +15,7 @@
 
 {%- assign active_filters_size = 0 -%}
 
-{%- if collection.handle != blank and collection.handle != 'all' and collection.handle != 'all-1' -%}
+{%- if template.name != 'search' and collection.handle != blank and collection.handle != 'all' and collection.handle != 'all-1' -%}
 	{%- assign active_filters_size = active_filters_size | plus: 1 -%}
 {%- endif -%}
 
@@ -47,6 +47,13 @@
 	{%- assign show_clear_button = true -%}
 {%- endif -%}
 
+{%- assign clear_all_url = routes.all_products_collection_url -%}
+
+{%- if template.name == 'search' -%}
+	{%- assign search_type = search.types | first | default: 'product' -%}
+	{%- capture clear_all_url -%}{{ routes.search_url }}?q={{ search.terms | url_encode }}&type={{ search_type | url_encode }}{%- endcapture -%}
+{%- endif -%}
+
 {%- if product_list != blank -%}
 	<div class="{{- product_filters_selected_wrapper_classes | strip_newlines -}}">
 		{%- if active_filters_size > 0 -%}
@@ -63,7 +70,7 @@
 						{%- if active_filters_size > 0 -%}
 							<a
 								class="focus-visible-outline product-filters-selected__button-clear-all js-reset-filters"
-								href="/collections/all"
+								href="{{- clear_all_url -}}"
 								aria-label="{{- 'general.filters.clear_all' | t | escape -}}"
 								style="margin-top: 0; text-decoration: underline; font-size: 14px;"
 							>
@@ -80,7 +87,7 @@
 							<li class="product-filters-selected__item">
 								<a
 									class="focus-visible-outline product-filters-selected__button product-filters-selected__button--clear-all js-reset-filters"
-									href="/collections/all"
+									href="{{- clear_all_url -}}"
 									aria-label="{{- 'general.filters.clear_all' | t | escape -}}"
 								>
 									{{- 'general.filters.clear_all' | t -}}
@@ -90,11 +97,11 @@
 						{%- endif -%}
 					{%- endif -%}
 
-					{%- if collection.handle != blank and collection.handle != 'all' and collection.handle != 'all-1' -%}
+					{%- if template.name != 'search' and collection.handle != blank and collection.handle != 'all' and collection.handle != 'all-1' -%}
 						<li class="product-filters-selected__item">
 							<a
 								class="focus-visible-outline product-filters-selected__button js-collection-ajax-link"
-								href="/collections/all"
+								href="{{- routes.all_products_collection_url -}}"
 								aria-label="Remove Collection: {{ collection.title | escape }}"
 							>
 								{{- collection.title -}}

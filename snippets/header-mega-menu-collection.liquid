@@ -46,8 +46,14 @@
 				{%- assign shop_women_product = blank -%}
 
 				{%- if shop_gender_product_logic != 'auto' -%}
-					{%- assign shop_men_product = section.settings.shop_mega_men_product -%}
-					{%- assign shop_women_product = section.settings.shop_mega_women_product -%}
+					{%- assign shop_men_product = section.settings.shop_mega_for_men_product -%}
+					{%- if shop_men_product == blank -%}
+						{%- assign shop_men_product = section.settings.shop_mega_men_product -%}
+					{%- endif -%}
+					{%- assign shop_women_product = section.settings.shop_mega_for_women_product -%}
+					{%- if shop_women_product == blank -%}
+						{%- assign shop_women_product = section.settings.shop_mega_women_product -%}
+					{%- endif -%}
 				{%- endif -%}
 
 				{%- assign shop_gender_should_auto_fill = false -%}
@@ -554,17 +560,28 @@
 }
 
 .mega-featured-list,
-.mega-independence-list {
-	align-items: flex-start;
-	gap: 12px;
+.mega-terrain-list.mega-independence-list {
+	display: grid;
+	grid-auto-rows: 24px;
+	align-items: stretch;
+	gap: 4px;
+}
+
+.mega-featured-list li {
+	display: flex;
+	align-items: stretch;
+	min-height: 24px;
 }
 
 .mega-featured-list .mega-block__link,
-.mega-independence-list .mega-block__link {
+.mega-terrain-list.mega-independence-list .mega-block__link {
+	display: flex;
+	align-items: center;
+	min-height: 24px;
 	color: #2C3D33;
 	font-size: 15px;
 	font-weight: 400;
-	line-height: 1.4;
+	line-height: 1.2;
 }
 
 .mega-shop-products {
