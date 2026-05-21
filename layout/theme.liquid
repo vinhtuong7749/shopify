@@ -102,6 +102,72 @@
 					display: none !important;
 				}
 			}
+
+			/* Match Judge.me review text to the product short description typography */
+			.jdgm-widget .jdgm-rev__author,
+			.jdgm-widget .jdgm-rev__timestamp,
+			.jdgm-widget .jdgm-rev__title,
+			.jdgm-widget .jdgm-rev__body,
+			.jdgm-widget .jdgm-rev__body p,
+			.jdgm-widget .jdgm-rev__content,
+			.jdgm-widget .jdgm-rev__content p,
+			.jdgm-all-reviews-page .jdgm-rev__author,
+			.jdgm-all-reviews-page .jdgm-rev__timestamp,
+			.jdgm-all-reviews-page .jdgm-rev__title,
+			.jdgm-all-reviews-page .jdgm-rev__body,
+			.jdgm-all-reviews-page .jdgm-rev__body p,
+			.jdgm-all-reviews-page .jdgm-rev__content,
+			.jdgm-all-reviews-page .jdgm-rev__content p,
+			.jdgm-carousel-wrapper .jdgm-carousel-item__reviewer-name,
+			.jdgm-carousel-wrapper .jdgm-carousel-item__timestamp,
+			.jdgm-carousel-wrapper .jdgm-carousel-item__review-title,
+			.jdgm-carousel-wrapper .jdgm-carousel-item__review-body,
+			.jdgm-carousel-wrapper .jdgm-carousel-item__review-body p {
+				font-family: var(--base-font-family) !important;
+				font-size: calc(var(--body-font-size) * 0.875) !important;
+				font-weight: 400 !important;
+				line-height: 1.65 !important;
+				letter-spacing: 0 !important;
+				text-transform: none !important;
+				color: var(--color-text-thirdly) !important;
+			}
+
+			.jdgm-widget .jdgm-rev__body p,
+			.jdgm-all-reviews-page .jdgm-rev__body p,
+			.jdgm-carousel-wrapper .jdgm-carousel-item__review-body p {
+				margin-bottom: 0.5em !important;
+			}
+
+			.jdgm-widget .jdgm-rev__body p:last-child,
+			.jdgm-all-reviews-page .jdgm-rev__body p:last-child,
+			.jdgm-carousel-wrapper .jdgm-carousel-item__review-body p:last-child {
+				margin-bottom: 0 !important;
+			}
+
+			@media screen and (max-width: 767px) {
+				.jdgm-widget .jdgm-rev__author,
+				.jdgm-widget .jdgm-rev__timestamp,
+				.jdgm-widget .jdgm-rev__title,
+				.jdgm-widget .jdgm-rev__body,
+				.jdgm-widget .jdgm-rev__body p,
+				.jdgm-widget .jdgm-rev__content,
+				.jdgm-widget .jdgm-rev__content p,
+				.jdgm-all-reviews-page .jdgm-rev__author,
+				.jdgm-all-reviews-page .jdgm-rev__timestamp,
+				.jdgm-all-reviews-page .jdgm-rev__title,
+				.jdgm-all-reviews-page .jdgm-rev__body,
+				.jdgm-all-reviews-page .jdgm-rev__body p,
+				.jdgm-all-reviews-page .jdgm-rev__content,
+				.jdgm-all-reviews-page .jdgm-rev__content p,
+				.jdgm-carousel-wrapper .jdgm-carousel-item__reviewer-name,
+				.jdgm-carousel-wrapper .jdgm-carousel-item__timestamp,
+				.jdgm-carousel-wrapper .jdgm-carousel-item__review-title,
+				.jdgm-carousel-wrapper .jdgm-carousel-item__review-body,
+				.jdgm-carousel-wrapper .jdgm-carousel-item__review-body p {
+					font-size: 13px !important;
+					line-height: 1.5 !important;
+				}
+			}
 		</style>
 
 		{{ content_for_header }}
