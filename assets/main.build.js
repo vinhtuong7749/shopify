@@ -2908,8 +2908,8 @@ const ProductCard = () => {
       await window.themeCore.CartApi.makeRequest(window.themeCore.CartApi.actions.ADD_TO_CART, params);
       setTimeout(() => {
         togglePreloader(button, false);
-      }, 500);
-      window.themeCore.CartApi.makeRequest(window.themeCore.CartApi.actions.GET_CART, { noOpen: true, noRefresh: true });
+      }, 120);
+      scheduleSilentCartSync();
     } catch (error) {
       onQuantityError(error);
       setTimeout(() => {
@@ -3463,7 +3463,7 @@ const QuickView = () => {
       formErrorWrapper.classList.remove(cssClasses2.hidden);
       formButton && setTimeout(() => {
         togglePreloader(formButton, false);
-      }, 500);
+      }, 120);
       return;
     }
     const loader2 = document.querySelector(selectors2.loader);
@@ -3472,12 +3472,12 @@ const QuickView = () => {
     }
     formButton && setTimeout(() => {
       togglePreloader(formButton, false);
-    }, 500);
+    }, 120);
     if (window.themeCore.objects.settings.show_cart_notification || window.themeCore.objects.settings.cart_type === "page") {
       window.themeCore.EventBus.emit(`Toggle:quick-view:close`);
       window.themeCore.EventBus.emit(`Overlay:quick-view:close`);
     }
-    window.themeCore.CartApi.makeRequest(window.themeCore.CartApi.actions.GET_CART, { noOpen: true, noRefresh: true });
+    scheduleSilentCartSync();
   }
   function changeErrorMessage(message = "") {
     formError.innerText = message;
@@ -9434,6 +9434,14 @@ const CartApi = () => {
     makeRequest
   });
 };
+function scheduleSilentCartSync() {
+  const run = () => window.themeCore.CartApi.makeRequest(window.themeCore.CartApi.actions.GET_CART, { noOpen: true, noRefresh: true });
+  if ("requestIdleCallback" in window) {
+    window.requestIdleCallback(run, { timeout: 1500 });
+    return;
+  }
+  window.setTimeout(run, 600);
+}
 const VIDEO_TYPES = {
   html: "html",
   youtube: "youtube",
@@ -9753,7 +9761,7 @@ const AddToCart = () => {
             params.properties["_Pre-order"] = "true";
           }
           await window.themeCore.CartApi.makeRequest(window.themeCore.CartApi.actions.ADD_TO_CART, params);
-          window.themeCore.CartApi.makeRequest(window.themeCore.CartApi.actions.GET_CART, { noOpen: true, noRefresh: true });
+          scheduleSilentCartSync();
         } catch (error) {
           const CartNotificationError = window.themeCore.CartNotificationError;
           CartNotificationError.addNotification(error.description);

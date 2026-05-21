@@ -45,6 +45,8 @@ const Cart = () => {
     empty: "is-empty"
   };
   let sections = [], drawers = [], sectionDrawerWrapper = null;
+  const pendingQuantityUpdates = /* @__PURE__ */ new Map();
+  const quantityUpdateDelay = 140;
   function init() {
     sectionDrawerWrapper = document.querySelector(selectors.sectionDrawerWrapper);
     setupDrawers();
@@ -100,9 +102,12 @@ const Cart = () => {
       if (preloader) {
         section.preloader = preloader.init();
       }
-      on("click", section.el, onRemoveButtonClick);
-      on("submit", section.el, onDiscountSubmit);
-      on("click", section.el, onRemoveDiscount);
+      if (!section.el.dataset.cartSectionListenersBound) {
+        on("click", section.el, onRemoveButtonClick);
+        on("submit", section.el, onDiscountSubmit);
+        on("click", section.el, onRemoveDiscount);
+        section.el.dataset.cartSectionListenersBound = "true";
+      }
     });
     updateFreeShippingBar();
   }
@@ -331,14 +336,34 @@ const Cart = () => {
     if (!widget || !widget.controls || !widget.controls.input) {
       return;
     }
-    showPreloaders();
     const input = widget.controls.input;
     const key = input.dataset.itemKey;
     const quantity = widget.quantity.value;
+    const existingUpdate = pendingQuantityUpdates.get(key);
+    if (existingUpdate && existingUpdate.timer) {
+      clearTimeout(existingUpdate.timer);
+    }
+    pendingQuantityUpdates.set(key, {
+      ...(existingUpdate || {}),
+      widget,
+      quantity,
+      timer: setTimeout(() => flushQuantityUpdate(key), quantityUpdateDelay)
+    });
+  }
+  function flushQuantityUpdate(key) {
+    const pendingUpdate = pendingQuantityUpdates.get(key);
+    if (!pendingUpdate || pendingUpdate.inFlight) {
+      return;
+    }
+    const { widget, quantity } = pendingUpdate;
+    pendingUpdate.inFlight = true;
+    pendingUpdate.timer = null;
+    showPreloaders();
     const sectionsIds = getSectionsIds().join(",");
     window.themeCore.CartApi.makeRequest(window.themeCore.CartApi.actions.CHANGE_CART_ITEM_QUANTITY, key, quantity, sectionsIds).then(async (cart) => {
       let item = cart.items.find((item2) => item2.key === key);
-      if (item && quantity !== item.quantity) {
+      const latestUpdate = pendingQuantityUpdates.get(key);
+      if (item && quantity !== item.quantity && latestUpdate && latestUpdate.quantity === quantity) {
         const description = window.themeCore.translations.get("cart.errors.quantity", {
           count: item.quantity,
           title: item.title
@@ -350,11 +375,23 @@ const Cart = () => {
         throw { description };
       }
     }).catch((error) => {
-      onQuantityError(widget, error);
+      const latestUpdate = pendingQuantityUpdates.get(key);
+      if (latestUpdate && latestUpdate.quantity === quantity) {
+        onQuantityError(widget, error);
+      }
     }).finally(() => {
-      hidePreloaders();
-      widget.toggleIncrease();
-      widget.toggleDecrease();
+      const latestUpdate = pendingQuantityUpdates.get(key);
+      if (latestUpdate && latestUpdate.quantity !== quantity) {
+        latestUpdate.inFlight = false;
+        latestUpdate.timer = setTimeout(() => flushQuantityUpdate(key), 0);
+      } else {
+        pendingQuantityUpdates.delete(key);
+        if (pendingQuantityUpdates.size === 0) {
+          hidePreloaders();
+        }
+        widget.toggleIncrease();
+        widget.toggleDecrease();
+      }
     });
   }
   function onRemoveButtonClick(event) {
@@ -366,6 +403,11 @@ const Cart = () => {
     showPreloaders();
     const sectionsIds = getSectionsIds().join(",");
     const key = removeButton.dataset.itemKey;
+    const pendingUpdate = pendingQuantityUpdates.get(key);
+    if (pendingUpdate && pendingUpdate.timer) {
+      clearTimeout(pendingUpdate.timer);
+    }
+    pendingQuantityUpdates.delete(key);
     window.themeCore.CartApi.makeRequest(window.themeCore.CartApi.actions.REMOVE_CART_ITEM, key, sectionsIds).finally(() => {
       hidePreloaders();
     });

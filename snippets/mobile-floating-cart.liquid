@@ -22,11 +22,9 @@
 			aria-controls="CartDrawer"
 			aria-label="{{ 'layout.header.labels.cart_drawer' | t | escape }}"
 		>
-			<svg class="mobile-floating-cart__icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-				<circle cx="9" cy="21" r="1"></circle>
-				<circle cx="20" cy="21" r="1"></circle>
-				<path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"></path>
-			</svg>
+			<span class="mobile-floating-cart__icon">
+				{%- render 'icons', icon: 'cart' -%}
+			</span>
 
 			<span
 				class="mobile-floating-cart__count js-mobile-floating-cart-count"
@@ -47,11 +45,9 @@
 			class="mobile-floating-cart__button"
 			aria-label="{{ 'layout.header.labels.cart' | t | escape }}"
 		>
-			<svg class="mobile-floating-cart__icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-				<circle cx="9" cy="21" r="1"></circle>
-				<circle cx="20" cy="21" r="1"></circle>
-				<path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"></path>
-			</svg>
+			<span class="mobile-floating-cart__icon">
+				{%- render 'icons', icon: 'cart' -%}
+			</span>
 
 			<span
 				class="mobile-floating-cart__count"
@@ -82,20 +78,22 @@
 		.mobile-floating-cart {
 			display: block;
 			position: fixed;
-			bottom: 115px;
-			right: 26px;
-			z-index: 13;
+			right: 16px;
+			bottom: 96px;
+			z-index: 18;
 			opacity: 0;
 			visibility: hidden;
 			touch-action: none;
 			user-select: none;
 			-webkit-user-select: none;
-			transition: opacity 0.3s ease, visibility 0.3s ease;
+			transition: opacity 0.22s ease, visibility 0.22s ease, transform 0.22s ease;
+			transform: translateY(8px);
 		}
 
 		.mobile-floating-cart.is-visible {
 			opacity: 1;
 			visibility: visible;
+			transform: translateY(0);
 		}
 
 		/* When being dragged, disable transitions so movement is instant */
@@ -109,63 +107,111 @@
 		}
 
 		.mobile-floating-cart__button {
+			-webkit-appearance: none;
+			appearance: none;
+			box-sizing: border-box;
 			display: flex;
 			align-items: center;
 			justify-content: center;
 			position: relative;
-			width: 52px;
-			height: 52px;
-			border: none;
+			width: 56px;
+			height: 56px;
+			padding: 0;
+			border: 2px solid rgba(255, 255, 255, 0.92);
 			border-radius: 50%;
-			background-color: var(--color-text-primary, #1a1a1a);
-			color: var(--color-background, #ffffff);
+			background: #2c3d33;
+			color: #ffffff;
 			cursor: grab;
-			box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+			box-shadow: 0 12px 28px rgba(17, 29, 22, 0.3), 0 0 0 4px rgba(44, 61, 51, 0.16);
+			backdrop-filter: blur(8px);
+			-webkit-backdrop-filter: blur(8px);
 			text-decoration: none;
 			-webkit-tap-highlight-color: transparent;
-			transition: transform 0.15s ease, box-shadow 0.15s ease;
+			transition: transform 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease, border-color 0.16s ease;
 		}
 
 		.mobile-floating-cart.is-dragging .mobile-floating-cart__button {
 			cursor: grabbing;
 			transform: scale(1.08);
-			box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3);
+			box-shadow: 0 16px 36px rgba(17, 29, 22, 0.32), 0 0 0 5px rgba(44, 61, 51, 0.16);
 		}
 
-		.mobile-floating-cart__button:active:not(.is-dragging .mobile-floating-cart__button) {
-			transform: scale(0.93);
+		.mobile-floating-cart__button:active {
+			transform: scale(0.94);
+		}
+
+		.mobile-floating-cart__button:focus-visible {
+			outline: 2px solid #ffffff;
+			outline-offset: 3px;
+		}
+
+		@media (-moz-touch-enabled: 0), (hover: hover), (pointer: fine) {
+			.mobile-floating-cart__button:hover {
+				background: #24342b;
+				border-color: #ffffff;
+				box-shadow: 0 16px 34px rgba(17, 29, 22, 0.36), 0 0 0 5px rgba(44, 61, 51, 0.2);
+				transform: translateY(-1px);
+			}
 		}
 
 		.mobile-floating-cart__icon {
-			width: 22px;
-			height: 22px;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 25px;
+			height: 25px;
 			flex-shrink: 0;
 			pointer-events: none;
 		}
 
+		.mobile-floating-cart__icon .icon {
+			width: 25px;
+			height: 25px;
+		}
+
 		.mobile-floating-cart__count {
 			position: absolute;
-			top: -4px;
-			right: -4px;
+			top: -7px;
+			right: -7px;
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			min-width: 20px;
-			height: 20px;
-			padding: 0 5px;
-			border-radius: 10px;
-			background-color: var(--color-button, #1a1a1a);
-			color: var(--color-button-text, #ffffff);
-			font-size: 10px;
-			font-weight: 600;
+			min-width: 22px;
+			height: 22px;
+			padding: 0 6px;
+			border-radius: 999px;
+			background-color: #17261e;
+			color: #ffffff;
+			font-size: 11px;
+			font-weight: 700;
 			line-height: 1;
-			border: 2px solid var(--color-background, #ffffff);
+			border: 2px solid #ffffff;
+			box-shadow: 0 4px 10px rgba(17, 29, 22, 0.22);
 			pointer-events: none;
 		}
 
 		/* Hide badge when cart is empty */
 		.mobile-floating-cart__count[data-cart-count="0"] {
 			display: none;
+		}
+
+		@media (max-width: 767px) {
+			.mobile-floating-cart {
+				right: 16px;
+				bottom: 88px;
+			}
+
+			.mobile-floating-cart__button {
+				width: 56px;
+				height: 56px;
+			}
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			.mobile-floating-cart,
+			.mobile-floating-cart__button {
+				transition: none;
+			}
 		}
 	}
 
@@ -183,11 +229,13 @@
 		if (!el) return;
 
 		/* ---- Scroll show/hide ---- */
-		var showThreshold = 100;
+		var showThreshold = 40;
 		var ticking = false;
+		var countBadge = el.querySelector('[data-cart-count]');
+		var currentCount = countBadge ? parseInt(countBadge.getAttribute('data-cart-count'), 10) || 0 : 0;
 
 		function updateVisibility() {
-			if (window.scrollY > showThreshold) {
+			if (currentCount > 0 || window.scrollY > showThreshold) {
 				el.classList.add('is-visible');
 			} else {
 				el.classList.remove('is-visible');
@@ -212,7 +260,7 @@
 		var startRight = 0;
 		var startBottom = 0;
 		var dragThreshold = 8; /* px movement before considered a drag */
-		var margin = 26; /* edge margin */
+		var margin = 16; /* align with the bottom-right chat button */
 
 		el.addEventListener('touchstart', function(e) {
 			var touch = e.touches[0];
@@ -301,16 +349,20 @@
 		function updateFloatingCartCount(data) {
 			if (!data || !data.hasOwnProperty('item_count')) return;
 
+			currentCount = parseInt(data.item_count, 10) || 0;
+
 			var countBadges = el.querySelectorAll('[data-cart-count]');
 			var countTexts = el.querySelectorAll('.js-header-cart-item-count');
 
 			countBadges.forEach(function(badge) {
-				badge.setAttribute('data-cart-count', data.item_count);
+				badge.setAttribute('data-cart-count', currentCount);
 			});
 
 			countTexts.forEach(function(txt) {
-				txt.innerHTML = data.item_count > 99 ? '99+' : data.item_count;
+				txt.innerHTML = currentCount > 99 ? '99+' : currentCount;
 			});
+
+			updateVisibility();
 		}
 
 		/* Wait for theme EventBus to be ready, then listen */

@@ -191,7 +191,7 @@ const ProductCardWithForm = () => {
     event.preventDefault();
     const errorMessage = await addToCart(variantId, minQuantity, productCard);
     changeErrorMessage(form, errorMessage);
-    window.themeCore.CartApi.makeRequest(window.themeCore.CartApi.actions.GET_CART, { noOpen: true, noRefresh: true });
+    scheduleSilentCartSync();
     window.themeCore.EventBus.emit("product-card-form-end-request", event);
     if (!errorMessage) {
       return;
@@ -218,6 +218,14 @@ const ProductCardWithForm = () => {
       return;
     }
     formError.innerText = message;
+  }
+  function scheduleSilentCartSync() {
+    const run = () => window.themeCore.CartApi.makeRequest(window.themeCore.CartApi.actions.GET_CART, { noOpen: true, noRefresh: true });
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(run, { timeout: 1500 });
+      return;
+    }
+    window.setTimeout(run, 600);
   }
   return Object.freeze({
     init
