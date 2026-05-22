@@ -168,7 +168,7 @@
         "custom_banner_margin_horizontal": 16,
         "custom_banner_margin_bottom": 0,
         "custom_banner_radius": 6,
-        "show_upsell": true,
+        "show_upsell": false,
         "upsell_heading": "Upsell products",
         "upsell_products": [
           "black-bear-wildlife-hunting-t-shirt",

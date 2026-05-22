@@ -627,6 +627,32 @@
 			}
 		}
 
+		#CartDrawer .camo-external-cart-button-loading {
+			position: relative !important;
+			opacity: 0.72 !important;
+			pointer-events: none !important;
+		}
+
+		#CartDrawer .camo-external-cart-button-loading::after {
+			content: "";
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			width: 14px;
+			height: 14px;
+			margin: -7px 0 0 -7px;
+			border: 2px solid rgba(255, 255, 255, 0.38);
+			border-top-color: #fff;
+			border-radius: 50%;
+			animation: camo-cart-button-spin 0.65s linear infinite;
+		}
+
+		@keyframes camo-cart-button-spin {
+			to {
+				transform: rotate(360deg);
+			}
+		}
+
 		@media screen and (max-width: 767px) {
 			body.is-cart-drawer-open #ShopifyChat,
 			body.is-cart-drawer-open #shopify-chat,
@@ -778,6 +804,271 @@
 			} else {
 				document.addEventListener('theme:all:loaded', bindCartEvents, abortController ? { once: true, signal: abortController.signal } : { once: true });
 			}
+		})();
+	</script>
+
+	<script>
+		(function() {
+			var syncState = window.CamoExternalCartAppSync || {};
+			if (syncState.abortController) {
+				syncState.abortController.abort();
+			}
+			if (syncState.observer) {
+				syncState.observer.disconnect();
+			}
+
+			var abortController = window.AbortController ? new AbortController() : null;
+			var captureOptions = abortController ? { capture: true, signal: abortController.signal } : true;
+			var drawerSelector = '#CartDrawer';
+			var appTargetSelector = '#CartDrawer .shopify-app-block, #CartDrawer [id*="selleasy" i], #CartDrawer [class*="selleasy" i], #CartDrawer [id*="lb-widget" i], #CartDrawer [class*="lb-widget" i], #CartDrawer [id*="lb-upsell" i], #CartDrawer [class*="lb-upsell" i], #CartDrawer [id*="sll" i], #CartDrawer [class*="sll" i]';
+			var quantityInputSelector = '#CartDrawer [data-cart-item] [data-quantity-input]';
+			var cartMutationRegex = /\/cart\/(add|change|update|clear)\.js(\?|$)/i;
+			var loadingButton = null;
+			var loadingTimer = null;
+			var syncTimer = null;
+			var fallbackTimer = null;
+			var refreshTimer = null;
+			var lastPublishedCount = null;
+			var lastCartAppClickAt = 0;
+			var lastRefreshEmitAt = 0;
+
+			function getDrawer() {
+				return document.querySelector(drawerSelector);
+			}
+
+			function closestAppTarget(target) {
+				if (!target || !target.closest) return null;
+				try {
+					return target.closest(appTargetSelector);
+				} catch (error) {
+					return null;
+				}
+			}
+
+			function getCountValue(count) {
+				var value = Number(count);
+				return Number.isFinite(value) && value >= 0 ? value : null;
+			}
+
+			function parseRenderedSubtotalCount() {
+				var drawer = getDrawer();
+				if (!drawer) return null;
+
+				var footer = drawer.querySelector('.js-cart-footer');
+				var textSources = [];
+				if (footer) textSources.push(footer.textContent || '');
+				textSources.push(drawer.textContent || '');
+
+				for (var i = 0; i < textSources.length; i++) {
+					var normalizedText = textSources[i].replace(/\s+/g, ' ');
+					var match = normalizedText.match(/\((\d+)\s+items?\)/i);
+					var count = match ? getCountValue(match[1]) : null;
+
+					if (count !== null) return count;
+				}
+
+				return null;
+			}
+
+			function getVisibleQuantityCount() {
+				var inputs = document.querySelectorAll(quantityInputSelector);
+				if (!inputs.length) return null;
+
+				return Array.prototype.reduce.call(inputs, function(total, input) {
+					var value = getCountValue(input.value);
+					return total + (value || 0);
+				}, 0);
+			}
+
+			function readRenderedCount() {
+				var subtotalCount = parseRenderedSubtotalCount();
+				if (subtotalCount !== null) return subtotalCount;
+				return getVisibleQuantityCount();
+			}
+
+			function clearLoading() {
+				if (loadingTimer) {
+					window.clearTimeout(loadingTimer);
+					loadingTimer = null;
+				}
+				if (!loadingButton) return;
+
+				loadingButton.classList.remove('camo-external-cart-button-loading');
+				loadingButton.removeAttribute('aria-busy');
+				loadingButton = null;
+			}
+
+			function publishCount(count) {
+				var normalizedCount = getCountValue(count);
+				if (normalizedCount === null) return;
+
+				var shouldBroadcast = lastPublishedCount !== normalizedCount;
+				lastPublishedCount = normalizedCount;
+
+				if (window.CamoCartDrawerTitleSync && window.CamoCartDrawerTitleSync.updateTitle) {
+					window.CamoCartDrawerTitleSync.updateTitle(normalizedCount);
+				}
+
+				if (shouldBroadcast && window.themeCore && window.themeCore.EventBus) {
+					window.themeCore.EventBus.emit('header:update-item-count', { item_count: normalizedCount });
+				}
+
+				clearLoading();
+			}
+
+			function updateFromCartPayload(cart) {
+				if (!cart || !Object.prototype.hasOwnProperty.call(cart, 'item_count')) return;
+				publishCount(cart.item_count);
+			}
+
+			function syncFromRenderedCart() {
+				var count = readRenderedCount();
+				if (count === null) return;
+				publishCount(count);
+			}
+
+			function scheduleRenderedSync(delay) {
+				if (syncTimer) window.clearTimeout(syncTimer);
+				syncTimer = window.setTimeout(syncFromRenderedCart, delay || 80);
+			}
+
+			function emitCartRefresh() {
+				if (!window.themeCore || !window.themeCore.EventBus) return;
+				var now = Date.now();
+				if (now - lastRefreshEmitAt < 250) return;
+				lastRefreshEmitAt = now;
+				window.themeCore.EventBus.emit('cart:refresh');
+			}
+
+			function scheduleCartRefresh(delay) {
+				if (refreshTimer) window.clearTimeout(refreshTimer);
+				refreshTimer = window.setTimeout(function() {
+					refreshTimer = null;
+					emitCartRefresh();
+				}, delay || 0);
+			}
+
+			function setLoadingButton(trigger) {
+				clearLoading();
+				loadingButton = trigger;
+				loadingButton.classList.add('camo-external-cart-button-loading');
+				loadingButton.setAttribute('aria-busy', 'true');
+				loadingTimer = window.setTimeout(clearLoading, 7000);
+			}
+
+			function handleExternalCartClick(event) {
+				var target = event.target;
+				var trigger = target && target.closest ? target.closest('button, [role="button"], input[type="submit"], a') : null;
+
+				if (!trigger || !closestAppTarget(trigger)) return;
+
+				lastCartAppClickAt = Date.now();
+				setLoadingButton(trigger);
+				/* Safety net: if no /cart/*.js fetch is detected (e.g. app uses XHR),
+				   fall back to reading the rendered count once. */
+				if (fallbackTimer) window.clearTimeout(fallbackTimer);
+				fallbackTimer = window.setTimeout(function() {
+					fallbackTimer = null;
+					syncFromRenderedCart();
+				}, 1500);
+			}
+
+			/* Observe ONLY the footer subtotal area for textual count changes.
+			   This is dramatically lighter than watching the entire drawer subtree. */
+			function observeFooter() {
+				var drawer = getDrawer();
+				if (!drawer || !window.MutationObserver) return null;
+
+				var footer = drawer.querySelector('.js-cart-footer');
+				if (!footer) return null;
+
+				var observer = new MutationObserver(function() {
+					scheduleRenderedSync(60);
+				});
+
+				observer.observe(footer, { childList: true, characterData: true, subtree: true });
+				return observer;
+			}
+
+			/* Intercept fetch responses to /cart/*.js so we react immediately
+			   instead of polling the DOM at 700/1800/3600ms. */
+			if (typeof window.fetch === 'function' && !window.__camoCartDrawerFetchPatched) {
+				window.__camoCartDrawerFetchPatched = true;
+				var nativeFetch = window.fetch;
+				window.fetch = function(input, init) {
+					var url = '';
+					if (typeof input === 'string') {
+						url = input;
+					} else if (input && typeof input.url === 'string') {
+						url = input.url;
+					}
+
+					var isCartMutation = url && cartMutationRegex.test(url);
+					var promise = nativeFetch.apply(this, arguments);
+
+					if (!isCartMutation) return promise;
+
+					promise.then(function(response) {
+						if (!response || typeof response.clone !== 'function') return;
+						response.clone().json().then(function(data) {
+							var hasCount = data && typeof data.item_count === 'number';
+							if (hasCount) {
+								publishCount(data.item_count);
+							}
+							/* Refresh drawer contents only when the user actually
+							   interacted with an external cart-app trigger recently. */
+							if (Date.now() - lastCartAppClickAt < 7000) {
+								scheduleCartRefresh(0);
+								clearLoading();
+								/* Keep the fallback timer when we don't have the
+								   item_count (e.g. /cart/add.js) — it reads the
+								   rendered count once the refresh paints, so the
+								   header badge still ends up in sync. */
+								if (hasCount && fallbackTimer) {
+									window.clearTimeout(fallbackTimer);
+									fallbackTimer = null;
+								}
+							}
+						}).catch(function() {});
+					}).catch(function() {});
+
+					return promise;
+				};
+			}
+
+			function bindThemeEvents() {
+				if (!window.themeCore || !window.themeCore.EventBus || window.CamoExternalCartAppSyncEventsBound) return;
+				window.CamoExternalCartAppSyncEventsBound = true;
+
+				window.themeCore.EventBus.listen('cart:updated', function(cart) {
+					if (window.CamoExternalCartAppSync) {
+						window.CamoExternalCartAppSync.updateFromCartPayload(cart);
+					}
+				});
+
+				window.themeCore.EventBus.listen('header:update-item-count', function(cart) {
+					if (window.CamoExternalCartAppSync) {
+						window.CamoExternalCartAppSync.updateFromCartPayload(cart);
+					}
+				});
+			}
+
+			document.addEventListener('click', handleExternalCartClick, captureOptions);
+
+			window.CamoExternalCartAppSync = {
+				abortController: abortController,
+				observer: observeFooter(),
+				sync: syncFromRenderedCart,
+				updateFromCartPayload: updateFromCartPayload
+			};
+
+			if (window.themeCore && window.themeCore.EventBus) {
+				bindThemeEvents();
+			} else {
+				document.addEventListener('theme:all:loaded', bindThemeEvents, abortController ? { once: true, signal: abortController.signal } : { once: true });
+			}
+
+			syncFromRenderedCart();
 		})();
 	</script>
 

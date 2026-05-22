@@ -213,6 +213,31 @@
 		/* Save the REAL fetch before anyone patches it */
 		var nativeFetch = window.fetch;
 		window.__upsellIsProcessing = window.__upsellIsProcessing || false;
+		var cartAppAddSelector = '#CartDrawer .shopify-app-block, #CartDrawer [id*="selleasy" i], #CartDrawer [class*="selleasy" i], #CartDrawer [id*="lb-widget" i], #CartDrawer [class*="lb-widget" i], #CartDrawer [id*="lb-upsell" i], #CartDrawer [class*="lb-upsell" i], #CartDrawer [id*="sll" i], #CartDrawer [class*="sll" i]';
+		var lastCartAppAddAt = 0;
+
+		function isCartAppTarget(target) {
+			if (!target || !target.closest) return false;
+			try {
+				return !!target.closest(cartAppAddSelector);
+			} catch (error) {
+				return false;
+			}
+		}
+
+		document.addEventListener('click', function(event) {
+			var target = event.target;
+			var trigger = target && target.closest ? target.closest('button, [role="button"], input[type="submit"], a') : null;
+
+			if (trigger && isCartAppTarget(trigger)) {
+				lastCartAppAddAt = Date.now();
+			}
+		}, true);
+
+		function shouldSkipProtectionForExternalCartAdd() {
+			if (Date.now() - lastCartAppAddAt < 5000) return true;
+			return isCartAppTarget(document.activeElement);
+		}
 
 		window.fetch = function(url, opts) {
 			var isAddJs = typeof url === 'string' && url.indexOf('/cart/add') !== -1;
@@ -221,45 +246,41 @@
 				return nativeFetch.call(window, url, opts);
 			}
 
+			if (shouldSkipProtectionForExternalCartAdd()) {
+				return nativeFetch.call(window, url, opts);
+			}
+
 			/*
 			 * This IS an add-to-cart request. Prevent race conditions with a lock.
 			 */
 			return nativeFetch.call(window, url, opts).then(function(response) {
-				var cloned = response.clone();
+				if (window.__upsellIsProcessing) return response;
 
+				window.__upsellIsProcessing = true;
+				/* Run the upsell reconciliation immediately after the main /cart/add
+				   response settles — Shopify has already committed it. */
+				var work;
 				if (checkbox.checked) {
-					if (!window.__upsellIsProcessing) {
-						window.__upsellIsProcessing = true;
-						setTimeout(function() {
-							getUpsellCartQty().then(function(qty) {
-								if (qty === 0) {
-									xhrPost('/cart/add.js', { items: [{ id: UPSELL_VARIANT_ID, quantity: 1 }] }).then(function() {
-										if (window.themeCore && window.themeCore.EventBus) window.themeCore.EventBus.emit('cart:refresh');
-									}).finally(function() {
-										window.__upsellIsProcessing = false;
-									});
-								} else if (qty > 1) {
-									xhrPost('/cart/change.js', { id: UPSELL_VARIANT_ID, quantity: 1 }).then(function() {
-										if (window.themeCore && window.themeCore.EventBus) window.themeCore.EventBus.emit('cart:refresh');
-									}).finally(function() {
-										window.__upsellIsProcessing = false;
-									});
-								} else {
-									window.__upsellIsProcessing = false;
-								}
+					work = getUpsellCartQty().then(function(qty) {
+						if (qty === 0) {
+							return xhrPost('/cart/add.js', { items: [{ id: UPSELL_VARIANT_ID, quantity: 1 }] }).then(function() {
+								if (window.themeCore && window.themeCore.EventBus) window.themeCore.EventBus.emit('cart:refresh');
 							});
-						}, 200);
-					}
+						}
+						if (qty > 1) {
+							return xhrPost('/cart/change.js', { id: UPSELL_VARIANT_ID, quantity: 1 }).then(function() {
+								if (window.themeCore && window.themeCore.EventBus) window.themeCore.EventBus.emit('cart:refresh');
+							});
+						}
+					});
 				} else {
 					/* Checkbox not checked — still enforce max 1 as safety */
-					if (!window.__upsellIsProcessing) {
-						window.__upsellIsProcessing = true;
-						setTimeout(function() {
-							enforceMaxOne();
-							window.__upsellIsProcessing = false;
-						}, 200);
-					}
+					work = Promise.resolve(enforceMaxOne());
 				}
+
+				Promise.resolve(work).catch(function() {}).then(function() {
+					window.__upsellIsProcessing = false;
+				});
 
 				return response;
 			});

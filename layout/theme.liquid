@@ -367,13 +367,114 @@
 			setTimeout(function() {
 			(function() {
 				var SP_HANDLE = 'shipping-protection-apparel';
+				var COOLDOWN_MS = 1200;
+				var DEBOUNCE_MS = 220;
+				var BLUR_HIDE_MS = 200;
 				var isEnforcing = false;
+				var lastEnforceAt = 0;
+				var debounceTimer = null;
+				var pendingHint = null;
 
-				function enforceCartRules(callback) {
+				function analyzeItems(items) {
+					var updates = {};
+					var needsUpdate = false;
+					var variants = {};
+
+					for (var i = 0; i < items.length; i++) {
+						var item = items[i];
+
+						if (item.handle === SP_HANDLE) {
+							if (item.quantity > 1) {
+								needsUpdate = true;
+								updates[item.key] = 1;
+							}
+							continue;
+						}
+
+						if (variants[item.variant_id]) {
+							needsUpdate = true;
+							variants[item.variant_id].qty += item.quantity;
+							updates[item.key] = 0;
+							updates[variants[item.variant_id].key] = variants[item.variant_id].qty;
+						} else {
+							variants[item.variant_id] = { key: item.key, qty: item.quantity };
+						}
+					}
+
+					return { updates: updates, needsUpdate: needsUpdate };
+				}
+
+				function postCartUpdate(updates, callback) {
+					document.documentElement.classList.add('is-cart-merging');
+					var fix = new XMLHttpRequest();
+					fix.open('POST', '/cart/update.js', true);
+					fix.setRequestHeader('Content-Type', 'application/json');
+					fix.onload = function() {
+						isEnforcing = false;
+						lastEnforceAt = Date.now();
+						if (callback && typeof callback === 'function') {
+							callback();
+						} else if (window.themeCore && window.themeCore.EventBus) {
+							window.themeCore.EventBus.emit("cart:refresh");
+							setTimeout(function() { document.documentElement.classList.remove('is-cart-merging'); }, BLUR_HIDE_MS);
+						} else {
+							window.location.reload();
+						}
+					};
+					fix.onerror = function() {
+						isEnforcing = false;
+						lastEnforceAt = Date.now();
+						document.documentElement.classList.remove('is-cart-merging');
+						if (callback) callback();
+					};
+					fix.send(JSON.stringify({ updates: updates }));
+				}
+
+				function isFullCartPayload(cart) {
+					if (!cart || !Array.isArray(cart.items) || typeof cart.item_count !== 'number') return false;
+
+					var totalQuantity = 0;
+					for (var i = 0; i < cart.items.length; i++) {
+						var item = cart.items[i];
+						if (!item || !item.key || !item.variant_id || typeof item.quantity !== 'number') return false;
+						totalQuantity += item.quantity;
+					}
+
+					return totalQuantity === cart.item_count;
+				}
+
+				function hasShippingProtection(items) {
+					if (!Array.isArray(items)) return false;
+					for (var i = 0; i < items.length; i++) {
+						if (items[i] && items[i].handle === SP_HANDLE) return true;
+					}
+					return false;
+				}
+
+				function enforceCartRules(callback, cartHint) {
 					if (isEnforcing) {
 						if (callback) callback();
 						return;
 					}
+
+					/* Fast path: payload already contains the full cart — analyze without an extra /cart.js fetch. */
+					if (isFullCartPayload(cartHint)) {
+						var result = analyzeItems(cartHint.items);
+						lastEnforceAt = Date.now();
+						if (!result.needsUpdate) {
+							if (callback) callback();
+							return;
+						}
+						isEnforcing = true;
+						postCartUpdate(result.updates, callback);
+						return;
+					}
+
+					/* Skip silent checks during cooldown — checkout-callback path still runs */
+					if (!callback && Date.now() - lastEnforceAt < COOLDOWN_MS) {
+						return;
+					}
+
 					isEnforcing = true;
 					var xhr = new XMLHttpRequest();
 					xhr.open('GET', '/cart.js', true);
@@ -381,71 +482,36 @@
 					xhr.onload = function() {
 						if (xhr.status >= 200 && xhr.status < 300) {
 							var cart = JSON.parse(xhr.responseText);
-							var updates = {};
-							var needsUpdate = false;
-							var variants = {};
+							var result = analyzeItems(cart.items);
 
-							for (var i = 0; i < cart.items.length; i++) {
-								var item = cart.items[i];
-
-								// 1. Shipping Protection rule:
-								if (item.handle === SP_HANDLE) {
-									if (item.quantity > 1) {
-										needsUpdate = true;
-										updates[item.key] = 1;
-									}
-									continue;
-								}
-
-								// 2. Merge identical variants rule:
-								if (variants[item.variant_id]) {
-									needsUpdate = true;
-									variants[item.variant_id].qty += item.quantity;
-									updates[item.key] = 0;
-									updates[variants[item.variant_id].key] = variants[item.variant_id].qty;
-								} else {
-									variants[item.variant_id] = { key: item.key, qty: item.quantity };
-								}
-							}
-
-							if (needsUpdate) {
-								/* Chỉ mờ giỏ hàng khi THẬT SỰ cần update */
-								document.documentElement.classList.add('is-cart-merging');
-								var fix = new XMLHttpRequest();
-								fix.open('POST', '/cart/update.js', true);
-								fix.setRequestHeader('Content-Type', 'application/json');
-								fix.onload = function() {
-									isEnforcing = false;
-									if (callback && typeof callback === 'function') {
-										callback();
-									} else {
-										if (window.themeCore && window.themeCore.EventBus) {
-											window.themeCore.EventBus.emit("cart:refresh");
-											setTimeout(function() { document.documentElement.classList.remove('is-cart-merging'); }, 400);
-										} else {
-											window.location.reload();
-										}
-									}
-								};
-								fix.onerror = function() { 
-									isEnforcing = false; 
-									document.documentElement.classList.remove('is-cart-merging');
-									if (callback) callback(); 
-								};
-								fix.send(JSON.stringify({ updates: updates }));
+							if (result.needsUpdate) {
+								postCartUpdate(result.updates, callback);
 								return;
 							}
 						}
 						isEnforcing = false;
+						lastEnforceAt = Date.now();
 						document.documentElement.classList.remove('is-cart-merging');
 						if (callback && typeof callback === 'function') callback();
 					};
-					xhr.onerror = function() { 
-						isEnforcing = false; 
+					xhr.onerror = function() {
+						isEnforcing = false;
+						lastEnforceAt = Date.now();
 						document.documentElement.classList.remove('is-cart-merging');
-						if (callback) callback(); 
+						if (callback) callback();
 					};
 					xhr.send();
+				}
+
+				function scheduleEnforce(cartHint) {
+					pendingHint = cartHint || pendingHint;
+					if (debounceTimer) clearTimeout(debounceTimer);
+					debounceTimer = setTimeout(function() {
+						debounceTimer = null;
+						var hint = pendingHint;
+						pendingHint = null;
+						enforceCartRules(null, hint);
+					}, DEBOUNCE_MS);
 				}
 
 				function hasCartItemsHint() {
@@ -469,7 +535,16 @@
 				function bindCartUpdates() {
 					if (!window.themeCore || !window.themeCore.EventBus) return;
 					window.themeCore.EventBus.listen('cart:updated', function(cart) {
-						if (cart && cart.item_count > 0) enforceCartRules();
+						if (!cart || !cart.item_count) return;
+						/* For ADD responses, payload.items only contains added line items.
+						   Skip the silent enforce entirely when those added items contain no
+						   shipping-protection — Shopify already merges duplicate variants. */
+						var isAddAction = cart.action === 'addItem' || cart.action === 'addItems';
+						if (isAddAction && Array.isArray(cart.items) && !hasShippingProtection(cart.items)) {
+							lastEnforceAt = Date.now();
+							return;
+						}
+						scheduleEnforce(cart);
 					});
 				}
 
@@ -498,6 +573,11 @@
 					if (isCheckout) {
 						e.preventDefault();
 						var form = e.target;
+						if (debounceTimer) {
+							clearTimeout(debounceTimer);
+							debounceTimer = null;
+							pendingHint = null;
+						}
 						document.documentElement.classList.add('is-cart-merging');
 						enforceCartRules(function() {
 							document.documentElement.classList.remove('is-cart-merging');
