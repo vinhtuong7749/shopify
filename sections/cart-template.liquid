@@ -261,15 +261,139 @@
 			xhr.send();
 		}
 
+		function isCarouselNavigationTrigger(trigger) {
+			if (!trigger) return false;
+			var text = (trigger.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
+			var className = typeof trigger.className === 'string' ? trigger.className : '';
+			var label = [
+				text,
+				className,
+				trigger.getAttribute('aria-label') || '',
+				trigger.getAttribute('title') || '',
+				trigger.getAttribute('data-action') || '',
+				trigger.getAttribute('data-direction') || ''
+			].join(' ').toLowerCase();
+			var looksLikeNav = /(prev|previous|next|arrow|slide|carousel|swiper|slick|glide|splide)/.test(label);
+			var looksLikeCartAction = /(add|cart|bag|buy|checkout)/.test(label);
+			var isIconOnly = text.length <= 2 && !!trigger.querySelector('svg, path, use');
+			return looksLikeNav && !looksLikeCartAction || isIconOnly && !looksLikeCartAction;
+		}
+
 		document.addEventListener('click', function(event) {
 			var target = event.target;
 			if (!target || !target.closest) return;
 			try {
-				if (target.closest(appTargetSelector)) {
+				if (target.closest('#CartDrawer')) return;
+				var trigger = target.closest('button, [role="button"], input[type="submit"], a');
+				if (target.closest(appTargetSelector) && !isCarouselNavigationTrigger(trigger)) {
 					lastAppClickAt = Date.now();
 				}
 			} catch (error) { /* selector unsupported in old browsers */ }
 		}, true);
+
+		function getCartSectionsIds() {
+			var sections = document.querySelectorAll('[data-section-type="cart-template"]:not([data-section-modification="drawer"])');
+			if (!sections.length) {
+				sections = document.querySelectorAll('[data-section-type="cart-template"]');
+			}
+
+			return Array.prototype.map.call(
+				sections,
+				function(s) { return s.dataset.sectionId; }
+			).filter(Boolean).join(',');
+		}
+
+		function addSectionsToBody(body) {
+			var sectionsIds = getCartSectionsIds();
+			if (!sectionsIds || body == null) return body;
+
+			if (typeof body === 'string') {
+				try {
+					var parsedBody = JSON.parse(body);
+					if (parsedBody && typeof parsedBody === 'object' && !Array.isArray(parsedBody) && !parsedBody.sections) {
+						parsedBody.sections = sectionsIds;
+						return JSON.stringify(parsedBody);
+					}
+				} catch (error) {
+					try {
+						var params = new URLSearchParams(body);
+						if (!params.has('sections')) {
+							params.set('sections', sectionsIds);
+							return params.toString();
+						}
+					} catch (paramsError) { /* ignore */ }
+				}
+				return body;
+			}
+
+			if (typeof URLSearchParams === 'function' && body instanceof URLSearchParams && !body.has('sections')) {
+				body.set('sections', sectionsIds);
+				return body;
+			}
+
+			if (typeof FormData === 'function' && body instanceof FormData && !body.has('sections')) {
+				body.append('sections', sectionsIds);
+				return body;
+			}
+
+			return body;
+		}
+
+		function getCartSectionsUrl() {
+			var ids = getCartSectionsIds();
+			if (!ids) return null;
+			var url = new URL(window.location.href);
+			url.searchParams.set('sections', ids);
+			url.searchParams.set('lazyload', 'false');
+			return url.href;
+		}
+
+		function refreshSectionsSilently() {
+			var url = getCartSectionsUrl();
+			if (!url || typeof window.__camoCartPartialUpdate !== 'function') {
+				emitRefresh();
+				return;
+			}
+
+			fetch(url).then(function(response) {
+				return response.json();
+			}).then(function(sections) {
+				if (sections && typeof sections === 'object') {
+					window.__camoCartPartialUpdate({
+						action: 'addItem',
+						sections: sections,
+						params: [{ noRefresh: true }]
+					});
+				}
+			}).catch(function() {
+				emitRefresh();
+			});
+		}
+
+		function handleCartMutationData(data) {
+			var hasCount = data && typeof data.item_count === 'number';
+			if (hasCount) emitHeaderCount(data.item_count);
+
+			if (Date.now() - lastAppClickAt >= 7000) return;
+
+			var hasSections = data && data.sections && typeof data.sections === 'object' && !Array.isArray(data.sections) && Object.keys(data.sections).length > 0;
+			if (hasSections && typeof window.__camoCartPartialUpdate === 'function') {
+				window.__camoCartPartialUpdate({
+					action: 'addItem',
+					sections: data.sections,
+					params: [{ noRefresh: true }]
+				});
+				if (!hasCount) fetchHeaderCount();
+				return;
+			}
+
+			if (hasCount) {
+				refreshSectionsSilently();
+			} else {
+				refreshSectionsSilently();
+				fetchHeaderCount();
+			}
+		}
 
 		if (typeof window.fetch === 'function') {
 			var nativeFetch = window.fetch;
@@ -282,7 +406,19 @@
 				}
 
 				var isCartMutation = url && cartMutationRegex.test(url);
-				var promise = nativeFetch.apply(this, arguments);
+				var fetchArgs = arguments;
+
+				/* Inject `sections=` into external-app cart mutation bodies so the
+				   response carries the rendered section HTML — that lets us morph
+				   the cart in place instead of triggering a flickery full
+				   refresh. Only do this for recent app clicks. */
+				if (isCartMutation && Date.now() - lastAppClickAt < 7000 && init && init.body) {
+					var bodyWithSections = addSectionsToBody(init.body);
+					if (bodyWithSections !== init.body) {
+						fetchArgs = [input, Object.assign({}, init, { body: bodyWithSections })];
+					}
+				}
+				var promise = nativeFetch.apply(this, fetchArgs);
 
 				if (!isCartMutation) return promise;
 
@@ -294,23 +430,47 @@
 					if (Date.now() - lastAppClickAt >= 7000) return;
 
 					response.clone().json().then(function(data) {
-						if (data && typeof data.item_count === 'number') {
-							emitHeaderCount(data.item_count);
-							emitRefresh();
-						} else {
-							/* /cart/add.js does not return item_count; fetch /cart.js
-							   in parallel so the header count stays in sync while the
-							   section refresh runs. */
-							emitRefresh();
+						handleCartMutationData(data);
+					}).catch(function() {
+						if (Date.now() - lastAppClickAt < 7000) {
+							refreshSectionsSilently();
 							fetchHeaderCount();
 						}
-					}).catch(function() {
-						emitRefresh();
-						fetchHeaderCount();
 					});
 				}).catch(function() {});
 
 				return promise;
+			};
+		}
+
+		if (window.XMLHttpRequest && !window.__camoCartPageXhrPatched) {
+			window.__camoCartPageXhrPatched = true;
+			var nativeXhrOpen = XMLHttpRequest.prototype.open;
+			var nativeXhrSend = XMLHttpRequest.prototype.send;
+
+			XMLHttpRequest.prototype.open = function(method, url) {
+				this.__camoCartUrl = url;
+				this.__camoCartMethod = method;
+				return nativeXhrOpen.apply(this, arguments);
+			};
+
+			XMLHttpRequest.prototype.send = function(body) {
+				var url = this.__camoCartUrl || '';
+				var isCartMutation = url && cartMutationRegex.test(url);
+				var recentAppClick = Date.now() - lastAppClickAt < 7000;
+
+				if (isCartMutation && recentAppClick) {
+					body = addSectionsToBody(body);
+					this.addEventListener('load', function() {
+						try {
+							handleCartMutationData(JSON.parse(this.responseText));
+						} catch (error) {
+							refreshSectionsSilently();
+						}
+					});
+				}
+
+				return nativeXhrSend.call(this, body);
 			};
 		}
 	})();

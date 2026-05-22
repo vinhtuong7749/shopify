@@ -627,32 +627,6 @@
 			}
 		}
 
-		#CartDrawer .camo-external-cart-button-loading {
-			position: relative !important;
-			opacity: 0.72 !important;
-			pointer-events: none !important;
-		}
-
-		#CartDrawer .camo-external-cart-button-loading::after {
-			content: "";
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			width: 14px;
-			height: 14px;
-			margin: -7px 0 0 -7px;
-			border: 2px solid rgba(255, 255, 255, 0.38);
-			border-top-color: #fff;
-			border-radius: 50%;
-			animation: camo-cart-button-spin 0.65s linear infinite;
-		}
-
-		@keyframes camo-cart-button-spin {
-			to {
-				transform: rotate(360deg);
-			}
-		}
-
 		@media screen and (max-width: 767px) {
 			body.is-cart-drawer-open #ShopifyChat,
 			body.is-cart-drawer-open #shopify-chat,
@@ -732,14 +706,36 @@
 				});
 			}
 
+			/* Count items currently rendered in the drawer.
+			   IMPORTANT: shipping-protection cards intentionally render WITHOUT a
+			   [data-quantity-input], so summing only quantity inputs under-counts
+			   the cart. Add the protection cards' quantity (always 1 per the
+			   global enforcer) so optimistic updates stay in sync with the
+			   server-side cart.item_count. */
 			function getVisibleQuantityCount() {
-				var inputs = document.querySelectorAll(quantityInputSelector);
-				if (!inputs.length) return null;
+				var drawer = document.querySelector('#CartDrawer');
+				if (!drawer) return null;
 
-				return Array.prototype.reduce.call(inputs, function(total, input) {
+				var inputs = drawer.querySelectorAll('[data-cart-item] [data-quantity-input]');
+				var protectionCards = drawer.querySelectorAll('.cart-item-drawer--protection');
+
+				if (!inputs.length && !protectionCards.length) return null;
+
+				var inputSum = Array.prototype.reduce.call(inputs, function(total, input) {
 					var value = Number(input.value || 0);
 					return total + (Number.isFinite(value) && value > 0 ? value : 0);
 				}, 0);
+
+				return inputSum + protectionCards.length;
+			}
+
+			function getDisplayedCount() {
+				var title = document.querySelector(titleSelector);
+				if (!title) return null;
+				var attrValue = title.getAttribute('data-cart-drawer-count');
+				if (attrValue === null || attrValue === '') return null;
+				var count = Number(attrValue);
+				return Number.isFinite(count) && count >= 0 ? count : null;
 			}
 
 			function updateFromVisibleQuantities() {
@@ -763,10 +759,17 @@
 			document.addEventListener('click', function(event) {
 				var removeButton = event.target.closest('#CartDrawer .js-cart-item-remove');
 				if (removeButton) {
-					var currentCount = getVisibleQuantityCount();
+					/* Prefer the badge's current value over recomputing from the
+					   DOM — the badge already reflects the authoritative
+					   server-side count, including shipping-protection items. */
+					var currentCount = getDisplayedCount();
+					if (currentCount === null) currentCount = getVisibleQuantityCount();
+
 					var cartItem = removeButton.closest('[data-cart-item]');
 					var quantityInput = cartItem ? cartItem.querySelector('[data-quantity-input]') : null;
-					var itemQuantity = quantityInput ? getCountValue(quantityInput.value) : 0;
+					/* Items without an input (shipping protection) always have
+					   quantity 1 per the global cart enforcer. */
+					var itemQuantity = quantityInput ? getCountValue(quantityInput.value) : 1;
 					if (currentCount !== null) updateTitle(Math.max(currentCount - itemQuantity, 0));
 					return;
 				}
@@ -823,11 +826,12 @@
 			var appTargetSelector = '#CartDrawer .shopify-app-block, #CartDrawer [id*="selleasy" i], #CartDrawer [class*="selleasy" i], #CartDrawer [id*="lb-widget" i], #CartDrawer [class*="lb-widget" i], #CartDrawer [id*="lb-upsell" i], #CartDrawer [class*="lb-upsell" i], #CartDrawer [id*="sll" i], #CartDrawer [class*="sll" i]';
 			var quantityInputSelector = '#CartDrawer [data-cart-item] [data-quantity-input]';
 			var cartMutationRegex = /\/cart\/(add|change|update|clear)\.js(\?|$)/i;
-			var loadingButton = null;
 			var loadingTimer = null;
 			var syncTimer = null;
 			var fallbackTimer = null;
 			var refreshTimer = null;
+			var silentRefreshTimer = null;
+			var appAddingTimer = null;
 			var lastPublishedCount = null;
 			var lastCartAppClickAt = 0;
 			var lastRefreshEmitAt = 0;
@@ -870,14 +874,23 @@
 				return null;
 			}
 
+			/* Mirror of CamoCartDrawerTitleSync — include shipping-protection
+			   cards which don't expose a [data-quantity-input]. */
 			function getVisibleQuantityCount() {
-				var inputs = document.querySelectorAll(quantityInputSelector);
-				if (!inputs.length) return null;
+				var drawer = getDrawer();
+				if (!drawer) return null;
 
-				return Array.prototype.reduce.call(inputs, function(total, input) {
+				var inputs = drawer.querySelectorAll('[data-cart-item] [data-quantity-input]');
+				var protectionCards = drawer.querySelectorAll('.cart-item-drawer--protection');
+
+				if (!inputs.length && !protectionCards.length) return null;
+
+				var inputSum = Array.prototype.reduce.call(inputs, function(total, input) {
 					var value = getCountValue(input.value);
 					return total + (value || 0);
 				}, 0);
+
+				return inputSum + protectionCards.length;
 			}
 
 			function readRenderedCount() {
@@ -891,11 +904,15 @@
 					window.clearTimeout(loadingTimer);
 					loadingTimer = null;
 				}
-				if (!loadingButton) return;
+				if (appAddingTimer) {
+					window.clearTimeout(appAddingTimer);
+					appAddingTimer = null;
+				}
+				appAddingTimer = window.setTimeout(function() {
+					appAddingTimer = null;
+					document.documentElement.classList.remove('is-cart-app-adding');
+				}, 250);
 
-				loadingButton.classList.remove('camo-external-cart-button-loading');
-				loadingButton.removeAttribute('aria-busy');
-				loadingButton = null;
 			}
 
 			function publishCount(count) {
@@ -948,12 +965,28 @@
 				}, delay || 0);
 			}
 
-			function setLoadingButton(trigger) {
+			function markExternalCartAdding() {
 				clearLoading();
-				loadingButton = trigger;
-				loadingButton.classList.add('camo-external-cart-button-loading');
-				loadingButton.setAttribute('aria-busy', 'true');
+				document.documentElement.classList.add('is-cart-app-adding');
 				loadingTimer = window.setTimeout(clearLoading, 7000);
+			}
+
+			function isCarouselNavigationTrigger(trigger) {
+				if (!trigger) return false;
+				var text = (trigger.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
+				var className = typeof trigger.className === 'string' ? trigger.className : '';
+				var label = [
+					text,
+					className,
+					trigger.getAttribute('aria-label') || '',
+					trigger.getAttribute('title') || '',
+					trigger.getAttribute('data-action') || '',
+					trigger.getAttribute('data-direction') || ''
+				].join(' ').toLowerCase();
+				var looksLikeNav = /(prev|previous|next|arrow|slide|carousel|swiper|slick|glide|splide)/.test(label);
+				var looksLikeCartAction = /(add|cart|bag|buy|checkout)/.test(label);
+				var isIconOnly = text.length <= 2 && !!trigger.querySelector('svg, path, use');
+				return looksLikeNav && !looksLikeCartAction || isIconOnly && !looksLikeCartAction;
 			}
 
 			function handleExternalCartClick(event) {
@@ -961,11 +994,13 @@
 				var trigger = target && target.closest ? target.closest('button, [role="button"], input[type="submit"], a') : null;
 
 				if (!trigger || !closestAppTarget(trigger)) return;
+				if (isCarouselNavigationTrigger(trigger)) return;
 
 				lastCartAppClickAt = Date.now();
-				setLoadingButton(trigger);
-				/* Safety net: if no /cart/*.js fetch is detected (e.g. app uses XHR),
-				   fall back to reading the rendered count once. */
+				markExternalCartAdding();
+
+				/* Safety net: if no /cart/*.js response is detected, fall back to
+				   reading the rendered count once. */
 				if (fallbackTimer) window.clearTimeout(fallbackTimer);
 				fallbackTimer = window.setTimeout(function() {
 					fallbackTimer = null;
@@ -990,8 +1025,133 @@
 				return observer;
 			}
 
+			function getDrawerSectionsIds() {
+				var drawer = getDrawer();
+				if (drawer && drawer.dataset && drawer.dataset.sectionId) {
+					return drawer.dataset.sectionId;
+				}
+
+				return Array.prototype.map.call(
+					document.querySelectorAll('[data-section-type="cart-template"][data-section-modification="drawer"]'),
+					function(s) { return s.dataset.sectionId; }
+				).filter(Boolean).join(',');
+			}
+
+			function getCartSectionsUrl() {
+				var ids = getDrawerSectionsIds();
+				if (!ids) return null;
+				var url = new URL(window.location.href);
+				url.searchParams.set('sections', ids);
+				url.searchParams.set('lazyload', 'false');
+				return url.href;
+			}
+
+			function addSectionsToBody(body) {
+				var sectionsIds = getDrawerSectionsIds();
+				if (!sectionsIds || body == null) return body;
+
+				if (typeof body === 'string') {
+					try {
+						var parsedBody = JSON.parse(body);
+						if (parsedBody && typeof parsedBody === 'object' && !Array.isArray(parsedBody) && !parsedBody.sections) {
+							parsedBody.sections = sectionsIds;
+							return JSON.stringify(parsedBody);
+						}
+					} catch (error) {
+						try {
+							var params = new URLSearchParams(body);
+							if (!params.has('sections')) {
+								params.set('sections', sectionsIds);
+								return params.toString();
+							}
+						} catch (paramsError) { /* ignore */ }
+					}
+					return body;
+				}
+
+				if (typeof URLSearchParams === 'function' && body instanceof URLSearchParams && !body.has('sections')) {
+					body.set('sections', sectionsIds);
+					return body;
+				}
+
+				if (typeof FormData === 'function' && body instanceof FormData && !body.has('sections')) {
+					body.append('sections', sectionsIds);
+					return body;
+				}
+
+				return body;
+			}
+
+			function refreshSectionsSilently() {
+				if (silentRefreshTimer) window.clearTimeout(silentRefreshTimer);
+				silentRefreshTimer = window.setTimeout(function() {
+					silentRefreshTimer = null;
+					var url = getCartSectionsUrl();
+					if (!url || typeof window.__camoCartPartialUpdate !== 'function') {
+						scheduleCartRefresh(0);
+						clearLoading();
+						return;
+					}
+
+					fetch(url).then(function(response) {
+						return response.json();
+					}).then(function(sections) {
+						if (sections && typeof sections === 'object') {
+							window.__camoCartPartialUpdate({
+								action: 'addItem',
+								sections: sections,
+								params: [{ noRefresh: true }]
+							});
+							scheduleRenderedSync(80);
+							clearLoading();
+						}
+					}).catch(function() {
+						scheduleCartRefresh(0);
+						clearLoading();
+					});
+				}, 0);
+			}
+
+			function handleCartMutationData(data) {
+				var hasCount = data && typeof data.item_count === 'number';
+				if (hasCount) {
+					publishCount(data.item_count);
+				}
+
+				if (Date.now() - lastCartAppClickAt >= 7000) return;
+
+				var hasSections = data && data.sections && typeof data.sections === 'object' && !Array.isArray(data.sections) && Object.keys(data.sections).length > 0;
+				if (hasSections && typeof window.__camoCartPartialUpdate === 'function') {
+					window.__camoCartPartialUpdate({
+						action: 'addItem',
+						sections: data.sections,
+						params: [{ noRefresh: true }]
+					});
+					scheduleRenderedSync(80);
+					clearLoading();
+					if (fallbackTimer) {
+						window.clearTimeout(fallbackTimer);
+						fallbackTimer = null;
+					}
+					return;
+				}
+
+				clearLoading();
+				refreshSectionsSilently();
+				if (hasCount && fallbackTimer) {
+					window.clearTimeout(fallbackTimer);
+					fallbackTimer = null;
+				}
+			}
+
 			/* Intercept fetch responses to /cart/*.js so we react immediately
-			   instead of polling the DOM at 700/1800/3600ms. */
+			   instead of polling the DOM at 700/1800/3600ms.
+
+			   When an external app (Selleasy etc.) is about to fire /cart/*.js
+			   without a `sections` field in the body, we slip one in so Shopify
+			   renders the cart sections inline — which lets us avoid a second
+			   round-trip AND lets us morph the drawer in place rather than
+			   replacing its innerHTML wholesale. */
 			if (typeof window.fetch === 'function' && !window.__camoCartDrawerFetchPatched) {
 				window.__camoCartDrawerFetchPatched = true;
 				var nativeFetch = window.fetch;
@@ -1004,35 +1164,66 @@
 					}
 
 					var isCartMutation = url && cartMutationRegex.test(url);
-					var promise = nativeFetch.apply(this, arguments);
+					var fetchArgs = arguments;
+
+					if (isCartMutation && Date.now() - lastCartAppClickAt < 7000 && init && init.body) {
+						var bodyWithSections = addSectionsToBody(init.body);
+						if (bodyWithSections !== init.body) {
+							fetchArgs = [input, Object.assign({}, init, { body: bodyWithSections })];
+						}
+					}
+					var promise = nativeFetch.apply(this, fetchArgs);
 
 					if (!isCartMutation) return promise;
 
 					promise.then(function(response) {
 						if (!response || typeof response.clone !== 'function') return;
 						response.clone().json().then(function(data) {
-							var hasCount = data && typeof data.item_count === 'number';
-							if (hasCount) {
-								publishCount(data.item_count);
-							}
-							/* Refresh drawer contents only when the user actually
-							   interacted with an external cart-app trigger recently. */
+							handleCartMutationData(data);
+						}).catch(function() {
 							if (Date.now() - lastCartAppClickAt < 7000) {
-								scheduleCartRefresh(0);
 								clearLoading();
-								/* Keep the fallback timer when we don't have the
-								   item_count (e.g. /cart/add.js) — it reads the
-								   rendered count once the refresh paints, so the
-								   header badge still ends up in sync. */
-								if (hasCount && fallbackTimer) {
-									window.clearTimeout(fallbackTimer);
-									fallbackTimer = null;
-								}
+								refreshSectionsSilently();
 							}
-						}).catch(function() {});
-					}).catch(function() {});
+						});
+					}).catch(function() {
+						clearLoading();
+					});
 
 					return promise;
+				};
+			}
+
+			if (window.XMLHttpRequest && !window.__camoCartDrawerXhrPatched) {
+				window.__camoCartDrawerXhrPatched = true;
+				var nativeXhrOpen = XMLHttpRequest.prototype.open;
+				var nativeXhrSend = XMLHttpRequest.prototype.send;
+
+				XMLHttpRequest.prototype.open = function(method, url) {
+					this.__camoCartUrl = url;
+					this.__camoCartMethod = method;
+					return nativeXhrOpen.apply(this, arguments);
+				};
+
+				XMLHttpRequest.prototype.send = function(body) {
+					var url = this.__camoCartUrl || '';
+					var isCartMutation = url && cartMutationRegex.test(url);
+					var recentAppClick = Date.now() - lastCartAppClickAt < 7000;
+
+					if (isCartMutation && recentAppClick) {
+						body = addSectionsToBody(body);
+						this.addEventListener('load', function() {
+							try {
+								handleCartMutationData(JSON.parse(this.responseText));
+							} catch (error) {
+								clearLoading();
+								refreshSectionsSilently();
+							}
+						});
+						this.addEventListener('error', clearLoading);
+					}
+
+					return nativeXhrSend.call(this, body);
 				};
 			}
 

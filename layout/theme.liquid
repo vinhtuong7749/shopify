@@ -276,6 +276,592 @@
 	{%- assign current_langs = localization.language.iso_code | split: '-' | first -%}
 
 	<body class="template-{{ template | split: '.' | first }}{% if rtl_langs contains current_langs %} rtl{% endif %}">
+		{%- comment -%}
+			Cart sections response cache.
+			--------------------------------------------------------------------
+			cart-149fe4ce.js's refreshSections() has a broken guard that ALWAYS
+			triggers an extra GET ${url}?sections=...&lazyload=false even though
+			the rendered section HTML is already present in the /cart/*.js
+			response. That extra fetch adds ~200-400ms to every cart action.
+
+			This interceptor must be the FIRST fetch patch so it is the innermost
+			wrapper — that way it populates the cache before any later wrapper's
+			.then() emits cart:refresh and triggers refreshSections().
+
+			It:
+			  1. Pre-populates a cache from /cart/(add|change|update|clear).js
+			     responses (theme.CartApi always passes `sections` so Shopify
+			     renders them inline).
+			  2. Short-circuits the redundant refresh fetch by returning the
+			     cached payload as a synthetic Response.
+		{%- endcomment -%}
+		<script>
+			(function() {
+				if (window.__camoSectionsCacheInstalled) return;
+				window.__camoSectionsCacheInstalled = true;
+
+				if (typeof window.fetch !== 'function' || typeof Response !== 'function') return;
+
+				var sectionsCache = null;
+				var sectionsCacheAt = 0;
+				var CACHE_TTL_MS = 3000;
+				var cartMutationRegex = /\/cart\/(add|change|update|clear)\.js(\?|$)/i;
+
+				function getRequestedSectionIds(url) {
+					if (typeof url !== 'string') return null;
+
+					try {
+						var requestURL = new URL(url, window.location.href);
+						if (requestURL.searchParams.get('lazyload') !== 'false') return null;
+
+						var sections = requestURL.searchParams.get('sections');
+						if (!sections) return null;
+
+						var ids = sections.split(',').filter(Boolean);
+						return ids.length ? ids : null;
+					} catch (error) {
+						return null;
+					}
+				}
+
+				function canServeCachedSections(url) {
+					if (!sectionsCache || Date.now() - sectionsCacheAt >= CACHE_TTL_MS) return false;
+
+					var requestedIds = getRequestedSectionIds(url);
+					if (!requestedIds) return false;
+
+					for (var i = 0; i < requestedIds.length; i++) {
+						if (!Object.prototype.hasOwnProperty.call(sectionsCache, requestedIds[i])) return false;
+					}
+
+					return true;
+				}
+
+				var origFetch = window.fetch;
+				window.fetch = function(input, init) {
+					var url = '';
+					if (typeof input === 'string') {
+						url = input;
+					} else if (input && typeof input.url === 'string') {
+						url = input.url;
+					}
+
+					/* Cache hit: skip the network round-trip entirely. */
+					if (canServeCachedSections(url)) {
+						var cached = sectionsCache;
+						sectionsCache = null;
+						sectionsCacheAt = 0;
+						return Promise.resolve(new Response(JSON.stringify(cached), {
+							status: 200,
+							headers: { 'Content-Type': 'application/json' }
+						}));
+					}
+
+					/* Invalidate stale cache when a new mutation starts — handles
+					   the case where an external app (Selleasy) fires /cart/add.js
+					   without `sections` in the body, so the follow-up refresh
+					   doesn't serve outdated HTML from a previous theme action. */
+					if (url && cartMutationRegex.test(url)) {
+						sectionsCache = null;
+						sectionsCacheAt = 0;
+					}
+
+					var promise = origFetch.apply(this, arguments);
+
+					/* Cache populate: every theme cart mutation request goes out
+					   with `sections=...`, so the JSON response contains the
+					   rendered HTML we need for the follow-up refreshSections(). */
+					if (url && cartMutationRegex.test(url)) {
+						return promise.then(function(response) {
+							if (!response || typeof response.clone !== 'function') return response;
+							return response.clone().json().then(function(data) {
+								if (data && data.sections && typeof data.sections === 'object' && !Array.isArray(data.sections) && Object.keys(data.sections).length > 0) {
+									sectionsCache = data.sections;
+									sectionsCacheAt = Date.now();
+								}
+								return response;
+							}).catch(function() {
+								return response;
+							});
+						});
+					}
+
+					return promise;
+				};
+			})();
+		</script>
+
+		<style>
+			/* Suppress the full-section preloader overlay during quantity
+			   changes — the optimistic input value + the in-place price
+			   update already give the user enough feedback. */
+			html.is-cart-qty-changing [data-section-type="cart-template"] .js-preloader.is-active,
+			html.is-cart-qty-changing [data-section-type="cart-template"] .preloader-wrapper.is-active,
+			html.is-cart-app-adding [data-section-type="cart-template"] .js-preloader.is-active,
+			html.is-cart-app-adding [data-section-type="cart-template"] .preloader-wrapper.is-active {
+				opacity: 0 !important;
+				visibility: hidden !important;
+				pointer-events: none !important;
+			}
+
+			[data-cart-item].camo-cart-item-updating {
+				position: relative;
+			}
+
+			[data-cart-item].camo-cart-item-updating::after {
+				display: none;
+			}
+
+			[data-cart-item].camo-cart-item-updating .cart-item__image-container,
+			[data-cart-item].camo-cart-item-updating .cart-item-drawer__image-container {
+				position: relative;
+			}
+
+			[data-cart-item].camo-cart-item-updating .cart-item__image-container::after,
+			[data-cart-item].camo-cart-item-updating .cart-item-drawer__image-container::after {
+				content: "";
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				width: 22px;
+				height: 22px;
+				margin: -11px 0 0 -11px;
+				border: 2px solid rgba(255, 255, 255, 0.7);
+				border-top-color: #263e30;
+				border-radius: 999px;
+				animation: camo-cart-spin 0.7s linear infinite;
+				box-shadow: 0 3px 10px rgba(38, 62, 48, 0.22);
+				z-index: 5;
+			}
+
+			@keyframes camo-cart-spin {
+				to {
+					transform: rotate(360deg);
+				}
+			}
+		</style>
+
+		{%- comment -%}
+			Cart partial update for item-level changes.
+			--------------------------------------------------------------------
+			By default theme.refreshSections() blows away the entire
+			.js-cart-content innerHTML on every cart:updated, which makes the
+			+/- buttons in the drawer feel janky (flicker, lost focus, every
+			widget re-bound).
+
+			For action === 'changeQuantity' / 'removeItem' / add actions we:
+			  1. Inject a `noRefresh` flag into the cart:updated params, which
+			     makes theme.onCartUpdated bail out without touching the DOM.
+			  2. Surgically update only what actually changes — the affected
+			     line item's price/discount, the subtotal, the discount-tier
+			     banner, and the free-shipping progress bar — leaving the
+			     quantity input element (and its theme widget binding) intact.
+
+			This also handles inserted/removed line items without replacing the
+			entire cart drawer/page content.
+		{%- endcomment -%}
+		<script>
+			(function() {
+				if (window.__camoCartPartialUpdateInstalled) return;
+
+				function partialCartUpdate(payload) {
+					if (!payload || !payload.sections) return;
+					var sectionIds = Object.keys(payload.sections);
+					for (var i = 0; i < sectionIds.length; i++) {
+						var sectionId = sectionIds[i];
+						var html = payload.sections[sectionId];
+						if (typeof html !== 'string' || !html) continue;
+
+						var sectionEl = document.querySelector('[data-section-id="' + sectionId + '"]');
+						if (!sectionEl) continue;
+
+						var template = document.createElement('template');
+						template.innerHTML = html;
+						updateSectionPartially(sectionEl, template.content);
+					}
+				}
+
+				function updateSectionPartially(sectionEl, newRoot) {
+					/* 1. Morph the cart-items list:
+					      - update items present in both
+					      - remove items missing from the response
+					      - insert items that are new (e.g. from an add action)
+					        in the same order the server rendered them. */
+					var newItemEls = Array.from(newRoot.querySelectorAll('[data-cart-item]'));
+					var oldItemEls = Array.from(sectionEl.querySelectorAll('[data-cart-item]'));
+					var newKeys = newItemEls.map(function(el) { return el.getAttribute('data-cart-item'); });
+
+					/* Remove items that are no longer in the new list. */
+					oldItemEls.forEach(function(oldItem) {
+						var key = oldItem.getAttribute('data-cart-item');
+						if (key && newKeys.indexOf(key) === -1) {
+							oldItem.remove();
+						}
+					});
+
+					/* Walk the new list in order; update existing rows or insert
+					   missing ones before the next-existing sibling. */
+					for (var i = 0; i < newItemEls.length; i++) {
+						var newItem = newItemEls[i];
+						var key = newItem.getAttribute('data-cart-item');
+						var oldItem = key ? sectionEl.querySelector('[data-cart-item="' + cssEscape(key) + '"]') : null;
+
+						if (oldItem) {
+							updateLineItemPartially(oldItem, newItem);
+							continue;
+						}
+
+						/* New item — find the nearest existing successor and
+						   insertBefore it. Falls back to appending into the
+						   nearest valid items container. */
+						var anchor = null;
+						for (var j = i + 1; j < newItemEls.length; j++) {
+							var nextKey = newItemEls[j].getAttribute('data-cart-item');
+							var nextOld = nextKey ? sectionEl.querySelector('[data-cart-item="' + cssEscape(nextKey) + '"]') : null;
+							if (nextOld) { anchor = nextOld; break; }
+						}
+
+						var clone = document.importNode(newItem, true);
+						if (anchor && anchor.parentNode) {
+							anchor.parentNode.insertBefore(clone, anchor);
+						} else {
+							/* Find a reasonable items container in the existing DOM.
+							   cart-template renders items inside .cart-items__body,
+							   cart drawer renders them directly inside
+							   .cart-drawer__section--items or .js-cart-content. */
+							var container = sectionEl.querySelector('.cart-items__body')
+								|| sectionEl.querySelector('.cart-drawer__section--items .cart-items')
+								|| sectionEl.querySelector('.cart-drawer__section--items')
+								|| sectionEl.querySelector('.js-cart-content');
+							if (container) container.appendChild(clone);
+						}
+						bindNewItemQuantityWidget(clone);
+					}
+
+					/* 2. Subtotal, discount, and footer button blocks. */
+					replaceInnerHTMLIfDifferent(sectionEl, newRoot, '.js-cart-subtotal');
+					replaceInnerHTMLIfDifferent(sectionEl, newRoot, '.js-cart-discount-block');
+					replaceInnerHTMLIfDifferent(sectionEl, newRoot, '.js-cart-footer-button');
+					replaceInnerHTMLIfDifferent(sectionEl, newRoot, '.js-cart-footer-additional-buttons');
+
+					/* 3. Drop the is-empty flag if items reappeared, or set it
+					      when the cart just became empty. */
+					var newSection = newRoot.querySelector('[data-section-type="cart-template"]');
+					if (newSection) {
+						sectionEl.classList.toggle('is-empty', newSection.classList.contains('is-empty'));
+					}
+
+					/* 4. Discount-tier banner (BUY 2/3/4 …). */
+					var oldTier = sectionEl.querySelector('.cart-drawer__tier-offers');
+					var newTier = newRoot.querySelector('.cart-drawer__tier-offers');
+					if (oldTier && newTier && oldTier.outerHTML !== newTier.outerHTML) {
+						oldTier.outerHTML = newTier.outerHTML;
+					}
+
+					/* 5. Free-shipping bar progress + message. */
+					updateShippingBar(sectionEl, newRoot);
+				}
+
+				/* Bind theme's QuantityWidget to a freshly inserted line item.
+				   We pipe the change through our own debounced handler instead of
+				   theme's internal onQuantityChange (which is closure-private). */
+				var customPending = (typeof Map === 'function') ? new Map() : null;
+
+				function bindNewItemQuantityWidget(itemEl) {
+					if (!itemEl || itemEl.nodeType !== 1) return;
+					var quantityEl = itemEl.querySelector('.js-quantity');
+					if (!quantityEl) return;
+					if (quantityEl.dataset.camoQtyBound === 'true') return;
+					var QuantityWidget = window.themeCore && window.themeCore.utils && window.themeCore.utils.QuantityWidget;
+					if (!QuantityWidget) return;
+
+					quantityEl.dataset.camoQtyBound = 'true';
+					try {
+						var widget = QuantityWidget(quantityEl, { onQuantityChange: handleCustomQuantityChange });
+						widget.init();
+					} catch (e) { /* ignore widget init errors */ }
+				}
+
+				function handleCustomQuantityChange(widget) {
+					if (!widget || !widget.controls || !widget.controls.input || !customPending) return;
+					var key = widget.controls.input.dataset.itemKey;
+					if (!key) return;
+					var quantity = Number(widget.quantity.value);
+					if (!Number.isFinite(quantity)) return;
+
+					var existing = customPending.get(key);
+					if (existing && existing.timer) clearTimeout(existing.timer);
+
+					customPending.set(key, {
+						widget: widget,
+						quantity: quantity,
+						timer: setTimeout(function() { flushCustomQuantity(key); }, 140),
+						inFlight: false
+					});
+					markQtyChanging(widget.controls.input);
+				}
+
+				function flushCustomQuantity(key) {
+					if (!customPending) return;
+					var pending = customPending.get(key);
+					if (!pending || pending.inFlight) return;
+					var CartApi = window.themeCore && window.themeCore.CartApi;
+					if (!CartApi || !CartApi.actions) return;
+
+					pending.inFlight = true;
+					pending.timer = null;
+					var sectionsIds = Array.from(document.querySelectorAll('[data-section-type="cart-template"]'))
+						.map(function(s) { return s.dataset.sectionId; })
+						.filter(Boolean)
+						.join(',');
+
+					CartApi.makeRequest(CartApi.actions.CHANGE_CART_ITEM_QUANTITY, key, pending.quantity, sectionsIds)
+						.catch(function() {
+							if (pending.widget && typeof pending.widget.rollbackValue === 'function') {
+								pending.widget.rollbackValue();
+							}
+						})
+						.finally(function() {
+							customPending.delete(key);
+						});
+				}
+
+				function updateLineItemPartially(oldItem, newItem) {
+					var priceSelectors = [
+						'.cart-item-drawer__price-wrapper',
+						'.cart-item-drawer__summary',
+						'.cart-item-drawer__price-varies',
+						'.cart-item__prices',
+						'.cart-item__price-varies',
+						'.cart-item__summary',
+						'.cart-item__total',
+						'.cart-item__final-price'
+					];
+					for (var i = 0; i < priceSelectors.length; i++) {
+						var sel = priceSelectors[i];
+						var oldEl = oldItem.querySelector(sel);
+						var newEl = newItem.querySelector(sel);
+						if (oldEl && newEl && oldEl.innerHTML !== newEl.innerHTML) {
+							oldEl.innerHTML = newEl.innerHTML;
+							break;
+						}
+					}
+
+					/* Inline discount badges that sit next to the variant name. */
+					var oldText = oldItem.querySelector('.cart-item-drawer__details-text, .cart-item__details-text');
+					var newText = newItem.querySelector('.cart-item-drawer__details-text, .cart-item__details-text');
+					if (oldText && newText && oldText.innerHTML !== newText.innerHTML) {
+						oldText.innerHTML = newText.innerHTML;
+					}
+
+					/* Keep the quantity input value in sync, but never overwrite
+					   one the user is actively typing in. */
+					var oldQty = oldItem.querySelector('[data-quantity-input]');
+					var newQty = newItem.querySelector('[data-quantity-input]');
+					if (oldQty && newQty && oldQty.value !== newQty.value && document.activeElement !== oldQty) {
+						oldQty.value = newQty.value;
+					}
+				}
+
+				function replaceInnerHTMLIfDifferent(sectionEl, newRoot, selector) {
+					var oldEl = sectionEl.querySelector(selector);
+					var newEl = newRoot.querySelector(selector);
+					if (oldEl && newEl && oldEl.innerHTML !== newEl.innerHTML) {
+						oldEl.innerHTML = newEl.innerHTML;
+					}
+				}
+
+				function updateShippingBar(sectionEl, newRoot) {
+					var oldBar = sectionEl.querySelector('.js-cart-shipping');
+					var newBar = newRoot.querySelector('.js-cart-shipping');
+					if (!oldBar || !newBar) return;
+
+					var attrsToSync = ['data-cart-total', 'data-amount-cents', 'data-amount-message', 'data-success-message'];
+					for (var i = 0; i < attrsToSync.length; i++) {
+						var attr = attrsToSync[i];
+						if (newBar.hasAttribute(attr)) {
+							oldBar.setAttribute(attr, newBar.getAttribute(attr));
+						}
+					}
+
+					var shopCurrencyRate = (window.Shopify && Shopify.currency && Shopify.currency.rate) || 1;
+					var moneyFormat = (window.themeCore && window.themeCore.objects && window.themeCore.objects.shop && window.themeCore.objects.shop.money_format) || '';
+					var cartTotal = Number(oldBar.getAttribute('data-cart-total')) || 0;
+					var amountCents = (Number(oldBar.getAttribute('data-amount-cents')) || 0) * shopCurrencyRate;
+					var percentage = amountCents > 0 ? (cartTotal / amountCents * 100) : 0;
+					var amountMessage = oldBar.getAttribute('data-amount-message');
+					var successMessage = oldBar.getAttribute('data-success-message');
+
+					oldBar.style.setProperty('--shipping-bar-progress-value', percentage + '%');
+
+					var hiddenClass = (window.themeCore && window.themeCore.utils && window.themeCore.utils.cssClasses && window.themeCore.utils.cssClasses.hidden) || 'is-hidden';
+					var shippingTextEl = oldBar.querySelector('.js-cart-shipping-amount-msg');
+					var progressBar = oldBar.querySelector('.js-cart-shipping-progress-bar');
+					var shippingIcon = oldBar.querySelector('.js-cart-shipping-icon');
+					var hiddenTextEl = oldBar.querySelector('.js-shipping-bar-progress-hidden-text');
+
+					if (hiddenTextEl && window.themeCore && window.themeCore.translations && typeof window.themeCore.translations.get === 'function') {
+						try {
+							var hiddenMessage = window.themeCore.translations.get('cart.shipping_bar.progress');
+							if (hiddenMessage) {
+								hiddenTextEl.textContent = hiddenMessage.replace('{' + '{ value }}', percentage.toFixed(1));
+							}
+						} catch (e) { /* ignore translation lookup errors */ }
+					}
+
+					if (percentage < 100) {
+						if (shippingTextEl && amountMessage) {
+							var remaining = Math.max(0, amountCents - cartTotal);
+							var remainingMoney = formatMoneyCompat(remaining, moneyFormat);
+							shippingTextEl.innerHTML = amountMessage.replace('{amount}', '<strong>' + remainingMoney + '</strong>');
+						}
+						if (progressBar) progressBar.classList.remove(hiddenClass);
+						if (shippingIcon) shippingIcon.classList.add(hiddenClass);
+					} else {
+						if (shippingTextEl && successMessage) shippingTextEl.innerHTML = successMessage;
+						if (progressBar) progressBar.classList.add(hiddenClass);
+						if (shippingIcon) shippingIcon.classList.remove(hiddenClass);
+					}
+				}
+
+				function formatMoneyCompat(cents, format) {
+					if (window.themeCore && window.themeCore.utils && typeof window.themeCore.utils.formatMoney === 'function') {
+						return window.themeCore.utils.formatMoney(cents, format);
+					}
+					var value = (Number(cents) / 100).toFixed(2);
+					return format ? format.replace(/\{\{\s*amount\s*\}\}/, value) : value;
+				}
+
+				function cssEscape(value) {
+					if (window.CSS && typeof window.CSS.escape === 'function') return window.CSS.escape(value);
+					return String(value).replace(/(["\\])/g, '\\$1');
+				}
+
+				/* Toggle a sentinel class so CSS can suppress the section preloader
+				   overlay during a quantity change (it's redundant once we update
+				   the price in-place). Set it as soon as the user interacts so
+				   the overlay never gets a chance to flash in. */
+				var qtyChangeTimer = null;
+				function clearItemUpdating() {
+					document.querySelectorAll('[data-cart-item].camo-cart-item-updating').forEach(function(item) {
+						item.classList.remove('camo-cart-item-updating');
+					});
+				}
+
+				function markQtyChanging(target) {
+					if (qtyChangeTimer) clearTimeout(qtyChangeTimer);
+					document.documentElement.classList.add('is-cart-qty-changing');
+					if (target && target.closest) {
+						clearItemUpdating();
+						var item = target.closest('[data-cart-item]');
+						if (item) item.classList.add('camo-cart-item-updating');
+					}
+					/* Safety net: if a request fails and never emits cart:updated,
+					   make sure the class doesn't linger and suppress preloaders
+					   for unrelated actions. */
+					qtyChangeTimer = setTimeout(function() {
+						qtyChangeTimer = null;
+						document.documentElement.classList.remove('is-cart-qty-changing');
+						clearItemUpdating();
+					}, 5000);
+				}
+				function clearQtyChanging(delay) {
+					if (qtyChangeTimer) clearTimeout(qtyChangeTimer);
+					qtyChangeTimer = setTimeout(function() {
+						qtyChangeTimer = null;
+						document.documentElement.classList.remove('is-cart-qty-changing');
+						clearItemUpdating();
+					}, delay || 350);
+				}
+
+				document.addEventListener('click', function(event) {
+					var target = event.target;
+					if (!target || !target.closest) return;
+					var removeButton = target.closest('.js-cart-item-remove');
+					if (removeButton) {
+						markQtyChanging(removeButton);
+						return;
+					}
+					if (target.closest('[data-quantity-increase], [data-quantity-decrease]')) {
+						markQtyChanging(target);
+					}
+				}, true);
+
+				document.addEventListener('change', function(event) {
+					var target = event.target;
+					if (target && target.matches && target.matches('[data-quantity-input]')) {
+						markQtyChanging(target);
+					}
+				}, true);
+
+				/* Exposed so external-app bridges (e.g. the cart-drawer Selleasy
+				   wrapper) can route their own /cart/*.js responses through the
+				   same surgical update path. */
+				window.__camoCartPartialUpdate = function(payload) {
+					if (!payload || !payload.sections) return;
+					partialCartUpdate(payload);
+				};
+
+				function shouldUsePartialUpdate(payload) {
+					if (!payload || !payload.sections || typeof payload.sections !== 'object') return false;
+					var action = payload.action;
+					return action === 'changeQuantity' || action === 'removeItem' || action === 'addItem' || action === 'addItems';
+				}
+
+				function maybeAutoOpenDrawer(payload) {
+					if (!payload || (payload.action !== 'addItem' && payload.action !== 'addItems')) return;
+					var settings = window.themeCore && window.themeCore.objects && window.themeCore.objects.settings;
+					var notificationEnabled = false;
+					try { notificationEnabled = !!JSON.parse(settings && settings.show_cart_notification); } catch (e) {}
+					if (notificationEnabled) return;
+					var noOpen = Array.isArray(payload.params) && payload.params.some(function(p) { return p && p.noOpen; });
+					if (noOpen) return;
+					if (window.themeCore && window.themeCore.EventBus) {
+						window.themeCore.EventBus.emit('cart:drawer:open');
+					}
+				}
+
+				function tryInstall() {
+					if (window.__camoCartPartialUpdateInstalled) return true;
+					var EventBus = window.themeCore && window.themeCore.EventBus;
+					if (!EventBus || typeof EventBus.emit !== 'function') return false;
+
+					window.__camoCartPartialUpdateInstalled = true;
+
+					var originalEmit = EventBus.emit;
+					EventBus.emit = function(event, payload) {
+						if (event === 'cart:updated' && shouldUsePartialUpdate(payload)) {
+							if (!Array.isArray(payload.params)) payload.params = [];
+							var alreadyMarked = payload.params.some(function(p) { return p && typeof p === 'object' && p.noRefresh; });
+							if (!alreadyMarked) {
+								payload.params.push({ noRefresh: true });
+							}
+							/* Defer the partial update until after the synchronous
+							   listener fan-out, so theme.onCartUpdated has already
+							   seen the noRefresh flag and bailed. */
+							setTimeout(function() {
+								partialCartUpdate(payload);
+								/* Theme.onCartUpdated bailed early because of the
+								   noRefresh flag, so we have to take over the
+								   drawer auto-open it would normally handle. */
+								maybeAutoOpenDrawer(payload);
+								/* Give theme's hidePreloaders() its 300ms grace
+								   period before we let the section preloader become
+								   visible again on the next interaction. */
+								clearQtyChanging(350);
+							}, 0);
+						}
+						return originalEmit.apply(this, arguments);
+					};
+					return true;
+				}
+
+				if (!tryInstall()) {
+					document.addEventListener('theme:all:loaded', tryInstall, { once: true });
+				}
+			})();
+		</script>
+
 		<a href="#MainContent" class="skip-content-link visually-hidden">
 			{{- "general.accessibility.skip_to_content" | t -}}
 		</a>
@@ -451,6 +1037,14 @@
 					return false;
 				}
 
+				function hasUnsafeShippingProtection(items) {
+					if (!Array.isArray(items)) return false;
+					for (var i = 0; i < items.length; i++) {
+						if (items[i] && items[i].handle === SP_HANDLE && items[i].quantity > 1) return true;
+					}
+					return false;
+				}
+
 				function enforceCartRules(callback, cartHint) {
 					if (isEnforcing) {
 						if (callback) callback();
@@ -540,9 +1134,16 @@
 						   Skip the silent enforce entirely when those added items contain no
 						   shipping-protection — Shopify already merges duplicate variants. */
 						var isAddAction = cart.action === 'addItem' || cart.action === 'addItems';
-						if (isAddAction && Array.isArray(cart.items) && !hasShippingProtection(cart.items)) {
-							lastEnforceAt = Date.now();
-							return;
+						if (isAddAction && Array.isArray(cart.items)) {
+							if (!hasShippingProtection(cart.items)) {
+								lastEnforceAt = Date.now();
+								return;
+							}
+
+							if (cart._camoSkipProtectionEnforce && !hasUnsafeShippingProtection(cart.items)) {
+								lastEnforceAt = Date.now();
+								return;
+							}
 						}
 						scheduleEnforce(cart);
 					});
@@ -619,5 +1220,6 @@
 			setTimeout(tryApplyDiscount, 1000);
 		});
 		</script>
+
 	</body>
 </html>
