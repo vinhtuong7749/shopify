@@ -288,7 +288,7 @@
 			if (!target || !target.closest) return;
 			try {
 				if (target.closest('#CartDrawer')) return;
-				var trigger = target.closest('button, [role="button"], input[type="submit"], a');
+				var trigger = target.closest('button, [role="button"], input[type="submit"], a, .lb-button, [class*="lb-button" i], .lb-carousel-nav, [class*="lb-carousel" i]');
 				if (target.closest(appTargetSelector) && !isCarouselNavigationTrigger(trigger)) {
 					lastAppClickAt = Date.now();
 				}
@@ -310,12 +310,14 @@
 		function addSectionsToBody(body) {
 			var sectionsIds = getCartSectionsIds();
 			if (!sectionsIds || body == null) return body;
+			var sectionsUrl = window.location.pathname || '/cart';
 
 			if (typeof body === 'string') {
 				try {
 					var parsedBody = JSON.parse(body);
 					if (parsedBody && typeof parsedBody === 'object' && !Array.isArray(parsedBody) && !parsedBody.sections) {
 						parsedBody.sections = sectionsIds;
+						if (!parsedBody.sections_url) parsedBody.sections_url = sectionsUrl;
 						return JSON.stringify(parsedBody);
 					}
 				} catch (error) {
@@ -323,6 +325,7 @@
 						var params = new URLSearchParams(body);
 						if (!params.has('sections')) {
 							params.set('sections', sectionsIds);
+							if (!params.has('sections_url')) params.set('sections_url', sectionsUrl);
 							return params.toString();
 						}
 					} catch (paramsError) { /* ignore */ }
@@ -332,11 +335,13 @@
 
 			if (typeof URLSearchParams === 'function' && body instanceof URLSearchParams && !body.has('sections')) {
 				body.set('sections', sectionsIds);
+				if (!body.has('sections_url')) body.set('sections_url', sectionsUrl);
 				return body;
 			}
 
 			if (typeof FormData === 'function' && body instanceof FormData && !body.has('sections')) {
 				body.append('sections', sectionsIds);
+				if (!body.has('sections_url')) body.append('sections_url', sectionsUrl);
 				return body;
 			}
 
@@ -350,6 +355,24 @@
 			url.searchParams.set('sections', ids);
 			url.searchParams.set('lazyload', 'false');
 			return url.href;
+		}
+
+		function addSectionsToUrl(url) {
+			var sectionsIds = getCartSectionsIds();
+			if (!sectionsIds || !url) return url;
+
+			try {
+				var requestUrl = new URL(url, window.location.href);
+				if (!requestUrl.searchParams.has('sections')) {
+					requestUrl.searchParams.set('sections', sectionsIds);
+				}
+				if (!requestUrl.searchParams.has('sections_url')) {
+					requestUrl.searchParams.set('sections_url', window.location.pathname || '/cart');
+				}
+				return requestUrl.href;
+			} catch (error) {
+				return url;
+			}
 		}
 
 		function refreshSectionsSilently() {
@@ -418,10 +441,26 @@
 				   response carries the rendered section HTML — that lets us morph
 				   the cart in place instead of triggering a flickery full
 				   refresh. Only do this for recent app clicks. */
-				if (isCartMutation && Date.now() - lastAppClickAt < 7000 && !isThemeCartChangeInProgress() && init && init.body) {
-					var bodyWithSections = addSectionsToBody(init.body);
-					if (bodyWithSections !== init.body) {
-						fetchArgs = [input, Object.assign({}, init, { body: bodyWithSections })];
+				if (isCartMutation && Date.now() - lastAppClickAt < 7000 && !isThemeCartChangeInProgress()) {
+					var bodyWithSections = init && init.body ? addSectionsToBody(init.body) : init && init.body;
+					var urlWithSections = addSectionsToUrl(url);
+					if ((init && bodyWithSections !== init.body) || urlWithSections !== url) {
+						var requestInput = input;
+						if (urlWithSections !== url) {
+							if (typeof input === 'string') {
+								requestInput = urlWithSections;
+							} else if (typeof Request === 'function' && input instanceof Request) {
+								try {
+									requestInput = new Request(urlWithSections, input);
+								} catch (error) {
+									requestInput = input;
+								}
+							}
+						}
+						fetchArgs = [
+							requestInput,
+							init ? Object.assign({}, init, { body: bodyWithSections }) : init
+						];
 					}
 				}
 				var promise = nativeFetch.apply(this, fetchArgs);
@@ -455,6 +494,10 @@
 			var nativeXhrSend = XMLHttpRequest.prototype.send;
 
 			XMLHttpRequest.prototype.open = function(method, url) {
+				if (url && cartMutationRegex.test(url) && Date.now() - lastAppClickAt < 7000 && !isThemeCartChangeInProgress()) {
+					url = addSectionsToUrl(url);
+					arguments[1] = url;
+				}
 				this.__camoCartUrl = url;
 				this.__camoCartMethod = method;
 				return nativeXhrOpen.apply(this, arguments);

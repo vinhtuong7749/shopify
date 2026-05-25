@@ -265,7 +265,12 @@
 
 		/* Save the REAL fetch before anyone patches it */
 		var nativeFetch = window.fetch;
-		var cartAppAddSelector = '#CartDrawer .shopify-app-block, #CartDrawer [id*="selleasy" i], #CartDrawer [class*="selleasy" i], #CartDrawer [id*="lb-widget" i], #CartDrawer [class*="lb-widget" i], #CartDrawer [id*="lb-upsell" i], #CartDrawer [class*="lb-upsell" i], #CartDrawer [id*="sll" i], #CartDrawer [class*="sll" i]';
+		/* Match Selleasy / lb-upsell / sll widgets anywhere on the page —
+		   in particular the "People also bought" block that renders below the
+		   product form. Without this scope, clicks on that widget would slip
+		   past `shouldSkipProtectionForExternalCartAdd()` and accidentally
+		   bundle the theme upsell variant into the Selleasy add request. */
+		var cartAppAddSelector = '.shopify-app-block, [id*="selleasy" i], [class*="selleasy" i], [id*="lb-widget" i], [class*="lb-widget" i], [id*="lb-upsell" i], [class*="lb-upsell" i], [id*="sll" i], [class*="sll" i]';
 		var lastCartAppAddAt = 0;
 
 		function isCartAppTarget(target) {

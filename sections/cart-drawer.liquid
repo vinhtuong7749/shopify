@@ -845,7 +845,12 @@
 			var abortController = window.AbortController ? new AbortController() : null;
 			var captureOptions = abortController ? { capture: true, signal: abortController.signal } : true;
 			var drawerSelector = '#CartDrawer';
-			var appTargetSelector = '#CartDrawer .shopify-app-block, #CartDrawer [id*="selleasy" i], #CartDrawer [class*="selleasy" i], #CartDrawer [id*="lb-widget" i], #CartDrawer [class*="lb-widget" i], #CartDrawer [id*="lb-upsell" i], #CartDrawer [class*="lb-upsell" i], #CartDrawer [id*="sll" i], #CartDrawer [class*="sll" i]';
+			/* Site-wide selector: catch Selleasy / lb-upsell / sll widgets
+			   wherever they render, not just inside the drawer. Otherwise a
+			   "People also bought" upsell on the product page slips past the
+			   bridge — meaning no sections= injection, no partial update, and
+			   no header-count broadcast, so the cart appears unresponsive. */
+			var appTargetSelector = '.shopify-app-block, [id*="selleasy" i], [class*="selleasy" i], [id*="lb-widget" i], [class*="lb-widget" i], [id*="lb-upsell" i], [class*="lb-upsell" i], [id*="sll" i], [class*="sll" i]';
 			var quantityInputSelector = '#CartDrawer [data-cart-item] [data-quantity-input]';
 			var cartMutationRegex = /\/cart\/(add|change|update|clear)\.js(\?|$)/i;
 			var loadingTimer = null;
@@ -857,6 +862,10 @@
 			var lastPublishedCount = null;
 			var lastCartAppClickAt = 0;
 			var lastRefreshEmitAt = 0;
+			var cartAppScrollSnapshot = null;
+			var cartAppScrollReleaseTimer = null;
+			var cartAppScrollGuardFrame = null;
+			var cartAppScrollGuardTimer = null;
 
 			function getDrawer() {
 				return document.querySelector(drawerSelector);
@@ -925,6 +934,150 @@
 				return getVisibleQuantityCount();
 			}
 
+			function getDrawerScroller() {
+				var drawer = getDrawer();
+				if (!drawer) return null;
+				return drawer.querySelector('[data-scrollable]')
+					|| drawer.querySelector('.js-cart-content')
+					|| drawer.querySelector('.js-cart-container');
+			}
+
+			function getCartAppAnchor(target) {
+				if (target && target.closest) {
+					var directAnchor = target.closest('lb-upsell-widget, lb-upsell-flat-card, .lb-widget, .lb-product-card, .lb-flat-card-host, .shopify-app-block');
+					if (directAnchor) return directAnchor;
+				}
+				var drawer = getDrawer();
+				if (!drawer) return null;
+				return drawer.querySelector('lb-upsell-widget, .lb-widget, .shopify-app-block, [class*="lb-upsell"], [id*="lb-upsell"]');
+			}
+
+			function captureCartAppScrollAnchor(trigger) {
+				var scroller = getDrawerScroller();
+				var anchor = getCartAppAnchor(trigger);
+				if (!scroller || !anchor || !anchor.getBoundingClientRect) return;
+
+				var rect = anchor.getBoundingClientRect();
+				cartAppScrollSnapshot = {
+					scroller: scroller,
+					anchor: anchor,
+					top: rect.top,
+					left: rect.left,
+					scrollTop: scroller.scrollTop,
+					scrollLeft: scroller.scrollLeft,
+					expiresAt: Date.now() + 7000
+				};
+
+				if (cartAppScrollReleaseTimer) window.clearTimeout(cartAppScrollReleaseTimer);
+				cartAppScrollReleaseTimer = window.setTimeout(function() {
+					cartAppScrollReleaseTimer = null;
+					cartAppScrollSnapshot = null;
+				}, 7200);
+			}
+
+			function restoreCartAppScrollAnchor() {
+				var snapshot = cartAppScrollSnapshot;
+				if (!snapshot || Date.now() > snapshot.expiresAt) return;
+
+				var scroller = snapshot.scroller && document.contains(snapshot.scroller)
+					? snapshot.scroller
+					: getDrawerScroller();
+				if (!scroller) return;
+
+				var anchor = snapshot.anchor && document.contains(snapshot.anchor)
+					? snapshot.anchor
+					: getCartAppAnchor(scroller);
+
+				if (anchor && anchor.getBoundingClientRect) {
+					var currentTop = anchor.getBoundingClientRect().top;
+					var deltaTop = currentTop - snapshot.top;
+					if (Math.abs(deltaTop) > 1) {
+						scroller.scrollTop += deltaTop;
+					}
+				} else {
+					scroller.scrollTop = snapshot.scrollTop;
+				}
+
+				scroller.scrollLeft = snapshot.scrollLeft;
+			}
+
+			function scheduleCartAppScrollRestore() {
+				if (!cartAppScrollSnapshot) return;
+				restoreCartAppScrollAnchor();
+				if (window.requestAnimationFrame) {
+					window.requestAnimationFrame(restoreCartAppScrollAnchor);
+					window.requestAnimationFrame(function() {
+						window.requestAnimationFrame(restoreCartAppScrollAnchor);
+					});
+				}
+				window.setTimeout(restoreCartAppScrollAnchor, 80);
+				window.setTimeout(restoreCartAppScrollAnchor, 220);
+			}
+
+			window.__camoRestoreCartAppScrollAnchor = restoreCartAppScrollAnchor;
+
+			function scrollDrawerToCartTop() {
+				var scroller = getDrawerScroller();
+				var run = function() {
+					if (scroller && document.contains(scroller)) {
+						scroller.scrollTop = 0;
+						scroller.scrollLeft = 0;
+					} else {
+						window.scrollTo(0, 0);
+					}
+				};
+
+				run();
+				if (window.requestAnimationFrame) {
+					window.requestAnimationFrame(run);
+					window.requestAnimationFrame(function() {
+						window.requestAnimationFrame(run);
+					});
+				}
+				window.setTimeout(run, 60);
+			}
+
+			function stopCartAppScrollGuard() {
+				if (cartAppScrollGuardFrame && window.cancelAnimationFrame) {
+					window.cancelAnimationFrame(cartAppScrollGuardFrame);
+				}
+				if (cartAppScrollGuardTimer) {
+					window.clearTimeout(cartAppScrollGuardTimer);
+				}
+				cartAppScrollGuardFrame = null;
+				cartAppScrollGuardTimer = null;
+			}
+
+			function startCartAppScrollGuard() {
+				stopCartAppScrollGuard();
+				if (!cartAppScrollSnapshot) return;
+
+				var startedAt = Date.now();
+				var run = function() {
+					if (!cartAppScrollSnapshot || Date.now() > cartAppScrollSnapshot.expiresAt) {
+						stopCartAppScrollGuard();
+						return;
+					}
+
+					restoreCartAppScrollAnchor();
+
+					var stillAdding = document.documentElement.classList.contains('is-cart-app-adding');
+					var elapsed = Date.now() - startedAt;
+					if ((!stillAdding && elapsed > 350) || elapsed > 2600) {
+						stopCartAppScrollGuard();
+						return;
+					}
+
+					if (window.requestAnimationFrame) {
+						cartAppScrollGuardFrame = window.requestAnimationFrame(run);
+					} else {
+						cartAppScrollGuardTimer = window.setTimeout(run, 50);
+					}
+				};
+
+				run();
+			}
+
 			function clearLoading() {
 				if (loadingTimer) {
 					window.clearTimeout(loadingTimer);
@@ -936,12 +1089,29 @@
 				}
 				appAddingTimer = window.setTimeout(function() {
 					appAddingTimer = null;
+					scheduleCartAppScrollRestore();
 					document.documentElement.classList.remove('is-cart-app-adding');
+					stopCartAppScrollGuard();
 				}, 250);
 
 			}
 
-			function publishCount(count) {
+			function finishExternalCartAdd() {
+				if (loadingTimer) {
+					window.clearTimeout(loadingTimer);
+					loadingTimer = null;
+				}
+				if (appAddingTimer) {
+					window.clearTimeout(appAddingTimer);
+					appAddingTimer = null;
+				}
+				document.documentElement.classList.remove('is-cart-app-adding');
+				stopCartAppScrollGuard();
+				cartAppScrollSnapshot = null;
+				scrollDrawerToCartTop();
+			}
+
+			function publishCount(count, options) {
 				var normalizedCount = getCountValue(count);
 				if (normalizedCount === null) return;
 
@@ -956,7 +1126,9 @@
 					window.themeCore.EventBus.emit('header:update-item-count', { item_count: normalizedCount });
 				}
 
-				clearLoading();
+				if (!options || !options.keepLoading) {
+					clearLoading();
+				}
 			}
 
 			function updateFromCartPayload(cart) {
@@ -992,8 +1164,16 @@
 			}
 
 			function markExternalCartAdding() {
-				clearLoading();
+				if (loadingTimer) {
+					window.clearTimeout(loadingTimer);
+					loadingTimer = null;
+				}
+				if (appAddingTimer) {
+					window.clearTimeout(appAddingTimer);
+					appAddingTimer = null;
+				}
 				document.documentElement.classList.add('is-cart-app-adding');
+				startCartAppScrollGuard();
 				loadingTimer = window.setTimeout(clearLoading, 7000);
 			}
 
@@ -1017,13 +1197,20 @@
 
 			function handleExternalCartClick(event) {
 				var target = event.target;
-				var trigger = target && target.closest ? target.closest('button, [role="button"], input[type="submit"], a') : null;
+				var trigger = target && target.closest
+					? target.closest('button, [role="button"], input[type="submit"], a, .lb-button, [class*="lb-button" i], .lb-carousel-nav, [class*="lb-carousel" i]')
+					: null;
+				if (!trigger && target && target.closest) {
+					trigger = target.closest(appTargetSelector);
+				}
 
 				if (!trigger || !closestAppTarget(trigger)) return;
 				if (isCarouselNavigationTrigger(trigger)) return;
 
 				lastCartAppClickAt = Date.now();
+				captureCartAppScrollAnchor(trigger);
 				markExternalCartAdding();
+				scheduleCartAppScrollRestore();
 
 				/* Safety net: if no /cart/*.js response is detected, fall back to
 				   reading the rendered count once. */
@@ -1031,6 +1218,8 @@
 				fallbackTimer = window.setTimeout(function() {
 					fallbackTimer = null;
 					syncFromRenderedCart();
+					markExternalCartAdding();
+					refreshSectionsSilently({ jumpToCart: true });
 				}, 1500);
 			}
 
@@ -1072,15 +1261,35 @@
 				return url.href;
 			}
 
+			function addSectionsToUrl(url) {
+				var sectionsIds = getDrawerSectionsIds();
+				if (!sectionsIds || !url) return url;
+
+				try {
+					var requestUrl = new URL(url, window.location.href);
+					if (!requestUrl.searchParams.has('sections')) {
+						requestUrl.searchParams.set('sections', sectionsIds);
+					}
+					if (!requestUrl.searchParams.has('sections_url')) {
+						requestUrl.searchParams.set('sections_url', window.location.pathname || '/');
+					}
+					return requestUrl.href;
+				} catch (error) {
+					return url;
+				}
+			}
+
 			function addSectionsToBody(body) {
 				var sectionsIds = getDrawerSectionsIds();
 				if (!sectionsIds || body == null) return body;
+				var sectionsUrl = window.location.pathname || '/';
 
 				if (typeof body === 'string') {
 					try {
 						var parsedBody = JSON.parse(body);
 						if (parsedBody && typeof parsedBody === 'object' && !Array.isArray(parsedBody) && !parsedBody.sections) {
 							parsedBody.sections = sectionsIds;
+							if (!parsedBody.sections_url) parsedBody.sections_url = sectionsUrl;
 							return JSON.stringify(parsedBody);
 						}
 					} catch (error) {
@@ -1088,6 +1297,7 @@
 							var params = new URLSearchParams(body);
 							if (!params.has('sections')) {
 								params.set('sections', sectionsIds);
+								if (!params.has('sections_url')) params.set('sections_url', sectionsUrl);
 								return params.toString();
 							}
 						} catch (paramsError) { /* ignore */ }
@@ -1097,51 +1307,57 @@
 
 				if (typeof URLSearchParams === 'function' && body instanceof URLSearchParams && !body.has('sections')) {
 					body.set('sections', sectionsIds);
+					if (!body.has('sections_url')) body.set('sections_url', sectionsUrl);
 					return body;
 				}
 
 				if (typeof FormData === 'function' && body instanceof FormData && !body.has('sections')) {
 					body.append('sections', sectionsIds);
+					if (!body.has('sections_url')) body.append('sections_url', sectionsUrl);
 					return body;
 				}
 
 				return body;
 			}
 
-			function refreshSectionsSilently() {
-				if (silentRefreshTimer) window.clearTimeout(silentRefreshTimer);
-				silentRefreshTimer = window.setTimeout(function() {
+			function refreshSectionsSilently(options) {
+				if (silentRefreshTimer) {
+					window.clearTimeout(silentRefreshTimer);
 					silentRefreshTimer = null;
-					var url = getCartSectionsUrl();
-					if (!url || typeof window.__camoCartPartialUpdate !== 'function') {
-						scheduleCartRefresh(0);
-						clearLoading();
-						return;
-					}
+				}
+				var url = getCartSectionsUrl();
+				if (!url || typeof window.__camoCartPartialUpdate !== 'function') {
+					scheduleCartRefresh(0);
+					clearLoading();
+					return;
+				}
 
-					fetch(url).then(function(response) {
-						return response.json();
-					}).then(function(sections) {
-						if (sections && typeof sections === 'object') {
-							window.__camoCartPartialUpdate({
-								action: 'addItem',
-								sections: sections,
-								params: [{ noRefresh: true }]
-							});
-							scheduleRenderedSync(80);
+				fetch(url).then(function(response) {
+					return response.json();
+				}).then(function(sections) {
+					if (sections && typeof sections === 'object') {
+						window.__camoCartPartialUpdate({
+							action: 'addItem',
+							sections: sections,
+							params: [{ noRefresh: true }]
+						});
+						scheduleRenderedSync(80);
+						if (options && options.jumpToCart) {
+							finishExternalCartAdd();
+						} else {
 							clearLoading();
 						}
-					}).catch(function() {
-						scheduleCartRefresh(0);
-						clearLoading();
-					});
-				}, 0);
+					}
+				}).catch(function() {
+					scheduleCartRefresh(0);
+					clearLoading();
+				});
 			}
 
 			function handleCartMutationData(data) {
 				var hasCount = data && typeof data.item_count === 'number';
 				if (hasCount) {
-					publishCount(data.item_count);
+					publishCount(data.item_count, { keepLoading: Date.now() - lastCartAppClickAt < 7000 });
 				}
 
 				if (isThemeCartChangeInProgress()) {
@@ -1163,7 +1379,7 @@
 						params: [{ noRefresh: true }]
 					});
 					scheduleRenderedSync(80);
-					clearLoading();
+					finishExternalCartAdd();
 					if (fallbackTimer) {
 						window.clearTimeout(fallbackTimer);
 						fallbackTimer = null;
@@ -1171,9 +1387,9 @@
 					return;
 				}
 
-				clearLoading();
-				refreshSectionsSilently();
-				if (hasCount && fallbackTimer) {
+				markExternalCartAdding();
+				refreshSectionsSilently({ jumpToCart: true });
+				if (fallbackTimer) {
 					window.clearTimeout(fallbackTimer);
 					fallbackTimer = null;
 				}
@@ -1201,10 +1417,26 @@
 					var isCartMutation = url && cartMutationRegex.test(url);
 					var fetchArgs = arguments;
 
-					if (isCartMutation && Date.now() - lastCartAppClickAt < 7000 && !isThemeCartChangeInProgress() && init && init.body) {
-						var bodyWithSections = addSectionsToBody(init.body);
-						if (bodyWithSections !== init.body) {
-							fetchArgs = [input, Object.assign({}, init, { body: bodyWithSections })];
+					if (isCartMutation && Date.now() - lastCartAppClickAt < 7000 && !isThemeCartChangeInProgress()) {
+						var bodyWithSections = init && init.body ? addSectionsToBody(init.body) : init && init.body;
+						var urlWithSections = addSectionsToUrl(url);
+						if ((init && bodyWithSections !== init.body) || urlWithSections !== url) {
+							var requestInput = input;
+							if (urlWithSections !== url) {
+								if (typeof input === 'string') {
+									requestInput = urlWithSections;
+								} else if (typeof Request === 'function' && input instanceof Request) {
+									try {
+										requestInput = new Request(urlWithSections, input);
+									} catch (error) {
+										requestInput = input;
+									}
+								}
+							}
+							fetchArgs = [
+								requestInput,
+								init ? Object.assign({}, init, { body: bodyWithSections }) : init
+							];
 						}
 					}
 					var promise = nativeFetch.apply(this, fetchArgs);
@@ -1217,8 +1449,8 @@
 							handleCartMutationData(data);
 						}).catch(function() {
 							if (Date.now() - lastCartAppClickAt < 7000 && !isThemeCartChangeInProgress()) {
-								clearLoading();
-								refreshSectionsSilently();
+								markExternalCartAdding();
+								refreshSectionsSilently({ jumpToCart: true });
 							}
 						});
 					}).catch(function() {
@@ -1235,6 +1467,10 @@
 				var nativeXhrSend = XMLHttpRequest.prototype.send;
 
 				XMLHttpRequest.prototype.open = function(method, url) {
+					if (url && cartMutationRegex.test(url) && Date.now() - lastCartAppClickAt < 7000 && !isThemeCartChangeInProgress()) {
+						url = addSectionsToUrl(url);
+						arguments[1] = url;
+					}
 					this.__camoCartUrl = url;
 					this.__camoCartMethod = method;
 					return nativeXhrOpen.apply(this, arguments);
@@ -1251,8 +1487,8 @@
 							try {
 								handleCartMutationData(JSON.parse(this.responseText));
 							} catch (error) {
-								clearLoading();
-								refreshSectionsSilently();
+								markExternalCartAdding();
+								refreshSectionsSilently({ jumpToCart: true });
 							}
 						});
 						this.addEventListener('error', clearLoading);

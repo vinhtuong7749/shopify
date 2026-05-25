@@ -436,15 +436,30 @@
 
 			html.is-cart-qty-changing lb-upsell-widget,
 			html.is-cart-qty-changing .lb-widget,
+			html.is-cart-qty-changing [id*="lb-upsell" i],
+			html.is-cart-qty-changing [class*="lb-upsell" i],
 			html.is-cart-qty-changing [id*="selleasy" i],
 			html.is-cart-qty-changing [class*="selleasy" i] {
 				opacity: 1 !important;
 				visibility: visible !important;
 				transition: none !important;
+				content-visibility: visible !important;
 			}
 
 			html.is-cart-qty-changing lb-upsell-widget *,
-			html.is-cart-qty-changing .lb-widget * {
+			html.is-cart-qty-changing .lb-widget *,
+			html.is-cart-qty-changing [id*="lb-upsell" i] *,
+			html.is-cart-qty-changing [class*="lb-upsell" i] *,
+			html.is-cart-qty-changing [id*="selleasy" i] *,
+			html.is-cart-qty-changing [class*="selleasy" i] * {
+				transition: none !important;
+				animation-duration: 0s !important;
+			}
+
+			html.is-cart-qty-changing .camo-cart-app-freeze,
+			html.is-cart-qty-changing .camo-cart-app-freeze * {
+				opacity: 1 !important;
+				visibility: visible !important;
 				transition: none !important;
 				animation-duration: 0s !important;
 			}
@@ -504,8 +519,8 @@
 					        in the same order the server rendered them. */
 					var oldItemsRoot = getCartItemsRoot(sectionEl);
 					var newItemsRoot = getCartItemsRoot(newRoot);
-					var newItemEls = newItemsRoot ? Array.from(newItemsRoot.querySelectorAll('[data-cart-item]')) : [];
-					var oldItemEls = oldItemsRoot ? Array.from(oldItemsRoot.querySelectorAll('[data-cart-item]')) : [];
+					var newItemEls = getThemeCartItems(newItemsRoot);
+					var oldItemEls = getThemeCartItems(oldItemsRoot);
 					var newKeys = newItemEls.map(function(el) { return el.getAttribute('data-cart-item'); });
 
 					/* Remove items that are no longer in the new list. */
@@ -521,7 +536,7 @@
 					for (var i = 0; i < newItemEls.length; i++) {
 						var newItem = newItemEls[i];
 						var key = newItem.getAttribute('data-cart-item');
-						var oldItem = key && oldItemsRoot ? oldItemsRoot.querySelector('[data-cart-item="' + cssEscape(key) + '"]') : null;
+						var oldItem = findThemeCartItemByKey(oldItemsRoot, key);
 
 						if (oldItem) {
 							updateLineItemPartially(oldItem, newItem);
@@ -534,7 +549,7 @@
 						var anchor = null;
 						for (var j = i + 1; j < newItemEls.length; j++) {
 							var nextKey = newItemEls[j].getAttribute('data-cart-item');
-							var nextOld = nextKey && oldItemsRoot ? oldItemsRoot.querySelector('[data-cart-item="' + cssEscape(nextKey) + '"]') : null;
+							var nextOld = findThemeCartItemByKey(oldItemsRoot, nextKey);
 							if (nextOld) { anchor = nextOld; break; }
 						}
 
@@ -546,7 +561,18 @@
 							   deliberately scoped so third-party cart app widgets
 							   are not mistaken for cart rows. */
 							var container = oldItemsRoot;
-							if (container) container.appendChild(clone);
+							if (container) {
+								var appWidget = getCartAppWidget(container);
+								var appAnchor = appWidget;
+								while (appAnchor && appAnchor.parentNode !== container) {
+									appAnchor = appAnchor.parentNode;
+								}
+								if (appAnchor && appAnchor.parentNode === container) {
+									container.insertBefore(clone, appAnchor);
+								} else {
+									container.appendChild(clone);
+								}
+							}
 						}
 						bindNewItemQuantityWidget(clone);
 					}
@@ -584,11 +610,15 @@
 						|| root.querySelector('.cart-drawer__section--items');
 				}
 
-				var cartAppWidgetSelector = 'lb-upsell-widget.lb-widget, lb-upsell-widget, .lb-widget';
+				var cartAppWidgetSelector = 'lb-upsell-widget.lb-widget, lb-upsell-widget, .lb-widget, .shopify-app-block, [id*="selleasy" i], [class*="selleasy" i], [id*="lb_upsell" i], [id*="lb-upsell" i], [class*="lb-widget" i], [class*="lb-upsell" i], [id*="sll" i], [class*="sll" i]';
 				var preservedCartAppWidget = null;
 				var preservedCartAppScope = null;
 				var preservedCartAppMinHeight = null;
 				var preservedCartAppMinHeightPriority = '';
+				var preservedCartAppFreezeOverlay = null;
+				var preservedCartAppFreezeWidget = null;
+				var preservedCartAppFreezeFrame = null;
+				var preservedCartAppHiddenWidgets = [];
 				var cartAppWidgetObserver = null;
 				var cartAppWidgetObservedRoot = null;
 
@@ -597,9 +627,148 @@
 					return root.querySelector(cartAppWidgetSelector);
 				}
 
+				function isInsideCartAppWidget(el) {
+					return !!(el && el.closest && el.closest(cartAppWidgetSelector));
+				}
+
+				function isThemeCartItem(el) {
+					if (!el || el.nodeType !== 1 || isInsideCartAppWidget(el)) return false;
+					if (el.matches && el.matches('.cart-item-drawer[data-cart-item], .cart-item[data-cart-item], [data-cart-item].cart-item-drawer, [data-cart-item].cart-item')) return true;
+					return !!(el.querySelector && el.querySelector('.cart-item-drawer__media, .cart-item__media, .cart-item-drawer__quantity, .cart-item__quantity'));
+				}
+
+				function getThemeCartItems(root) {
+					if (!root || !root.querySelectorAll) return [];
+					return Array.from(root.querySelectorAll('[data-cart-item]')).filter(isThemeCartItem);
+				}
+
+				function findThemeCartItemByKey(root, key) {
+					if (!root || !key || !root.querySelectorAll) return null;
+					var matches = root.querySelectorAll('[data-cart-item="' + cssEscape(key) + '"]');
+					for (var i = 0; i < matches.length; i++) {
+						if (isThemeCartItem(matches[i])) return matches[i];
+					}
+					return null;
+				}
+
 				function getCartContentRoot(root) {
 					if (!root || !root.querySelector) return null;
 					return root.querySelector('.js-cart-content') || root.querySelector('#cart-drawer-main-content');
+				}
+
+				function positionCartAppFreezeOverlay() {
+					if (!preservedCartAppFreezeOverlay || !preservedCartAppFreezeWidget || !document.contains(preservedCartAppFreezeWidget)) return;
+					var rect = preservedCartAppFreezeWidget.getBoundingClientRect();
+					preservedCartAppFreezeOverlay.style.top = Math.round(rect.top) + 'px';
+					preservedCartAppFreezeOverlay.style.left = Math.round(rect.left) + 'px';
+					preservedCartAppFreezeOverlay.style.width = Math.max(0, Math.round(rect.width)) + 'px';
+					preservedCartAppFreezeOverlay.style.height = Math.max(0, Math.round(rect.height)) + 'px';
+				}
+
+				function releaseCartAppWidgetFreeze() {
+					if (preservedCartAppFreezeFrame && window.cancelAnimationFrame) {
+						window.cancelAnimationFrame(preservedCartAppFreezeFrame);
+					}
+					preservedCartAppFreezeFrame = null;
+					preservedCartAppHiddenWidgets.forEach(function(entry) {
+						if (!entry || !entry.el || !document.contains(entry.el)) return;
+						entry.el.classList.remove('camo-cart-app-freeze-source');
+						if (entry.visibility) {
+							entry.el.style.setProperty('visibility', entry.visibility, entry.visibilityPriority);
+						} else {
+							entry.el.style.removeProperty('visibility');
+						}
+						if (entry.opacity) {
+							entry.el.style.setProperty('opacity', entry.opacity, entry.opacityPriority);
+						} else {
+							entry.el.style.removeProperty('opacity');
+						}
+					});
+					preservedCartAppHiddenWidgets = [];
+					if (preservedCartAppFreezeOverlay && preservedCartAppFreezeOverlay.parentNode) {
+						preservedCartAppFreezeOverlay.parentNode.removeChild(preservedCartAppFreezeOverlay);
+					}
+					preservedCartAppFreezeOverlay = null;
+					preservedCartAppFreezeWidget = null;
+				}
+
+				function hideCartAppFreezeSource(widget) {
+					if (!widget || widget.nodeType !== 1) return;
+					var alreadyHidden = preservedCartAppHiddenWidgets.some(function(entry) {
+						return entry && entry.el === widget;
+					});
+					if (!alreadyHidden) {
+						preservedCartAppHiddenWidgets.push({
+							el: widget,
+							visibility: widget.style.getPropertyValue('visibility'),
+							visibilityPriority: widget.style.getPropertyPriority('visibility'),
+							opacity: widget.style.getPropertyValue('opacity'),
+							opacityPriority: widget.style.getPropertyPriority('opacity')
+						});
+					}
+					widget.classList.add('camo-cart-app-freeze-source');
+					widget.style.setProperty('visibility', 'hidden', 'important');
+					widget.style.setProperty('opacity', '0', 'important');
+				}
+
+				function freezeCartAppWidgetVisual(widget) {
+					if (!widget || !widget.getBoundingClientRect || !document.body) return;
+					if (preservedCartAppFreezeWidget === widget && preservedCartAppFreezeOverlay) {
+						positionCartAppFreezeOverlay();
+						hideCartAppFreezeSource(widget);
+						return;
+					}
+
+					releaseCartAppWidgetFreeze();
+
+					var rect = widget.getBoundingClientRect();
+					if (!rect || rect.width <= 0 || rect.height <= 0) return;
+
+					var overlay = document.createElement('div');
+					var clone = document.createElement('div');
+					overlay.setAttribute('aria-hidden', 'true');
+					overlay.className = 'camo-cart-app-freeze';
+					overlay.style.cssText = [
+						'position:fixed',
+						'overflow:hidden',
+						'pointer-events:none',
+						'z-index:2147483000',
+						'box-sizing:border-box',
+						'contain:layout paint',
+						'background:transparent'
+					].join(';');
+					clone.className = typeof widget.className === 'string' ? widget.className : '';
+					clone.innerHTML = widget.innerHTML;
+					Array.prototype.forEach.call(clone.querySelectorAll('script, [id]'), function(el) {
+						if (el.tagName && el.tagName.toLowerCase() === 'script') {
+							el.remove();
+							return;
+						}
+						el.removeAttribute('id');
+					});
+					clone.style.margin = '0';
+					clone.style.width = '100%';
+					clone.style.maxWidth = '100%';
+					clone.style.pointerEvents = 'none';
+					overlay.appendChild(clone);
+					document.body.appendChild(overlay);
+
+					preservedCartAppFreezeOverlay = overlay;
+					preservedCartAppFreezeWidget = widget;
+					positionCartAppFreezeOverlay();
+					hideCartAppFreezeSource(widget);
+
+					var startedAt = Date.now();
+					var keepPositioned = function() {
+						if (!preservedCartAppFreezeOverlay) return;
+						positionCartAppFreezeOverlay();
+						if (document.documentElement.classList.contains('is-cart-qty-changing') && Date.now() - startedAt < 2500 && window.requestAnimationFrame) {
+							preservedCartAppFreezeFrame = window.requestAnimationFrame(keepPositioned);
+						}
+					};
+					if (window.requestAnimationFrame) {
+						preservedCartAppFreezeFrame = window.requestAnimationFrame(keepPositioned);
+					}
 				}
 
 				function installCartAppWidgetObserver(scope) {
@@ -634,6 +803,7 @@
 					if (rect && rect.height > 0) {
 						widget.style.setProperty('min-height', Math.ceil(rect.height) + 'px', 'important');
 					}
+					freezeCartAppWidgetVisual(widget);
 					installCartAppWidgetObserver(scope || document);
 				}
 
@@ -649,7 +819,9 @@
 					var currentWidget = getCartAppWidget(scope);
 
 					if (currentWidget && currentWidget !== preservedCartAppWidget) {
+						hideCartAppFreezeSource(currentWidget);
 						preservedCartAppWidget = currentWidget;
+						positionCartAppFreezeOverlay();
 						return;
 					}
 					if (document.contains(preservedCartAppWidget)) return;
@@ -657,6 +829,7 @@
 					var itemsRoot = getCartItemsRoot(scope);
 					if (!itemsRoot) return;
 					itemsRoot.appendChild(preservedCartAppWidget);
+					positionCartAppFreezeOverlay();
 				}
 
 				function releaseCartAppWidgetPreservation() {
@@ -672,6 +845,7 @@
 					preservedCartAppScope = null;
 					preservedCartAppMinHeight = null;
 					preservedCartAppMinHeightPriority = '';
+					releaseCartAppWidgetFreeze();
 					if (cartAppWidgetObserver) {
 						cartAppWidgetObserver.disconnect();
 						cartAppWidgetObserver = null;
@@ -922,13 +1096,18 @@
 						var nativeElementScrollTo = Element.prototype.scrollTo;
 						Element.prototype.scrollTo = function() {
 							var top = getScrollTopArg(arguments);
+							var isCartAppAdding = document.documentElement.classList.contains('is-cart-app-adding');
 							if (
 								top === 0 &&
-								document.documentElement.classList.contains('is-cart-qty-changing') &&
+								(document.documentElement.classList.contains('is-cart-qty-changing') || isCartAppAdding) &&
 								this.matches &&
 								this.matches('#CartDrawer [data-scrollable]')
 							) {
-								restoreCartScrollPosition();
+								if (isCartAppAdding && typeof window.__camoRestoreCartAppScrollAnchor === 'function') {
+									window.__camoRestoreCartAppScrollAnchor();
+								} else {
+									restoreCartScrollPosition();
+								}
 								return;
 							}
 							return nativeElementScrollTo.apply(this, arguments);
@@ -939,13 +1118,23 @@
 						var nativeWindowScrollTo = window.scrollTo;
 						window.scrollTo = function() {
 							var top = getScrollTopArg(arguments);
+							var isCartAppAdding = document.documentElement.classList.contains('is-cart-app-adding');
 							if (
 								top === 0 &&
-								document.documentElement.classList.contains('is-cart-qty-changing') &&
-								cartScrollSnapshot &&
-								cartScrollSnapshot.type === 'window'
+								((
+									document.documentElement.classList.contains('is-cart-qty-changing') &&
+									cartScrollSnapshot &&
+									cartScrollSnapshot.type === 'window'
+								) || (
+									isCartAppAdding &&
+									typeof window.__camoRestoreCartAppScrollAnchor === 'function'
+								))
 							) {
-								restoreCartScrollPosition();
+								if (isCartAppAdding && typeof window.__camoRestoreCartAppScrollAnchor === 'function') {
+									window.__camoRestoreCartAppScrollAnchor();
+								} else {
+									restoreCartScrollPosition();
+								}
 								return;
 							}
 							return nativeWindowScrollTo.apply(window, arguments);
@@ -961,6 +1150,12 @@
 					});
 				}
 
+				function closestThemeCartItem(target) {
+					if (!target || !target.closest) return null;
+					var item = target.closest('.cart-item-drawer[data-cart-item], .cart-item[data-cart-item], [data-cart-item].cart-item-drawer, [data-cart-item].cart-item');
+					return isThemeCartItem(item) ? item : null;
+				}
+
 				function markQtyChanging(target) {
 					if (qtyChangeTimer) clearTimeout(qtyChangeTimer);
 					document.documentElement.classList.add('is-cart-qty-changing');
@@ -968,7 +1163,7 @@
 						captureCartScrollPosition(target);
 						preserveCartAppWidget(target);
 						clearItemUpdating();
-						var item = target.closest('[data-cart-item]');
+						var item = closestThemeCartItem(target);
 						if (item) item.classList.add('camo-cart-item-updating');
 					}
 					/* Safety net: if a request fails and never emits cart:updated,
@@ -1003,14 +1198,15 @@
 						markQtyChanging(removeButton);
 						return;
 					}
-					if (target.closest('[data-quantity-increase], [data-quantity-decrease]')) {
+					var quantityButton = target.closest('[data-quantity-increase], [data-quantity-decrease]');
+					if (quantityButton && closestThemeCartItem(quantityButton)) {
 						markQtyChanging(target);
 					}
 				}, true);
 
 				document.addEventListener('change', function(event) {
 					var target = event.target;
-					if (target && target.matches && target.matches('[data-quantity-input]')) {
+					if (target && target.matches && target.matches('[data-quantity-input]') && closestThemeCartItem(target)) {
 						markQtyChanging(target);
 					}
 				}, true);
@@ -1034,8 +1230,16 @@
 				}
 
 				function shouldBlockFullCartRefresh() {
-					return document.documentElement.classList.contains('is-cart-qty-changing')
+					var hasPartialUpdate = typeof window.__camoCartPartialUpdate === 'function';
+					return (document.documentElement.classList.contains('is-cart-qty-changing')
+						|| (document.documentElement.classList.contains('is-cart-app-adding') && hasPartialUpdate))
 						&& !document.documentElement.classList.contains('is-cart-merging');
+				}
+
+				function shouldKeepCartAppStable(payload) {
+					if (!document.documentElement.classList.contains('is-cart-qty-changing')) return false;
+					if (!payload || !payload.action) return true;
+					return payload.action === 'changeQuantity' || payload.action === 'removeItem';
 				}
 
 				function maybeAutoOpenDrawer(payload) {
@@ -1066,6 +1270,7 @@
 						}
 
 						if (event === 'cart:updated' && shouldUsePartialUpdate(payload)) {
+							var keepCartAppStable = shouldKeepCartAppStable(payload);
 							if (!Array.isArray(payload.params)) payload.params = [];
 							var alreadyMarked = payload.params.some(function(p) { return p && typeof p === 'object' && p.noRefresh; });
 							if (!alreadyMarked) {
@@ -1077,6 +1282,10 @@
 							setTimeout(function() {
 								partialCartUpdate(payload);
 								restoreCartScrollPosition();
+								restoreCartAppWidget();
+								if (keepCartAppStable && payload && typeof payload.item_count === 'number') {
+									originalEmit.call(EventBus, 'header:update-item-count', { item_count: payload.item_count });
+								}
 								/* Theme.onCartUpdated bailed early because of the
 								   noRefresh flag, so we have to take over the
 								   drawer auto-open it would normally handle. */
@@ -1084,8 +1293,11 @@
 								/* Give theme's hidePreloaders() its 300ms grace
 								   period before we let the section preloader become
 								   visible again on the next interaction. */
-								clearQtyChanging(350);
+								clearQtyChanging(keepCartAppStable ? 700 : 350);
 							}, 0);
+							if (keepCartAppStable) {
+								return this;
+							}
 						}
 						return originalEmit.apply(this, arguments);
 					};
