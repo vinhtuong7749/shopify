@@ -240,6 +240,10 @@
 			window.themeCore.EventBus.emit('cart:refresh');
 		}
 
+		function isThemeCartChangeInProgress() {
+			return document.documentElement.classList.contains('is-cart-qty-changing');
+		}
+
 		function fetchHeaderCount() {
 			if (pendingHeaderFetch) return;
 			if (Date.now() - lastHeaderCountAt < 500) return;
@@ -374,6 +378,8 @@
 			var hasCount = data && typeof data.item_count === 'number';
 			if (hasCount) emitHeaderCount(data.item_count);
 
+			if (isThemeCartChangeInProgress()) return;
+
 			if (Date.now() - lastAppClickAt >= 7000) return;
 
 			var hasSections = data && data.sections && typeof data.sections === 'object' && !Array.isArray(data.sections) && Object.keys(data.sections).length > 0;
@@ -412,7 +418,7 @@
 				   response carries the rendered section HTML — that lets us morph
 				   the cart in place instead of triggering a flickery full
 				   refresh. Only do this for recent app clicks. */
-				if (isCartMutation && Date.now() - lastAppClickAt < 7000 && init && init.body) {
+				if (isCartMutation && Date.now() - lastAppClickAt < 7000 && !isThemeCartChangeInProgress() && init && init.body) {
 					var bodyWithSections = addSectionsToBody(init.body);
 					if (bodyWithSections !== init.body) {
 						fetchArgs = [input, Object.assign({}, init, { body: bodyWithSections })];
@@ -427,12 +433,12 @@
 					/* Only intervene when the user just interacted with an external
 					   cart-app trigger — keeps the bridge invisible for theme actions
 					   which already emit cart:updated via the EventBus. */
-					if (Date.now() - lastAppClickAt >= 7000) return;
+					if (Date.now() - lastAppClickAt >= 7000 || isThemeCartChangeInProgress()) return;
 
 					response.clone().json().then(function(data) {
 						handleCartMutationData(data);
 					}).catch(function() {
-						if (Date.now() - lastAppClickAt < 7000) {
+						if (Date.now() - lastAppClickAt < 7000 && !isThemeCartChangeInProgress()) {
 							refreshSectionsSilently();
 							fetchHeaderCount();
 						}
@@ -457,7 +463,7 @@
 			XMLHttpRequest.prototype.send = function(body) {
 				var url = this.__camoCartUrl || '';
 				var isCartMutation = url && cartMutationRegex.test(url);
-				var recentAppClick = Date.now() - lastAppClickAt < 7000;
+				var recentAppClick = Date.now() - lastAppClickAt < 7000 && !isThemeCartChangeInProgress();
 
 				if (isCartMutation && recentAppClick) {
 					body = addSectionsToBody(body);

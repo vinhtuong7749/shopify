@@ -434,6 +434,21 @@
 				z-index: 5;
 			}
 
+			html.is-cart-qty-changing lb-upsell-widget,
+			html.is-cart-qty-changing .lb-widget,
+			html.is-cart-qty-changing [id*="selleasy" i],
+			html.is-cart-qty-changing [class*="selleasy" i] {
+				opacity: 1 !important;
+				visibility: visible !important;
+				transition: none !important;
+			}
+
+			html.is-cart-qty-changing lb-upsell-widget *,
+			html.is-cart-qty-changing .lb-widget * {
+				transition: none !important;
+				animation-duration: 0s !important;
+			}
+
 			@keyframes camo-cart-spin {
 				to {
 					transform: rotate(360deg);
@@ -487,8 +502,10 @@
 					      - remove items missing from the response
 					      - insert items that are new (e.g. from an add action)
 					        in the same order the server rendered them. */
-					var newItemEls = Array.from(newRoot.querySelectorAll('[data-cart-item]'));
-					var oldItemEls = Array.from(sectionEl.querySelectorAll('[data-cart-item]'));
+					var oldItemsRoot = getCartItemsRoot(sectionEl);
+					var newItemsRoot = getCartItemsRoot(newRoot);
+					var newItemEls = newItemsRoot ? Array.from(newItemsRoot.querySelectorAll('[data-cart-item]')) : [];
+					var oldItemEls = oldItemsRoot ? Array.from(oldItemsRoot.querySelectorAll('[data-cart-item]')) : [];
 					var newKeys = newItemEls.map(function(el) { return el.getAttribute('data-cart-item'); });
 
 					/* Remove items that are no longer in the new list. */
@@ -504,7 +521,7 @@
 					for (var i = 0; i < newItemEls.length; i++) {
 						var newItem = newItemEls[i];
 						var key = newItem.getAttribute('data-cart-item');
-						var oldItem = key ? sectionEl.querySelector('[data-cart-item="' + cssEscape(key) + '"]') : null;
+						var oldItem = key && oldItemsRoot ? oldItemsRoot.querySelector('[data-cart-item="' + cssEscape(key) + '"]') : null;
 
 						if (oldItem) {
 							updateLineItemPartially(oldItem, newItem);
@@ -517,7 +534,7 @@
 						var anchor = null;
 						for (var j = i + 1; j < newItemEls.length; j++) {
 							var nextKey = newItemEls[j].getAttribute('data-cart-item');
-							var nextOld = nextKey ? sectionEl.querySelector('[data-cart-item="' + cssEscape(nextKey) + '"]') : null;
+							var nextOld = nextKey && oldItemsRoot ? oldItemsRoot.querySelector('[data-cart-item="' + cssEscape(nextKey) + '"]') : null;
 							if (nextOld) { anchor = nextOld; break; }
 						}
 
@@ -525,14 +542,10 @@
 						if (anchor && anchor.parentNode) {
 							anchor.parentNode.insertBefore(clone, anchor);
 						} else {
-							/* Find a reasonable items container in the existing DOM.
-							   cart-template renders items inside .cart-items__body,
-							   cart drawer renders them directly inside
-							   .cart-drawer__section--items or .js-cart-content. */
-							var container = sectionEl.querySelector('.cart-items__body')
-								|| sectionEl.querySelector('.cart-drawer__section--items .cart-items')
-								|| sectionEl.querySelector('.cart-drawer__section--items')
-								|| sectionEl.querySelector('.js-cart-content');
+							/* Find the theme-owned cart items container. Keep this
+							   deliberately scoped so third-party cart app widgets
+							   are not mistaken for cart rows. */
+							var container = oldItemsRoot;
 							if (container) container.appendChild(clone);
 						}
 						bindNewItemQuantityWidget(clone);
@@ -560,6 +573,110 @@
 
 					/* 5. Free-shipping bar progress + message. */
 					updateShippingBar(sectionEl, newRoot);
+				}
+
+				function getCartItemsRoot(root) {
+					if (!root || !root.querySelector) return null;
+					return root.querySelector('.cart-drawer__section--items .cart-items__body')
+						|| root.querySelector('.cart-template__items .cart-items__body')
+						|| root.querySelector('form.cart-items__form .cart-items__body')
+						|| root.querySelector('.cart-drawer__section--items .cart-items')
+						|| root.querySelector('.cart-drawer__section--items');
+				}
+
+				var cartAppWidgetSelector = 'lb-upsell-widget.lb-widget, lb-upsell-widget, .lb-widget';
+				var preservedCartAppWidget = null;
+				var preservedCartAppScope = null;
+				var preservedCartAppMinHeight = null;
+				var preservedCartAppMinHeightPriority = '';
+				var cartAppWidgetObserver = null;
+				var cartAppWidgetObservedRoot = null;
+
+				function getCartAppWidget(root) {
+					if (!root || !root.querySelector) return null;
+					return root.querySelector(cartAppWidgetSelector);
+				}
+
+				function getCartContentRoot(root) {
+					if (!root || !root.querySelector) return null;
+					return root.querySelector('.js-cart-content') || root.querySelector('#cart-drawer-main-content');
+				}
+
+				function installCartAppWidgetObserver(scope) {
+					var contentRoot = getCartContentRoot(scope)
+						|| document.querySelector('#CartDrawer .js-cart-content, .cart-drawer .js-cart-content, .js-cart-content');
+					if (!contentRoot || typeof MutationObserver === 'undefined') return;
+					if (cartAppWidgetObserver && cartAppWidgetObservedRoot === contentRoot) return;
+					if (cartAppWidgetObserver) {
+						cartAppWidgetObserver.disconnect();
+						cartAppWidgetObserver = null;
+					}
+
+					cartAppWidgetObserver = new MutationObserver(function() {
+						if (!document.documentElement.classList.contains('is-cart-qty-changing')) return;
+						restoreCartAppWidget();
+					});
+					cartAppWidgetObserver.observe(contentRoot, { childList: true, subtree: true });
+					cartAppWidgetObservedRoot = contentRoot;
+				}
+
+				function preserveCartAppWidget(target) {
+					var scope = target && target.closest ? target.closest('#CartDrawer, [data-section-type="cart-template"]') : null;
+					var widget = getCartAppWidget(scope || document);
+					if (!widget) return;
+					if (preservedCartAppWidget !== widget) {
+						preservedCartAppMinHeight = widget.style.getPropertyValue('min-height');
+						preservedCartAppMinHeightPriority = widget.style.getPropertyPriority('min-height');
+					}
+					preservedCartAppWidget = widget;
+					preservedCartAppScope = scope || document;
+					var rect = widget.getBoundingClientRect();
+					if (rect && rect.height > 0) {
+						widget.style.setProperty('min-height', Math.ceil(rect.height) + 'px', 'important');
+					}
+					installCartAppWidgetObserver(scope || document);
+				}
+
+				function restoreCartAppWidget() {
+					if (!preservedCartAppWidget) return;
+					var scope = preservedCartAppScope || document.querySelector('#CartDrawer') || document;
+					if (scope !== document && !document.contains(scope)) {
+						scope = document.querySelector('#CartDrawer.is-active')
+							|| document.querySelector('[data-section-type="cart-template"]:not([data-section-modification="drawer"])')
+							|| document.querySelector('[data-section-type="cart-template"]')
+							|| document;
+					}
+					var currentWidget = getCartAppWidget(scope);
+
+					if (currentWidget && currentWidget !== preservedCartAppWidget) {
+						preservedCartAppWidget = currentWidget;
+						return;
+					}
+					if (document.contains(preservedCartAppWidget)) return;
+
+					var itemsRoot = getCartItemsRoot(scope);
+					if (!itemsRoot) return;
+					itemsRoot.appendChild(preservedCartAppWidget);
+				}
+
+				function releaseCartAppWidgetPreservation() {
+					restoreCartAppWidget();
+					if (preservedCartAppWidget) {
+						if (preservedCartAppMinHeight) {
+							preservedCartAppWidget.style.setProperty('min-height', preservedCartAppMinHeight, preservedCartAppMinHeightPriority);
+						} else {
+							preservedCartAppWidget.style.removeProperty('min-height');
+						}
+					}
+					preservedCartAppWidget = null;
+					preservedCartAppScope = null;
+					preservedCartAppMinHeight = null;
+					preservedCartAppMinHeightPriority = '';
+					if (cartAppWidgetObserver) {
+						cartAppWidgetObserver.disconnect();
+						cartAppWidgetObserver = null;
+					}
+					cartAppWidgetObservedRoot = null;
 				}
 
 				/* Bind theme's QuantityWidget to a freshly inserted line item.
@@ -742,6 +859,102 @@
 				   the price in-place). Set it as soon as the user interacts so
 				   the overlay never gets a chance to flash in. */
 				var qtyChangeTimer = null;
+				var cartScrollSnapshot = null;
+
+				function captureCartScrollPosition(target) {
+					var drawer = target && target.closest ? target.closest('#CartDrawer') : null;
+					var scrollable = drawer ? drawer.querySelector('[data-scrollable]') : null;
+
+					if (scrollable) {
+						cartScrollSnapshot = {
+							type: 'element',
+							element: scrollable,
+							top: scrollable.scrollTop,
+							left: scrollable.scrollLeft
+						};
+						return;
+					}
+
+					var scrollingElement = document.scrollingElement || document.documentElement;
+					cartScrollSnapshot = {
+						type: 'window',
+						element: scrollingElement,
+						top: window.pageYOffset || scrollingElement.scrollTop || 0,
+						left: window.pageXOffset || scrollingElement.scrollLeft || 0
+					};
+				}
+
+				function restoreCartScrollPosition() {
+					if (!cartScrollSnapshot) return;
+					var snapshot = cartScrollSnapshot;
+					var restore = function() {
+						if (snapshot.type === 'element' && snapshot.element && document.contains(snapshot.element)) {
+							snapshot.element.scrollTop = snapshot.top;
+							snapshot.element.scrollLeft = snapshot.left;
+							return;
+						}
+						window.scrollTo(snapshot.left, snapshot.top);
+					};
+
+					restore();
+					if (window.requestAnimationFrame) {
+						window.requestAnimationFrame(restore);
+						window.requestAnimationFrame(function() {
+							window.requestAnimationFrame(restore);
+						});
+					}
+					setTimeout(restore, 80);
+				}
+
+				function getScrollTopArg(args) {
+					if (!args || !args.length) return null;
+					if (typeof args[0] === 'object' && args[0] !== null) {
+						return typeof args[0].top === 'number' ? args[0].top : null;
+					}
+					return typeof args[1] === 'number' ? args[1] : null;
+				}
+
+				function installCartScrollGuard() {
+					if (window.__camoCartScrollGuardInstalled) return;
+					window.__camoCartScrollGuardInstalled = true;
+
+					if (window.Element && Element.prototype && typeof Element.prototype.scrollTo === 'function') {
+						var nativeElementScrollTo = Element.prototype.scrollTo;
+						Element.prototype.scrollTo = function() {
+							var top = getScrollTopArg(arguments);
+							if (
+								top === 0 &&
+								document.documentElement.classList.contains('is-cart-qty-changing') &&
+								this.matches &&
+								this.matches('#CartDrawer [data-scrollable]')
+							) {
+								restoreCartScrollPosition();
+								return;
+							}
+							return nativeElementScrollTo.apply(this, arguments);
+						};
+					}
+
+					if (typeof window.scrollTo === 'function') {
+						var nativeWindowScrollTo = window.scrollTo;
+						window.scrollTo = function() {
+							var top = getScrollTopArg(arguments);
+							if (
+								top === 0 &&
+								document.documentElement.classList.contains('is-cart-qty-changing') &&
+								cartScrollSnapshot &&
+								cartScrollSnapshot.type === 'window'
+							) {
+								restoreCartScrollPosition();
+								return;
+							}
+							return nativeWindowScrollTo.apply(window, arguments);
+						};
+					}
+				}
+
+				installCartScrollGuard();
+
 				function clearItemUpdating() {
 					document.querySelectorAll('[data-cart-item].camo-cart-item-updating').forEach(function(item) {
 						item.classList.remove('camo-cart-item-updating');
@@ -752,6 +965,8 @@
 					if (qtyChangeTimer) clearTimeout(qtyChangeTimer);
 					document.documentElement.classList.add('is-cart-qty-changing');
 					if (target && target.closest) {
+						captureCartScrollPosition(target);
+						preserveCartAppWidget(target);
 						clearItemUpdating();
 						var item = target.closest('[data-cart-item]');
 						if (item) item.classList.add('camo-cart-item-updating');
@@ -761,16 +976,22 @@
 					   for unrelated actions. */
 					qtyChangeTimer = setTimeout(function() {
 						qtyChangeTimer = null;
+						restoreCartScrollPosition();
 						document.documentElement.classList.remove('is-cart-qty-changing');
 						clearItemUpdating();
+						releaseCartAppWidgetPreservation();
+						cartScrollSnapshot = null;
 					}, 5000);
 				}
 				function clearQtyChanging(delay) {
 					if (qtyChangeTimer) clearTimeout(qtyChangeTimer);
 					qtyChangeTimer = setTimeout(function() {
 						qtyChangeTimer = null;
+						restoreCartScrollPosition();
 						document.documentElement.classList.remove('is-cart-qty-changing');
 						clearItemUpdating();
+						releaseCartAppWidgetPreservation();
+						cartScrollSnapshot = null;
 					}, delay || 350);
 				}
 
@@ -805,7 +1026,16 @@
 				function shouldUsePartialUpdate(payload) {
 					if (!payload || !payload.sections || typeof payload.sections !== 'object') return false;
 					var action = payload.action;
-					return action === 'changeQuantity' || action === 'removeItem' || action === 'addItem' || action === 'addItems';
+					return action === 'changeQuantity'
+						|| action === 'removeItem'
+						|| action === 'addItem'
+						|| action === 'addItems'
+						|| document.documentElement.classList.contains('is-cart-qty-changing');
+				}
+
+				function shouldBlockFullCartRefresh() {
+					return document.documentElement.classList.contains('is-cart-qty-changing')
+						&& !document.documentElement.classList.contains('is-cart-merging');
 				}
 
 				function maybeAutoOpenDrawer(payload) {
@@ -830,6 +1060,11 @@
 
 					var originalEmit = EventBus.emit;
 					EventBus.emit = function(event, payload) {
+						if (event === 'cart:refresh' && shouldBlockFullCartRefresh()) {
+							restoreCartScrollPosition();
+							return this;
+						}
+
 						if (event === 'cart:updated' && shouldUsePartialUpdate(payload)) {
 							if (!Array.isArray(payload.params)) payload.params = [];
 							var alreadyMarked = payload.params.some(function(p) { return p && typeof p === 'object' && p.noRefresh; });
@@ -841,6 +1076,7 @@
 							   seen the noRefresh flag and bailed. */
 							setTimeout(function() {
 								partialCartUpdate(payload);
+								restoreCartScrollPosition();
 								/* Theme.onCartUpdated bailed early because of the
 								   noRefresh flag, so we have to take over the
 								   drawer auto-open it would normally handle. */
@@ -857,7 +1093,29 @@
 				}
 
 				if (!tryInstall()) {
-					document.addEventListener('theme:all:loaded', tryInstall, { once: true });
+					var installAttempts = 0;
+					var installTimer = null;
+
+					function stopInstallRetry() {
+						if (!installTimer) return;
+						clearInterval(installTimer);
+						installTimer = null;
+					}
+
+					function retryInstall() {
+						installAttempts += 1;
+						if (tryInstall() || installAttempts >= 80) {
+							stopInstallRetry();
+						}
+					}
+
+					installTimer = setInterval(retryInstall, 100);
+					document.addEventListener('theme:all:loaded', function() {
+						if (tryInstall()) stopInstallRetry();
+					}, { once: true });
+					window.addEventListener('load', function() {
+						if (tryInstall()) stopInstallRetry();
+					}, { once: true });
 				}
 			})();
 		</script>
