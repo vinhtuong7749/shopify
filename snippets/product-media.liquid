@@ -540,6 +540,79 @@
 				return swiperEl.swiper || null;
 			}
 
+			var mainSwiperEl = document.querySelector('.js-product-media-slider-' + sectionId);
+
+			function getMainSwiper() {
+				return mainSwiperEl && mainSwiperEl.swiper ? mainSwiperEl.swiper : null;
+			}
+
+			function getVisibleThumbCount(sw) {
+				if (!sw || !sw.slides || !sw.slides.length) return MAX_VISIBLE;
+
+				var firstSlide = sw.slides[0];
+				var slideH = firstSlide ? firstSlide.offsetHeight : 0;
+				var viewportH = swiperEl.clientHeight || 0;
+				var gap = Number(sw.params && sw.params.spaceBetween) || SPACE_BETWEEN;
+
+				if (!slideH || slideH < 10 || !viewportH) return MAX_VISIBLE;
+
+				return Math.max(1, Math.min(MAX_VISIBLE, Math.floor((viewportH + gap) / (slideH + gap))));
+			}
+
+			function syncThumbWindow(sw) {
+				var mainSw = getMainSwiper();
+				if (!sw || !mainSw || !sw.slides || !sw.slides.length) return;
+
+				var visibleCount = getVisibleThumbCount(sw);
+				var lastStartIndex = Math.max(sw.slides.length - visibleCount, 0);
+				var activeIndex = Math.max(0, Math.min(mainSw.activeIndex || 0, sw.slides.length - 1));
+				var targetStartIndex = Math.min(Math.max(activeIndex - visibleCount + 1, 0), lastStartIndex);
+
+				if (sw.activeIndex !== targetStartIndex) {
+					sw.slideTo(targetStartIndex, 0);
+				}
+
+				updateButtons(sw);
+			}
+
+			function scheduleThumbSync(sw) {
+				if (!sw) return;
+				requestAnimationFrame(function() {
+					syncThumbWindow(sw);
+					setTimeout(function() { syncThumbWindow(sw); }, 60);
+					setTimeout(function() { syncThumbWindow(sw); }, 450);
+				});
+			}
+
+			var isMainSwiperBound = false;
+			var isVariantEventBound = false;
+
+			function bindMainSwiper(sw, attempts) {
+				if (isMainSwiperBound) return;
+
+				var mainSw = getMainSwiper();
+				if (mainSw && mainSw.on) {
+					mainSw.on('slideChange', function() { scheduleThumbSync(sw); });
+					isMainSwiperBound = true;
+					scheduleThumbSync(sw);
+				} else if (attempts > 0) {
+					setTimeout(function() { bindMainSwiper(sw, attempts - 1); }, 200);
+				}
+			}
+
+			function bindVariantEvent(sw, attempts) {
+				if (isVariantEventBound) return;
+
+				if (window.themeCore && window.themeCore.EventBus) {
+					window.themeCore.EventBus.listen('pdp:section-' + sectionId + ':change-variant', function() {
+						scheduleThumbSync(sw);
+					});
+					isVariantEventBound = true;
+				} else if (attempts > 0) {
+					setTimeout(function() { bindVariantEvent(sw, attempts - 1); }, 200);
+				}
+			}
+
 			function updateButtons(sw) {
 				if (!sw) return;
 				var MAX_VISIBLE = 7;
@@ -622,8 +695,13 @@
 					sw.on('slideChange', function() { updateButtons(sw); });
 					sw.on('resize', function() {
 						applyMaxSlides(sw);
+						scheduleThumbSync(sw);
 						updateButtons(sw);
 					});
+
+					bindMainSwiper(sw, 20);
+					bindVariantEvent(sw, 20);
+					scheduleThumbSync(sw);
 				} else if (attempts > 0) {
 					setTimeout(function() { waitForSwiper(attempts - 1); }, 200);
 				}

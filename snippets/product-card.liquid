@@ -60,6 +60,32 @@
 {%- assign mobile_size = mobile_size | default: tablet_size -%}
 
 {%- assign has_swatch = false -%}
+{%- assign product_card_tag_badge_image = blank -%}
+{%- assign product_card_tag_badge_label = blank -%}
+{%- assign product_card_tag_badge_modifier = blank -%}
+{%- assign product_card_tag_badge_width = 0 -%}
+{%- assign product_card_tag_badge_height = 0 -%}
+
+{%- if product != blank -%}
+	{%- for tag in product.tags -%}
+		{%- assign product_tag_handle = tag | handleize -%}
+
+		{%- if product_tag_handle contains 'bella' -%}
+			{%- assign product_card_tag_badge_image = 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/Comfort_Colors_3.png?v=1779703338' -%}
+			{%- assign product_card_tag_badge_label = 'Bella product tag' -%}
+			{%- assign product_card_tag_badge_modifier = ' product-card__tag-badge--bella' -%}
+			{%- assign product_card_tag_badge_width = 320 -%}
+			{%- assign product_card_tag_badge_height = 92 -%}
+			{%- break -%}
+		{%- elsif product_card_tag_badge_image == blank and product_tag_handle contains 'comfort' -%}
+			{%- assign product_card_tag_badge_image = 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/Comfort_Colors_2.png?v=1779703337' -%}
+			{%- assign product_card_tag_badge_label = 'Comfort Colors product tag' -%}
+			{%- assign product_card_tag_badge_modifier = ' product-card__tag-badge--comfort' -%}
+			{%- assign product_card_tag_badge_width = 394 -%}
+			{%- assign product_card_tag_badge_height = 116 -%}
+		{%- endif -%}
+	{%- endfor -%}
+{%- endif -%}
 
 {%- assign min = 1 -%}
 {%- assign max = 6 -%}
@@ -160,7 +186,7 @@
 			</div>
 		{% endif %}
 
-		{%- for color in swatches limit: 5 -%}
+		{%- for color in swatches limit: 6 -%}
 			{%- assign color_variant 	= color.variant -%}
 			{%- assign image        	= color.variant.featured_image -%}
 			{%- assign hover_image		= color.variant.metafields.product_card.hover_image  -%}
@@ -371,6 +397,23 @@
 			</a>
 		{%- endif -%}
 
+		{%- if product_card_tag_badge_image != blank -%}
+			<div
+				class="product-card__tag-badge{{ product_card_tag_badge_modifier }}"
+				role="img"
+				aria-label="{{- product_card_tag_badge_label | escape -}}"
+			>
+				<img
+					class="product-card__tag-badge-image"
+					src="{{- product_card_tag_badge_image -}}"
+					alt=""
+					width="{{- product_card_tag_badge_width -}}"
+					height="{{- product_card_tag_badge_height -}}"
+					loading="lazy"
+				>
+			</div>
+		{%- endif -%}
+
 		{%- comment -%} 
 			Native quick view removed.
 		{%- if quick_view_enabled and product.available -%}
@@ -502,6 +545,29 @@
 	}
 	@keyframes spin { 100% { transform: rotate(360deg); } }
 
+	.product-card__tag-badge {
+		position: absolute;
+		left: 12px;
+		bottom: 14px;
+		z-index: 3;
+		display: flex;
+		width: clamp(132px, 58%, 210px);
+		max-width: calc(100% - 24px);
+		pointer-events: none;
+		filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.18));
+	}
+
+	.product-card__tag-badge--bella {
+		width: clamp(118px, 52%, 190px);
+	}
+
+	.product-card__tag-badge-image {
+		display: block;
+		width: 100%;
+		height: auto;
+		object-fit: contain;
+	}
+
 	/* Match Sassy Girl / Iron Garrison design overrides */
 	.product-card__swatches-wrapper {
 		opacity: 1 !important;
@@ -541,7 +607,7 @@
 	.product-card__swatches-wrapper .product-card__swatches-count {
 		display: none !important;
 	}
-	/* Force show all 5 swatches on mobile */
+	/* Force show all visible swatches on mobile */
 	.product-card .product-card__swatch-button:nth-child(1n+3) {
 		display: inline-flex !important;
 	}
@@ -639,6 +705,19 @@
 			object-fit: cover !important;
 			object-position: center top !important;
 		}
+
+		.product-card__tag-badge {
+			left: 7px;
+			bottom: 8px;
+			width: clamp(104px, 76%, 150px);
+			max-width: calc(100% - 14px);
+			filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.16));
+		}
+
+		.product-card__tag-badge--bella {
+			width: clamp(92px, 68%, 136px);
+		}
+
 		/* SVG placeholders */
 		.product-card__image--placeholder {
 			width: 100% !important;

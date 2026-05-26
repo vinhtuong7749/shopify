@@ -263,8 +263,11 @@
 			block.classList.toggle('is-selected', this.checked);
 		});
 
-		/* Save the REAL fetch before anyone patches it */
+		/* Save the current fetch. Depending on script order this may be the
+		   cart-drawer bridge already, or the browser-native fetch. */
 		var nativeFetch = window.fetch;
+		var nativeFetchHadCartDrawerPatch = !!window.__camoCartDrawerFetchPatched;
+		var wrappedFetch = null;
 		/* Match Selleasy / lb-upsell / sll widgets anywhere on the page —
 		   in particular the "People also bought" block that renders below the
 		   product form. Without this scope, clicks on that widget would slip
@@ -282,29 +285,66 @@
 			}
 		}
 
-		document.addEventListener('click', function(event) {
+		function markExternalCartAppAdd(event) {
 			var target = event.target;
-			var trigger = target && target.closest ? target.closest('button, [role="button"], input[type="submit"], a') : null;
+			var trigger = target && target.closest ? target.closest('form, button, [role="button"], input[type="submit"], a') : null;
 
 			if (trigger && isCartAppTarget(trigger)) {
 				lastCartAppAddAt = Date.now();
+				if (window.CamoExternalCartAppSync && typeof window.CamoExternalCartAppSync.markIntent === 'function') {
+					window.CamoExternalCartAppSync.markIntent({
+						inDrawer: !!(trigger.closest && trigger.closest('#CartDrawer'))
+					});
+				}
 			}
-		}, true);
+		}
+
+		document.addEventListener('pointerdown', markExternalCartAppAdd, true);
+		document.addEventListener('touchstart', markExternalCartAppAdd, true);
+		document.addEventListener('click', markExternalCartAppAdd, true);
+		document.addEventListener('submit', markExternalCartAppAdd, true);
 
 		function shouldSkipProtectionForExternalCartAdd() {
 			if (Date.now() - lastCartAppAddAt < 5000) return true;
 			return isCartAppTarget(document.activeElement);
 		}
 
-		window.fetch = function(url, opts) {
-			var isAddJs = typeof url === 'string' && url.indexOf('/cart/add') !== -1;
+		function shouldNotifyCartDrawerManually() {
+			if (nativeFetchHadCartDrawerPatch) return false;
+			return !(window.__camoCartDrawerFetchPatched && window.fetch !== wrappedFetch);
+		}
+
+		function notifyCartDrawerFromResponse(response) {
+			if (!shouldNotifyCartDrawerManually() || !response || typeof response.clone !== 'function') {
+				return response;
+			}
+
+			response.clone().json().then(function(data) {
+				document.dispatchEvent(new CustomEvent('camo:external-cart-app-response', {
+					detail: data
+				}));
+			}).catch(function() {});
+
+			return response;
+		}
+
+		wrappedFetch = function(url, opts) {
+			var requestUrl = '';
+			if (typeof url === 'string') {
+				requestUrl = url;
+			} else if (typeof URL === 'function' && url instanceof URL) {
+				requestUrl = url.href;
+			} else if (url && typeof url.url === 'string') {
+				requestUrl = url.url;
+			}
+			var isAddJs = requestUrl.indexOf('/cart/add') !== -1;
 
 			if (!isAddJs) {
 				return nativeFetch.call(window, url, opts);
 			}
 
 			if (shouldSkipProtectionForExternalCartAdd()) {
-				return nativeFetch.call(window, url, opts);
+				return nativeFetch.call(window, url, opts).then(notifyCartDrawerFromResponse);
 			}
 
 			/* Bundle the upsell variant into the same /cart/add.js request so
@@ -358,6 +398,8 @@
 				return response;
 			});
 		};
+
+		window.fetch = wrappedFetch;
 
 		if (window.themeCore && window.themeCore.EventBus) {
 			bindCartListener();

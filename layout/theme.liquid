@@ -456,14 +456,6 @@
 				animation-duration: 0s !important;
 			}
 
-			html.is-cart-qty-changing .camo-cart-app-freeze,
-			html.is-cart-qty-changing .camo-cart-app-freeze * {
-				opacity: 1 !important;
-				visibility: visible !important;
-				transition: none !important;
-				animation-duration: 0s !important;
-			}
-
 			@keyframes camo-cart-spin {
 				to {
 					transform: rotate(360deg);
@@ -615,10 +607,6 @@
 				var preservedCartAppScope = null;
 				var preservedCartAppMinHeight = null;
 				var preservedCartAppMinHeightPriority = '';
-				var preservedCartAppFreezeOverlay = null;
-				var preservedCartAppFreezeWidget = null;
-				var preservedCartAppFreezeFrame = null;
-				var preservedCartAppHiddenWidgets = [];
 				var cartAppWidgetObserver = null;
 				var cartAppWidgetObservedRoot = null;
 
@@ -656,121 +644,6 @@
 					return root.querySelector('.js-cart-content') || root.querySelector('#cart-drawer-main-content');
 				}
 
-				function positionCartAppFreezeOverlay() {
-					if (!preservedCartAppFreezeOverlay || !preservedCartAppFreezeWidget || !document.contains(preservedCartAppFreezeWidget)) return;
-					var rect = preservedCartAppFreezeWidget.getBoundingClientRect();
-					preservedCartAppFreezeOverlay.style.top = Math.round(rect.top) + 'px';
-					preservedCartAppFreezeOverlay.style.left = Math.round(rect.left) + 'px';
-					preservedCartAppFreezeOverlay.style.width = Math.max(0, Math.round(rect.width)) + 'px';
-					preservedCartAppFreezeOverlay.style.height = Math.max(0, Math.round(rect.height)) + 'px';
-				}
-
-				function releaseCartAppWidgetFreeze() {
-					if (preservedCartAppFreezeFrame && window.cancelAnimationFrame) {
-						window.cancelAnimationFrame(preservedCartAppFreezeFrame);
-					}
-					preservedCartAppFreezeFrame = null;
-					preservedCartAppHiddenWidgets.forEach(function(entry) {
-						if (!entry || !entry.el || !document.contains(entry.el)) return;
-						entry.el.classList.remove('camo-cart-app-freeze-source');
-						if (entry.visibility) {
-							entry.el.style.setProperty('visibility', entry.visibility, entry.visibilityPriority);
-						} else {
-							entry.el.style.removeProperty('visibility');
-						}
-						if (entry.opacity) {
-							entry.el.style.setProperty('opacity', entry.opacity, entry.opacityPriority);
-						} else {
-							entry.el.style.removeProperty('opacity');
-						}
-					});
-					preservedCartAppHiddenWidgets = [];
-					if (preservedCartAppFreezeOverlay && preservedCartAppFreezeOverlay.parentNode) {
-						preservedCartAppFreezeOverlay.parentNode.removeChild(preservedCartAppFreezeOverlay);
-					}
-					preservedCartAppFreezeOverlay = null;
-					preservedCartAppFreezeWidget = null;
-				}
-
-				function hideCartAppFreezeSource(widget) {
-					if (!widget || widget.nodeType !== 1) return;
-					var alreadyHidden = preservedCartAppHiddenWidgets.some(function(entry) {
-						return entry && entry.el === widget;
-					});
-					if (!alreadyHidden) {
-						preservedCartAppHiddenWidgets.push({
-							el: widget,
-							visibility: widget.style.getPropertyValue('visibility'),
-							visibilityPriority: widget.style.getPropertyPriority('visibility'),
-							opacity: widget.style.getPropertyValue('opacity'),
-							opacityPriority: widget.style.getPropertyPriority('opacity')
-						});
-					}
-					widget.classList.add('camo-cart-app-freeze-source');
-					widget.style.setProperty('visibility', 'hidden', 'important');
-					widget.style.setProperty('opacity', '0', 'important');
-				}
-
-				function freezeCartAppWidgetVisual(widget) {
-					if (!widget || !widget.getBoundingClientRect || !document.body) return;
-					if (preservedCartAppFreezeWidget === widget && preservedCartAppFreezeOverlay) {
-						positionCartAppFreezeOverlay();
-						hideCartAppFreezeSource(widget);
-						return;
-					}
-
-					releaseCartAppWidgetFreeze();
-
-					var rect = widget.getBoundingClientRect();
-					if (!rect || rect.width <= 0 || rect.height <= 0) return;
-
-					var overlay = document.createElement('div');
-					var clone = document.createElement('div');
-					overlay.setAttribute('aria-hidden', 'true');
-					overlay.className = 'camo-cart-app-freeze';
-					overlay.style.cssText = [
-						'position:fixed',
-						'overflow:hidden',
-						'pointer-events:none',
-						'z-index:2147483000',
-						'box-sizing:border-box',
-						'contain:layout paint',
-						'background:transparent'
-					].join(';');
-					clone.className = typeof widget.className === 'string' ? widget.className : '';
-					clone.innerHTML = widget.innerHTML;
-					Array.prototype.forEach.call(clone.querySelectorAll('script, [id]'), function(el) {
-						if (el.tagName && el.tagName.toLowerCase() === 'script') {
-							el.remove();
-							return;
-						}
-						el.removeAttribute('id');
-					});
-					clone.style.margin = '0';
-					clone.style.width = '100%';
-					clone.style.maxWidth = '100%';
-					clone.style.pointerEvents = 'none';
-					overlay.appendChild(clone);
-					document.body.appendChild(overlay);
-
-					preservedCartAppFreezeOverlay = overlay;
-					preservedCartAppFreezeWidget = widget;
-					positionCartAppFreezeOverlay();
-					hideCartAppFreezeSource(widget);
-
-					var startedAt = Date.now();
-					var keepPositioned = function() {
-						if (!preservedCartAppFreezeOverlay) return;
-						positionCartAppFreezeOverlay();
-						if (document.documentElement.classList.contains('is-cart-qty-changing') && Date.now() - startedAt < 2500 && window.requestAnimationFrame) {
-							preservedCartAppFreezeFrame = window.requestAnimationFrame(keepPositioned);
-						}
-					};
-					if (window.requestAnimationFrame) {
-						preservedCartAppFreezeFrame = window.requestAnimationFrame(keepPositioned);
-					}
-				}
-
 				function installCartAppWidgetObserver(scope) {
 					var contentRoot = getCartContentRoot(scope)
 						|| document.querySelector('#CartDrawer .js-cart-content, .cart-drawer .js-cart-content, .js-cart-content');
@@ -803,7 +676,6 @@
 					if (rect && rect.height > 0) {
 						widget.style.setProperty('min-height', Math.ceil(rect.height) + 'px', 'important');
 					}
-					freezeCartAppWidgetVisual(widget);
 					installCartAppWidgetObserver(scope || document);
 				}
 
@@ -819,9 +691,7 @@
 					var currentWidget = getCartAppWidget(scope);
 
 					if (currentWidget && currentWidget !== preservedCartAppWidget) {
-						hideCartAppFreezeSource(currentWidget);
 						preservedCartAppWidget = currentWidget;
-						positionCartAppFreezeOverlay();
 						return;
 					}
 					if (document.contains(preservedCartAppWidget)) return;
@@ -829,7 +699,6 @@
 					var itemsRoot = getCartItemsRoot(scope);
 					if (!itemsRoot) return;
 					itemsRoot.appendChild(preservedCartAppWidget);
-					positionCartAppFreezeOverlay();
 				}
 
 				function releaseCartAppWidgetPreservation() {
@@ -845,7 +714,6 @@
 					preservedCartAppScope = null;
 					preservedCartAppMinHeight = null;
 					preservedCartAppMinHeightPriority = '';
-					releaseCartAppWidgetFreeze();
 					if (cartAppWidgetObserver) {
 						cartAppWidgetObserver.disconnect();
 						cartAppWidgetObserver = null;

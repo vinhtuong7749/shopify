@@ -861,6 +861,7 @@
 			var appAddingTimer = null;
 			var lastPublishedCount = null;
 			var lastCartAppClickAt = 0;
+			var lastCartAppClickInDrawer = false;
 			var lastRefreshEmitAt = 0;
 			var cartAppScrollSnapshot = null;
 			var cartAppScrollReleaseTimer = null;
@@ -880,8 +881,61 @@
 				}
 			}
 
+			function getClosestFromEvent(event, selector) {
+				var target = event && event.target;
+				if (target && target.closest) {
+					try {
+						var direct = target.closest(selector);
+						if (direct) return direct;
+					} catch (error) { /* ignore invalid selectors */ }
+				}
+
+				var path = event && typeof event.composedPath === 'function' ? event.composedPath() : [];
+				for (var i = 0; i < path.length; i++) {
+					var node = path[i];
+					if (!node || node === window || node === document) continue;
+					try {
+						if (node.matches && node.matches(selector)) return node;
+						if (node.closest) {
+							var closest = node.closest(selector);
+							if (closest) return closest;
+						}
+					} catch (pathError) { /* ignore */ }
+				}
+				return null;
+			}
+
+			function getAppTargetFromEvent(event, trigger) {
+				var direct = closestAppTarget(trigger || (event && event.target));
+				if (direct) return direct;
+
+				var path = event && typeof event.composedPath === 'function' ? event.composedPath() : [];
+				for (var i = 0; i < path.length; i++) {
+					var node = path[i];
+					if (!node || node === window || node === document) continue;
+					try {
+						if (node.matches && node.matches(appTargetSelector)) return node;
+						if (node.closest) {
+							var closest = node.closest(appTargetSelector);
+							if (closest) return closest;
+						}
+					} catch (error) { /* ignore */ }
+				}
+				return null;
+			}
+
 			function isThemeCartChangeInProgress() {
 				return document.documentElement.classList.contains('is-cart-qty-changing');
+			}
+
+			function isCartPage() {
+				return /\/cart\/?$/i.test(window.location.pathname || '');
+			}
+
+			function markExternalCartIntentFromBridge(options) {
+				lastCartAppClickAt = Date.now();
+				lastCartAppClickInDrawer = !!(options && options.inDrawer);
+				markExternalCartAdding();
 			}
 
 			function getCountValue(count) {
@@ -1109,6 +1163,9 @@
 				stopCartAppScrollGuard();
 				cartAppScrollSnapshot = null;
 				scrollDrawerToCartTop();
+				if (!lastCartAppClickInDrawer && !isCartPage() && window.themeCore && window.themeCore.EventBus) {
+					window.themeCore.EventBus.emit('cart:drawer:open');
+				}
 			}
 
 			function publishCount(count, options) {
@@ -1195,19 +1252,18 @@
 				return looksLikeNav && !looksLikeCartAction || isIconOnly && !looksLikeCartAction;
 			}
 
-			function handleExternalCartClick(event) {
+			function handleExternalCartIntent(event) {
+				if (event && event.type === 'pointerdown' && event.button && event.button !== 0) return;
 				var target = event.target;
-				var trigger = target && target.closest
-					? target.closest('button, [role="button"], input[type="submit"], a, .lb-button, [class*="lb-button" i], .lb-carousel-nav, [class*="lb-carousel" i]')
-					: null;
-				if (!trigger && target && target.closest) {
-					trigger = target.closest(appTargetSelector);
-				}
+				var trigger = getClosestFromEvent(event, 'form, button, [role="button"], input[type="submit"], a, .lb-button, [class*="lb-button" i], .lb-carousel-nav, [class*="lb-carousel" i]')
+					|| getClosestFromEvent(event, appTargetSelector);
+				var appTarget = getAppTargetFromEvent(event, trigger);
 
-				if (!trigger || !closestAppTarget(trigger)) return;
+				if (!trigger || !appTarget) return;
 				if (isCarouselNavigationTrigger(trigger)) return;
 
 				lastCartAppClickAt = Date.now();
+				lastCartAppClickInDrawer = !!(trigger.closest && trigger.closest(drawerSelector));
 				captureCartAppScrollAnchor(trigger);
 				markExternalCartAdding();
 				scheduleCartAppScrollRestore();
@@ -1410,6 +1466,8 @@
 					var url = '';
 					if (typeof input === 'string') {
 						url = input;
+					} else if (typeof URL === 'function' && input instanceof URL) {
+						url = input.href;
 					} else if (input && typeof input.url === 'string') {
 						url = input.url;
 					}
@@ -1425,6 +1483,8 @@
 							if (urlWithSections !== url) {
 								if (typeof input === 'string') {
 									requestInput = urlWithSections;
+								} else if (typeof URL === 'function' && input instanceof URL) {
+									requestInput = new URL(urlWithSections);
 								} else if (typeof Request === 'function' && input instanceof Request) {
 									try {
 										requestInput = new Request(urlWithSections, input);
@@ -1498,6 +1558,11 @@
 				};
 			}
 
+			document.addEventListener('camo:external-cart-app-response', function(event) {
+				if (!event || !event.detail) return;
+				handleCartMutationData(event.detail);
+			}, abortController ? { signal: abortController.signal } : false);
+
 			function bindThemeEvents() {
 				if (!window.themeCore || !window.themeCore.EventBus || window.CamoExternalCartAppSyncEventsBound) return;
 				window.CamoExternalCartAppSyncEventsBound = true;
@@ -1515,11 +1580,15 @@
 				});
 			}
 
-			document.addEventListener('click', handleExternalCartClick, captureOptions);
+			document.addEventListener('pointerdown', handleExternalCartIntent, captureOptions);
+			document.addEventListener('touchstart', handleExternalCartIntent, captureOptions);
+			document.addEventListener('click', handleExternalCartIntent, captureOptions);
+			document.addEventListener('submit', handleExternalCartIntent, captureOptions);
 
 			window.CamoExternalCartAppSync = {
 				abortController: abortController,
 				observer: observeFooter(),
+				markIntent: markExternalCartIntentFromBridge,
 				sync: syncFromRenderedCart,
 				updateFromCartPayload: updateFromCartPayload
 			};

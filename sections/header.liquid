@@ -326,6 +326,11 @@
 		.header__utils .header__icons .header__icon--search.no-js {
 			display: none !important;
 		}
+		/* Hide the transformed burger/X while the mobile drawer is open. */
+		.header .header__burger-mobile-menu-button.is-active {
+			visibility: hidden !important;
+			pointer-events: none !important;
+		}
 		/* Compact icon row: tight gap, flush to right edge */
 		.header__utils .header__icons {
 			display: flex !important;
