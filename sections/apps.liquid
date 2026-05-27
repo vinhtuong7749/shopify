@@ -10,6 +10,28 @@
 			padding-bottom: {{- section.settings.offset_bottom_desktop -}}px;
 		}
 	}
+
+	{%- if template.name == 'product' -%}
+		@media screen and (max-width: 767px) {
+			body.template-product #shopify-section-{{- section.id -}} .jdgm-widget,
+			body.template-product #shopify-section-{{- section.id -}} .jdgm-review-widget,
+			body.template-product #shopify-section-{{- section.id -}} .jdgm-rev-widg,
+			body.template-product #shopify-section-{{- section.id -}} .jdgm-revs-tab,
+			body.template-product #shopify-section-{{- section.id -}} .jdgm-revs-tab__content-body,
+			body.template-product #shopify-section-{{- section.id -}} .jdgm-paginate {
+				margin-bottom: 0 !important;
+				padding-bottom: 0 !important;
+			}
+
+			body.template-product #shopify-section-{{- section.id -}} .jdgm-paginate {
+				margin-top: 10px !important;
+			}
+
+			body.template-product #shopify-section-{{- section.id -}} + .shopify-section:has([data-product-recommendations]) {
+				margin-top: clamp(-170px, -20vh, -120px) !important;
+			}
+		}
+	{%- endif -%}
 {%- endstyle -%}
 
 {%- render 'adastra' with '/src/styles/apps-section.scss' -%}

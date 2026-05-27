@@ -1580,8 +1580,6 @@
 				});
 			}
 
-			document.addEventListener('pointerdown', handleExternalCartIntent, captureOptions);
-			document.addEventListener('touchstart', handleExternalCartIntent, captureOptions);
 			document.addEventListener('click', handleExternalCartIntent, captureOptions);
 			document.addEventListener('submit', handleExternalCartIntent, captureOptions);
 
@@ -1728,7 +1726,7 @@
 			"type": "checkbox",
 			"id": "show_auto_open",
 			"label": "Auto-open drawer when cart has items",
-			"default": true
+			"default": false
 		},
 		{
 			"type": "text",

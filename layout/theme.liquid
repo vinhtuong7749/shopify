@@ -1200,6 +1200,78 @@
 			})();
 		</script>
 
+		{%- comment -%}
+			Definitive cart-drawer auto-open guard.
+			The drawer must only open from a genuine user action (clicking the cart
+			icon / a real add-to-cart) or right after the cart actually gains items.
+			This vetoes every spontaneous open of an EMPTY cart — no matter what
+			emits the open event (third-party apps, preview tooling, race conditions).
+		{%- endcomment -%}
+		<script>
+			(function() {
+				var INTENT_SELECTOR = '.js-header-cart-toggler, [data-js-toggle="CartDrawer"], .add-to-cart, [name="add"], .js-product-card-quick-view-button, .shopify-payment-button__button';
+				var INTENT_WINDOW_MS = 8000;
+				var lastCartIntentAt = 0;
+
+				function markIntent(e) {
+					var target = e && e.target;
+					if (!target || !target.closest) return;
+					try {
+						if (target.closest(INTENT_SELECTOR)) {
+							lastCartIntentAt = Date.now();
+						}
+					} catch (err) {}
+				}
+				document.addEventListener('pointerdown', markIntent, true);
+				document.addEventListener('click', markIntent, true);
+
+				function cartIsEmpty() {
+					var co = window.themeCore && window.themeCore.cartObject;
+					if (co && typeof co.item_count === 'number') {
+						return co.item_count === 0;
+					}
+					var counter = document.querySelector('[data-cart-count]');
+					var count = counter ? parseInt(counter.getAttribute('data-cart-count'), 10) : 0;
+					return !(count > 0);
+				}
+
+				var OPEN_EVENTS = {
+					'cart:drawer:open': 1,
+					'cart:drawer:refresh-and-open': 1,
+					'cart:drawer:CartDrawer:open': 1
+				};
+
+				function tryInstall() {
+					var EventBus = window.themeCore && window.themeCore.EventBus;
+					if (!EventBus || typeof EventBus.emit !== 'function') return false;
+					if (EventBus.__camoOpenGuardInstalled) return true;
+					EventBus.__camoOpenGuardInstalled = true;
+
+					var underlyingEmit = EventBus.emit;
+					EventBus.emit = function(event, payload) {
+						if (OPEN_EVENTS[event]) {
+							var recentIntent = (Date.now() - lastCartIntentAt) < INTENT_WINDOW_MS;
+							if (cartIsEmpty() && !recentIntent) {
+								/* Spontaneous empty-cart open — block it. */
+								return this;
+							}
+						}
+						return underlyingEmit.apply(this, arguments);
+					};
+					return true;
+				}
+
+				if (!tryInstall()) {
+					var attempts = 0;
+					var timer = setInterval(function() {
+						attempts += 1;
+						if (tryInstall() || attempts >= 100) clearInterval(timer);
+					}, 100);
+					document.addEventListener('theme:all:loaded', function() { tryInstall(); }, { once: true });
+				}
+			})();
+		</script>
+
 		<a href="#MainContent" class="skip-content-link visually-hidden">
 			{{- "general.accessibility.skip_to_content" | t -}}
 		</a>

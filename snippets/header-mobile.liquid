@@ -534,6 +534,31 @@
 	justify-content: flex-start !important;
 }
 
+@media (max-width: 767.98px) {
+	#headerDrawerMenu.header-mobile {
+		width: min(90vw, 380px) !important;
+		max-width: calc(100vw - 36px) !important;
+		border-right: 1px solid rgba(44, 61, 51, 0.12);
+		box-shadow: 18px 0 44px rgba(18, 28, 22, 0.24);
+		overflow: hidden;
+	}
+
+	#headerDrawerMenu.header-mobile .header-mobile__body {
+		padding: 18px 16px 24px;
+	}
+
+	#headerDrawerMenu.header-mobile .header-mobile__close {
+		top: 10px;
+		right: 10px;
+	}
+
+	.window-overlay[data-js-overlay="headerToggleMenuDrawer"] {
+		background: rgba(18, 28, 22, 0.44) !important;
+		backdrop-filter: blur(1.5px);
+		-webkit-backdrop-filter: blur(1.5px);
+	}
+}
+
 /* Adjust spacing between menu and bottom info */
 .header-mobile__info {
 	margin-top: 40px !important;

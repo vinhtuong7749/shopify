@@ -62,6 +62,7 @@
 				},
 				"socials": {
 					"type": "socials",
+					"disabled": true,
 					"settings": {}
 				},
 				"complementary": {

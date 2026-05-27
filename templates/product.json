@@ -124,11 +124,11 @@
             "description_toggle_text": "Description",
             "description_drawer_title": "Description",
             "drawer_page_1": "",
-            "drawer_toggle_text_1": "Size Guide",
-            "drawer_title_1": "Size Guide",
+            "drawer_toggle_text_1": "Care Instructions",
+            "drawer_title_1": "Care Instructions",
             "drawer_page_2": "",
-            "drawer_toggle_text_2": "Shipping",
-            "drawer_title_2": "Shipping",
+            "drawer_toggle_text_2": "Shipping & Delivery",
+            "drawer_title_2": "Shipping & Delivery",
             "drawer_page_3": "",
             "drawer_toggle_text_3": "Drawer 3",
             "drawer_title_3": "Drawer 3",
@@ -169,6 +169,7 @@
         },
         "socials": {
           "type": "socials",
+          "disabled": true,
           "settings": {
             "show_facebook": true,
             "show_twitter": true,

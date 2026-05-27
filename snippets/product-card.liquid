@@ -65,6 +65,7 @@
 {%- assign product_card_tag_badge_modifier = blank -%}
 {%- assign product_card_tag_badge_width = 0 -%}
 {%- assign product_card_tag_badge_height = 0 -%}
+{%- assign product_card_show_tag_badges = false -%}
 {%- assign product_card_has_comfort_tag = false -%}
 {%- assign product_card_has_bella_tag = false -%}
 {%- assign product_card_has_vneck_tag = false -%}
@@ -76,7 +77,11 @@
 {%- assign product_card_has_gildan_tag = false -%}
 {%- assign product_card_has_colorblast_tag = false -%}
 
-{%- if product != blank -%}
+{%- if collection.handle == 'grand-slam-subspecies' or request.path contains '/collections/grand-slam-subspecies' -%}
+	{%- assign product_card_show_tag_badges = true -%}
+{%- endif -%}
+
+{%- if product != blank and product_card_show_tag_badges -%}
 	{%- for tag in product.tags -%}
 		{%- assign product_tag_handle = tag | handleize -%}
 
