@@ -6,6 +6,171 @@
 {%- endcomment -%}
 
 {%- comment -%}
+	Product details content
+	For T-Shirt products, tag-specific details win. Other product types use type-only details.
+{%- endcomment -%}
+{%- assign product_details_type = product.type | downcase | strip -%}
+{%- assign product_details_profile = blank -%}
+{%- assign product_details_is_tshirt = false -%}
+{%- assign product_details_is_tshirt_family = false -%}
+{%- assign product_details_has_bella = false -%}
+{%- assign product_details_has_vneck = false -%}
+{%- assign product_details_has_wash = false -%}
+{%- assign product_details_has_tanktop = false -%}
+{%- assign product_details_has_comfort_1745 = false -%}
+{%- assign product_details_has_comfort_1717 = false -%}
+
+{%- if product_details_type == 't-shirt' or product_details_type == 'tshirt' or product_details_type == 't shirt' -%}
+	{%- assign product_details_is_tshirt = true -%}
+	{%- assign product_details_is_tshirt_family = true -%}
+{%- elsif product_details_type == 'type1' or product_details_type contains 't-shirt' or product_details_type contains 'tshirt' -%}
+	{%- assign product_details_is_tshirt_family = true -%}
+{%- endif -%}
+
+{%- if product_details_is_tshirt -%}
+	{%- for tag in product.tags -%}
+		{%- assign product_details_tag = tag | handleize -%}
+		{%- if product_details_tag contains 'bella' -%}
+			{%- assign product_details_has_bella = true -%}
+		{%- endif -%}
+		{%- if product_details_tag contains 'vneck' or product_details_tag contains 'v-neck' -%}
+			{%- assign product_details_has_vneck = true -%}
+		{%- endif -%}
+		{%- if product_details_tag contains 'wash' -%}
+			{%- assign product_details_has_wash = true -%}
+		{%- endif -%}
+		{%- if product_details_tag contains 'tanktop' or product_details_tag contains 'tank-top' -%}
+			{%- assign product_details_has_tanktop = true -%}
+		{%- endif -%}
+		{%- if product_details_tag contains '1745' or product_details_tag contains 'colorblast' or product_details_tag contains 'color-blast' -%}
+			{%- assign product_details_has_comfort_1745 = true -%}
+		{%- endif -%}
+		{%- if product_details_tag contains '1717' or product_details_tag contains 'comfort' -%}
+			{%- assign product_details_has_comfort_1717 = true -%}
+		{%- endif -%}
+	{%- endfor -%}
+
+	{%- if product_details_has_vneck -%}
+		{%- assign product_details_profile = 'vneck' -%}
+	{%- elsif product_details_has_wash -%}
+		{%- assign product_details_profile = 'wash' -%}
+	{%- elsif product_details_has_tanktop -%}
+		{%- assign product_details_profile = 'tanktop' -%}
+	{%- elsif product_details_has_comfort_1745 -%}
+		{%- assign product_details_profile = 'comfort-1745' -%}
+	{%- elsif product_details_has_comfort_1717 -%}
+		{%- assign product_details_profile = 'comfort-1717' -%}
+	{%- elsif product_details_has_bella -%}
+		{%- assign product_details_profile = 'bella' -%}
+	{%- else -%}
+		{%- assign product_details_profile = 'tshirt-default' -%}
+	{%- endif -%}
+{%- elsif product_details_type contains 'hoodie' -%}
+	{%- assign product_details_profile = 'hoodie' -%}
+{%- elsif product_details_type contains 'sweatshirt' or product_details_type contains 'sweater' -%}
+	{%- assign product_details_profile = 'sweatshirt' -%}
+{%- elsif product_details_type contains 'long' and product_details_type contains 'sleeve' -%}
+	{%- assign product_details_profile = 'long-sleeve' -%}
+{%- elsif product_details_type contains 'hat' or product_details_type contains 'cap' -%}
+	{%- assign product_details_profile = 'hat' -%}
+{%- elsif product_details_is_tshirt_family -%}
+	{%- assign product_details_profile = 'tshirt-default' -%}
+{%- endif -%}
+
+{%- capture product_details_content -%}
+	{%- case product_details_profile -%}
+		{%- when 'bella' -%}
+			<p><strong>Base Item:</strong> Bella+Canvas 3001.</p>
+			<p><strong>Sizes:</strong> S to 4XL.</p>
+			<p><strong>Colors:</strong> Select via color swatches</p>
+			<p><strong>Print Method:</strong> Premium Direct-to-Garment (DTG) printing for realistic, vintage, lasting designs.</p>
+			<p><strong>Style:</strong> Modern retail fit, classic crew neck, and true unisex sizing.</p>
+			<p><strong>Premium Feel:</strong> Crafted from Airlume combed and ring-spun cotton - ultra-soft and lightweight.</p>
+			<p><strong>Material:</strong> Solid Colors: 100% Cotton (Lightweight 4.2 oz/yd&sup2;); Ash &amp; Heather Prism Natural: 99% Cotton/ 1% Polyester; Athletic &amp; Black Heather: 90% Cotton/ 10% Polyester; Other Heathers: 52% Cotton/ 48% Polyester.</p>
+		{%- when 'comfort-1745' -%}
+			<p><strong>Material:</strong> 100% Ring-Spun Cotton.</p>
+			<p><strong>Base Item:</strong> Comfort Colors 1745.</p>
+			<p><strong>Sizes:</strong> S to 3XL.</p>
+			<p><strong>Colors:</strong> Amethyst, Citrine, Clay, Fern, Ocean, Smoke</p>
+			<p><strong>Style:</strong> Relaxed unisex fit with a cool, effortless vintage look.</p>
+			<p><strong>Print Method:</strong> Premium Direct-to-Garment (DTG) printing for realistic, vintage, lasting designs.</p>
+			<p><strong>Unique Aesthetic:</strong> &quot;Colorblast&quot; pigment-dye process creates a one-of-a-kind, lived-in fading effect for every single shirt.</p>
+			<p><strong>Premium Heavyweight:</strong> Crafted from ultra-durable 100% ring-spun cotton (6.1 oz./yd&sup2;).</p>
+			<p><strong>Built to Last:</strong> Garment-dyed for minimal shrinkage, featuring a topstitched rib collar and shoulder-to-shoulder twill tape.</p>
+		{%- when 'vneck' -%}
+			<p><strong>Base Item:</strong> Bella Canvas 3005.</p>
+			<p><strong>Sizes:</strong> S to 3XL.</p>
+			<p><strong>Colors:</strong> Select via color swatches</p>
+			<p><strong>Style:</strong> Modern retail fit with a classic V-neck and true unisex sizing.</p>
+			<p><strong>Print Method:</strong> Premium Direct-to-Garment (DTG) printing for realistic, vintage, lasting designs.</p>
+			<p><strong>Premium Feel:</strong> Crafted from Airlume combed and ring-spun cotton - ultra-soft and lightweight.</p>
+			<p><strong>Material:</strong> Solid Colors: 100% Cotton (Lightweight 4.2 oz/yd&sup2;); Ash &amp; Heather Prism Natural: 99% Cotton/ 1% Polyester; Athletic &amp; Black Heather: 90% Cotton/ 10% Polyester; Other Heathers: 52% Cotton/ 48% Polyester.</p>
+		{%- when 'wash' -%}
+			<p><strong>Sizes:</strong> S to 4XL.</p>
+			<p><strong>Colors:</strong> Select via color swatches</p>
+			<p><strong>Material:</strong> 100% Cotton (Premium 16-Count Snowflake-Washed Fabric).</p>
+			<p><strong>Print Method:</strong> Premium Direct-to-Garment (DTG) printing for realistic, vintage, lasting designs.</p>
+			<p><strong>Style &amp; Fit:</strong> Relaxed oversized fit featuring a unique vintage &quot;snowflake&quot; wash that looks even better wash after wash.</p>
+		{%- when 'tanktop' -%}
+			<p><strong>Base Item:</strong> Gildan 2200.</p>
+			<p><strong>Sizes:</strong> S to 3XL (True to size).</p>
+			<p><strong>Colors:</strong> Select via color swatches</p>
+			<p><strong>Print Method:</strong> Premium Direct-to-Garment (DTG) printing for realistic, vintage, lasting designs.</p>
+			<p><strong>Style &amp; Fit:</strong> Classic fit that perfectly balances relaxed comfort with a flattering silhouette for all body types.</p>
+			<p><strong>Material:</strong> Premium 100% American-grown cotton (Heavyweight 6 oz/yd&sup2;, 18 Singles).</p>
+			<p><strong>Versatility:</strong> Highly breathable and comfortable</p>
+		{%- when 'comfort-1717' -%}
+			<p><strong>Base Item:</strong> Comfort Colors 1717.</p>
+			<p><strong>Sizes:</strong> S to 4XL.</p>
+			<p><strong>Colors:</strong> Select via color swatches</p>
+			<p><strong>Material:</strong> 100% Ring Spun US Cotton.</p>
+			<p><strong>Style &amp; Fit:</strong> Relaxed unisex fit, casual style.</p>
+			<p><strong>Print Method:</strong> Premium Direct-to-Garment (DTG) printing for realistic, vintage, lasting designs.</p>
+			<p><strong>Premium Quality:</strong> Made from 100% Ring Spun US Cotton (6.1 oz/yd&sup2;) for a superior, heavyweight feel.</p>
+		{%- when 'hoodie' -%}
+			<p><strong>Base Item:</strong> Gildan 18500.</p>
+			<p><strong>Sizes:</strong> S to 5XL.</p>
+			<p><strong>Colors:</strong> Select via color swatches.</p>
+			<p><strong>Style &amp; Comfort:</strong> Versatile, heavyweight, and ultra-soft.</p>
+			<p><strong>Print Method:</strong> Premium Direct-to-Garment (DTG) printing for realistic, vintage, lasting designs.</p>
+			<p><strong>Material:</strong> Heavyweight fabric (8 oz/yd&sup2;). Heather Sport Dark Navy: 60% Polyester/ 40% Cotton. All Other Colors: 50% Cotton/ 50% Polyester.</p>
+			<p><strong>Fabric Features:</strong> Sweat-absorbent, highly breathable, and cozy.</p>
+		{%- when 'sweatshirt' -%}
+			<p><strong>Base Item:</strong> Gildan 18000.</p>
+			<p><strong>Sizes:</strong> S to 5XL.</p>
+			<p><strong>Colors:</strong> Select via color swatches.</p>
+			<p><strong>Material:</strong> Heavyweight fabric (8 oz/yd&sup2;). Heather Sport Royal: 60% Polyester/ 40% Cotton. All Other Colors: 50% Cotton/ 50% Polyester.</p>
+			<p><strong>Print Method:</strong> Premium Direct-to-Garment (DTG) printing for realistic, vintage, lasting designs.</p>
+			<p><strong>Style &amp; Comfort:</strong> Incredibly soft, breathable, and built to last.</p>
+		{%- when 'long-sleeve' -%}
+			<p><strong>Base Item:</strong> Gildan 5400.</p>
+			<p><strong>Sizes:</strong> S to 3XL (True to size).</p>
+			<p><strong>Colors:</strong> Select via color swatches</p>
+			<p><strong>Style:</strong> Relaxed unisex fit, classic crew neck with comfortable rib cuffs.</p>
+			<p><strong>Print Method:</strong> Premium Direct-to-Garment (DTG) printing for realistic, vintage, lasting designs.</p>
+			<p><strong>Material:</strong> 100% Cotton (5.3 oz/yd&sup2;) with Solid Colors; Sport Grey: 90% Cotton/ 10% Polyester; Graphite Heather &amp; Dark Heather: 50% Cotton/ 50% Polyester.</p>
+		{%- when 'hat' -%}
+			<p><strong>Front Panels:</strong> 60% cotton/ 40% polyester - structured and sturdy for a polished look.</p>
+			<p><strong>Mesh Back:</strong> 100% polyester - breathable and lightweight for everyday comfort.</p>
+			<p><strong>Patch:</strong> High-quality faux leather - designed to hold fine engraving with lasting clarity.</p>
+			<p><strong>Engraved Faux Leather Patch:</strong> Add a premium touch with laser-engraved detailing that brings your logo or design to life with crisp, high-end precision. Each patch is engraved and then carefully applied to the cap for a professional finish.</p>
+			<p><strong>Patch Shapes:</strong> Oval, Rectangle</p>
+			<p><strong>Patch Colors:</strong> Rustic Dark Brown, Rustic Light Brown, Gray - choose rustic or classic vibes to match your style.</p>
+			<p><strong>Cap Colors:</strong> Select via color swatches</p>
+		{%- when 'tshirt-default' -%}
+			<p><strong>Base Item:</strong> Premium Gildan 5000.</p>
+			<p><strong>Sizes:</strong> S to 5XL (True to size).</p>
+			<p><strong>Colors:</strong> Select via color swatches</p>
+			<p><strong>Style:</strong> Classic unisex fit, comfy crew neck, and short sleeves.</p>
+			<p><strong>Durability:</strong> Heavyweight cotton fabric with double-needle stitched sleeves and hem.</p>
+			<p><strong>Material:</strong> 100% Cotton (5.3 oz/yd&sup2;) with Solid Colors; Ash: 99% Cotton / 1% Polyester; Sport Gray &amp; Antique Colors: 90% Cotton / 10% Polyester.</p>
+			<p><strong>Heathers &amp; Tweed:</strong> 50% Cotton / 50% Polyester.</p>
+			<p><strong>Print Method:</strong> Premium Direct-to-Garment (DTG) printing for realistic, vintage, lasting designs.</p>
+	{%- endcase -%}
+{%- endcapture -%}
+{%- assign product_details_content = product_details_content | strip -%}
+
+{%- comment -%}
 	Description variables
 {%- endcomment -%}
 {%- assign description_show         = block.settings.show_description -%}
@@ -13,7 +178,7 @@
 {%- assign description_drawer_title = block.settings.description_drawer_title -%}
 {%- assign show_description         = false -%}
 
-{%- if description_show and description_toggle_text != blank and product.description != blank and description_drawer_title != blank -%}
+{%- if description_show and description_toggle_text != blank and product_details_content != blank and description_drawer_title != blank -%}
 	{%- assign show_description = true -%}
 {%- endif -%}
 
@@ -87,8 +252,8 @@
 	{%- assign has_any_accordion = true -%}
 {%- endif -%}
 
-{%- comment -%} Always show Description accordion using product.description even if drawer description is off {%- endcomment -%}
-{%- if has_any_accordion or product.description != blank -%}
+{%- comment -%} Always show Description accordion using generated product details even if drawer description is off {%- endcomment -%}
+{%- if has_any_accordion or product_details_content != blank -%}
 	{%- capture styles -%}
 		--offset-top-desktop: {{ block.settings.offset_top_desktop }}px; {{-  -}}
 		--offset-bottom-desktop: {{ block.settings.offset_bottom_desktop }}px; {{-  -}}
@@ -244,22 +409,8 @@
 
 	<div class="product-accordion" style="{{ styles }}" data-product-accordion>
 		{%- comment -%} DESCRIPTION - Full Page Overlay Trigger {%- endcomment -%}
-		{%- if product.description != blank -%}
-			{%- assign desc_content = product.description | replace: '<img', '<img loading="lazy"' -%}
-
-			{%- comment -%} Remove product title from description {%- endcomment -%}
-			{%- assign title_strong = '<strong>' | append: product.title | append: '</strong>' -%}
-			{%- assign title_b = '<b>' | append: product.title | append: '</b>' -%}
-			{%- assign title_em = '<em>' | append: product.title | append: '</em>' -%}
-			{%- assign desc_content = desc_content | replace: title_strong, '' -%}
-			{%- assign desc_content = desc_content | replace: title_b, '' -%}
-			{%- assign desc_content = desc_content | replace: title_em, '' -%}
-			{%- assign desc_content = desc_content | replace: product.title, '' -%}
-
-
-
-			{%- comment -%} Clean up empty tags {%- endcomment -%}
-			{%- assign desc_content = desc_content | replace: '<p></p>', '' | replace: '<p> </p>', '' | strip -%}
+		{%- if product_details_content != blank -%}
+			{%- assign desc_content = product_details_content -%}
 
 			<div class="product-accordion__item">
 				<button
@@ -268,7 +419,7 @@
 					aria-expanded="false"
 					onclick="document.getElementById('description-overlay').classList.add('is-active'); document.body.style.overflow='hidden';"
 				>
-					<span>DESCRIPTION</span>
+					<span>PRODUCT DETAILS</span>
 					<span class="product-accordion__trigger-icon">
 						<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<line x1="0" y1="6" x2="12" y2="6" stroke="currentColor" stroke-width="1.5"/>
@@ -1157,14 +1308,14 @@
 		{%- endif -%}
 	</div>
 
-	{%- if product.description != blank -%}
+	{%- if product_details_content != blank -%}
 		{%- capture description_overlay_html -%}
 			{%- comment -%} DESCRIPTION OVERLAY MOVED TO BOTTOM TO PREVENT HTML INJECTION BREAKAGE {%- endcomment -%}
 			<div id="description-overlay" class="size-chart-overlay">
 				<div class="size-chart-overlay__backdrop" onclick="document.getElementById('description-overlay').classList.remove('is-active'); document.body.style.overflow='';"></div>
 				<div class="size-chart-overlay__panel">
 					<div class="size-chart-overlay__header">
-						<h2 class="size-chart-overlay__title">DESCRIPTION</h2>
+						<h2 class="size-chart-overlay__title">PRODUCT DETAILS</h2>
 						<button class="size-chart-overlay__close" type="button" onclick="document.getElementById('description-overlay').classList.remove('is-active'); document.body.style.overflow='';" aria-label="Close">
 							<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 								<line x1="2" y1="2" x2="18" y2="18" stroke="currentColor" stroke-width="2"/>
@@ -1176,30 +1327,6 @@
 						<div class="product-desc-overlay__body rte">
 							{{ desc_content }}
 						</div>
-						{%- assign has_short_desc = false -%}
-						{%- for sec_block in section.blocks -%}
-							{%- if sec_block.type == 'short_description' -%}
-								{%- assign has_short_desc = true -%}
-								{%- break -%}
-							{%- endif -%}
-						{%- endfor -%}
-
-						{%- if has_short_desc -%}
-						<script>
-							document.addEventListener('DOMContentLoaded', function() {
-								var modalBody = document.querySelector('#description-overlay .product-desc-overlay__body');
-								if (modalBody) {
-									var pTags = modalBody.querySelectorAll('p');
-									for (var i = 0; i < pTags.length; i++) {
-										if (pTags[i].textContent.trim().length > 10) {
-											pTags[i].style.display = 'none';
-											break;
-										}
-									}
-								}
-							});
-						</script>
-						{%- endif -%}
 					</div>
 				</div>
 			</div>

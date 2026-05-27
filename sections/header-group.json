@@ -149,7 +149,7 @@
         "footer_shadow": "0 -12px 24px rgba(255, 255, 255, 0.95)",
         "heading": "Your cart",
         "show_cart_items_count": true,
-        "show_auto_open": true,
+        "show_auto_open": false,
         "cart_button_label": "View cart",
         "title_color": "#2c3d33",
         "title_font_size": 20,

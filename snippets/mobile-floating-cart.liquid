@@ -231,6 +231,7 @@
 		/* ---- Scroll show/hide ---- */
 		var showThreshold = 40;
 		var ticking = false;
+		var lastScrollAt = 0;
 		var countBadge = el.querySelector('[data-cart-count]');
 		var currentCount = countBadge ? parseInt(countBadge.getAttribute('data-cart-count'), 10) || 0 : 0;
 
@@ -244,6 +245,7 @@
 		}
 
 		window.addEventListener('scroll', function() {
+			lastScrollAt = Date.now();
 			if (!ticking) {
 				window.requestAnimationFrame(updateVisibility);
 				ticking = true;
@@ -262,11 +264,26 @@
 		var dragThreshold = 8; /* px movement before considered a drag */
 		var margin = 16; /* align with the bottom-right chat button */
 
+		/* ---- Accidental-open guard ----
+		   The button sits in the thumb zone and appears the moment you scroll,
+		   so a stray touch while browsing must NOT open the cart. We only open
+		   on a deliberate, clean tap: little movement, short press, and not
+		   immediately after the page was scrolling. */
+		var touchStartTime = 0;
+		var touchMaxMove = 0;
+		var allowTapOpen = false;
+		var TAP_MOVE_MAX = 10;     /* px — more movement means scroll/drag, not a tap */
+		var TAP_TIME_MAX = 600;    /* ms — longer press is not a quick tap */
+		var SCROLL_GUARD_MS = 450; /* ms — ignore taps landing right after a page scroll */
+
 		el.addEventListener('touchstart', function(e) {
 			var touch = e.touches[0];
 			startX = touch.clientX;
 			startY = touch.clientY;
 			wasDragged = false;
+			touchStartTime = Date.now();
+			touchMaxMove = 0;
+			allowTapOpen = false;
 
 			var rect = el.getBoundingClientRect();
 			startRight = window.innerWidth - rect.right;
@@ -277,6 +294,9 @@
 			var touch = e.touches[0];
 			var dx = touch.clientX - startX;
 			var dy = touch.clientY - startY;
+
+			var dist = Math.sqrt(dx * dx + dy * dy);
+			if (dist > touchMaxMove) touchMaxMove = dist;
 
 			/* Only start drag after exceeding threshold */
 			if (!isDragging && (Math.abs(dx) > dragThreshold || Math.abs(dy) > dragThreshold)) {
@@ -331,19 +351,41 @@
 				}, 300);
 			}
 
-			/* If it was a drag, prevent the click/tap from opening the cart */
+			/* Decide whether this gesture was a deliberate tap that may open the
+			   cart. Drags, long presses, or taps that land while the page is
+			   still scrolling are treated as accidental and vetoed below. */
+			var duration = Date.now() - touchStartTime;
+			var scrolledRecently = (Date.now() - lastScrollAt) < SCROLL_GUARD_MS;
+			allowTapOpen = !wasDragged
+				&& touchMaxMove <= TAP_MOVE_MAX
+				&& duration <= TAP_TIME_MAX
+				&& !scrolledRecently;
+
 			if (wasDragged) {
 				e.preventDefault();
-				var btn = el.querySelector('.mobile-floating-cart__button');
-				if (btn) {
-					btn.addEventListener('click', function blockClick(ev) {
-						ev.preventDefault();
-						ev.stopPropagation();
-						btn.removeEventListener('click', blockClick, true);
-					}, { once: true, capture: true });
-				}
 			}
 		}, { passive: false });
+
+		/* Mouse clicks can't "scroll-tap" by accident, so always treat them as
+		   deliberate (e.g. a desktop window narrowed below the mobile breakpoint). */
+		el.addEventListener('pointerdown', function(e) {
+			if (e.pointerType === 'mouse') {
+				allowTapOpen = true;
+			}
+		}, true);
+
+		/* Capture-phase gate on the wrapper runs BEFORE the theme's bubble-phase
+		   toggle handler on the button, so it reliably vetoes accidental opens
+		   regardless of listener registration order. */
+		el.addEventListener('click', function(ev) {
+			/* Keyboard / programmatic activation (detail === 0) is always allowed. */
+			if (ev.detail === 0) return;
+			if (!allowTapOpen) {
+				ev.preventDefault();
+				ev.stopImmediatePropagation();
+			}
+			allowTapOpen = false;
+		}, true);
 
 		/* ---- Live cart count update ---- */
 		function updateFloatingCartCount(data) {

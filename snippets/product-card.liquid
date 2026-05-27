@@ -65,26 +65,95 @@
 {%- assign product_card_tag_badge_modifier = blank -%}
 {%- assign product_card_tag_badge_width = 0 -%}
 {%- assign product_card_tag_badge_height = 0 -%}
+{%- assign product_card_has_comfort_tag = false -%}
+{%- assign product_card_has_bella_tag = false -%}
+{%- assign product_card_has_vneck_tag = false -%}
+{%- assign product_card_has_tanktop_tag = false -%}
+{%- assign product_card_has_longsleevetee_tag = false -%}
+{%- assign product_card_has_wash_tag = false -%}
+{%- assign product_card_has_sweater_tag = false -%}
+{%- assign product_card_has_hoodie_tag = false -%}
+{%- assign product_card_has_gildan_tag = false -%}
+{%- assign product_card_has_colorblast_tag = false -%}
 
 {%- if product != blank -%}
 	{%- for tag in product.tags -%}
 		{%- assign product_tag_handle = tag | handleize -%}
 
-		{%- if product_tag_handle contains 'bella' -%}
-			{%- assign product_card_tag_badge_image = 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/Comfort_Colors_3.png?v=1779703338' -%}
-			{%- assign product_card_tag_badge_label = 'Bella product tag' -%}
-			{%- assign product_card_tag_badge_modifier = ' product-card__tag-badge--bella' -%}
-			{%- assign product_card_tag_badge_width = 320 -%}
-			{%- assign product_card_tag_badge_height = 92 -%}
-			{%- break -%}
-		{%- elsif product_card_tag_badge_image == blank and product_tag_handle contains 'comfort' -%}
-			{%- assign product_card_tag_badge_image = 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/Comfort_Colors_2.png?v=1779703337' -%}
-			{%- assign product_card_tag_badge_label = 'Comfort Colors product tag' -%}
-			{%- assign product_card_tag_badge_modifier = ' product-card__tag-badge--comfort' -%}
-			{%- assign product_card_tag_badge_width = 394 -%}
-			{%- assign product_card_tag_badge_height = 116 -%}
+		{%- if product_tag_handle contains 'colorblast' or product_tag_handle contains 'color-blast' -%}
+			{%- assign product_card_has_colorblast_tag = true -%}
+		{%- endif -%}
+		{%- if product_tag_handle contains 'wash' -%}
+			{%- assign product_card_has_wash_tag = true -%}
+		{%- endif -%}
+		{%- if product_tag_handle contains 'sweater' or product_tag_handle contains 'sweatshirt' -%}
+			{%- assign product_card_has_sweater_tag = true -%}
+		{%- endif -%}
+		{%- if product_tag_handle contains 'hoodie' -%}
+			{%- assign product_card_has_hoodie_tag = true -%}
+		{%- endif -%}
+		{%- if product_tag_handle contains 'gildan' -%}
+			{%- assign product_card_has_gildan_tag = true -%}
+		{%- endif -%}
+		{%- if product_tag_handle contains 'comfort' -%}
+			{%- assign product_card_has_comfort_tag = true -%}
+		{%- elsif product_tag_handle contains 'bella' -%}
+			{%- assign product_card_has_bella_tag = true -%}
+		{%- elsif product_tag_handle contains 'vneck' or product_tag_handle contains 'v-neck' -%}
+			{%- assign product_card_has_vneck_tag = true -%}
+		{%- elsif product_tag_handle contains 'tanktop' or product_tag_handle contains 'tank-top' -%}
+			{%- assign product_card_has_tanktop_tag = true -%}
+		{%- elsif product_tag_handle contains 'longsleevetee' or product_tag_handle contains 'long-sleeve-tee' or product_tag_handle contains 'longsleeve' or product_tag_handle contains 'long-sleeve' -%}
+			{%- assign product_card_has_longsleevetee_tag = true -%}
 		{%- endif -%}
 	{%- endfor -%}
+
+	{%- if product_card_has_colorblast_tag -%}
+		{%- assign product_card_tag_badge_image = 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/colorblast_tee.png?v=1779866400' -%}
+		{%- assign product_card_tag_badge_label = 'Colorblast tee product tag' -%}
+		{%- assign product_card_tag_badge_modifier = ' product-card__tag-badge--colorblast' -%}
+	{%- elsif product_card_has_wash_tag -%}
+		{%- assign product_card_tag_badge_image = 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/wash_tee.png?v=1779866551' -%}
+		{%- assign product_card_tag_badge_label = 'Wash tee product tag' -%}
+		{%- assign product_card_tag_badge_modifier = ' product-card__tag-badge--wash' -%}
+	{%- elsif product_card_has_sweater_tag -%}
+		{%- assign product_card_tag_badge_image = 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/Class_sweater.png?v=1779866507' -%}
+		{%- assign product_card_tag_badge_label = 'Sweater product tag' -%}
+		{%- assign product_card_tag_badge_modifier = ' product-card__tag-badge--sweater' -%}
+	{%- elsif product_card_has_hoodie_tag -%}
+		{%- assign product_card_tag_badge_image = 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/Classic_hoodie.png?v=1779866453' -%}
+		{%- assign product_card_tag_badge_label = 'Hoodie product tag' -%}
+		{%- assign product_card_tag_badge_modifier = ' product-card__tag-badge--hoodie' -%}
+	{%- elsif product_card_has_comfort_tag -%}
+		{%- assign product_card_tag_badge_image = 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/1.png?v=1779782675' -%}
+		{%- assign product_card_tag_badge_label = 'Comfort product tag' -%}
+		{%- assign product_card_tag_badge_modifier = ' product-card__tag-badge--comfort' -%}
+	{%- elsif product_card_has_bella_tag -%}
+		{%- assign product_card_tag_badge_image = 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/2.png?v=1779782724' -%}
+		{%- assign product_card_tag_badge_label = 'Bella product tag' -%}
+		{%- assign product_card_tag_badge_modifier = ' product-card__tag-badge--bella' -%}
+	{%- elsif product_card_has_vneck_tag -%}
+		{%- assign product_card_tag_badge_image = 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/3.png?v=1779782792' -%}
+		{%- assign product_card_tag_badge_label = 'V-neck product tag' -%}
+		{%- assign product_card_tag_badge_modifier = ' product-card__tag-badge--vneck' -%}
+	{%- elsif product_card_has_tanktop_tag -%}
+		{%- assign product_card_tag_badge_image = 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/4.png?v=1779782848' -%}
+		{%- assign product_card_tag_badge_label = 'Tank top product tag' -%}
+		{%- assign product_card_tag_badge_modifier = ' product-card__tag-badge--tanktop' -%}
+	{%- elsif product_card_has_longsleevetee_tag -%}
+		{%- assign product_card_tag_badge_image = 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/tag_long_sleeve_tee.png?v=1779782923' -%}
+		{%- assign product_card_tag_badge_label = 'Long sleeve tee product tag' -%}
+		{%- assign product_card_tag_badge_modifier = ' product-card__tag-badge--longsleeve-tee' -%}
+	{%- elsif product_card_has_gildan_tag -%}
+		{%- assign product_card_tag_badge_image = 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/Classic_tee.png?v=1779866319' -%}
+		{%- assign product_card_tag_badge_label = 'Gildan tee product tag' -%}
+		{%- assign product_card_tag_badge_modifier = ' product-card__tag-badge--gildan' -%}
+	{%- endif -%}
+
+	{%- if product_card_tag_badge_image != blank -%}
+		{%- assign product_card_tag_badge_width = 394 -%}
+		{%- assign product_card_tag_badge_height = 116 -%}
+	{%- endif -%}
 {%- endif -%}
 
 {%- assign min = 1 -%}
@@ -561,6 +630,22 @@
 		width: clamp(118px, 52%, 190px);
 	}
 
+	.product-card__tag-badge--comfort,
+	.product-card__tag-badge--bella,
+	.product-card__tag-badge--vneck,
+	.product-card__tag-badge--tanktop,
+	.product-card__tag-badge--longsleeve-tee,
+	.product-card__tag-badge--wash,
+	.product-card__tag-badge--sweater,
+	.product-card__tag-badge--hoodie,
+	.product-card__tag-badge--gildan,
+	.product-card__tag-badge--colorblast {
+		left: 0;
+		bottom: 6px;
+		width: 50%;
+		max-width: 50%;
+	}
+
 	.product-card__tag-badge-image {
 		display: block;
 		width: 100%;
@@ -716,6 +801,22 @@
 
 		.product-card__tag-badge--bella {
 			width: clamp(92px, 68%, 136px);
+		}
+
+		.product-card__tag-badge--comfort,
+		.product-card__tag-badge--bella,
+		.product-card__tag-badge--vneck,
+		.product-card__tag-badge--tanktop,
+		.product-card__tag-badge--longsleeve-tee,
+		.product-card__tag-badge--wash,
+		.product-card__tag-badge--sweater,
+		.product-card__tag-badge--hoodie,
+		.product-card__tag-badge--gildan,
+		.product-card__tag-badge--colorblast {
+			left: 0;
+			bottom: 5px;
+			width: 50%;
+			max-width: 50%;
 		}
 
 		/* SVG placeholders */

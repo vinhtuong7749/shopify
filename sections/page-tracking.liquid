@@ -1,0 +1,1434 @@
+{%- comment -%}
+------------------------------------------------------------------------------
+	Section: Order Tracking page
+	- Customer-facing UI only
+	- Calls a private backend or Shopify app proxy for multi-carrier tracking data
+	- Never store tracking API credentials in Liquid or browser JavaScript
+------------------------------------------------------------------------------
+{%- endcomment -%}
+
+{%- assign heading        = section.settings.heading -%}
+{%- assign subheading     = section.settings.subheading -%}
+{%- assign placeholder    = section.settings.placeholder -%}
+{%- assign button_label   = section.settings.button_label -%}
+{%- assign help_text      = section.settings.help_text -%}
+{%- assign tracking_mode  = section.settings.tracking_mode | default: 'seventeen_track_widget' -%}
+{%- assign endpoint_url   = section.settings.endpoint_url | default: '/apps/order-tracking' -%}
+{%- assign request_method = section.settings.request_method | default: 'GET' -%}
+{%- assign bg_color       = section.settings.bg_color -%}
+{%- assign text_color     = section.settings.text_color -%}
+{%- assign accent_color   = section.settings.accent_color -%}
+
+<section
+	id="cs-tracking-{{ section.id }}"
+	class="page-tracking"
+	style="
+		--pt-bg: {{ bg_color }};
+		--pt-text: {{ text_color }};
+		--pt-accent: {{ accent_color }};
+	"
+	data-mode="{{ tracking_mode | escape }}"
+	data-endpoint="{{ endpoint_url | escape }}"
+	data-method="{{ request_method | escape }}"
+>
+	<div class="page-tracking__container">
+		{%- if heading != blank -%}
+			<h1 class="page-tracking__heading">{{ heading | escape }}</h1>
+		{%- endif -%}
+
+		{%- if subheading != blank -%}
+			<p class="page-tracking__subheading">{{ subheading | escape }}</p>
+		{%- endif -%}
+
+		<div class="page-tracking__panel">
+			<form class="page-tracking__form" data-track-form novalidate>
+				<label class="page-tracking__field">
+					<span class="page-tracking__field-label">Tracking number</span>
+					<input
+						class="page-tracking__input"
+						type="text"
+						name="trackingNumber"
+						placeholder="{{ placeholder | escape }}"
+						autocomplete="off"
+						autocorrect="off"
+						autocapitalize="characters"
+						spellcheck="false"
+						minlength="4"
+						maxlength="48"
+						required
+						data-track-input
+					/>
+				</label>
+				<button class="page-tracking__button" type="submit" data-track-button>
+					<span class="page-tracking__button-label">{{ button_label | escape }}</span>
+					<span class="page-tracking__spinner" aria-hidden="true"></span>
+				</button>
+			</form>
+
+			<div class="page-tracking__carriers" aria-label="Supported carriers">
+				<span>USPS</span>
+				<span>UPS</span>
+				<span>FedEx</span>
+				<span>DHL</span>
+				<span>YunExpress</span>
+			</div>
+
+			{%- if help_text != blank -%}
+				<div class="page-tracking__help">{{ help_text }}</div>
+			{%- endif -%}
+		</div>
+
+		<div class="page-tracking__error" data-track-error role="alert" hidden></div>
+
+		<div class="page-tracking__widget-shell" data-17track-shell hidden>
+			<div id="YQContainer-{{ section.id }}" class="page-tracking__widget-container" data-17track-container></div>
+			<div class="page-tracking__widget-mask-top" aria-hidden="true"></div>
+			<div class="page-tracking__widget-mask-bottom" aria-hidden="true"></div>
+		</div>
+
+		<div class="page-tracking__result" data-track-result aria-live="polite" hidden>
+			<header class="cs-result__header">
+				<div class="cs-result__status">
+					<span class="cs-result__status-icon" data-status="pending" aria-hidden="true"></span>
+					<div class="cs-result__status-text">
+						<span class="cs-result__status-label">-</span>
+						<span class="cs-result__status-sub">-</span>
+					</div>
+				</div>
+
+				<div class="cs-result__meta">
+					<div class="cs-result__meta-row"><span>Tracking #</span><strong data-field="number">-</strong></div>
+					<div class="cs-result__meta-row"><span>Carrier</span><strong data-field="carrier">-</strong></div>
+					<div class="cs-result__meta-row"><span>Service</span><strong data-field="service">-</strong></div>
+					<div class="cs-result__meta-row"><span>Estimated delivery</span><strong data-field="delivery">-</strong></div>
+					<div class="cs-result__meta-row"><span>Origin / Destination</span><strong data-field="route">-</strong></div>
+					<a class="cs-result__link" href="#" target="_blank" rel="noopener noreferrer" data-field="official-link" hidden>Open tracking page</a>
+				</div>
+			</header>
+
+			<ol class="cs-result__timeline" data-field="timeline"></ol>
+		</div>
+	</div>
+</section>
+
+<style>
+	.page-tracking {
+		background: var(--pt-bg, #faf6ee);
+		color: var(--pt-text, #2c3d33);
+		padding: 64px 20px 72px;
+	}
+
+	.page-tracking__container {
+		max-width: 960px;
+		margin: 0 auto;
+	}
+
+	.page-tracking__heading {
+		margin: 0 0 10px;
+		color: var(--pt-text);
+		font-family: 'Oswald', sans-serif;
+		font-size: 32px;
+		font-weight: 700;
+		letter-spacing: 0;
+		line-height: 1.1;
+		text-align: center;
+		text-transform: uppercase;
+	}
+
+	.page-tracking__subheading {
+		max-width: 640px;
+		margin: 0 auto 28px;
+		font-size: 16px;
+		line-height: 1.5;
+		text-align: center;
+		opacity: 0.82;
+	}
+
+	.page-tracking__panel {
+		max-width: 860px;
+		margin: 0 auto;
+		padding: 18px;
+		border: 1px solid rgba(44, 61, 51, 0.14);
+		border-radius: 8px;
+		background: rgba(255, 255, 255, 0.78);
+		box-shadow: 0 16px 42px rgba(21, 32, 27, 0.08);
+	}
+
+	.page-tracking__form {
+		display: flex;
+		gap: 12px;
+		justify-content: center;
+		align-items: stretch;
+		margin: 0;
+	}
+
+	.page-tracking__field {
+		position: relative;
+		flex: 1 1 420px;
+		min-width: 0;
+		margin: 0;
+	}
+
+	.page-tracking__field-label {
+		position: absolute;
+		top: 8px;
+		left: 16px;
+		z-index: 1;
+		color: rgba(44, 61, 51, 0.62);
+		font-size: 11px;
+		font-weight: 700;
+		line-height: 1;
+		text-transform: uppercase;
+	}
+
+	.page-tracking__input {
+		width: 100%;
+		height: 62px;
+		min-width: 0;
+		padding: 26px 18px 10px;
+		border: 1px solid rgba(44, 61, 51, 0.24);
+		border-radius: 4px;
+		background: #fff;
+		color: var(--pt-text);
+		font-family: inherit;
+		font-size: 16px;
+		font-weight: 600;
+		outline: none;
+		transition: border-color 0.2s, box-shadow 0.2s;
+	}
+
+	.page-tracking__input:focus {
+		border-color: var(--pt-accent);
+		box-shadow: 0 0 0 3px rgba(44, 61, 51, 0.12);
+	}
+
+	.page-tracking__button {
+		position: relative;
+		flex: 0 0 auto;
+		min-width: 144px;
+		min-height: 62px;
+		padding: 16px 30px;
+		border: 1.5px solid var(--pt-accent);
+		border-radius: 4px;
+		background: var(--pt-accent);
+		color: #fff;
+		cursor: pointer;
+		font-family: 'Oswald', sans-serif;
+		font-size: 16px;
+		font-weight: 600;
+		letter-spacing: 0;
+		line-height: 1.2;
+		text-transform: uppercase;
+		transition: opacity 0.2s, transform 0.05s;
+	}
+
+	.page-tracking__button:hover {
+		opacity: 0.9;
+		box-shadow: 0 10px 22px rgba(44, 61, 51, 0.2);
+	}
+
+	.page-tracking__button:active {
+		transform: translateY(1px);
+	}
+
+	.page-tracking__button[disabled] {
+		cursor: wait;
+		opacity: 0.72;
+	}
+
+	.page-tracking__button[disabled] .page-tracking__button-label {
+		visibility: hidden;
+	}
+
+	.page-tracking__spinner {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		display: none;
+		width: 18px;
+		height: 18px;
+		margin: -9px 0 0 -9px;
+		border: 2px solid rgba(255, 255, 255, 0.4);
+		border-top-color: #fff;
+		border-radius: 50%;
+		animation: csTrackingSpin 0.7s linear infinite;
+	}
+
+	.page-tracking__button[disabled] .page-tracking__spinner {
+		display: block;
+	}
+
+	@keyframes csTrackingSpin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+	.page-tracking__help {
+		max-width: 640px;
+		margin: 12px auto 0;
+		font-size: 13px;
+		line-height: 1.5;
+		text-align: center;
+		opacity: 0.72;
+	}
+
+	.page-tracking__carriers {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		justify-content: center;
+		margin-top: 14px;
+	}
+
+	.page-tracking__carriers span {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 28px;
+		padding: 6px 10px;
+		border: 1px solid rgba(44, 61, 51, 0.16);
+		border-radius: 4px;
+		background: rgba(44, 61, 51, 0.05);
+		color: rgba(44, 61, 51, 0.78);
+		font-size: 12px;
+		font-weight: 700;
+		line-height: 1;
+	}
+
+	.page-tracking__error {
+		max-width: 860px;
+		margin: 18px auto 0;
+		padding: 14px 18px;
+		border: 1px solid #f5c2c0;
+		border-radius: 6px;
+		background: #fdecec;
+		color: #9f1c15;
+		font-size: 14px;
+		line-height: 1.45;
+	}
+
+	.page-tracking__widget-shell {
+		position: relative;
+		max-width: 880px;
+		margin: 28px auto 0;
+		overflow: hidden;
+		border: 1px solid rgba(44, 61, 51, 0.14);
+		border-radius: 8px;
+		background: #fff;
+		box-shadow: 0 18px 44px rgba(21, 32, 27, 0.1);
+		height: 548px;
+	}
+
+	.page-tracking__widget-shell[hidden] {
+		display: none;
+	}
+
+	.page-tracking__widget-container {
+		height: 760px;
+		background: #fff;
+		transform: translateY(-58px);
+		transform-origin: top left;
+	}
+
+	.page-tracking__widget-container iframe {
+		display: block;
+		width: 100% !important;
+		max-width: 100% !important;
+		height: 760px !important;
+		min-height: 760px;
+		border: 0 !important;
+	}
+
+	.page-tracking__widget-mask-top,
+	.page-tracking__widget-mask-bottom {
+		position: absolute;
+		left: 0;
+		z-index: 2;
+		width: 100%;
+		background: #fff;
+		pointer-events: none;
+	}
+
+	.page-tracking__widget-mask-top {
+		top: 0;
+		height: 0;
+	}
+
+	.page-tracking__widget-mask-bottom {
+		bottom: 0;
+		height: 0;
+	}
+
+	.page-tracking__widget-container [class*="ad" i],
+	.page-tracking__widget-container [id*="ad" i],
+	.page-tracking__widget-container [class*="banner" i],
+	.page-tracking__widget-container [id*="banner" i],
+	.page-tracking__widget-container [class*="promo" i],
+	.page-tracking__widget-container [id*="promo" i],
+	.page-tracking__widget-container [class*="recommend" i],
+	.page-tracking__widget-container [id*="recommend" i],
+	.page-tracking__widget-container [class*="download" i],
+	.page-tracking__widget-container [id*="download" i],
+	.page-tracking__widget-container [href*="apps.shopify.com" i],
+	.page-tracking__widget-container [href*="/en/api" i],
+	.page-tracking__widget-container [href*="17track.net/en/api" i] {
+		display: none !important;
+		visibility: hidden !important;
+		height: 0 !important;
+		min-height: 0 !important;
+		margin: 0 !important;
+		padding: 0 !important;
+		overflow: hidden !important;
+	}
+
+	.page-tracking__result {
+		max-width: 880px;
+		margin: 28px auto 0;
+		overflow: hidden;
+		border: 1px solid rgba(44, 61, 51, 0.12);
+		border-radius: 8px;
+		background: #fff;
+		box-shadow: 0 18px 44px rgba(21, 32, 27, 0.1);
+	}
+
+	.cs-result__header {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 20px;
+		padding: 24px;
+		border-bottom: 1px solid rgba(44, 61, 51, 0.08);
+		background: linear-gradient(180deg, rgba(44, 61, 51, 0.04), transparent);
+	}
+
+	.cs-result__status {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+		min-width: 0;
+	}
+
+	.cs-result__status-icon {
+		position: relative;
+		display: inline-flex;
+		flex: 0 0 auto;
+		align-items: center;
+		justify-content: center;
+		width: 48px;
+		height: 48px;
+		border-radius: 50%;
+		background: rgba(44, 61, 51, 0.1);
+	}
+
+	.cs-result__status-icon::before {
+		display: block;
+		width: 22px;
+		height: 22px;
+		background: currentColor;
+		content: "";
+		-webkit-mask: center / contain no-repeat;
+		mask: center / contain no-repeat;
+	}
+
+	.cs-result__status-icon[data-status="pending"] {
+		color: #7f8f83;
+	}
+
+	.cs-result__status-icon[data-status="intransit"] {
+		background: rgba(178, 114, 19, 0.12);
+		color: #b27213;
+	}
+
+	.cs-result__status-icon[data-status="delivered"] {
+		background: rgba(44, 138, 74, 0.12);
+		color: #2c8a4a;
+	}
+
+	.cs-result__status-icon[data-status="exception"] {
+		background: rgba(179, 38, 30, 0.12);
+		color: #b3261e;
+	}
+
+	.cs-result__status-icon[data-status="pickup"] {
+		background: rgba(30, 111, 189, 0.12);
+		color: #1e6fbd;
+	}
+
+	.cs-result__status-icon[data-status="pending"]::before {
+		-webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23000' d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 5h-2v6l5 3 1-1.7-4-2.3V7Z'/></svg>");
+		mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23000' d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 5h-2v6l5 3 1-1.7-4-2.3V7Z'/></svg>");
+	}
+
+	.cs-result__status-icon[data-status="intransit"]::before {
+		-webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23000' d='M3 6h11v8h-2.05a2.5 2.5 0 0 1-4.9 0H5V8h6v4H5V6Zm13 4h2.5l1.5 2v2h-1.55a2.5 2.5 0 0 1-4.9 0H16v-4Zm-7 5a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm9 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z'/></svg>");
+		mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23000' d='M3 6h11v8h-2.05a2.5 2.5 0 0 1-4.9 0H5V8h6v4H5V6Zm13 4h2.5l1.5 2v2h-1.55a2.5 2.5 0 0 1-4.9 0H16v-4Zm-7 5a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm9 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z'/></svg>");
+	}
+
+	.cs-result__status-icon[data-status="delivered"]::before {
+		-webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23000' d='m9 16.2-3.5-3.5 1.4-1.4L9 13.4l7.1-7.1 1.4 1.4L9 16.2Z'/></svg>");
+		mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23000' d='m9 16.2-3.5-3.5 1.4-1.4L9 13.4l7.1-7.1 1.4 1.4L9 16.2Z'/></svg>");
+	}
+
+	.cs-result__status-icon[data-status="exception"]::before {
+		-webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23000' d='M12 2 1 21h22L12 2Zm-1 7h2v6h-2V9Zm0 8h2v2h-2v-2Z'/></svg>");
+		mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23000' d='M12 2 1 21h22L12 2Zm-1 7h2v6h-2V9Zm0 8h2v2h-2v-2Z'/></svg>");
+	}
+
+	.cs-result__status-icon[data-status="pickup"]::before {
+		-webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23000' d='M3 4h18v4H3V4Zm2 6h14v10H5V10Zm4 3v2h6v-2H9Z'/></svg>");
+		mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23000' d='M3 4h18v4H3V4Zm2 6h14v10H5V10Zm4 3v2h6v-2H9Z'/></svg>");
+	}
+
+	.cs-result__status-text {
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.cs-result__status-label {
+		color: var(--pt-text);
+		font-family: 'Oswald', sans-serif;
+		font-size: 22px;
+		font-weight: 700;
+		letter-spacing: 0;
+		line-height: 1.18;
+		text-transform: uppercase;
+	}
+
+	.cs-result__status-sub {
+		font-size: 13px;
+		line-height: 1.35;
+		opacity: 0.74;
+	}
+
+	.cs-result__meta {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		font-size: 13px;
+		line-height: 1.35;
+	}
+
+	.cs-result__meta-row {
+		display: grid;
+		grid-template-columns: 136px minmax(0, 1fr);
+		gap: 10px;
+	}
+
+	.cs-result__meta-row > span {
+		opacity: 0.64;
+	}
+
+	.cs-result__meta-row > strong {
+		font-weight: 600;
+		word-break: break-word;
+	}
+
+	.cs-result__link {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: fit-content;
+		min-height: 40px;
+		margin-top: 10px;
+		padding: 10px 16px;
+		border: 1.5px solid var(--pt-accent);
+		border-radius: 4px;
+		background: var(--pt-accent);
+		color: #fff;
+		font-family: 'Oswald', sans-serif;
+		font-size: 14px;
+		font-weight: 600;
+		line-height: 1.2;
+		text-decoration: none;
+		text-transform: uppercase;
+	}
+
+	.cs-result__link[hidden] {
+		display: none;
+	}
+
+	.cs-result__timeline {
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+		margin: 0;
+		padding: 24px;
+		list-style: none;
+	}
+
+	.cs-event {
+		position: relative;
+		margin-left: 6px;
+		padding: 0 0 24px 28px;
+		border-left: 2px solid rgba(44, 61, 51, 0.12);
+	}
+
+	.cs-event:last-child {
+		padding-bottom: 0;
+		border-left-color: transparent;
+	}
+
+	.cs-event::before {
+		position: absolute;
+		top: 2px;
+		left: -8px;
+		width: 14px;
+		height: 14px;
+		border: 2px solid rgba(44, 61, 51, 0.3);
+		border-radius: 50%;
+		background: #fff;
+		content: "";
+	}
+
+	.cs-event--first::before {
+		border-color: var(--pt-accent);
+		background: var(--pt-accent);
+		box-shadow: 0 0 0 4px rgba(44, 61, 51, 0.12);
+	}
+
+	.cs-event__time {
+		margin-bottom: 4px;
+		font-size: 12px;
+		font-variant-numeric: tabular-nums;
+		line-height: 1.35;
+		opacity: 0.65;
+	}
+
+	.cs-event__desc {
+		font-size: 15px;
+		font-weight: 500;
+		line-height: 1.45;
+	}
+
+	.cs-event__loc {
+		margin-top: 2px;
+		font-size: 13px;
+		line-height: 1.4;
+		opacity: 0.75;
+	}
+
+	@media (min-width: 640px) {
+		.cs-result__header {
+			grid-template-columns: minmax(0, 1fr) minmax(300px, auto);
+			align-items: center;
+		}
+	}
+
+	@media (min-width: 768px) {
+		.page-tracking__heading {
+			font-size: 44px;
+		}
+	}
+
+	@media (max-width: 600px) {
+		.page-tracking {
+			padding: 42px 16px 54px;
+		}
+
+		.page-tracking__panel {
+			padding: 14px;
+		}
+
+		.page-tracking__form {
+			flex-direction: column;
+		}
+
+		.page-tracking__button {
+			width: 100%;
+		}
+
+		.page-tracking__widget-shell {
+			height: 520px;
+		}
+
+		.page-tracking__widget-container {
+			transform: translateY(-54px);
+		}
+
+		.cs-result__header,
+		.cs-result__timeline {
+			padding: 18px;
+		}
+
+		.cs-result__meta-row {
+			grid-template-columns: minmax(0, 1fr);
+			gap: 2px;
+		}
+	}
+</style>
+
+<script>
+(function () {
+	var section = document.getElementById('cs-tracking-{{ section.id }}');
+	if (!section) return;
+
+	var mode = (section.dataset.mode || 'direct_link').trim();
+	var endpoint = (section.dataset.endpoint || '').trim();
+	var method = (section.dataset.method || 'GET').toUpperCase();
+	var form = section.querySelector('[data-track-form]');
+	var input = section.querySelector('[data-track-input]');
+	var button = section.querySelector('[data-track-button]');
+	var errEl = section.querySelector('[data-track-error]');
+	var resEl = section.querySelector('[data-track-result]');
+	var widgetShell = section.querySelector('[data-17track-shell]');
+	var widgetContainer = section.querySelector('[data-17track-container]');
+	var yqLoadingPromise = null;
+
+	function stripTags(value) {
+		if (value === null || value === undefined) return '';
+		return String(value).replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+	}
+
+	function compact(parts) {
+		return parts.map(stripTags).filter(Boolean);
+	}
+
+	function joinLocation(parts) {
+		return compact(parts).join(', ');
+	}
+
+	function showError(message) {
+		resEl.hidden = true;
+		widgetShell.hidden = true;
+		errEl.hidden = false;
+		errEl.textContent = message;
+	}
+
+	function clearStates() {
+		errEl.hidden = true;
+		errEl.textContent = '';
+		resEl.hidden = true;
+		widgetShell.hidden = true;
+	}
+
+	function setLoading(isLoading) {
+		button.disabled = !!isLoading;
+		input.disabled = !!isLoading;
+	}
+
+	function setField(selector, value) {
+		var el = resEl.querySelector(selector);
+		if (el) el.textContent = stripTags(value) || '-';
+	}
+
+	function setOfficialLink(carrier) {
+		var link = resEl.querySelector('[data-field="official-link"]');
+		if (!link) return;
+
+		if (!carrier || !carrier.url) {
+			link.hidden = true;
+			link.removeAttribute('href');
+			return;
+		}
+
+		link.href = carrier.url;
+		link.textContent = 'Open ' + carrier.name + ' tracking';
+		link.hidden = false;
+	}
+
+	function normalizeTrackingNumber(value) {
+		return String(value || '').trim().replace(/\s+/g, '').toUpperCase();
+	}
+
+	function isValidTrackingNumber(value) {
+		return /^[A-Z0-9]{4,34}$/.test(value);
+	}
+
+	function detectCarrier(trackingNumber) {
+		var number = normalizeTrackingNumber(trackingNumber);
+
+		if (/^YT\d{16}$/i.test(number)) {
+			return {
+				name: 'YunExpress',
+				service: 'Official YunTrack page',
+				url: 'https://www.yuntrack.com/parcelTracking?id=' + encodeURIComponent(number)
+			};
+		}
+
+		if (/^[A-Z]{2}\d{9}US$/i.test(number) || /^(92|93|94|95|96|97)\d{18,32}$/.test(number)) {
+			return {
+				name: 'USPS',
+				service: 'Official USPS tracking page',
+				url: 'https://tools.usps.com/go/TrackConfirmAction?tLabels=' + encodeURIComponent(number)
+			};
+		}
+
+		if (/^1Z[0-9A-Z]{16}$/i.test(number) || /^T\d{10}$/i.test(number)) {
+			return {
+				name: 'UPS',
+				service: 'Official UPS tracking page',
+				url: 'https://www.ups.com/track?tracknum=' + encodeURIComponent(number)
+			};
+		}
+
+		if (/^JD[0-9A-Z]{18,}$/i.test(number)) {
+			return {
+				name: 'DHL',
+				service: 'Official DHL tracking page',
+				url: 'https://www.dhl.com/us-en/home/tracking/tracking-express.html?submit=1&tracking-id=' + encodeURIComponent(number)
+			};
+		}
+
+		if (/^\d{12}$/.test(number) || /^\d{15}$/.test(number) || /^\d{20}$/.test(number)) {
+			return {
+				name: 'FedEx',
+				service: 'Official FedEx tracking page',
+				url: 'https://www.fedex.com/fedextrack/?trknbr=' + encodeURIComponent(number)
+			};
+		}
+
+		if (/^\d{10}$/.test(number)) {
+			return {
+				name: 'DHL',
+				service: 'Official DHL tracking page',
+				url: 'https://www.dhl.com/us-en/home/tracking/tracking-express.html?submit=1&tracking-id=' + encodeURIComponent(number)
+			};
+		}
+
+		return null;
+	}
+
+	function buildEndpointUrl(trackingNumber) {
+		if (!endpoint) return '';
+
+		if (endpoint.indexOf('{trackingNumber}') !== -1) {
+			return endpoint.replace(/\{trackingNumber\}/g, encodeURIComponent(trackingNumber));
+		}
+
+		var url = new URL(endpoint, window.location.origin);
+		if (!url.searchParams.has('trackingNumber') && !url.searchParams.has('tracking')) {
+			url.searchParams.set('trackingNumber', trackingNumber);
+		}
+
+		return url.toString();
+	}
+
+	function messageFromPayload(payload) {
+		if (!payload) return '';
+		if (typeof payload === 'string') return payload;
+		if (payload.message) return payload.message;
+		if (payload.detail) return payload.detail;
+		if (payload.title) return payload.title;
+		if (payload.error) return messageFromPayload(payload.error);
+		if (payload.errors && payload.errors.length) return messageFromPayload(payload.errors[0]);
+		return '';
+	}
+
+	function fallbackHttpMessage(status) {
+		if (status === 400) return 'Please check the tracking number and try again.';
+		if (status === 401 || status === 403) return 'Tracking access is not authorized for this shipment yet.';
+		if (status === 404) return 'Tracking backend is not connected yet. Please configure the /apps/order-tracking app proxy or set the correct endpoint in this section.';
+		if (status === 429) return 'Tracking lookup is busy right now. Please try again in a few minutes.';
+		if (status >= 500) return 'Tracking service is temporarily unavailable. Please try again soon.';
+		return 'Could not fetch tracking information. Please try again.';
+	}
+
+	function parseJsonResponse(response) {
+		return response.text().then(function (text) {
+			var payload = null;
+
+			if (text) {
+				try {
+					payload = JSON.parse(text);
+				} catch (error) {
+					payload = { message: text };
+				}
+			}
+
+			if (!response.ok) {
+				throw new Error(stripTags(messageFromPayload(payload)) || fallbackHttpMessage(response.status));
+			}
+
+			return payload;
+		});
+	}
+
+	function fetchTracking(trackingNumber) {
+		var url = buildEndpointUrl(trackingNumber);
+		if (!url) {
+			return Promise.reject(new Error('Tracking endpoint is not configured yet.'));
+		}
+
+		var options = {
+			method: method === 'POST' ? 'POST' : 'GET',
+			headers: { Accept: 'application/json' },
+			credentials: 'same-origin'
+		};
+
+		if (options.method === 'POST') {
+			options.headers['Content-Type'] = 'application/json';
+			options.body = JSON.stringify({ trackingNumber: trackingNumber });
+		}
+
+		return fetch(url, options).then(parseJsonResponse);
+	}
+
+	function load17TrackWidget() {
+		if (window.YQV5 && typeof window.YQV5.trackSingle === 'function') {
+			return Promise.resolve(window.YQV5);
+		}
+
+		if (yqLoadingPromise) return yqLoadingPromise;
+
+		yqLoadingPromise = new Promise(function (resolve, reject) {
+			var existing = document.querySelector('script[src*="17track.net/externalcall.js"]');
+
+			if (existing) {
+				existing.addEventListener('load', function () {
+					if (window.YQV5) resolve(window.YQV5);
+					else reject(new Error('17TRACK widget did not load correctly.'));
+				}, { once: true });
+				existing.addEventListener('error', function () {
+					reject(new Error('Could not load 17TRACK widget.'));
+				}, { once: true });
+				return;
+			}
+
+			var script = document.createElement('script');
+			script.src = 'https://www.17track.net/externalcall.js';
+			script.async = true;
+			script.onload = function () {
+				if (window.YQV5) resolve(window.YQV5);
+				else reject(new Error('17TRACK widget did not load correctly.'));
+			};
+			script.onerror = function () {
+				reject(new Error('Could not load 17TRACK widget.'));
+			};
+			document.body.appendChild(script);
+		});
+
+		return yqLoadingPromise;
+	}
+
+	function hide17TrackPromos(root) {
+		if (!root) return;
+
+		var selectors = [
+			'[class*="ad" i]',
+			'[id*="ad" i]',
+			'[class*="banner" i]',
+			'[id*="banner" i]',
+			'[class*="promo" i]',
+			'[id*="promo" i]',
+			'[class*="recommend" i]',
+			'[id*="recommend" i]',
+			'[class*="download" i]',
+			'[id*="download" i]',
+			'[href*="apps.shopify.com" i]',
+			'[href*="/en/api" i]',
+			'[href*="17track.net/en/api" i]'
+		];
+
+		root.querySelectorAll(selectors.join(',')).forEach(function (node) {
+			node.setAttribute('hidden', 'hidden');
+			node.style.setProperty('display', 'none', 'important');
+			node.style.setProperty('visibility', 'hidden', 'important');
+			node.style.setProperty('height', '0', 'important');
+			node.style.setProperty('min-height', '0', 'important');
+			node.style.setProperty('margin', '0', 'important');
+			node.style.setProperty('padding', '0', 'important');
+			node.style.setProperty('overflow', 'hidden', 'important');
+		});
+	}
+
+	function observe17TrackWidget() {
+		if (!window.MutationObserver || !widgetContainer) return;
+
+		hide17TrackPromos(widgetContainer);
+
+		var observer = new MutationObserver(function () {
+			hide17TrackPromos(widgetContainer);
+		});
+
+		observer.observe(widgetContainer, {
+			childList: true,
+			subtree: true,
+			attributes: true,
+			attributeFilter: ['class', 'id', 'href', 'style']
+		});
+
+		window.setTimeout(function () {
+			observer.disconnect();
+		}, 30000);
+	}
+
+	function render17TrackWidget(trackingNumber) {
+		setLoading(true);
+		resEl.hidden = true;
+		errEl.hidden = true;
+		widgetShell.hidden = false;
+		widgetContainer.innerHTML = '';
+
+		load17TrackWidget()
+			.then(function (YQV5) {
+				YQV5.trackSingle({
+					YQ_ContainerId: widgetContainer.id,
+					YQ_Height: 760,
+					YQ_Fc: '0',
+					YQ_Lang: 'en',
+					YQ_Num: trackingNumber
+				});
+				observe17TrackWidget();
+				window.setTimeout(function () {
+					var iframe = widgetContainer.querySelector('iframe');
+					if (iframe) {
+						iframe.style.setProperty('height', '760px', 'important');
+						iframe.style.setProperty('min-height', '760px', 'important');
+					}
+				}, 500);
+			})
+			.catch(function (error) {
+				showError(error && error.message ? error.message : 'Could not load tracking widget. Please try again.');
+			})
+			.finally(function () {
+				setLoading(false);
+			});
+	}
+
+	function unwrapPayload(payload) {
+		if (!payload) return null;
+		if (payload.success === false || payload.ok === false) throw new Error(stripTags(messageFromPayload(payload)) || 'Tracking lookup failed.');
+		if (payload.error || (payload.errors && payload.errors.length)) throw new Error(stripTags(messageFromPayload(payload)) || 'Tracking lookup failed.');
+		if (Array.isArray(payload)) return payload[0] || null;
+		if (payload.tracking) return unwrapPayload(payload.tracking);
+		if (payload.track) return unwrapPayload(payload.track);
+		if (payload.result) return unwrapPayload(payload.result);
+		if (payload.results) return unwrapPayload(payload.results);
+		if (payload.data) return unwrapPayload(payload.data);
+		if (payload.TrackResults && payload.TrackResults.TrackInfo) return payload.TrackResults.TrackInfo;
+		return payload;
+	}
+
+	function getTrackingNumber(item, fallback) {
+		return stripTags(item.trackingNumber || item.tracking_number || item.associatedTrackingNumber || item.ID || item['@ID'] || fallback);
+	}
+
+	function getCarrierName(item) {
+		return stripTags(
+			item.carrierName ||
+			item.courierName ||
+			item.carrier ||
+			item.slug ||
+			item.courier_slug ||
+			item.provider ||
+			''
+		);
+	}
+
+	function getService(item) {
+		var services = item.services;
+		if (Array.isArray(services)) return services.map(stripTags).filter(Boolean).join(', ');
+		return stripTags(services || item.mailClass || item.MailClass || item.service || item.shipmentType || item.shipment_type || '');
+	}
+
+	function getDeliveryDate(item) {
+		var delivery = item.deliveryDateExpectation || {};
+		return delivery.predictedDeliveryDate ||
+			delivery.expectedDeliveryDate ||
+			delivery.guaranteedDeliveryDate ||
+			item.expectedDeliveryDate ||
+			item.expected_delivery ||
+			item.expected_delivery_date ||
+			item.estDeliveryDate ||
+			item.ExpectedDeliveryDate ||
+			item.GuaranteedDeliveryDate ||
+			'';
+	}
+
+	function getRoute(item) {
+		var origin = joinLocation([
+			item.originCity,
+			item.originState,
+			item.originZIPCode || item.originZIP,
+			item.originCountry || item.origin_country_region || item.origin_country
+		]);
+		var destination = joinLocation([
+			item.destinationCity,
+			item.destinationState,
+			item.destinationZIPCode || item.destinationZIP,
+			item.destinationCountry || item.destination_country_region || item.destination_country
+		]);
+
+		if (!origin && !destination) return '';
+		return (origin || '-') + ' / ' + (destination || '-');
+	}
+
+	function getSummary(item) {
+		return stripTags(
+			item.statusSummary ||
+			item.subtagMessage ||
+			item.subtag_message ||
+			item.TrackSummary ||
+			item.summary ||
+			item.message ||
+			''
+		);
+	}
+
+	function getEvents(item) {
+		var events = item.trackingEvents || item.checkpoints || item.events || item.TrackDetail || [];
+		if (!Array.isArray(events)) events = [events];
+
+		return events.map(function (event, index) {
+			if (typeof event === 'string') {
+				return {
+					index: index,
+					time: '',
+					description: stripTags(event),
+					location: '',
+					sortTime: 0
+				};
+			}
+
+			var time = event.GMTTimestamp ||
+				event.eventTimestamp ||
+				event.checkpoint_time ||
+				compact([event.EventDate, event.EventTime]).join(' ') ||
+				event.timestamp ||
+				event.time ||
+				event.date ||
+				'';
+			var location = event.location || joinLocation([
+				event.eventCity || event.EventCity,
+				event.city,
+				event.eventState || event.EventState,
+				event.state,
+				event.eventZIPCode || event.EventZIPCode,
+				event.postal_code,
+				event.eventCountry || event.EventCountry || event.country_region || event.country_region_name
+			]);
+			var description = event.eventType ||
+				event.Event ||
+				event.message ||
+				event.subtag_message ||
+				event.description ||
+				event.status ||
+				event.tag ||
+				event.summary ||
+				'';
+			var sortTime = time ? new Date(time).getTime() : 0;
+
+			return {
+				index: index,
+				time: stripTags(time),
+				description: stripTags(description),
+				location: stripTags(location),
+				sortTime: isNaN(sortTime) ? 0 : sortTime
+			};
+		}).filter(function (event) {
+			return event.description || event.time || event.location;
+		}).sort(function (a, b) {
+			if (a.sortTime && b.sortTime && a.sortTime !== b.sortTime) return b.sortTime - a.sortTime;
+			return a.index - b.index;
+		});
+	}
+
+	function mapStatus(statusText) {
+		var value = stripTags(statusText).toLowerCase();
+		if (!value) return 'pending';
+		if (value.indexOf('delivered') !== -1) return 'delivered';
+		if (value.indexOf('exception') !== -1 || value.indexOf('alert') !== -1 || value.indexOf('return') !== -1 || value.indexOf('fail') !== -1) return 'exception';
+		if (value.indexOf('pickup') !== -1 || value.indexOf('available') !== -1) return 'pickup';
+		if (value.indexOf('pending') !== -1 || value.indexOf('info') !== -1 || value.indexOf('pre-shipment') !== -1 || value.indexOf('label') !== -1) return 'pending';
+		return 'intransit';
+	}
+
+	function formatDate(raw, dateOnly) {
+		var value = stripTags(raw);
+		if (!value) return '';
+
+		var date = new Date(value);
+		if (isNaN(date.getTime())) return value;
+
+		if (dateOnly && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+			return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: '2-digit' });
+		}
+
+		return date.toLocaleString(undefined, {
+			year: 'numeric',
+			month: 'short',
+			day: '2-digit',
+			hour: '2-digit',
+			minute: '2-digit'
+		});
+	}
+
+	function appendEvent(timeline, event, index) {
+		var li = document.createElement('li');
+		li.className = 'cs-event' + (index === 0 ? ' cs-event--first' : '');
+
+		if (event.time) {
+			var time = document.createElement('div');
+			time.className = 'cs-event__time';
+			time.textContent = formatDate(event.time, false);
+			li.appendChild(time);
+		}
+
+		var description = document.createElement('div');
+		description.className = 'cs-event__desc';
+		description.textContent = event.description || 'Tracking update received.';
+		li.appendChild(description);
+
+		if (event.location) {
+			var location = document.createElement('div');
+			location.className = 'cs-event__loc';
+			location.textContent = event.location;
+			li.appendChild(location);
+		}
+
+		timeline.appendChild(li);
+	}
+
+	function render(payload, requestedNumber) {
+		setOfficialLink(null);
+
+		var item = unwrapPayload(payload);
+		if (!item) {
+			showError('No tracking record was found for this number yet.');
+			return;
+		}
+
+		if (item.error || item.errors) {
+			showError(stripTags(messageFromPayload(item)) || 'No tracking record was found for this number yet.');
+			return;
+		}
+
+		var events = getEvents(item);
+		var summary = getSummary(item);
+		var statusLabel = stripTags(item.status || item.statusCategory || item.tag || (events[0] && events[0].description) || 'Tracking received');
+		var statusSub = summary || (events[0] && events[0].description) || 'Waiting for the latest carrier update.';
+		var statusType = mapStatus([item.statusCategory, item.status, item.tag, summary].join(' '));
+		var icon = resEl.querySelector('.cs-result__status-icon');
+		var timeline = resEl.querySelector('[data-field="timeline"]');
+
+		icon.setAttribute('data-status', statusType);
+		resEl.querySelector('.cs-result__status-label').textContent = statusLabel;
+		resEl.querySelector('.cs-result__status-sub').textContent = statusSub;
+
+		setField('[data-field="number"]', getTrackingNumber(item, requestedNumber));
+		setField('[data-field="carrier"]', getCarrierName(item));
+		setField('[data-field="service"]', getService(item));
+		setField('[data-field="delivery"]', formatDate(getDeliveryDate(item), true));
+		setField('[data-field="route"]', getRoute(item));
+
+		timeline.innerHTML = '';
+		if (events.length) {
+			events.forEach(function (event, index) {
+				appendEvent(timeline, event, index);
+			});
+		} else {
+			appendEvent(timeline, {
+				time: '',
+				description: summary || 'Tracking has been received. Carrier scan events will appear here when available.',
+				location: ''
+			}, 0);
+		}
+
+		errEl.hidden = true;
+		resEl.hidden = false;
+	}
+
+	function renderDirectLink(trackingNumber) {
+		var carrier = detectCarrier(trackingNumber);
+
+		if (!carrier) {
+			showError('Carrier could not be detected from this tracking number. Please check the number or use the carrier tracking page directly.');
+			return;
+		}
+
+		var icon = resEl.querySelector('.cs-result__status-icon');
+		var timeline = resEl.querySelector('[data-field="timeline"]');
+
+		icon.setAttribute('data-status', 'pickup');
+		resEl.querySelector('.cs-result__status-label').textContent = 'Ready to track';
+		resEl.querySelector('.cs-result__status-sub').textContent = 'Open the official carrier page for live updates.';
+
+		setField('[data-field="number"]', trackingNumber);
+		setField('[data-field="carrier"]', carrier.name);
+		setField('[data-field="service"]', carrier.service);
+		setField('[data-field="delivery"]', '');
+		setField('[data-field="route"]', '');
+		setOfficialLink(carrier);
+
+		timeline.innerHTML = '';
+		appendEvent(timeline, {
+			time: '',
+			description: 'Official carrier tracking page is ready.',
+			location: carrier.name
+		}, 0);
+
+		errEl.hidden = true;
+		resEl.hidden = false;
+	}
+
+	function track(rawValue) {
+		var trackingNumber = normalizeTrackingNumber(rawValue);
+		clearStates();
+
+		if (!isValidTrackingNumber(trackingNumber)) {
+			showError('Please enter a valid tracking number.');
+			return;
+		}
+
+		if (mode === 'seventeen_track_widget') {
+			render17TrackWidget(trackingNumber);
+			return;
+		}
+
+		if (mode === 'direct_link') {
+			renderDirectLink(trackingNumber);
+			return;
+		}
+
+		setLoading(true);
+		fetchTracking(trackingNumber)
+			.then(function (payload) {
+				render(payload, trackingNumber);
+			})
+			.catch(function (error) {
+				showError(error && error.message ? error.message : 'Could not fetch tracking information. Please try again.');
+			})
+			.finally(function () {
+				setLoading(false);
+			});
+	}
+
+	form.addEventListener('submit', function (event) {
+		event.preventDefault();
+		track(input.value);
+	});
+
+	try {
+		var params = new URLSearchParams(window.location.search);
+		var preset = params.get('trackingNumber') || params.get('tracking') || params.get('nums') || params.get('tn');
+		if (preset) {
+			input.value = preset;
+			track(preset);
+		}
+	} catch (error) {}
+})();
+</script>
+
+{% schema %}
+{
+	"name": "Order Tracking",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Content"
+		},
+		{
+			"type": "text",
+			"id": "heading",
+			"label": "Heading",
+			"default": "Track Your Order"
+		},
+		{
+			"type": "textarea",
+			"id": "subheading",
+			"label": "Subheading",
+			"default": "Enter your tracking number to see the latest status of your shipment."
+		},
+		{
+			"type": "text",
+			"id": "placeholder",
+			"label": "Input placeholder",
+			"default": "Enter tracking number"
+		},
+		{
+			"type": "text",
+			"id": "button_label",
+			"label": "Button label",
+			"default": "Track"
+		},
+		{
+			"type": "richtext",
+			"id": "help_text",
+			"label": "Help text",
+			"default": "<p>Tracking supports USPS, UPS, FedEx, DHL, YunExpress, and more.</p>"
+		},
+		{
+			"type": "select",
+			"id": "tracking_mode",
+			"label": "Tracking mode",
+			"default": "seventeen_track_widget",
+			"options": [
+				{
+					"value": "seventeen_track_widget",
+					"label": "17TRACK widget"
+				},
+				{
+					"value": "direct_link",
+					"label": "Official carrier links"
+				},
+				{
+					"value": "backend",
+					"label": "Backend/API lookup"
+				}
+			],
+			"info": "17TRACK widget does not require an API key. The theme hides promotional blocks that are rendered inside the page DOM; cross-domain iframe contents can only be changed by 17TRACK."
+		},
+		{
+			"type": "header",
+			"content": "Tracking backend"
+		},
+		{
+			"type": "paragraph",
+			"content": "Use a private backend or Shopify app proxy that calls your multi-carrier tracking API. Do not place 17TRACK or carrier API keys in this theme."
+		},
+		{
+			"type": "text",
+			"id": "endpoint_url",
+			"label": "Tracking endpoint URL",
+			"default": "/apps/order-tracking",
+			"info": "The endpoint should return tracking JSON. Use {trackingNumber} in the URL if your endpoint needs path replacement."
+		},
+		{
+			"type": "select",
+			"id": "request_method",
+			"label": "Request method",
+			"default": "GET",
+			"options": [
+				{
+					"value": "GET",
+					"label": "GET"
+				},
+				{
+					"value": "POST",
+					"label": "POST"
+				}
+			]
+		},
+		{
+			"type": "header",
+			"content": "Colors"
+		},
+		{
+			"type": "color",
+			"id": "bg_color",
+			"label": "Background",
+			"default": "#faf6ee"
+		},
+		{
+			"type": "color",
+			"id": "text_color",
+			"label": "Text",
+			"default": "#2c3d33"
+		},
+		{
+			"type": "color",
+			"id": "accent_color",
+			"label": "Button color",
+			"default": "#2c3d33"
+		}
+	],
+	"presets": [
+		{
+			"name": "Order Tracking",
+			"category": "Page"
+		}
+	]
+}
+{% endschema %}
