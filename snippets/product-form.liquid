@@ -200,3 +200,16 @@
 		</div>
 	{%- endif -%}
 {%- endif -%}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var forms = document.querySelectorAll('.product-form, [data-js-product-form]');
+    forms.forEach(function(form) {
+      form.addEventListener('submit', function(e) {
+        if (e.submitter && (e.submitter.closest('.shopify-app-block') || e.submitter.closest('#looxReviews') || e.submitter.closest('.loox-reviews-default'))) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }, true);
+    });
+  });
+</script>

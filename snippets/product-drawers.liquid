@@ -855,6 +855,24 @@
 				pointer-events: auto;
 				opacity: 1;
 			}
+			body:has(.size-chart-overlay.is-active) .sales-notification-popup,
+			body:has(.size-chart-overlay.is-active) .mobile-floating-cart,
+			body:has(.size-chart-overlay.is-active) .mobile-sticky-atc,
+			body:has(.size-chart-overlay.is-active) #ShopifyChat,
+			body:has(.size-chart-overlay.is-active) #shopify-chat,
+			body:has(.size-chart-overlay.is-active) [id*="shopify-chat"],
+			body:has(.size-chart-overlay.is-active) [class*="shopify-chat"],
+			body:has(.size-chart-overlay.is-active) iframe#dummy-chat-button-iframe,
+			body:has(.size-chart-overlay.is-active) iframe[title*="chat" i],
+			body:has(.size-chart-overlay.is-active) iframe[src*="shopifychat" i],
+			body:has(.size-chart-overlay.is-active) iframe[src*="inbox.shopify" i],
+			body:has(.size-chart-overlay.is-active) iframe[src*="chat" i] {
+				z-index: 1 !important;
+				opacity: 0 !important;
+				visibility: hidden !important;
+				pointer-events: none !important;
+				transform: translateY(120%) !important;
+			}
 			.size-chart-overlay__backdrop {
 				position: absolute;
 				top: 0;
@@ -1300,28 +1318,108 @@
 				});
 			}
 
-			/* Close on ESC key */
-			document.addEventListener('keydown', function(e) {
-				if (e.key === 'Escape') {
-					['size-chart-overlay', 'care-instructions-overlay'].forEach(function(overlayId) {
-						var overlay = document.getElementById(overlayId);
-						if (overlay && overlay.classList.contains('is-active')) {
-							overlay.classList.remove('is-active');
-							document.body.style.overflow = '';
-						}
-					});
-				}
-			});
+			(function() {
+				var overlayIds = ['size-chart-overlay', 'care-instructions-overlay', 'shipping-overlay', 'description-overlay'];
+				var bodyClass = 'is-product-info-overlay-open';
 
-			/* Move overlay to <body> to escape stacking context from theme wrappers */
-			document.addEventListener('DOMContentLoaded', function() {
-				['size-chart-overlay', 'care-instructions-overlay'].forEach(function(overlayId) {
-					var overlay = document.getElementById(overlayId);
-					if (overlay && overlay.parentNode !== document.body) {
-						document.body.appendChild(overlay);
+				function getInfoOverlays() {
+					return overlayIds.map(function(overlayId) {
+						return document.getElementById(overlayId);
+					}).filter(Boolean);
+				}
+
+				function syncInfoOverlayState() {
+					var isOpen = getInfoOverlays().some(function(overlay) {
+						return overlay.classList.contains('is-active');
+					});
+
+					document.body.classList.toggle(bodyClass, isOpen);
+				}
+
+				function queueInfoOverlaySync() {
+					window.setTimeout(function() {
+						initInfoOverlays();
+						syncInfoOverlayState();
+					}, 0);
+				}
+
+				function closeInfoOverlay(overlay) {
+					if (!overlay) return;
+
+					overlay.classList.remove('is-active');
+					document.body.style.overflow = '';
+					syncInfoOverlayState();
+				}
+
+				function initInfoOverlays() {
+					getInfoOverlays().forEach(function(overlay) {
+						if (overlay.parentNode !== document.body) {
+							document.body.appendChild(overlay);
+						}
+
+						if (overlay.dataset.productInfoOverlayObserved === 'true') {
+							return;
+						}
+
+						overlay.dataset.productInfoOverlayObserved = 'true';
+						new MutationObserver(syncInfoOverlayState).observe(overlay, {
+							attributes: true,
+							attributeFilter: ['class']
+						});
+					});
+
+					syncInfoOverlayState();
+				}
+
+				window.CamoProductInfoOverlays = {
+					init: initInfoOverlays,
+					sync: syncInfoOverlayState,
+					close: function(overlayId) {
+						closeInfoOverlay(document.getElementById(overlayId));
+					}
+				};
+
+				/* Close on ESC key */
+				document.addEventListener('keydown', function(e) {
+					if (e.key === 'Escape') {
+						getInfoOverlays().forEach(function(overlay) {
+							if (overlay.classList.contains('is-active')) {
+								overlay.classList.remove('is-active');
+								document.body.style.overflow = '';
+							}
+						});
+						syncInfoOverlayState();
 					}
 				});
-			});
+
+				document.addEventListener('click', function(event) {
+					var target = event.target;
+					if (!target || !target.closest) return;
+
+					var closeControl = target.closest('.size-chart-overlay__close, .size-chart-overlay__close-btn');
+					var backdrop = target.classList && target.classList.contains('size-chart-overlay__backdrop') ? target : null;
+
+					if (closeControl || backdrop) {
+						var overlay = target.closest('.size-chart-overlay') || (backdrop && backdrop.closest('.size-chart-overlay'));
+						event.preventDefault();
+						event.stopPropagation();
+						closeInfoOverlay(overlay);
+						return;
+					}
+
+					if (target.closest('.size-chart-overlay') || target.closest('[onclick*="overlay"]')) {
+						queueInfoOverlaySync();
+					}
+				}, true);
+
+				if (document.readyState === 'loading') {
+					document.addEventListener('DOMContentLoaded', initInfoOverlays);
+				} else {
+					initInfoOverlays();
+				}
+
+				document.addEventListener('shopify:section:load', initInfoOverlays);
+			})();
 		</script>
 
 		{%- comment -%} SHIPPING & DELIVERY OVERLAY {%- endcomment -%}
@@ -1450,6 +1548,7 @@
 				});
 			</script>
 		{%- endcapture -%}
+		{{- description_overlay_html -}}
 	{%- endif -%}
 
 	<script>

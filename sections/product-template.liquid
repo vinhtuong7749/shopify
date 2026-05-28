@@ -230,6 +230,12 @@
 		z-index: 9999 !important;
 	}
 
+	@media screen and (min-width: 768px) {
+		#shopify-section-{{- section.id -}} .product-short-description {
+			display: none !important;
+		}
+	}
+
 	{% if breadcrumbs_block != blank -%}
 		.breadcrumb {
 			display: none;

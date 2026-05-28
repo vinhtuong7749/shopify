@@ -542,11 +542,11 @@
   },
   "order": [
     "product-template",
+    "product-recommendations",
     "17750062752dbc4a4a",
     "richtext",
     "image_with_text",
     "product_features",
-    "product-recommendations",
     "recently-viewed",
     "1775012941bcfca0c9",
     "1775502196d186dc61",

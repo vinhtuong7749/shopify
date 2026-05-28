@@ -12,7 +12,7 @@
 {%- assign placeholder    = section.settings.placeholder -%}
 {%- assign button_label   = section.settings.button_label -%}
 {%- assign help_text      = section.settings.help_text -%}
-{%- assign tracking_mode  = section.settings.tracking_mode | default: 'seventeen_track_widget' -%}
+{%- assign tracking_mode  = section.settings.tracking_mode | default: 'direct_link' -%}
 {%- assign endpoint_url   = section.settings.endpoint_url | default: '/apps/order-tracking' -%}
 {%- assign request_method = section.settings.request_method | default: 'GET' -%}
 {%- assign bg_color       = section.settings.bg_color -%}
@@ -71,11 +71,23 @@
 				<span>FedEx</span>
 				<span>DHL</span>
 				<span>YunExpress</span>
+				<span>China Post</span>
 			</div>
 
 			{%- if help_text != blank -%}
 				<div class="page-tracking__help">{{ help_text }}</div>
 			{%- endif -%}
+
+			<div class="page-tracking__actions" aria-label="Order tracking options">
+				<a class="page-tracking__action" href="/account">
+					<span class="page-tracking__action-title">View your orders</span>
+					<span class="page-tracking__action-text">Sign in to see order status and saved tracking links.</span>
+				</a>
+				<a class="page-tracking__action" href="/pages/contact">
+					<span class="page-tracking__action-title">Need help?</span>
+					<span class="page-tracking__action-text">Send your order number and checkout email to support.</span>
+				</a>
+			</div>
 		</div>
 
 		<div class="page-tracking__error" data-track-error role="alert" hidden></div>
@@ -300,6 +312,42 @@
 		font-size: 12px;
 		font-weight: 700;
 		line-height: 1;
+	}
+
+	.page-tracking__actions {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 20px;
+		margin-top: 28px;
+		padding-top: 24px;
+		border-top: 1px solid rgba(44, 61, 51, 0.1);
+	}
+
+	.page-tracking__action {
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+		gap: 5px;
+		color: var(--pt-text);
+		text-decoration: none;
+	}
+
+	.page-tracking__action:hover .page-tracking__action-title {
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	.page-tracking__action-title {
+		font-size: 14px;
+		font-weight: 700;
+		line-height: 1.25;
+		text-transform: uppercase;
+	}
+
+	.page-tracking__action-text {
+		font-size: 13px;
+		line-height: 1.45;
+		opacity: 0.7;
 	}
 
 	.page-tracking__error {
@@ -645,6 +693,11 @@
 			width: 100%;
 		}
 
+		.page-tracking__actions {
+			grid-template-columns: minmax(0, 1fr);
+			gap: 16px;
+		}
+
 		.page-tracking__widget-shell {
 			height: 520px;
 		}
@@ -730,7 +783,7 @@
 		}
 
 		link.href = carrier.url;
-		link.textContent = 'Open ' + carrier.name + ' tracking';
+		link.textContent = carrier.linkLabel || ('Open ' + carrier.name + ' tracking');
 		link.hidden = false;
 	}
 
@@ -777,6 +830,23 @@
 			};
 		}
 
+		if (/^[A-Z]{2}\d{9}CN$/i.test(number)) {
+			return {
+				name: 'China Post',
+				service: 'Multi-carrier tracking page',
+				url: 'https://www.17track.net/en/track?nums=' + encodeURIComponent(number),
+				linkLabel: 'Open multi-carrier tracking'
+			};
+		}
+
+		if (/^[A-Z]{2}\d{9}GB$/i.test(number)) {
+			return {
+				name: 'Royal Mail',
+				service: 'Official Royal Mail tracking page',
+				url: 'https://www.royalmail.com/track-your-item#/tracking-results/' + encodeURIComponent(number)
+			};
+		}
+
 		if (/^\d{12}$/.test(number) || /^\d{15}$/.test(number) || /^\d{20}$/.test(number)) {
 			return {
 				name: 'FedEx',
@@ -793,7 +863,13 @@
 			};
 		}
 
-		return null;
+		return {
+			name: 'Carrier not detected',
+			service: 'Multi-carrier tracking page',
+			url: 'https://www.17track.net/en/track?nums=' + encodeURIComponent(number),
+			linkLabel: 'Open multi-carrier tracking',
+			fallback: true
+		};
 	}
 
 	function buildEndpointUrl(trackingNumber) {
@@ -1239,17 +1315,14 @@
 	function renderDirectLink(trackingNumber) {
 		var carrier = detectCarrier(trackingNumber);
 
-		if (!carrier) {
-			showError('Carrier could not be detected from this tracking number. Please check the number or use the carrier tracking page directly.');
-			return;
-		}
-
 		var icon = resEl.querySelector('.cs-result__status-icon');
 		var timeline = resEl.querySelector('[data-field="timeline"]');
 
 		icon.setAttribute('data-status', 'pickup');
-		resEl.querySelector('.cs-result__status-label').textContent = 'Ready to track';
-		resEl.querySelector('.cs-result__status-sub').textContent = 'Open the official carrier page for live updates.';
+		resEl.querySelector('.cs-result__status-label').textContent = carrier.fallback ? 'Carrier not detected' : 'Ready to track';
+		resEl.querySelector('.cs-result__status-sub').textContent = carrier.fallback ?
+			'Open the multi-carrier page or use the link in your shipping email for the most accurate status.' :
+			'Open the official carrier page for live updates.';
 
 		setField('[data-field="number"]', trackingNumber);
 		setField('[data-field="carrier"]', carrier.name);
@@ -1261,9 +1334,17 @@
 		timeline.innerHTML = '';
 		appendEvent(timeline, {
 			time: '',
-			description: 'Official carrier tracking page is ready.',
+			description: carrier.fallback ? 'This number does not match a known carrier pattern yet.' : 'Official carrier tracking page is ready.',
 			location: carrier.name
 		}, 0);
+
+		if (carrier.fallback) {
+			appendEvent(timeline, {
+				time: '',
+				description: 'For full order details, sign in to your account or open the tracking link from your shipping confirmation email.',
+				location: 'Camo Signal'
+			}, 1);
+		}
 
 		errEl.hidden = true;
 		resEl.hidden = false;
@@ -1335,7 +1416,7 @@
 			"type": "textarea",
 			"id": "subheading",
 			"label": "Subheading",
-			"default": "Enter your tracking number to see the latest status of your shipment."
+			"default": "Enter your tracking number to open the official carrier tracking page."
 		},
 		{
 			"type": "text",
@@ -1347,19 +1428,19 @@
 			"type": "text",
 			"id": "button_label",
 			"label": "Button label",
-			"default": "Track"
+			"default": "Find Carrier"
 		},
 		{
 			"type": "richtext",
 			"id": "help_text",
 			"label": "Help text",
-			"default": "<p>Tracking supports USPS, UPS, FedEx, DHL, YunExpress, and more.</p>"
+			"default": "<p>For full order details, use the link in your shipping email or sign in to your account.</p>"
 		},
 		{
 			"type": "select",
 			"id": "tracking_mode",
 			"label": "Tracking mode",
-			"default": "seventeen_track_widget",
+			"default": "direct_link",
 			"options": [
 				{
 					"value": "seventeen_track_widget",
@@ -1374,7 +1455,7 @@
 					"label": "Backend/API lookup"
 				}
 			],
-			"info": "17TRACK widget does not require an API key. The theme hides promotional blocks that are rendered inside the page DOM; cross-domain iframe contents can only be changed by 17TRACK."
+			"info": "Official carrier links work without an app or API key. Backend/API lookup requires a private endpoint such as Cloudflare Workers."
 		},
 		{
 			"type": "header",

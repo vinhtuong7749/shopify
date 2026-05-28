@@ -219,7 +219,7 @@
 		window.__camoCartPageBridgeInstalled = true;
 
 		var cartMutationRegex = /\/cart\/(add|change|update|clear)\.js(\?|$)/i;
-		var appTargetSelector = '[id*="selleasy" i], [class*="selleasy" i], [id*="lb-widget" i], [class*="lb-widget" i], [id*="lb-upsell" i], [class*="lb-upsell" i], [id*="sll" i], [class*="sll" i], .shopify-app-block';
+		var appTargetSelector = 'lb-upsell-widget, lb-upsell-flat-card, .lb-widget, .lb-product-card, .lb-flat-card-host, [id*="selleasy" i], [class*="selleasy" i], [id*="lb-widget" i], [class*="lb-widget" i], [id*="lb-upsell" i], [class*="lb-upsell" i], [id*="sll" i], [class*="sll" i]';
 		var lastRefreshEmitAt = 0;
 		var lastAppClickAt = 0;
 		var lastHeaderCountAt = 0;

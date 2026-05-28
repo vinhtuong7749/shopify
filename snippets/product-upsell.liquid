@@ -119,7 +119,7 @@
 	}
 </style>
 
-<label class="product-upsell-block{% if checked_by_default %} is-selected{% endif %}" style="{{ styles }}">
+<label class="product-upsell-block{% if checked_by_default %} is-selected{% endif %}" style="{{ styles }}" data-product-handle="{{- upsell_product.handle | escape -}}">
 	<div class="product-upsell__left">
 		<div class="product-upsell__checkbox">
 			<svg viewBox="0 0 16 16"><path d="M3 8L6 11L13 4"></path></svg>

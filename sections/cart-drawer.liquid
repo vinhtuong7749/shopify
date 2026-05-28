@@ -850,7 +850,7 @@
 			   "People also bought" upsell on the product page slips past the
 			   bridge — meaning no sections= injection, no partial update, and
 			   no header-count broadcast, so the cart appears unresponsive. */
-			var appTargetSelector = '.shopify-app-block, [id*="selleasy" i], [class*="selleasy" i], [id*="lb-widget" i], [class*="lb-widget" i], [id*="lb-upsell" i], [class*="lb-upsell" i], [id*="sll" i], [class*="sll" i]';
+			var appTargetSelector = 'lb-upsell-widget, lb-upsell-flat-card, .lb-widget, .lb-product-card, .lb-flat-card-host, [id*="selleasy" i], [class*="selleasy" i], [id*="lb-widget" i], [class*="lb-widget" i], [id*="lb-upsell" i], [class*="lb-upsell" i], [id*="sll" i], [class*="sll" i]';
 			var quantityInputSelector = '#CartDrawer [data-cart-item] [data-quantity-input]';
 			var cartMutationRegex = /\/cart\/(add|change|update|clear)\.js(\?|$)/i;
 			var loadingTimer = null;
@@ -862,6 +862,7 @@
 			var lastPublishedCount = null;
 			var lastCartAppClickAt = 0;
 			var lastCartAppClickInDrawer = false;
+			var cartCountBeforeAppClick = null;
 			var lastRefreshEmitAt = 0;
 			var cartAppScrollSnapshot = null;
 			var cartAppScrollReleaseTimer = null;
@@ -935,6 +936,7 @@
 			function markExternalCartIntentFromBridge(options) {
 				lastCartAppClickAt = Date.now();
 				lastCartAppClickInDrawer = !!(options && options.inDrawer);
+				cartCountBeforeAppClick = readKnownCartCount();
 				markExternalCartAdding();
 			}
 
@@ -988,6 +990,58 @@
 				return getVisibleQuantityCount();
 			}
 
+			function readKnownCartCount() {
+				var renderedCount = readRenderedCount();
+				if (renderedCount !== null) return renderedCount;
+
+				var cartObject = window.themeCore && window.themeCore.cartObject;
+				var cartObjectCount = cartObject && typeof cartObject.item_count === 'number'
+					? getCountValue(cartObject.item_count)
+					: null;
+				if (cartObjectCount !== null) return cartObjectCount;
+
+				var counter = document.querySelector('[data-cart-count]');
+				var counterCount = counter ? getCountValue(counter.getAttribute('data-cart-count')) : null;
+				if (counterCount !== null) return counterCount;
+
+				var headerCounter = document.querySelector('.js-header-cart-item-count');
+				return headerCounter ? getCountValue((headerCounter.textContent || '').replace(/\D/g, '')) : null;
+			}
+
+			function didCartCountChange(count) {
+				var normalizedCount = getCountValue(count);
+				return cartCountBeforeAppClick === null || normalizedCount === null || normalizedCount !== cartCountBeforeAppClick;
+			}
+
+			function runOnlyIfCartChanged(callback) {
+				var beforeCount = cartCountBeforeAppClick;
+				var fallback = function() {
+					var currentCount = readKnownCartCount();
+					if (beforeCount !== null && currentCount !== null && currentCount === beforeCount) {
+						clearLoading();
+						return;
+					}
+					callback();
+				};
+
+				if (typeof fetch !== 'function') {
+					fallback();
+					return;
+				}
+
+				fetch('/cart.js')
+					.then(function(response) { return response.json(); })
+					.then(function(cart) {
+						var currentCount = cart && typeof cart.item_count === 'number' ? getCountValue(cart.item_count) : null;
+						if (beforeCount !== null && currentCount !== null && currentCount === beforeCount) {
+							clearLoading();
+							return;
+						}
+						callback();
+					})
+					.catch(fallback);
+			}
+
 			function getDrawerScroller() {
 				var drawer = getDrawer();
 				if (!drawer) return null;
@@ -998,12 +1052,12 @@
 
 			function getCartAppAnchor(target) {
 				if (target && target.closest) {
-					var directAnchor = target.closest('lb-upsell-widget, lb-upsell-flat-card, .lb-widget, .lb-product-card, .lb-flat-card-host, .shopify-app-block');
+					var directAnchor = target.closest('lb-upsell-widget, lb-upsell-flat-card, .lb-widget, .lb-product-card, .lb-flat-card-host');
 					if (directAnchor) return directAnchor;
 				}
 				var drawer = getDrawer();
 				if (!drawer) return null;
-				return drawer.querySelector('lb-upsell-widget, .lb-widget, .shopify-app-block, [class*="lb-upsell"], [id*="lb-upsell"]');
+				return drawer.querySelector('lb-upsell-widget, .lb-widget, [class*="lb-upsell"], [id*="lb-upsell"], [id*="selleasy" i], [class*="selleasy" i], [id*="sll" i], [class*="sll" i]');
 			}
 
 			function captureCartAppScrollAnchor(trigger) {
@@ -1254,8 +1308,10 @@
 
 			function handleExternalCartIntent(event) {
 				if (event && event.type === 'pointerdown' && event.button && event.button !== 0) return;
-				var target = event.target;
-				var trigger = getClosestFromEvent(event, 'form, button, [role="button"], input[type="submit"], a, .lb-button, [class*="lb-button" i], .lb-carousel-nav, [class*="lb-carousel" i]')
+				var triggerSelector = event && event.type === 'submit'
+					? 'form'
+					: 'button, [role="button"], input[type="submit"], a, .lb-button, [class*="lb-button" i], .lb-carousel-nav, [class*="lb-carousel" i]';
+				var trigger = getClosestFromEvent(event, triggerSelector)
 					|| getClosestFromEvent(event, appTargetSelector);
 				var appTarget = getAppTargetFromEvent(event, trigger);
 
@@ -1264,18 +1320,23 @@
 
 				lastCartAppClickAt = Date.now();
 				lastCartAppClickInDrawer = !!(trigger.closest && trigger.closest(drawerSelector));
+				cartCountBeforeAppClick = readKnownCartCount();
 				captureCartAppScrollAnchor(trigger);
 				markExternalCartAdding();
 				scheduleCartAppScrollRestore();
 
-				/* Safety net: if no /cart/*.js response is detected, fall back to
-				   reading the rendered count once. */
+				/* Safety net: if no /cart/*.js response is detected, only open
+				   the drawer when the cart count actually changed. This keeps
+				   non-cart Shopify app blocks (Judge.me, reviews, filters) from
+				   being mistaken for an add-to-cart interaction. */
 				if (fallbackTimer) window.clearTimeout(fallbackTimer);
 				fallbackTimer = window.setTimeout(function() {
 					fallbackTimer = null;
-					syncFromRenderedCart();
-					markExternalCartAdding();
-					refreshSectionsSilently({ jumpToCart: true });
+					runOnlyIfCartChanged(function() {
+						syncFromRenderedCart();
+						markExternalCartAdding();
+						refreshSectionsSilently({ jumpToCart: true });
+					});
 				}, 1500);
 			}
 
@@ -1426,6 +1487,14 @@
 				}
 
 				if (Date.now() - lastCartAppClickAt >= 7000) return;
+				if (hasCount && !didCartCountChange(data.item_count)) {
+					clearLoading();
+					if (fallbackTimer) {
+						window.clearTimeout(fallbackTimer);
+						fallbackTimer = null;
+					}
+					return;
+				}
 
 				var hasSections = data && data.sections && typeof data.sections === 'object' && !Array.isArray(data.sections) && Object.keys(data.sections).length > 0;
 				if (hasSections && typeof window.__camoCartPartialUpdate === 'function') {
