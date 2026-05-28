@@ -76,6 +76,7 @@
 {%- assign product_card_has_hoodie_tag = false -%}
 {%- assign product_card_has_gildan_tag = false -%}
 {%- assign product_card_has_colorblast_tag = false -%}
+{%- assign product_card_has_trucker_tag = false -%}
 
 {%- if collection.handle == 'grand-slam-subspecies' or request.path contains '/collections/grand-slam-subspecies' -%}
 	{%- assign product_card_show_tag_badges = true -%}
@@ -87,6 +88,9 @@
 
 		{%- if product_tag_handle contains 'colorblast' or product_tag_handle contains 'color-blast' -%}
 			{%- assign product_card_has_colorblast_tag = true -%}
+		{%- endif -%}
+		{%- if product_tag_handle contains 'trucker' -%}
+			{%- assign product_card_has_trucker_tag = true -%}
 		{%- endif -%}
 		{%- if product_tag_handle contains 'wash' -%}
 			{%- assign product_card_has_wash_tag = true -%}
@@ -113,7 +117,11 @@
 		{%- endif -%}
 	{%- endfor -%}
 
-	{%- if product_card_has_colorblast_tag -%}
+	{%- if product_card_has_trucker_tag -%}
+		{%- assign product_card_tag_badge_image = 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/Trucker_Cap.png?v=1779882764' -%}
+		{%- assign product_card_tag_badge_label = 'Trucker cap product tag' -%}
+		{%- assign product_card_tag_badge_modifier = ' product-card__tag-badge--trucker' -%}
+	{%- elsif product_card_has_colorblast_tag -%}
 		{%- assign product_card_tag_badge_image = 'https://cdn.shopify.com/s/files/1/0741/7987/0911/files/colorblast_tee.png?v=1779866400' -%}
 		{%- assign product_card_tag_badge_label = 'Colorblast tee product tag' -%}
 		{%- assign product_card_tag_badge_modifier = ' product-card__tag-badge--colorblast' -%}
@@ -644,6 +652,7 @@
 	.product-card__tag-badge--sweater,
 	.product-card__tag-badge--hoodie,
 	.product-card__tag-badge--gildan,
+	.product-card__tag-badge--trucker,
 	.product-card__tag-badge--colorblast {
 		left: 0;
 		bottom: 6px;
@@ -817,6 +826,7 @@
 		.product-card__tag-badge--sweater,
 		.product-card__tag-badge--hoodie,
 		.product-card__tag-badge--gildan,
+		.product-card__tag-badge--trucker,
 		.product-card__tag-badge--colorblast {
 			left: 0;
 			bottom: 5px;

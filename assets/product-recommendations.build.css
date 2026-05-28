@@ -119,3 +119,28 @@
     overflow: hidden;
   }
 }
+
+@media (max-width: 767px) {
+  .product-recommendations .js-product-recommendations-content {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden !important;
+    overflow-x: hidden !important;
+    clip-path: inset(0);
+    contain: paint;
+  }
+  .product-recommendations .product-recommendations__slider,
+  .product-recommendations .product-recommendations__row-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden !important;
+    overflow-x: hidden !important;
+    clip-path: inset(0);
+  }
+  .product-recommendations .product-recommendations__col.swiper-slide {
+    box-sizing: border-box;
+    width: calc((100% - 12px) / 2) !important;
+    max-width: calc((100% - 12px) / 2) !important;
+    overflow: hidden;
+  }
+}

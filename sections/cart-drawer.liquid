@@ -1642,22 +1642,7 @@
 		})();
 	</script>
 
-	{%- if show_auto_open and cart.item_count > 0 -%}
-		<script>
-			(function() {
-				function autoOpenCartDrawer() {
-					if (window.themeCore && window.themeCore.EventBus) {
-						window.themeCore.EventBus.emit('cart:drawer:open');
-					}
-				}
-				if (window.themeCore && window.themeCore.loaded) {
-					autoOpenCartDrawer();
-				} else {
-					document.addEventListener('theme:all:loaded', autoOpenCartDrawer, { once: true });
-				}
-			})();
-		</script>
-	{%- endif -%}
+
 {%- endif -%}
 
 {% schema %}

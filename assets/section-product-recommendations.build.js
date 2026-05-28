@@ -44,15 +44,18 @@ const ProductRecommendations = () => {
     const sliderNextButton = section.el.querySelector(selectors.sliderButtonNext);
     const sliderOptions = {
       grabCursor: true,
-      slidesPerView: 1.25,
+      slidesPerView: 2,
       spaceBetween: 12,
+      centeredSlides: false,
+      roundLengths: true,
+      watchOverflow: true,
       navigation: {
         prevEl: sliderPrevButton,
         nextEl: sliderNextButton
       },
       breakpoints: {
         576: {
-          slidesPerView: slidesLength > 2 ? 2.2 : 2
+          slidesPerView: 2
         },
         768: {
           slidesPerView: slidesLength > 3 ? 3.2 : 3

@@ -11,7 +11,7 @@
         "tracking_mode": "seventeen_track_widget",
         "endpoint_url": "/apps/order-tracking",
         "request_method": "GET",
-        "bg_color": "#faf6ee",
+        "bg_color": "#ffffff",
         "text_color": "#2c3d33",
         "accent_color": "#2c3d33"
       }

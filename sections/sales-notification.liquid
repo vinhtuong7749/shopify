@@ -46,7 +46,7 @@
 
 .sales-notification-popup__header {
     margin-bottom: 8px;
-    padding-right: 15px;
+    padding-right: 28px;
 }
 
 .sales-notification-popup__action {
@@ -139,16 +139,21 @@
 
 .sales-notification-popup__close {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: 6px;
+    right: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
     background: none;
     border: none;
-    font-size: 18px;
+    font-size: 24px;
     cursor: pointer;
     color: {{ section.settings.text_color }};
     opacity: 0.4;
     line-height: 1;
-    padding: 2px;
+    padding: 0;
     transition: opacity 0.2s ease;
     pointer-events: auto !important;
     touch-action: manipulation;

@@ -112,10 +112,13 @@
 </section>
 
 <style>
+	@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+
 	.page-tracking {
-		background: var(--pt-bg, #faf6ee);
+		background: var(--pt-bg, #ffffff);
 		color: var(--pt-text, #2c3d33);
-		padding: 64px 20px 72px;
+		padding: 80px 20px 100px;
+		font-family: 'Outfit', sans-serif;
 	}
 
 	.page-tracking__container {
@@ -124,12 +127,12 @@
 	}
 
 	.page-tracking__heading {
-		margin: 0 0 10px;
+		margin: 0 0 16px;
 		color: var(--pt-text);
-		font-family: 'Oswald', sans-serif;
-		font-size: 32px;
+		font-family: 'Outfit', sans-serif;
+		font-size: 44px;
 		font-weight: 700;
-		letter-spacing: 0;
+		letter-spacing: 0.5px;
 		line-height: 1.1;
 		text-align: center;
 		text-transform: uppercase;
@@ -137,9 +140,9 @@
 
 	.page-tracking__subheading {
 		max-width: 640px;
-		margin: 0 auto 28px;
-		font-size: 16px;
-		line-height: 1.5;
+		margin: 0 auto 40px;
+		font-size: 18px;
+		line-height: 1.6;
 		text-align: center;
 		opacity: 0.82;
 	}
@@ -147,11 +150,11 @@
 	.page-tracking__panel {
 		max-width: 860px;
 		margin: 0 auto;
-		padding: 18px;
-		border: 1px solid rgba(44, 61, 51, 0.14);
-		border-radius: 8px;
-		background: rgba(255, 255, 255, 0.78);
-		box-shadow: 0 16px 42px rgba(21, 32, 27, 0.08);
+		padding: 40px;
+		border: 1px solid rgba(44, 61, 51, 0.08);
+		border-radius: 16px;
+		background: #ffffff;
+		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0,0,0,0.02);
 	}
 
 	.page-tracking__form {
@@ -183,48 +186,51 @@
 
 	.page-tracking__input {
 		width: 100%;
-		height: 62px;
+		height: 64px;
 		min-width: 0;
-		padding: 26px 18px 10px;
-		border: 1px solid rgba(44, 61, 51, 0.24);
-		border-radius: 4px;
-		background: #fff;
+		padding: 24px 20px 10px;
+		border: 2px solid #e1e4e2;
+		border-radius: 8px;
+		background: #fafaf9;
 		color: var(--pt-text);
 		font-family: inherit;
 		font-size: 16px;
 		font-weight: 600;
 		outline: none;
-		transition: border-color 0.2s, box-shadow 0.2s;
+		transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
 	}
 
 	.page-tracking__input:focus {
+		background: #ffffff;
 		border-color: var(--pt-accent);
-		box-shadow: 0 0 0 3px rgba(44, 61, 51, 0.12);
+		box-shadow: 0 0 0 4px rgba(44, 61, 51, 0.08);
 	}
 
 	.page-tracking__button {
 		position: relative;
 		flex: 0 0 auto;
-		min-width: 144px;
-		min-height: 62px;
-		padding: 16px 30px;
-		border: 1.5px solid var(--pt-accent);
-		border-radius: 4px;
+		min-width: 160px;
+		min-height: 64px;
+		padding: 16px 32px;
+		border: none;
+		border-radius: 8px;
 		background: var(--pt-accent);
 		color: #fff;
 		cursor: pointer;
-		font-family: 'Oswald', sans-serif;
+		font-family: 'Outfit', sans-serif;
 		font-size: 16px;
-		font-weight: 600;
-		letter-spacing: 0;
+		font-weight: 700;
+		letter-spacing: 1px;
 		line-height: 1.2;
 		text-transform: uppercase;
-		transition: opacity 0.2s, transform 0.05s;
+		transition: all 0.3s ease;
+		box-shadow: 0 4px 12px rgba(44, 61, 51, 0.15);
 	}
 
 	.page-tracking__button:hover {
-		opacity: 0.9;
-		box-shadow: 0 10px 22px rgba(44, 61, 51, 0.2);
+		transform: translateY(-2px);
+		box-shadow: 0 8px 24px rgba(44, 61, 51, 0.25);
+		opacity: 0.95;
 	}
 
 	.page-tracking__button:active {
@@ -278,7 +284,7 @@
 		flex-wrap: wrap;
 		gap: 8px;
 		justify-content: center;
-		margin-top: 14px;
+		margin-top: 24px;
 	}
 
 	.page-tracking__carriers span {
@@ -286,10 +292,10 @@
 		align-items: center;
 		justify-content: center;
 		min-height: 28px;
-		padding: 6px 10px;
-		border: 1px solid rgba(44, 61, 51, 0.16);
-		border-radius: 4px;
-		background: rgba(44, 61, 51, 0.05);
+		padding: 6px 14px;
+		border: 1px solid rgba(44, 61, 51, 0.12);
+		border-radius: 20px;
+		background: rgba(44, 61, 51, 0.04);
 		color: rgba(44, 61, 51, 0.78);
 		font-size: 12px;
 		font-weight: 700;
@@ -488,10 +494,10 @@
 
 	.cs-result__status-label {
 		color: var(--pt-text);
-		font-family: 'Oswald', sans-serif;
+		font-family: 'Outfit', sans-serif;
 		font-size: 22px;
 		font-weight: 700;
-		letter-spacing: 0;
+		letter-spacing: 0.5px;
 		line-height: 1.18;
 		text-transform: uppercase;
 	}
@@ -534,10 +540,10 @@
 		margin-top: 10px;
 		padding: 10px 16px;
 		border: 1.5px solid var(--pt-accent);
-		border-radius: 4px;
+		border-radius: 8px;
 		background: var(--pt-accent);
 		color: #fff;
-		font-family: 'Oswald', sans-serif;
+		font-family: 'Outfit', sans-serif;
 		font-size: 14px;
 		font-weight: 600;
 		line-height: 1.2;
@@ -628,7 +634,7 @@
 		}
 
 		.page-tracking__panel {
-			padding: 14px;
+			padding: 24px 16px;
 		}
 
 		.page-tracking__form {
