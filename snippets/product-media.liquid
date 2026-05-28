@@ -479,6 +479,7 @@
 					{% for media in product.media %}
 						<button class="swiper-slide product-media__slider-thumbnails-slide"
 								data-slide-index="{{ forloop.index0 }}"
+								type="button"
 								style="--thumbnail-aspect-ratio: {{ thumbnail_aspect_ratio }};"
 						>
 							{%- case media.media_type -%}
@@ -566,7 +567,17 @@
 				var visibleCount = getVisibleThumbCount(sw);
 				var lastStartIndex = Math.max(sw.slides.length - visibleCount, 0);
 				var activeIndex = Math.max(0, Math.min(mainSw.activeIndex || 0, sw.slides.length - 1));
-				var targetStartIndex = Math.min(Math.max(activeIndex - visibleCount + 1, 0), lastStartIndex);
+				var currentStartIndex = Math.max(0, Math.min(sw.activeIndex || 0, lastStartIndex));
+				var currentEndIndex = currentStartIndex + visibleCount - 1;
+				var targetStartIndex = currentStartIndex;
+
+				if (activeIndex < currentStartIndex) {
+					targetStartIndex = activeIndex;
+				} else if (activeIndex > currentEndIndex) {
+					targetStartIndex = activeIndex - visibleCount + 1;
+				}
+
+				targetStartIndex = Math.min(Math.max(targetStartIndex, 0), lastStartIndex);
 
 				if (sw.activeIndex !== targetStartIndex) {
 					sw.slideTo(targetStartIndex, 0);
@@ -575,12 +586,30 @@
 				updateButtons(sw);
 			}
 
+			var thumbSyncFrame = null;
+			var thumbSyncTimers = [];
+
+			function clearScheduledThumbSync() {
+				if (thumbSyncFrame) {
+					cancelAnimationFrame(thumbSyncFrame);
+					thumbSyncFrame = null;
+				}
+
+				thumbSyncTimers.forEach(function(timer) {
+					clearTimeout(timer);
+				});
+				thumbSyncTimers = [];
+			}
+
 			function scheduleThumbSync(sw) {
 				if (!sw) return;
-				requestAnimationFrame(function() {
+
+				clearScheduledThumbSync();
+				thumbSyncFrame = requestAnimationFrame(function() {
+					thumbSyncFrame = null;
 					syncThumbWindow(sw);
-					setTimeout(function() { syncThumbWindow(sw); }, 60);
-					setTimeout(function() { syncThumbWindow(sw); }, 450);
+					thumbSyncTimers.push(setTimeout(function() { syncThumbWindow(sw); }, 60));
+					thumbSyncTimers.push(setTimeout(function() { syncThumbWindow(sw); }, 450));
 				});
 			}
 
@@ -611,6 +640,37 @@
 				} else if (attempts > 0) {
 					setTimeout(function() { bindVariantEvent(sw, attempts - 1); }, 200);
 				}
+			}
+
+			function handleThumbnailClick(event) {
+				var slide = event.target.closest('.product-media__slider-thumbnails-slide');
+				if (!slide || !swiperEl.contains(slide)) return;
+
+				var sw = getSwiper();
+				var mainSw = getMainSwiper();
+				var targetIndex = Number(slide.dataset.slideIndex);
+
+				if (!sw || !mainSw || Number.isNaN(targetIndex)) return;
+
+				event.preventDefault();
+				event.stopImmediatePropagation();
+				clearScheduledThumbSync();
+
+				mainSw.slideTo(targetIndex, 0, true);
+
+				if (typeof mainSw.updateSlidesClasses === 'function') {
+					mainSw.updateSlidesClasses();
+				}
+
+				[].forEach.call(sw.slides || [], function(thumb, thumbIndex) {
+					var isActive = thumbIndex === targetIndex;
+					thumb.classList.toggle('swiper-slide-thumb-active', isActive);
+					thumb.classList.toggle('is-active', isActive);
+				});
+
+				requestAnimationFrame(function() {
+					syncThumbWindow(sw);
+				});
 			}
 
 			function updateButtons(sw) {
@@ -663,6 +723,8 @@
 			});
 
 			// Giới hạn tối đa MAX_VISIBLE thumbnails hiển thị cùng lúc
+			swiperEl.addEventListener('click', handleThumbnailClick, true);
+
 			var MAX_VISIBLE = 7;
 			var SPACE_BETWEEN = 8;
 

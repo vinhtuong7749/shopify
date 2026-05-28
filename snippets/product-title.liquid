@@ -262,6 +262,12 @@
 		color: #666666 !important;
 		opacity: 1 !important;
 	}
+
+	@media (min-width: 768px) {
+		.product .product-short-description {
+			display: none !important;
+		}
+	}
 </style>
 {%- assign preset_title = 'Product title' -%}
 {%- assign title 		= product.title -%}

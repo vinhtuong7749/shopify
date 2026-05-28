@@ -46,7 +46,7 @@
 
 .sales-notification-popup__header {
     margin-bottom: 8px;
-    padding-right: 28px;
+    padding-right: 42px;
 }
 
 .sales-notification-popup__action {
@@ -139,27 +139,32 @@
 
 .sales-notification-popup__close {
     position: absolute;
-    top: 6px;
-    right: 6px;
+    top: 8px;
+    right: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
-    background: none;
+    width: 36px;
+    height: 36px;
+    background: rgba(0, 0, 0, 0.06);
     border: none;
-    font-size: 24px;
+    border-radius: 50%;
+    font-size: 32px;
+    font-weight: 500;
     cursor: pointer;
     color: {{ section.settings.text_color }};
-    opacity: 0.4;
+    opacity: 0.78;
     line-height: 1;
     padding: 0;
-    transition: opacity 0.2s ease;
+    transition: background 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
     pointer-events: auto !important;
     touch-action: manipulation;
+    z-index: 2;
 }
 .sales-notification-popup__close:hover {
+    background: rgba(0, 0, 0, 0.1);
     opacity: 1;
+    transform: scale(1.04);
 }
 
 @media screen and (max-width: 767px) {
@@ -178,6 +183,14 @@
     }
     .sales-notification-popup__header {
         margin-bottom: 4px;
+        padding-right: 38px;
+    }
+    .sales-notification-popup__close {
+        top: 5px;
+        right: 5px;
+        width: 34px;
+        height: 34px;
+        font-size: 30px;
     }
     .sales-notification-popup__body {
         padding: 6px;
@@ -206,7 +219,7 @@
 </style>
 
 <div class="sales-notification-popup" id="salesNotificationPopup">
-    <button class="sales-notification-popup__close" id="salesNotificationClose">&times;</button>
+    <button class="sales-notification-popup__close" id="salesNotificationClose" type="button" aria-label="{{- 'general.accessibility.close' | t | default: 'Close' | escape -}}">&times;</button>
     
     <div class="sales-notification-popup__header">
         <p class="sales-notification-popup__action"><strong id="salesNotificationName"></strong> <span id="salesNotificationActionText"></span></p>
