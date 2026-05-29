@@ -522,7 +522,11 @@
 										{%- endif -%}
 										{%- assign selected_products = selected_products | append: product_handle | append: "," -%}
 										{%- assign selected_count = selected_count | plus: 1 -%}
-										<div class="featured-products__col swiper-slide js-featured-products-slide{% if selected_count > desktop_limit %} product-recommendations__slide--desktop-hidden{% endif %}{% if selected_count > mobile_limit %} product-recommendations__slide--mobile-hidden{% endif %}">
+										<div
+											class="featured-products__col swiper-slide js-featured-products-slide{% if selected_count > desktop_limit %} product-recommendations__slide--desktop-hidden{% endif %}{% if selected_count > mobile_limit %} product-recommendations__slide--mobile-hidden{% endif %}"
+											data-product-handle="{{- related_product.handle | escape -}}"
+											data-product-title="{{- related_product.title | escape -}}"
+										>
 											{%- render
 												'product-card',
 												product: related_product,
@@ -550,7 +554,11 @@
 								{%- endif -%}
 
 								{%- assign display_count = display_count | plus: 1 -%}
-								<div class="featured-products__col swiper-slide js-featured-products-slide{% if display_count > desktop_limit %} product-recommendations__slide--desktop-hidden{% endif %}{% if display_count > mobile_limit %} product-recommendations__slide--mobile-hidden{% endif %}">
+								<div
+									class="featured-products__col swiper-slide js-featured-products-slide{% if display_count > desktop_limit %} product-recommendations__slide--desktop-hidden{% endif %}{% if display_count > mobile_limit %} product-recommendations__slide--mobile-hidden{% endif %}"
+									data-product-handle="{{- product.handle | escape -}}"
+									data-product-title="{{- product.title | escape -}}"
+								>
 									{%- render
 										'product-card',
 										product: product,
@@ -585,6 +593,11 @@
 		var mobileQuery = window.matchMedia('(max-width: 767px)');
 		var retries = 0;
 		var bundleSelector = [
+			'lb-upsell-widget',
+			'lb-upsell-flat-card',
+			'.lb-widget',
+			'.lb-product-card',
+			'.lb-flat-card-host',
 			'[id*="selleasy" i]',
 			'[class*="selleasy" i]',
 			'[id*="lb-widget" i]',
@@ -605,6 +618,28 @@
 				.trim()
 				.replace(/^\/+|\/+$/g, '')
 				.toLowerCase();
+		}
+
+		function normalizeProductTitle(value) {
+			if (!value) return '';
+
+			return String(value)
+				.replace(/\s+/g, ' ')
+				.replace(/&/g, 'and')
+				.replace(/[^a-zA-Z0-9]+/g, ' ')
+				.trim()
+				.toLowerCase();
+		}
+
+		function isProductTitleCandidate(value) {
+			var title = normalizeProductTitle(value);
+
+			if (!title || title.length < 8) return false;
+			if (/^\d+$/.test(title)) return false;
+			if (/^(add|quick add|select|size|color|people also bought|customer favorites)$/.test(title)) return false;
+			if (title.split(' ').length <= 4 && /^(black|white|ivory|khaki|maroon|navy|sand|rectangle|small|medium|large|xl|2xl|3xl|4xl|5xl)(\s|$)/.test(title)) return false;
+
+			return true;
 		}
 
 		function getProductHandleFromUrl(value) {
@@ -643,13 +678,58 @@
 			}
 		}
 
-		function collectBundleProductHandles() {
+		function addTitle(title, titles) {
+			var normalizedTitle = normalizeProductTitle(title);
+
+			if (isProductTitleCandidate(normalizedTitle)) {
+				titles[normalizedTitle] = true;
+			}
+		}
+
+		function addTitleFromElement(element, titles) {
+			if (!element || element.nodeType !== 1) return;
+
+			addTitle(
+				element.getAttribute('data-product-title') ||
+				element.getAttribute('data-title') ||
+				element.getAttribute('aria-label'),
+				titles
+			);
+
+			Array.prototype.forEach.call(element.childNodes || [], function(node) {
+				if (node.nodeType === 3) {
+					addTitle(node.textContent, titles);
+				}
+			});
+		}
+
+		function collectTextTitles(root, titles) {
+			if (!root) return;
+
+			addTitleFromElement(root, titles);
+
+			root.querySelectorAll('[data-product-title], [data-title], [aria-label], [class*="title" i], [class*="name" i], a[href*="/products/"]').forEach(function(element) {
+				if (element.closest('script, style, select, option, button')) return;
+				addTitleFromElement(element, titles);
+			});
+
+			root.querySelectorAll('*').forEach(function(element) {
+				if (element.children.length || element.closest('script, style, select, option, button')) return;
+				addTitleFromElement(element, titles);
+			});
+		}
+
+		function collectBundleProductMatches() {
 			var section = document.getElementById('{{ section.id }}');
-			var handles = {};
+			var productMatches = {
+				handles: {},
+				titles: {}
+			};
 			var widgets = [];
 
 			document.querySelectorAll('.product-upsell-block[data-product-handle]').forEach(function(block) {
-				addHandleFromElement(block, handles);
+				addHandleFromElement(block, productMatches.handles);
+				collectTextTitles(block, productMatches.titles);
 			});
 
 			try {
@@ -661,24 +741,51 @@
 			widgets.forEach(function(widget) {
 				if (section && section.contains(widget)) return;
 
-				addHandleFromElement(widget, handles);
+				var roots = [widget];
+				if (widget.shadowRoot) {
+					roots.push(widget.shadowRoot);
+				}
 
-				widget.querySelectorAll('[data-product-card-handle], [data-product-handle], [data-handle], [data-product-url], [data-url*="/products/"], a[href*="/products/"]').forEach(function(element) {
-					addHandleFromElement(element, handles);
+				addHandleFromElement(widget, productMatches.handles);
+
+				roots.forEach(function(root) {
+					collectTextTitles(root, productMatches.titles);
+
+					root.querySelectorAll('[data-product-card-handle], [data-product-handle], [data-handle], [data-product-url], [data-url*="/products/"], a[href*="/products/"]').forEach(function(element) {
+						addHandleFromElement(element, productMatches.handles);
+						addTitleFromElement(element, productMatches.titles);
+					});
 				});
 			});
 
-			return handles;
+			return productMatches;
 		}
 
 		function getRecommendationProductHandle(slide) {
+			var handle = normalizeProductHandle(slide.getAttribute('data-product-handle'));
+
+			if (handle) return handle;
+
 			var handleElement = slide.querySelector('[data-product-card-handle]');
-			var handle = handleElement ? normalizeProductHandle(handleElement.getAttribute('data-product-card-handle')) : '';
+			handle = handleElement ? normalizeProductHandle(handleElement.getAttribute('data-product-card-handle')) : '';
 
 			if (handle) return handle;
 
 			var link = slide.querySelector('a[href*="/products/"]');
 			return link ? getProductHandleFromUrl(link.getAttribute('href')) : '';
+		}
+
+		function getRecommendationProductTitle(slide) {
+			var title = slide.getAttribute('data-product-title');
+			var titleElement = slide.querySelector('.product-card__title, [data-product-title], [aria-label]');
+
+			if (!title && titleElement) {
+				title = titleElement.getAttribute('data-product-title') ||
+					titleElement.getAttribute('aria-label') ||
+					titleElement.textContent;
+			}
+
+			return normalizeProductTitle(title);
 		}
 
 		function refreshRecommendationsSlider() {
@@ -702,17 +809,19 @@
 			var section = document.getElementById('{{ section.id }}');
 			if (!section) return false;
 
-			var bundleHandles = collectBundleProductHandles();
-			var bundleHandleCount = Object.keys(bundleHandles).length;
+			var productMatches = collectBundleProductMatches();
+			var bundleHandleCount = Object.keys(productMatches.handles).length;
+			var bundleTitleCount = Object.keys(productMatches.titles).length;
 
-			if (!bundleHandleCount) return false;
+			if (!bundleHandleCount && !bundleTitleCount) return false;
 
 			var removed = false;
 
 			section.querySelectorAll('.js-featured-products-slide').forEach(function(slide) {
 				var handle = getRecommendationProductHandle(slide);
+				var title = getRecommendationProductTitle(slide);
 
-				if (handle && bundleHandles[handle]) {
+				if ((handle && productMatches.handles[handle]) || (title && productMatches.titles[title])) {
 					slide.remove();
 					removed = true;
 				}
@@ -749,6 +858,10 @@
 
 			new MutationObserver(function(mutations) {
 				var shouldFilter = mutations.some(function(mutation) {
+					if (mutation.target && mutation.target.closest && mutation.target.closest(bundleSelector)) {
+						return true;
+					}
+
 					return Array.prototype.some.call(mutation.addedNodes, elementMatchesBundleSelector);
 				});
 
@@ -756,6 +869,19 @@
 					requestBundleFilter();
 				}
 			}).observe(document.body, {
+				childList: true,
+				subtree: true,
+				characterData: true
+			});
+		}
+
+		function observeRecommendationContent() {
+			var section = document.getElementById('{{ section.id }}');
+			var content = section ? section.querySelector('.js-product-recommendations-content') : null;
+
+			if (!window.MutationObserver || !content) return;
+
+			new MutationObserver(requestBundleFilter).observe(content, {
 				childList: true,
 				subtree: true
 			});
@@ -767,6 +893,7 @@
 				setTimeout(filterBundleProductsFromRecommendations, delay);
 			});
 			observeBundleWidgets();
+			observeRecommendationContent();
 		}
 
 		function shouldUseMobileRecommendationsLayout(section) {

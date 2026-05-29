@@ -1,0 +1,430 @@
+{%- comment -%}
+  CAMOSIGNAL EMAIL MARKETING LIQUID TEMPLATE
+
+  Use this as the Liquid source for a custom email template. The HTML file
+  beside this one is only a browser preview; this file renders products
+  dynamically from Shopify product handles.
+
+  QUICK CAMPAIGN CONFIG
+  For each new campaign, edit only this block:
+  1. campaign_url
+  2. hero_image_url
+  3. headline / subheadline / email_preheader
+  4. coupon_code
+  5. product_handles: exactly 6 handles, separated by commas
+
+  This email editor requires:
+  - {{ unsubscribe_link }}
+  - {{ open_tracking_block }}
+{%- endcomment -%}
+
+{%- assign shop_url = shop.url | default: 'https://camosignal.com' -%}
+
+{%- comment -%} ===== CAMPAIGN CONFIG START ===== {%- endcomment -%}
+{%- assign default_campaign_url = shop_url | append: '/collections/all' -%}
+{%- assign campaign_url = campaign_url | default: default_campaign_url -%}
+{%- assign hero_image_url = hero_image_url | default: 'https://placehold.co/1200x720/2c3d33/faf6ee?text=CAMOSIGNAL+SEASONAL+DROP' -%}
+{%- assign hero_alt = hero_alt | default: 'CamoSignal seasonal apparel drop' -%}
+{%- assign coupon_code = coupon_code | default: 'CAMOSIGNAL10' -%}
+{%- assign email_preheader = email_preheader | default: 'Fresh hunting apparel picked for the season. Use code CAMOSIGNAL10.' -%}
+{%- assign headline = headline | default: 'Gear Up For The Season' -%}
+{%- assign subheadline = subheadline | default: 'Field-ready graphics, soft everyday fits, and fresh CamoSignal picks for hunters, protectors, and people who carry their ground quietly.' -%}
+{%- assign product_handles = product_handles | default: 'land-of-the-free-t-shirt-1,independence-1776-don-t-tread-on-me-t-shirt,patriotic-moose-hunting-t-shirt-copy-2,liberty-or-death-gadsden-flag-t-shirt,personalized-dad-trucker-hat-with-leather-patch,grand-turkey-slam-trucker-hat-with-leather-patch' -%}
+{%- comment -%} ===== CAMPAIGN CONFIG END ===== {%- endcomment -%}
+
+{%- assign product_handle_list = product_handles | split: ',' -%}
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="x-apple-disable-message-reformatting">
+  <title>CamoSignal Marketing Email</title>
+  <style>
+    html,
+    body {
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      background: #f2f2f2;
+    }
+
+    * {
+      -ms-text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+      box-sizing: border-box;
+    }
+
+    table,
+    td {
+      mso-table-lspace: 0pt !important;
+      mso-table-rspace: 0pt !important;
+      border-collapse: collapse !important;
+    }
+
+    img {
+      -ms-interpolation-mode: bicubic;
+      border: 0;
+      display: block;
+      height: auto;
+      line-height: 100%;
+      outline: none;
+      text-decoration: none;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    @media screen and (max-width: 640px) {
+      .email-shell {
+        width: 100% !important;
+      }
+
+      .mobile-pad {
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+      }
+
+      .mobile-center {
+        text-align: center !important;
+      }
+
+      .stack-column,
+      .stack-column td {
+        display: block !important;
+        width: 100% !important;
+      }
+
+      .desktop-product-grid {
+        display: none !important;
+        max-height: 0 !important;
+        overflow: hidden !important;
+        mso-hide: all !important;
+      }
+
+      .mobile-product-grid {
+        display: table !important;
+        max-height: none !important;
+        overflow: visible !important;
+        width: 100% !important;
+      }
+
+      .mobile-product-cell {
+        display: table-cell !important;
+        width: 50% !important;
+        padding: 0 6px 22px 6px !important;
+        text-align: center !important;
+      }
+
+      .mobile-product-cell img {
+        width: 100% !important;
+        max-width: 156px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+      }
+
+      .mobile-product-title {
+        font-size: 13px !important;
+        line-height: 17px !important;
+        min-height: 34px !important;
+      }
+
+      .mobile-product-price {
+        font-size: 13px !important;
+      }
+
+      .mobile-product-button {
+        padding: 10px 6px !important;
+        font-size: 11px !important;
+      }
+
+      .collection-cta-cell {
+        padding: 0 26px 24px 26px !important;
+        text-align: center !important;
+      }
+
+      .hero-title {
+        font-size: 42px !important;
+        line-height: 0.98 !important;
+      }
+
+      .section-title {
+        font-size: 28px !important;
+      }
+
+      .hide-mobile {
+        display: none !important;
+      }
+
+      .button-full {
+        width: 100% !important;
+      }
+    }
+  </style>
+</head>
+<body style="margin:0; padding:0; background:#f2f2f2;">
+  <div style="display:none; max-height:0; overflow:hidden; opacity:0; color:transparent; line-height:1px;">
+    {{ email_preheader }}
+  </div>
+  {{ open_tracking_block }}
+
+  <center role="article" aria-roledescription="email" lang="en" style="width:100%; background:#f2f2f2;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width:100%; background:#f2f2f2;">
+      <tr>
+        <td align="center" style="padding:24px 12px;">
+          <table role="presentation" class="email-shell" width="600" cellpadding="0" cellspacing="0" style="width:600px; max-width:600px; background:#ffffff;">
+            <tr>
+              <td style="background:#2c3d33; padding:18px 28px;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td class="mobile-center" style="font-family:'Arial Narrow', Arial, sans-serif; font-size:24px; line-height:1; letter-spacing:0; font-weight:900; color:#faf6ee; text-transform:uppercase;">
+                      CAMOSIGNAL
+                    </td>
+                    <td class="hide-mobile" align="right" style="font-family:Arial, sans-serif; font-size:12px; line-height:18px; color:#faf6ee;">
+                      <a href="{{ shop_url }}/collections/all" style="color:#faf6ee;">Shop</a>
+                      <span style="color:#ffd875;"> / </span>
+                      <a href="{{ shop_url }}/collections/hunting" style="color:#faf6ee;">Hunting</a>
+                      <span style="color:#ffd875;"> / </span>
+                      <a href="{{ shop_url }}/collections/independence-day" style="color:#faf6ee;">Drops</a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <a href="{{ campaign_url }}" style="display:block;">
+                  <img src="{{ hero_image_url }}" width="600" alt="{{ hero_alt | escape }}" style="width:100%; max-width:600px; background:#2c3d33;">
+                </a>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="mobile-pad" style="padding:34px 44px 12px 44px; background:#ffffff;">
+                <p style="margin:0 0 10px 0; font-family:Arial, sans-serif; font-size:13px; line-height:18px; color:#535353;">
+                  Raised Here. Stood Here.
+                </p>
+                <h1 class="hero-title" style="margin:0; font-family:'Arial Narrow', Impact, Arial, sans-serif; font-size:58px; line-height:0.95; letter-spacing:0; color:#2c3d33; font-weight:900; text-transform:uppercase;">
+                  {{ headline }}
+                </h1>
+                <p style="margin:18px 0 0 0; font-family:Arial, sans-serif; font-size:16px; line-height:24px; color:#535353;">
+                  {{ subheadline }}
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="mobile-pad" style="padding:20px 44px 34px 44px; background:#ffffff;">
+                <table role="presentation" cellpadding="0" cellspacing="0" class="button-full">
+                  <tr>
+                    <td align="center" style="background:#2c3d33; border:1px solid #2c3d33; border-radius:4px;">
+                      <a href="{{ campaign_url }}" style="display:inline-block; padding:15px 30px; font-family:Arial, sans-serif; font-size:14px; line-height:16px; font-weight:700; color:#faf6ee; text-transform:uppercase;">
+                        Shop The Drop
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="mobile-pad" style="padding:0 28px 0 28px; background:#ffffff;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#faf6ee; border:1px solid #e9e9e9;">
+                  <tr>
+                    <td align="center" style="padding:19px 20px;">
+                      <p style="margin:0; font-family:Arial, sans-serif; font-size:12px; line-height:16px; color:#535353; text-transform:uppercase;">
+                        First order offer
+                      </p>
+                      <p style="margin:4px 0 0 0; font-family:'Arial Narrow', Arial, sans-serif; font-size:28px; line-height:32px; color:#2c3d33; font-weight:900; text-transform:uppercase;">
+                        Use code {{ coupon_code }}
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="mobile-pad" style="padding:42px 28px 18px 28px; background:#ffffff;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td class="mobile-center" style="font-family:'Arial Narrow', Impact, Arial, sans-serif; font-size:34px; line-height:38px; font-weight:900; color:#2c3d33; text-transform:uppercase;">
+                      Selected Favorites
+                    </td>
+                    <td class="hide-mobile" align="right" style="font-family:Arial, sans-serif; font-size:13px; line-height:18px; color:#535353;">
+                      Pick 6 products for this campaign
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:0 20px 8px 20px; background:#ffffff;">
+                <table role="presentation" class="desktop-product-grid" width="100%" cellpadding="0" cellspacing="0">
+                  {%- for product_handle in product_handle_list limit: 6 -%}
+                    {%- assign clean_handle = product_handle | strip -%}
+                    {%- assign product = all_products[clean_handle] -%}
+                    {%- assign desktop_mod = forloop.index0 | modulo: 3 -%}
+                    {%- assign desktop_close_mod = forloop.index | modulo: 3 -%}
+                    {%- if desktop_mod == 0 -%}<tr>{%- endif -%}
+                      <td class="product-card" width="33.333%" valign="top" style="padding:0 8px 22px 8px;">
+                        {%- if product != blank -%}
+                          {%- assign product_title = product.title -%}
+                          {%- assign product_url = shop_url | append: product.url -%}
+                          {%- if product.featured_image != blank -%}
+                            {%- assign product_image = product.featured_image | image_url: width: 540 -%}
+                          {%- else -%}
+                            {%- assign product_image = 'https://placehold.co/540x690/f2f2f2/2c3d33?text=Product+Image' -%}
+                          {%- endif -%}
+                          {%- assign product_price = product.price_min | money -%}
+                        {%- else -%}
+                          {%- assign product_title = clean_handle | replace: '-', ' ' | capitalize -%}
+                          {%- assign product_url = campaign_url -%}
+                          {%- assign product_image = 'https://placehold.co/540x690/f2f2f2/2c3d33?text=Product+Image' -%}
+                          {%- assign product_price = 'From $24.95' -%}
+                        {%- endif -%}
+                        <a href="{{ product_url }}" style="display:block;">
+                          <img src="{{ product_image }}" width="170" alt="{{ product_title | escape }}" style="width:100%; max-width:170px; background:#f2f2f2;">
+                        </a>
+                        <p style="margin:13px 0 4px 0; font-family:Arial, sans-serif; font-size:15px; line-height:20px; font-weight:700; color:#2c3d33;">
+                          {{ product_title }}
+                        </p>
+                        <p style="margin:0 0 12px 0; font-family:Arial, sans-serif; font-size:14px; line-height:18px; color:#535353;">
+                          {{ product_price }}
+                        </p>
+                        <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                          <tr>
+                            <td align="center" style="border:1px solid #2c3d33; border-radius:4px;">
+                              <a href="{{ product_url }}" style="display:block; padding:11px 10px; font-family:Arial, sans-serif; font-size:12px; line-height:14px; font-weight:700; color:#2c3d33; text-transform:uppercase;">
+                                Shop Now
+                              </a>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    {%- if desktop_close_mod == 0 or forloop.last -%}</tr>{%- endif -%}
+                  {%- endfor -%}
+                </table>
+
+                <table role="presentation" class="mobile-product-grid" width="100%" cellpadding="0" cellspacing="0" style="display:none; max-height:0; overflow:hidden; mso-hide:all;">
+                  {%- for product_handle in product_handle_list limit: 6 -%}
+                    {%- assign clean_handle = product_handle | strip -%}
+                    {%- assign product = all_products[clean_handle] -%}
+                    {%- assign mobile_mod = forloop.index0 | modulo: 2 -%}
+                    {%- assign mobile_close_mod = forloop.index | modulo: 2 -%}
+                    {%- if mobile_mod == 0 -%}<tr>{%- endif -%}
+                      <td class="mobile-product-cell" width="50%" valign="top" style="padding:0 6px 22px 6px;">
+                        {%- if product != blank -%}
+                          {%- assign product_title = product.title -%}
+                          {%- assign product_url = shop_url | append: product.url -%}
+                          {%- if product.featured_image != blank -%}
+                            {%- assign product_image = product.featured_image | image_url: width: 540 -%}
+                          {%- else -%}
+                            {%- assign product_image = 'https://placehold.co/540x690/f2f2f2/2c3d33?text=Product+Image' -%}
+                          {%- endif -%}
+                          {%- assign product_price = product.price_min | money -%}
+                        {%- else -%}
+                          {%- assign product_title = clean_handle | replace: '-', ' ' | capitalize -%}
+                          {%- assign product_url = campaign_url -%}
+                          {%- assign product_image = 'https://placehold.co/540x690/f2f2f2/2c3d33?text=Product+Image' -%}
+                          {%- assign product_price = 'From $24.95' -%}
+                        {%- endif -%}
+                        <a href="{{ product_url }}" style="display:block;">
+                          <img src="{{ product_image }}" width="156" alt="{{ product_title | escape }}" style="width:100%; max-width:156px; background:#f2f2f2;">
+                        </a>
+                        <p class="mobile-product-title" style="margin:11px 0 3px 0; font-family:Arial, sans-serif; font-size:13px; line-height:17px; min-height:34px; font-weight:700; color:#2c3d33;">
+                          {{ product_title }}
+                        </p>
+                        <p class="mobile-product-price" style="margin:0 0 10px 0; font-family:Arial, sans-serif; font-size:13px; line-height:17px; color:#535353;">
+                          {{ product_price }}
+                        </p>
+                        <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                          <tr>
+                            <td align="center" style="border:1px solid #2c3d33; border-radius:4px;">
+                              <a class="mobile-product-button" href="{{ product_url }}" style="display:block; padding:10px 6px; font-family:Arial, sans-serif; font-size:11px; line-height:13px; font-weight:700; color:#2c3d33; text-transform:uppercase;">
+                                Shop Now
+                              </a>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    {%- if mobile_close_mod == 0 or forloop.last -%}</tr>{%- endif -%}
+                  {%- endfor -%}
+                </table>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="mobile-pad" style="padding:10px 28px 36px 28px; background:#ffffff;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#2c3d33;">
+                  <tr>
+                    <td class="stack-column" width="52%" style="padding:24px 26px;">
+                      <h2 class="section-title" style="margin:0; font-family:'Arial Narrow', Impact, Arial, sans-serif; font-size:32px; line-height:34px; font-weight:900; color:#faf6ee; text-transform:uppercase;">
+                        Built On The Ground
+                      </h2>
+                      <p style="margin:10px 0 0 0; font-family:Arial, sans-serif; font-size:14px; line-height:21px; color:#faf6ee;">
+                        Choose a collection angle: Turkey, Deer, Waterfowl, Fishing, or Independence Day.
+                      </p>
+                    </td>
+                    <td class="stack-column collection-cta-cell" width="48%" valign="middle" align="center" style="padding:24px 26px 24px 0;">
+                      <table role="presentation" cellpadding="0" cellspacing="0" class="button-full">
+                        <tr>
+                          <td align="center" style="background:#faf6ee; border:1px solid #faf6ee; border-radius:4px;">
+                            <a href="{{ campaign_url }}" style="display:inline-block; padding:14px 24px; font-family:Arial, sans-serif; font-size:13px; line-height:15px; font-weight:700; color:#2c3d33; text-transform:uppercase;">
+                              Shop Collections
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="mobile-pad" align="center" style="padding:0 44px 38px 44px; background:#ffffff;">
+                <p style="margin:0 0 8px 0; font-family:Arial, sans-serif; font-size:13px; line-height:18px; color:#535353; text-transform:uppercase;">
+                  Customers are saying
+                </p>
+                <p style="margin:0; font-family:Georgia, 'Times New Roman', serif; font-size:22px; line-height:31px; color:#2c3d33;">
+                  "Comfortable enough for everyday wear, rugged enough for the weekend."
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="background:#faf6ee; padding:28px;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td class="mobile-center" style="font-family:'Arial Narrow', Arial, sans-serif; font-size:20px; line-height:22px; font-weight:900; color:#2c3d33; text-transform:uppercase;">
+                      CAMOSIGNAL
+                    </td>
+                    <td class="mobile-center" align="right" style="font-family:Arial, sans-serif; font-size:13px; line-height:20px; color:#535353;">
+                      <a href="https://www.instagram.com/camo.signal/" style="color:#2c3d33;">Instagram</a>
+                      <span style="color:#535353;"> / </span>
+                      <a href="https://www.facebook.com/profile.php?id=61575744733042" style="color:#2c3d33;">Facebook</a>
+                    </td>
+                  </tr>
+                </table>
+                <p style="margin:18px 0 0 0; font-family:Arial, sans-serif; font-size:12px; line-height:18px; color:#757575;">
+                  You are receiving this email because you joined the CamoSignal community or made a purchase from camosignal.com.
+                </p>
+                <p style="margin:10px 0 0 0; font-family:Arial, sans-serif; font-size:12px; line-height:18px; color:#757575;">
+                  <a href="{{ unsubscribe_link }}" style="color:#535353; text-decoration:underline;">Unsubscribe</a>
+                  <span> | </span>
+                  <a href="{{ shop_url }}" style="color:#535353; text-decoration:underline;">Visit store</a>
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </center>
+</body>
+</html>

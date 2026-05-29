@@ -1,0 +1,1750 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CamoSignal Email Studio</title>
+  <style>
+    :root {
+      --page: #f5fbf7;
+      --surface: #ffffff;
+      --surface-soft: #eef8f1;
+      --green-950: #0b2117;
+      --green-900: #102d20;
+      --green-800: #203c2d;
+      --green-700: #2c3d33;
+      --green-500: #4f7f61;
+      --green-200: #d7eadf;
+      --green-100: #eaf6ee;
+      --red: #e21b23;
+      --text: #173225;
+      --muted: #627568;
+      --shadow: 0 18px 48px rgba(16, 45, 32, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--page);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .app {
+      min-height: 100vh;
+      padding: 18px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      max-width: 1640px;
+      margin: 0 auto 16px auto;
+      padding: 16px 18px;
+      background: var(--green-900);
+      color: #ffffff;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .brand {
+      min-width: 0;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .brand p {
+      margin: 3px 0 0 0;
+      color: #dff2e6;
+      font-size: 13px;
+      line-height: 18px;
+    }
+
+    .actions,
+    .row-actions,
+    .tabs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .actions {
+      justify-content: flex-end;
+    }
+
+    .button {
+      min-height: 38px;
+      padding: 0 14px;
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--green-900);
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-size: 12px;
+      transition: transform 160ms ease, background-color 160ms ease;
+      white-space: nowrap;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+      background: var(--green-100);
+    }
+
+    .button.primary {
+      background: var(--green-800);
+      color: #ffffff;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+    }
+
+    .button.primary:hover {
+      background: #2f563f;
+    }
+
+    .button.ghost {
+      border: 1px solid var(--green-200);
+      background: #ffffff;
+      color: var(--green-800);
+    }
+
+    .button.danger {
+      min-height: 32px;
+      padding: 0 10px;
+      background: #ffe8e9;
+      color: #a3151b;
+      font-size: 11px;
+    }
+
+    .button.small {
+      min-height: 30px;
+      padding: 0 10px;
+      font-size: 11px;
+    }
+
+    .button.active {
+      background: var(--green-800);
+      color: #ffffff;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(330px, 390px) minmax(390px, 470px) minmax(520px, 1fr);
+      gap: 16px;
+      max-width: 1640px;
+      margin: 0 auto;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--green-200);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 58px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--green-200);
+      background: #ffffff;
+    }
+
+    .panel-header h2 {
+      margin: 0;
+      font-size: 14px;
+      line-height: 18px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .status {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+      text-align: right;
+    }
+
+    .panel-body {
+      display: grid;
+      gap: 14px;
+      padding: 16px;
+      max-height: calc(100vh - 132px);
+      overflow: auto;
+    }
+
+    .section {
+      display: grid;
+      gap: 12px;
+      padding: 14px;
+      background: #ffffff;
+      border: 1px solid var(--green-200);
+      border-radius: 8px;
+    }
+
+    .section-title {
+      margin: 0;
+      color: var(--green-900);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .field {
+      display: grid;
+      gap: 5px;
+      min-width: 0;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 13px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      min-height: 38px;
+      border: 1px solid var(--green-200);
+      border-radius: 8px;
+      padding: 9px 10px;
+      color: var(--text);
+      background: #ffffff;
+      outline: none;
+      transition: border-color 150ms ease, box-shadow 150ms ease;
+    }
+
+    .field textarea {
+      min-height: 72px;
+      resize: vertical;
+      line-height: 20px;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: var(--green-500);
+      box-shadow: 0 0 0 3px rgba(79, 127, 97, 0.14);
+    }
+
+    .banner-preview {
+      display: grid;
+      gap: 10px;
+    }
+
+    .banner-preview img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      border: 1px solid var(--green-200);
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .banner-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .banner-option {
+      padding: 0;
+      border: 1px solid var(--green-200);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .banner-option.active {
+      border-color: var(--green-500);
+      box-shadow: 0 0 0 3px rgba(79, 127, 97, 0.14);
+    }
+
+    .banner-option img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 5 / 4;
+      object-fit: cover;
+    }
+
+    .searchbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+    }
+
+    .catalog-tools {
+      display: grid;
+      grid-template-columns: minmax(140px, 0.9fr) minmax(180px, 1.1fr) auto;
+      gap: 8px;
+      align-items: end;
+    }
+
+    .catalog-tools .button {
+      min-height: 38px;
+    }
+
+    .catalog,
+    .selected-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .catalog-item,
+    .selected-item {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr);
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid var(--green-200);
+      border-radius: 8px;
+      background: #ffffff;
+      text-align: left;
+    }
+
+    .catalog-item {
+      width: 100%;
+      transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+    }
+
+    .catalog-item:hover,
+    .catalog-item.selected {
+      border-color: var(--green-500);
+      background: var(--surface-soft);
+      box-shadow: 0 0 0 3px rgba(79, 127, 97, 0.1);
+    }
+
+    .thumb {
+      width: 72px;
+      height: 86px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #ffffff;
+      border: 1px solid var(--green-200);
+    }
+
+    .thumb img {
+      max-width: 100%;
+      max-height: 100%;
+      display: block;
+    }
+
+    .item-main {
+      min-width: 0;
+      display: grid;
+      gap: 5px;
+      align-content: start;
+    }
+
+    .item-title {
+      color: var(--green-900);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .item-meta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    .price {
+      color: #c0392b;
+      font-weight: 900;
+    }
+
+    .selected-editor {
+      display: grid;
+      gap: 10px;
+    }
+
+    .selected-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .preview-body {
+      display: grid;
+      gap: 12px;
+      padding: 16px;
+    }
+
+    .preview-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .device-wrap {
+      width: 100%;
+      min-height: 580px;
+      overflow: auto;
+      padding: 14px;
+      border: 1px solid var(--green-200);
+      border-radius: 8px;
+      background: #e9f3ed;
+    }
+
+    .device {
+      height: 720px;
+      border: 1px solid var(--green-200);
+      border-radius: 8px;
+      background: #ffffff;
+      box-shadow: 0 12px 30px rgba(16, 45, 32, 0.1);
+      overflow: hidden;
+    }
+
+    .device.desktop {
+      width: 720px;
+      max-width: 100%;
+    }
+
+    .device.mobile {
+      width: 390px;
+      max-width: 100%;
+      margin: 0 auto;
+    }
+
+    .preview-frame {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #ffffff;
+    }
+
+    .codebox {
+      width: 100%;
+      min-height: 210px;
+      resize: vertical;
+      border: 1px solid var(--green-200);
+      border-radius: 8px;
+      padding: 12px;
+      background: var(--green-950);
+      color: #ecfff3;
+      font-family: "Cascadia Code", Consolas, monospace;
+      font-size: 12px;
+      line-height: 18px;
+      outline: none;
+    }
+
+    .empty {
+      padding: 16px;
+      border: 1px dashed var(--green-200);
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 18px;
+      text-align: center;
+    }
+
+    input[type="file"] {
+      padding: 8px;
+    }
+
+    @media (max-width: 1320px) {
+      .workspace {
+        grid-template-columns: minmax(330px, 420px) minmax(520px, 1fr);
+      }
+
+      .preview-panel {
+        grid-column: 1 / -1;
+      }
+
+      .panel-body {
+        max-height: none;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar,
+      .panel-header,
+      .preview-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .actions,
+      .tabs,
+      .row-actions {
+        width: 100%;
+      }
+
+      .actions .button,
+      .tabs .button {
+        flex: 1 1 auto;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .app {
+        padding: 10px;
+      }
+
+      .field-grid,
+      .searchbar,
+      .catalog-tools {
+        grid-template-columns: 1fr;
+      }
+
+      .catalog-item,
+      .selected-item {
+        grid-template-columns: 64px minmax(0, 1fr);
+      }
+
+      .thumb {
+        width: 64px;
+        height: 78px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <h1>CamoSignal Email Studio</h1>
+        <p>Choose products, choose a banner, preview, then export Messaging HTML.</p>
+      </div>
+      <div class="actions">
+        <button class="button" type="button" id="resetButton">Reset</button>
+        <button class="button" type="button" id="downloadButton">Download</button>
+        <button class="button primary" type="button" id="copyButton">Copy HTML</button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Campaign</h2>
+          <span class="status" id="campaignStatus">Ready</span>
+        </div>
+        <div class="panel-body">
+          <section class="section">
+            <h3 class="section-title">Message</h3>
+            <div class="field-grid">
+              <div class="field full">
+                <label for="preheader">Preheader</label>
+                <textarea id="preheader"></textarea>
+              </div>
+              <div class="field">
+                <label for="offerEyebrow">Offer label</label>
+                <input id="offerEyebrow" type="text">
+              </div>
+              <div class="field">
+                <label for="offerHeadline">Offer headline</label>
+                <input id="offerHeadline" type="text">
+              </div>
+              <div class="field full">
+                <label for="offerBody">Offer body</label>
+                <textarea id="offerBody"></textarea>
+              </div>
+              <div class="field">
+                <label for="sectionTitle">Product heading</label>
+                <input id="sectionTitle" type="text">
+              </div>
+              <div class="field">
+                <label for="sectionNote">Product note</label>
+                <input id="sectionNote" type="text">
+              </div>
+            </div>
+          </section>
+
+          <section class="section">
+            <h3 class="section-title">Banner</h3>
+            <div class="banner-preview">
+              <img id="bannerPreview" src="" alt="">
+              <div class="banner-grid" id="bannerPresets"></div>
+              <div class="field full">
+                <label for="bannerSrc">Banner image URL</label>
+                <input id="bannerSrc" type="text">
+              </div>
+              <div class="field full">
+                <label for="bannerFile">Local banner file</label>
+                <input id="bannerFile" type="file" accept="image/*">
+              </div>
+              <div class="field full">
+                <label for="bannerHref">Banner click URL</label>
+                <input id="bannerHref" type="text">
+              </div>
+              <div class="field full">
+                <label for="bannerAlt">Banner alt text</label>
+                <input id="bannerAlt" type="text">
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Products</h2>
+          <span class="status" id="productStatus">6 selected</span>
+        </div>
+        <div class="panel-body">
+          <section class="section">
+            <div class="selected-head">
+              <h3 class="section-title">Selected Products</h3>
+              <button class="button small ghost" type="button" id="addManualButton">Add blank</button>
+            </div>
+            <div class="selected-list" id="selectedProducts"></div>
+          </section>
+
+          <section class="section">
+            <div class="selected-head">
+              <h3 class="section-title">Product Catalog</h3>
+              <span class="row-actions">
+                <button class="button small ghost" type="button" id="loadCollectionsButton">Load collections</button>
+                <button class="button small ghost" type="button" id="loadProductsButton">Load all</button>
+              </span>
+            </div>
+            <div class="catalog-tools">
+              <div class="field">
+                <label for="collectionSelect">Collection</label>
+                <select id="collectionSelect">
+                  <option value="">All products</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="collectionHandle">Collection handle or URL</label>
+                <input id="collectionHandle" type="text" placeholder="independence-day or /collections/all">
+              </div>
+              <button class="button small primary" type="button" id="loadCollectionProductsButton">Load collection</button>
+            </div>
+            <div class="searchbar">
+              <input id="productSearch" type="search" placeholder="Search products">
+              <button class="button small ghost" type="button" id="clearSearchButton">Clear</button>
+            </div>
+            <div class="catalog" id="productCatalog"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="panel preview-panel">
+        <div class="panel-header">
+          <h2>Preview And Export</h2>
+          <span class="status" id="outputStatus">Generated</span>
+        </div>
+        <div class="preview-body">
+          <div class="preview-toolbar">
+            <div class="tabs">
+              <button class="button small active" type="button" data-preview-mode="desktop">Desktop</button>
+              <button class="button small" type="button" data-preview-mode="mobile">Mobile</button>
+            </div>
+            <div class="row-actions">
+              <button class="button small ghost" type="button" id="selectCodeButton">Select code</button>
+              <button class="button small primary" type="button" id="copyButtonSecondary">Copy HTML</button>
+            </div>
+          </div>
+          <div class="device-wrap">
+            <div class="device desktop" id="deviceFrame">
+              <iframe class="preview-frame" id="previewFrame" title="Email preview"></iframe>
+            </div>
+          </div>
+          <textarea class="codebox" id="generatedHtml" spellcheck="false"></textarea>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const bannerPresets = [
+      {
+        label: "Final 5x4",
+        src: "./images/camosignal-email-banner-final-5x4.jpg",
+      },
+      {
+        label: "Final wide",
+        src: "./images/camosignal-email-banner-final-1200.jpg",
+      },
+      {
+        label: "Green wide",
+        src: "./images/camosignal-email-banner-green-1200.jpg",
+      },
+      {
+        label: "Green PNG",
+        src: "./images/camosignal-email-banner-green.png",
+      },
+    ];
+
+    const fallbackCatalog = [
+      {
+        title: "True American Original '76 T-shirt",
+        handle: "true-american-original-76-t-shirt",
+        url: "https://camosignal.com/products/true-american-original-76-t-shirt",
+        image: "https://cdn.shopify.com/s/files/1/0741/7987/0911/files/TrueAmericanOriginal_76T-shirt_2.jpg?v=1780027122",
+        price: "$24.95",
+        compareAt: "$34.95",
+        badge: "28% OFF",
+      },
+      {
+        title: "Patriotic Setters 250th Anniversary T-shirt",
+        handle: "patriotic-setters-250th-anniversary-t-shirt",
+        url: "https://camosignal.com/products/patriotic-setters-250th-anniversary-t-shirt",
+        image: "https://cdn.shopify.com/s/files/1/0741/7987/0911/files/PatrioticSetters250thAnniversaryT-shirt_2.jpg?v=1780026442",
+        price: "$24.95",
+        compareAt: "$34.95",
+        badge: "28% OFF",
+      },
+      {
+        title: "Patriotic Dalmatians Dog T-shirt",
+        handle: "patriotic-dalmatians-dog-t-shirt",
+        url: "https://camosignal.com/products/patriotic-dalmatians-dog-t-shirt",
+        image: "https://cdn.shopify.com/s/files/1/0741/7987/0911/files/PatrioticDalmatiansDogT-shirt_1.jpg?v=1780026027",
+        price: "$24.95",
+        compareAt: "$34.95",
+        badge: "28% OFF",
+      },
+      {
+        title: "Firefall Yosemite National Park T-shirt",
+        handle: "firefall-yosemite-naitonal-park-t-shirt",
+        url: "https://camosignal.com/products/firefall-yosemite-naitonal-park-t-shirt",
+        image: "https://cdn.shopify.com/s/files/1/0741/7987/0911/files/FirefallYosemiteNaitonalParkT-shirt_5.jpg?v=1780024434",
+        price: "$24.95",
+        compareAt: "$34.95",
+        badge: "28% OFF",
+      },
+      {
+        title: "Yosemite 'Keep Bears Wild' T-shirt",
+        handle: "yosemite-keep-bears-wild-t-shirt",
+        url: "https://camosignal.com/products/yosemite-keep-bears-wild-t-shirt",
+        image: "https://cdn.shopify.com/s/files/1/0741/7987/0911/files/Yosemite_KeepBearsWild_T-shirt_1.jpg?v=1780023355",
+        price: "$24.95",
+        compareAt: "$34.95",
+        badge: "28% OFF",
+      },
+      {
+        title: "Yellowstone Est. 1872 T-shirt",
+        handle: "yellowstone-est-1872-t-shirt",
+        url: "https://camosignal.com/products/yellowstone-est-1872-t-shirt",
+        image: "https://cdn.shopify.com/s/files/1/0741/7987/0911/files/YellowstoneEst.1872T-shirt_1.jpg?v=1780022693",
+        price: "$24.95",
+        compareAt: "$34.95",
+        badge: "28% OFF",
+      },
+    ];
+
+    const defaultCampaign = {
+      preheader: "CamoSignal Favorites are here. Use code CAMOSIGNAL10 for 10% off your first order.",
+      banner: {
+        src: "./images/camosignal-email-banner-final-5x4.jpg",
+        href: "https://camosignal.com/collections/all",
+        alt: "CamoSignal Favorites - use code CAMOSIGNAL10",
+        width: 600,
+        height: "",
+      },
+      offer: {
+        eyebrow: "Welcome offer",
+        headline: "Use code CAMOSIGNAL10",
+        body: "Take 10% off your first order. Shop the selected favorites below.",
+      },
+      productsHeader: {
+        title: "Shop The Drop",
+        note: "6 campaign picks",
+      },
+      productGrid: {
+        desktopColumns: 3,
+        mobileColumns: 2,
+        desktopImageWidth: 166,
+        desktopImageStageHeight: 210,
+        mobileImageWidth: 148,
+      },
+      bottomCta: {
+        label: "View All Products",
+        url: "https://camosignal.com/collections/all",
+      },
+      footer: {
+        brand: "CAMOSIGNAL",
+        reason: "You are receiving this email because you joined the CamoSignal community or made a purchase from camosignal.com.",
+        supportEmail: "support.camosignal@gmail.com",
+        instagramUrl: "https://www.instagram.com/camo.signal/",
+        facebookUrl: "https://www.facebook.com/profile.php?id=61575744733042",
+        visitStoreUrl: "https://camosignal.com/collections/all",
+      },
+    };
+
+    const state = {
+      catalog: structuredClone(fallbackCatalog),
+      selected: structuredClone(fallbackCatalog.slice(0, 6)),
+      collections: [],
+      activeCollection: "",
+      previewMode: "desktop",
+      activeBanner: defaultCampaign.banner.src,
+    };
+
+    const productFields = [
+      ["title", "Title"],
+      ["url", "Product URL"],
+      ["image", "Image URL"],
+      ["price", "Price"],
+      ["compareAt", "Compare at"],
+      ["badge", "Badge"],
+    ];
+
+    function byId(id) {
+      return document.getElementById(id);
+    }
+
+    function clone(value) {
+      return structuredClone(value);
+    }
+
+    function money(value) {
+      const number = Number.parseFloat(value);
+      return Number.isFinite(number) ? `$${number.toFixed(2)}` : "";
+    }
+
+    function saleBadge(price, compareAt) {
+      const priceNumber = Number.parseFloat(price);
+      const compareNumber = Number.parseFloat(compareAt);
+      if (!priceNumber || !compareNumber || compareNumber <= priceNumber) return "";
+      return `${Math.round(((compareNumber - priceNumber) / compareNumber) * 100)}% OFF`;
+    }
+
+    function productKey(product) {
+      return product.handle || product.url || product.title;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value).replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    }
+
+    function cleanInlineValue(value) {
+      return String(value ?? "").replace(/\s+/g, " ").trim();
+    }
+
+    function editTextAttr(key, editable) {
+      return editable
+        ? ` data-edit-key="${escapeAttr(key)}" contenteditable="plaintext-only" spellcheck="false"`
+        : "";
+    }
+
+    function editProductAttr(index, field, editable) {
+      return editable
+        ? ` data-product-index="${index}" data-product-field="${escapeAttr(field)}" contenteditable="plaintext-only" spellcheck="false"`
+        : "";
+    }
+
+    function resolveEmailAsset(src) {
+      const raw = String(src || "").trim();
+      if (!raw || /^(https?:|data:|cid:)/i.test(raw)) return raw;
+
+      const hostedBase = "https://vercel-email-studio.vercel.app/";
+      if (/^\.?\/?images\//i.test(raw)) {
+        return new URL(raw.replace(/^\.?\//, ""), hostedBase).href;
+      }
+
+      try {
+        return new URL(raw, location.href).href;
+      } catch {
+        return raw;
+      }
+    }
+
+    function chunk(items, size) {
+      const rows = [];
+      for (let index = 0; index < items.length; index += size) {
+        rows.push(items.slice(index, index + size));
+      }
+      return rows;
+    }
+
+    function setStatus(message) {
+      byId("campaignStatus").textContent = message;
+      byId("outputStatus").textContent = message;
+    }
+
+    function setProductStatus() {
+      byId("productStatus").textContent = `${state.selected.length} selected`;
+    }
+
+    function fillCampaignFields() {
+      byId("preheader").value = defaultCampaign.preheader;
+      byId("bannerSrc").value = defaultCampaign.banner.src;
+      byId("bannerHref").value = defaultCampaign.banner.href;
+      byId("bannerAlt").value = defaultCampaign.banner.alt;
+      byId("offerEyebrow").value = defaultCampaign.offer.eyebrow;
+      byId("offerHeadline").value = defaultCampaign.offer.headline;
+      byId("offerBody").value = defaultCampaign.offer.body;
+      byId("sectionTitle").value = defaultCampaign.productsHeader.title;
+      byId("sectionNote").value = defaultCampaign.productsHeader.note;
+      byId("bannerPreview").src = defaultCampaign.banner.src;
+    }
+
+    function getCampaign() {
+      syncSelectedInputs();
+      return {
+        ...clone(defaultCampaign),
+        preheader: byId("preheader").value.trim(),
+        banner: {
+          ...defaultCampaign.banner,
+          src: byId("bannerSrc").value.trim(),
+          href: byId("bannerHref").value.trim(),
+          alt: byId("bannerAlt").value.trim(),
+        },
+        offer: {
+          eyebrow: byId("offerEyebrow").value.trim(),
+          headline: byId("offerHeadline").value.trim(),
+          body: byId("offerBody").value.trim(),
+        },
+        productsHeader: {
+          title: byId("sectionTitle").value.trim(),
+          note: byId("sectionNote").value.trim(),
+        },
+        products: state.selected.filter((product) => product.title && product.url && product.image),
+      };
+    }
+
+    function normalizeStoreProduct(product) {
+      const variant = product.variants?.[0] || {};
+      const price = money(variant.price);
+      const compareAt = money(variant.compare_at_price);
+      const image = product.images?.[0]?.src || product.image?.src || "";
+      return {
+        title: product.title || "Untitled product",
+        handle: product.handle || "",
+        url: `https://camosignal.com/products/${product.handle}`,
+        image,
+        price: price || "$24.95",
+        compareAt,
+        badge: saleBadge(variant.price, variant.compare_at_price),
+      };
+    }
+
+    function normalizeCollection(collection) {
+      return {
+        title: collection.title || collection.handle || "Untitled collection",
+        handle: collection.handle || "",
+      };
+    }
+
+    function parseCollectionHandle(value) {
+      const raw = String(value || "").trim();
+      if (!raw) return "";
+
+      try {
+        const url = new URL(raw, "https://camosignal.com");
+        const parts = url.pathname.split("/").filter(Boolean);
+        const collectionIndex = parts.indexOf("collections");
+        if (collectionIndex >= 0 && parts[collectionIndex + 1]) {
+          return parts[collectionIndex + 1];
+        }
+      } catch (error) {
+        // Fall through to handle cleanup below.
+      }
+
+      return raw
+        .replace(/^https?:\/\/[^/]+\/?/i, "")
+        .replace(/^\/+|\/+$/g, "")
+        .replace(/^collections\//i, "")
+        .split(/[?#]/)[0]
+        .trim();
+    }
+
+    function isHostedPage() {
+      return location.protocol === "http:" || location.protocol === "https:"
+    }
+
+    function productEndpoint(collectionHandle = "") {
+      const handle = parseCollectionHandle(collectionHandle);
+      const encodedHandle = encodeURIComponent(handle);
+      if (isHostedPage()) {
+        return handle ? `/api/products?collection=${encodedHandle}` : "/api/products";
+      }
+      return handle
+        ? `https://camosignal.com/collections/${encodedHandle}/products.json?limit=250`
+        : "https://camosignal.com/products.json?limit=250";
+    }
+
+    function collectionListEndpoint() {
+      return isHostedPage()
+        ? "/api/collections"
+        : "https://camosignal.com/collections.json?limit=250";
+    }
+
+    function renderCollectionSelect() {
+      const knownCollections = state.collections.filter((collection) => collection.handle);
+      const hasActiveCollection = state.activeCollection
+        && !knownCollections.some((collection) => collection.handle === state.activeCollection);
+      const options = [
+        { title: "All products", handle: "" },
+        ...(hasActiveCollection ? [{ title: `Manual: ${state.activeCollection}`, handle: state.activeCollection }] : []),
+        ...knownCollections,
+      ];
+
+      byId("collectionSelect").innerHTML = options
+        .map((collection) => `
+          <option value="${escapeAttr(collection.handle)}" ${collection.handle === state.activeCollection ? "selected" : ""}>
+            ${escapeHtml(collection.title)}
+          </option>
+        `)
+        .join("");
+    }
+
+    function renderBannerPresets() {
+      byId("bannerPresets").innerHTML = bannerPresets
+        .map((banner) => `
+          <button class="banner-option ${banner.src === state.activeBanner ? "active" : ""}" type="button" data-banner-src="${escapeAttr(banner.src)}">
+            <img src="${escapeAttr(banner.src)}" alt="${escapeAttr(banner.label)}">
+          </button>
+        `)
+        .join("");
+    }
+
+    function renderCatalog() {
+      const query = byId("productSearch").value.trim().toLowerCase();
+      const selectedKeys = new Set(state.selected.map(productKey));
+      const filtered = state.catalog.filter((product) => product.title.toLowerCase().includes(query));
+      byId("productCatalog").innerHTML = filtered.length
+        ? filtered
+            .map((product, index) => {
+              const key = productKey(product);
+              const selected = selectedKeys.has(key);
+              return `
+                <button class="catalog-item ${selected ? "selected" : ""}" type="button" data-catalog-key="${escapeAttr(key)}" data-catalog-index="${index}">
+                  <span class="thumb"><img src="${escapeAttr(product.image)}" alt=""></span>
+                  <span class="item-main">
+                    <span class="item-title">${escapeHtml(product.title)}</span>
+                    <span class="item-meta"><span class="price">${escapeHtml(product.price)}</span>${product.compareAt ? ` <s>${escapeHtml(product.compareAt)}</s>` : ""}</span>
+                    <span class="item-meta">${selected ? "Selected" : "Click to select"}</span>
+                  </span>
+                </button>`;
+            })
+            .join("")
+        : `<div class="empty">No products found.</div>`;
+    }
+
+    function renderSelectedProducts() {
+      const root = byId("selectedProducts");
+      root.innerHTML = state.selected.length
+        ? state.selected
+            .map((product, index) => `
+              <article class="selected-item">
+                <span class="thumb"><img src="${escapeAttr(product.image)}" alt=""></span>
+                <span class="selected-editor">
+                  <span class="selected-head">
+                    <strong class="item-title">Product ${index + 1}</strong>
+                    <span class="row-actions">
+                      <button class="button small ghost" type="button" data-move-up="${index}">Up</button>
+                      <button class="button small ghost" type="button" data-move-down="${index}">Down</button>
+                      <button class="button small danger" type="button" data-remove-selected="${index}">Remove</button>
+                    </span>
+                  </span>
+                  <span class="field-grid">
+                    ${productFields
+                      .map(([field, label]) => `
+                        <span class="field ${field === "title" || field === "url" || field === "image" ? "full" : ""}">
+                          <label>${label}</label>
+                          <input type="text" value="${escapeAttr(product[field] ?? "")}" data-selected-index="${index}" data-selected-field="${field}">
+                        </span>
+                      `)
+                      .join("")}
+                  </span>
+                </span>
+              </article>
+            `)
+            .join("")
+        : `<div class="empty">Select products from the catalog.</div>`;
+      setProductStatus();
+    }
+
+    function syncSelectedInputs() {
+      document.querySelectorAll("[data-selected-field]").forEach((input) => {
+        const index = Number(input.dataset.selectedIndex);
+        const field = input.dataset.selectedField;
+        if (state.selected[index]) {
+          state.selected[index][field] = input.value.trim();
+        }
+      });
+    }
+
+    function toggleCatalogProduct(key) {
+      syncSelectedInputs();
+      const existsAt = state.selected.findIndex((product) => productKey(product) === key);
+      if (existsAt >= 0) {
+        state.selected.splice(existsAt, 1);
+      } else {
+        if (state.selected.length >= 6) {
+          setStatus("Maximum 6 products");
+          return;
+        }
+        const product = state.catalog.find((item) => productKey(item) === key);
+        if (product) state.selected.push(clone(product));
+      }
+      renderAll();
+    }
+
+    function addBlankProduct() {
+      syncSelectedInputs();
+      if (state.selected.length >= 6) {
+        setStatus("Maximum 6 products");
+        return;
+      }
+      state.selected.push({
+        title: "New campaign product",
+        handle: `manual-${Date.now()}`,
+        url: "https://camosignal.com/products/",
+        image: "",
+        price: "$24.95",
+        compareAt: "$34.95",
+        badge: "28% OFF",
+      });
+      renderAll();
+    }
+
+    function moveSelected(index, direction) {
+      syncSelectedInputs();
+      const target = index + direction;
+      if (target < 0 || target >= state.selected.length) return;
+      const [item] = state.selected.splice(index, 1);
+      state.selected.splice(target, 0, item);
+      renderAll();
+    }
+
+    async function loadStoreProducts(collectionHandle = "") {
+      const handle = parseCollectionHandle(collectionHandle);
+      const label = handle ? `/collections/${handle}` : "all products";
+      state.activeCollection = handle;
+      byId("collectionHandle").value = handle ? `/collections/${handle}` : "";
+      renderCollectionSelect();
+      byId("productSearch").value = "";
+      byId("productStatus").textContent = handle ? "Loading collection" : "Loading store";
+      try {
+        const response = await fetch(productEndpoint(handle), { cache: "no-store" });
+        if (!response.ok) throw new Error(`Store returned ${response.status}`);
+        const data = await response.json();
+        const products = (data.products || []).map(normalizeStoreProduct).filter((product) => product.image);
+        if (!products.length) throw new Error("No products found");
+        state.catalog = products;
+        renderCatalog();
+        setProductStatus();
+        setStatus(`Loaded ${products.length} from ${label}`);
+      } catch (error) {
+        state.catalog = clone(fallbackCatalog);
+        renderCatalog();
+        setProductStatus();
+        setStatus("Using fallback products");
+      }
+    }
+
+    async function loadStoreCollections() {
+      byId("productStatus").textContent = "Loading collections";
+      try {
+        const response = await fetch(collectionListEndpoint(), { cache: "no-store" });
+        if (!response.ok) throw new Error(`Store returned ${response.status}`);
+        const data = await response.json();
+        const source = data.collections || data.custom_collections || data.smart_collections || [];
+        const collections = source.map(normalizeCollection).filter((collection) => collection.handle);
+        if (!collections.length) throw new Error("No collections found");
+        state.collections = collections;
+        renderCollectionSelect();
+        setStatus(`Loaded ${collections.length} collections`);
+      } catch (error) {
+        state.collections = [];
+        renderCollectionSelect();
+        setStatus("Enter a collection handle or URL");
+      }
+      setProductStatus();
+    }
+
+    function renderBadge(product, mobile = false) {
+      if (!product.badge) return "";
+
+      const style = mobile
+        ? "display:inline-block; min-width:52px; min-height:20px; padding:4px 8px; border-radius:999px; background-color:#e21b23; color:#ffffff; font-family:'Segoe UI', Arial, Helvetica, sans-serif; font-size:11px; line-height:12px; font-weight:500; letter-spacing:0.04em; text-transform:uppercase; text-align:center;"
+        : "display:inline-block; min-width:64px; min-height:24px; padding:6px 12px; border-radius:999px; background-color:#e21b23; color:#ffffff; font-family:'Segoe UI', Arial, Helvetica, sans-serif; font-size:13px; line-height:14px; font-weight:500; letter-spacing:0.04em; text-transform:uppercase; text-align:center;";
+      const padding = mobile ? "0 0 5px 0" : "0 0 6px 0";
+
+      return `
+                            <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                              <tr>
+                                <td align="left" style="padding:${padding};">
+                                  <span style="${style}">${escapeHtml(product.badge)}</span>
+                                </td>
+                              </tr>
+                            </table>`;
+    }
+
+    function renderPrice(product, mobile = false) {
+      const priceStyle = mobile
+        ? "margin:0 0 9px 0; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:12px; line-height:16px; color:#2c3d33; font-weight:700;"
+        : "margin:0 0 12px 0; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:13px; line-height:17px; color:#2c3d33; font-weight:700;";
+      const compareAt = product.compareAt
+        ? ` <span style="color:#777777; font-weight:400; text-decoration:line-through; margin-left:${mobile ? "3" : "4"}px;">${escapeHtml(product.compareAt)}</span>`
+        : "";
+      return `<p style="${priceStyle}"><span style="color:#c0392b; font-weight:700;">${escapeHtml(product.price)}</span>${compareAt}</p>`;
+    }
+
+    function renderDesktopProduct(product, config) {
+      return `
+                    <td width="33.333%" valign="top" style="padding:0 8px 26px 8px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#ffffff;">
+                        <tr>
+                          <td style="padding:0; background-color:#ffffff;">${renderBadge(product)}
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                              <tr>
+                                <td align="center" valign="middle" height="${config.desktopImageStageHeight}" style="height:${config.desktopImageStageHeight}px; padding:0; line-height:0;">
+                                  <a href="${escapeAttr(product.url)}" style="display:block;">
+                                    <img src="${escapeAttr(product.image)}" width="${config.desktopImageWidth}" alt="${escapeAttr(product.title)}" style="width:100%; max-width:${config.desktopImageWidth}px; height:auto; margin:0 auto; background-color:#ffffff;">
+                                  </a>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td align="left" style="padding:4px 0 0 0; text-align:left;">
+                            <p style="margin:0 0 5px 0; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:11px; line-height:15px; font-weight:700; color:#2c3d33; min-height:18px; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(product.title)}</p>
+                            ${renderPrice(product)}
+                            <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                              <tr>
+                                <td align="center" style="background:#2c3d33; border:0; border-radius:8px;">
+                                  <a class="btn-dark" href="${escapeAttr(product.url)}" style="display:block; padding:14px 15px; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:10px; line-height:13px; font-weight:600; color:#faf6ee; text-transform:uppercase; letter-spacing:1.5px; border-radius:8px;">SHOP NOW</a>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>`;
+    }
+
+    function renderMobileProduct(product, config) {
+      return `
+                    <td class="mobile-product-cell" width="50%" valign="top" style="padding:0 6px 22px 6px;">
+                      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#ffffff;">
+                        <tr>
+                          <td style="padding:0; background-color:#ffffff;">${renderBadge(product, true)}
+                            <a href="${escapeAttr(product.url)}" style="display:block;"><img class="mobile-product-image" src="${escapeAttr(product.image)}" width="${config.mobileImageWidth}" alt="${escapeAttr(product.title)}" style="width:100%; max-width:${config.mobileImageWidth}px; height:auto; margin:0 auto;"></a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td align="left" style="padding:4px 0 0 0; text-align:left;">
+                            <p class="mobile-title" style="margin:0 0 4px 0; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:10px; line-height:14px; min-height:28px; font-weight:700; color:#2c3d33; text-transform:uppercase; overflow:hidden;">${escapeHtml(product.title)}</p>
+                            ${renderPrice(product, true)}
+                            <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                              <tr>
+                                <td align="center" style="background:#2c3d33; border:0; border-radius:8px;">
+                                  <a class="mobile-button btn-dark" href="${escapeAttr(product.url)}" style="display:block; padding:11px 6px; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:10px; line-height:13px; font-weight:600; color:#faf6ee; text-transform:uppercase; letter-spacing:1.1px; border-radius:8px;">SHOP NOW</a>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>`;
+    }
+
+    function renderEmptyCell() {
+      return `
+                    <td width="33.333%" valign="top" style="padding:0 8px 26px 8px;">&nbsp;</td>`;
+    }
+
+    function renderRows(products, columns, renderProduct, config) {
+      return chunk(products, columns)
+        .map((row) => {
+          const cells = row.map((product) => renderProduct(product, config));
+          while (columns === 3 && cells.length < columns) cells.push(renderEmptyCell());
+          return `
+                  <tr>${cells.join("")}
+                  </tr>`;
+        })
+        .join("");
+    }
+
+    function renderEmail(campaign) {
+      const desktopRows = renderRows(campaign.products, campaign.productGrid.desktopColumns, renderDesktopProduct, campaign.productGrid);
+      const mobileRows = renderRows(campaign.products, campaign.productGrid.mobileColumns, renderMobileProduct, campaign.productGrid);
+
+      return `<!doctype html>
+<!--
+  FINAL STATIC HTML FOR SHOPIFY/MESSAGING.
+  Generated from docs/camosignal-email-campaign-editor.html.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="x-apple-disable-message-reformatting">
+  <title>CamoSignal Marketing Email</title>
+  <!--[if !mso]><!-->
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+  <!--<![endif]-->
+  <style>
+    html,
+    body {
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      background: #f5fbf7;
+    }
+
+    * {
+      -ms-text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+      box-sizing: border-box;
+    }
+
+    table,
+    td {
+      mso-table-lspace: 0pt !important;
+      mso-table-rspace: 0pt !important;
+      border-collapse: collapse !important;
+    }
+
+    img {
+      -ms-interpolation-mode: bicubic;
+      border: 0;
+      display: block;
+      height: auto;
+      line-height: 100%;
+      outline: none;
+      text-decoration: none;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    .btn-dark:hover {
+      background-color: #3a4e42 !important;
+    }
+
+    @media screen and (max-width: 640px) {
+      .email-shell {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+
+      .mobile-pad {
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+      }
+
+      .mobile-center {
+        text-align: center !important;
+      }
+
+      .hide-mobile {
+        display: none !important;
+      }
+
+      .desktop-product-grid {
+        display: none !important;
+        max-height: 0 !important;
+        overflow: hidden !important;
+        mso-hide: all !important;
+      }
+
+      .mobile-product-grid {
+        display: table !important;
+        max-height: none !important;
+        overflow: visible !important;
+        width: 100% !important;
+      }
+
+      .mobile-product-cell {
+        display: table-cell !important;
+        width: 50% !important;
+        padding: 0 5px 22px 5px !important;
+        vertical-align: top !important;
+      }
+
+      .mobile-product-image {
+        width: 100% !important;
+        max-width: ${campaign.productGrid.mobileImageWidth}px !important;
+      }
+
+      .mobile-title {
+        font-size: 10px !important;
+        line-height: 14px !important;
+        min-height: 28px !important;
+      }
+
+      .mobile-button {
+        padding: 11px 6px !important;
+        font-size: 10px !important;
+        line-height: 13px !important;
+        letter-spacing: 1.1px !important;
+      }
+    }
+  </style>
+</head>
+<body style="margin:0; padding:0; background-color:#f5fbf7;">
+  <div style="display:none; max-height:0; overflow:hidden; opacity:0; color:transparent; line-height:1px;">
+    ${escapeHtml(campaign.preheader)}
+  </div>
+  {{ open_tracking_block }}
+
+  <center role="article" aria-roledescription="email" lang="en" style="width:100%; background-color:#f5fbf7; padding:20px 0;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width:100%; background-color:#f5fbf7;">
+      <tr>
+        <td align="center" style="padding:12px;">
+          <table role="presentation" class="email-shell" width="600" cellpadding="0" cellspacing="0" style="width:600px; max-width:600px; background-color:#ffffff; border:1px solid #d7eadf; border-radius:8px; overflow:hidden;">
+
+            <tr>
+              <td style="background-color:#102d20;">
+                <a href="${escapeAttr(campaign.banner.href)}" style="display:block;">
+                  <img src="${escapeAttr(campaign.banner.src)}" width="${campaign.banner.width}" height="${campaign.banner.height}" alt="${escapeAttr(campaign.banner.alt)}" style="width:100%; max-width:${campaign.banner.width}px; height:auto; background-color:#102d20; color:#ffffff; font-family:Arial, sans-serif; font-size:14px; display:block;">
+                </a>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="mobile-pad" style="padding:24px 34px 10px 34px; background-color:#ffffff;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f5fbf7; border:1px solid #d7eadf; border-radius:8px;">
+                  <tr>
+                    <td align="center" style="padding:20px 18px;">
+                      <p style="margin:0 0 6px 0; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:12px; line-height:16px; font-weight:600; color:#5a6e5f; letter-spacing:0.08em; text-transform:uppercase;">
+                        ${escapeHtml(campaign.offer.eyebrow)}
+                      </p>
+                      <p style="margin:0; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:26px; line-height:32px; font-weight:700; color:#2c3d33; text-transform:uppercase;">
+                        ${escapeHtml(campaign.offer.headline)}
+                      </p>
+                      <p style="margin:6px 0 0 0; font-family:Arial, sans-serif; font-size:13px; line-height:19px; color:#2c3d33;">
+                        ${escapeHtml(campaign.offer.body)}
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="mobile-pad" style="padding:34px 34px 18px 34px; background-color:#ffffff;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td>
+                      <h2 style="margin:0; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:30px; line-height:35px; font-weight:700; color:#2c3d33; text-transform:uppercase; letter-spacing:0;">
+                        ${escapeHtml(campaign.productsHeader.title)}
+                      </h2>
+                    </td>
+                    <td class="hide-mobile" align="right" valign="bottom" style="font-family:Arial, sans-serif; font-size:12px; line-height:18px; color:#5a6e5f; font-weight:700;">
+                      ${escapeHtml(campaign.productsHeader.note)}
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:0 26px 8px 26px; background-color:#ffffff;">
+                <table role="presentation" class="desktop-product-grid" width="100%" cellpadding="0" cellspacing="0">${desktopRows}
+                </table>
+
+                <table role="presentation" class="mobile-product-grid" width="100%" cellpadding="0" cellspacing="0" style="display:none; max-height:0; overflow:hidden; mso-hide:all;">${mobileRows}
+                </table>
+              </td>
+            </tr>
+
+            <tr>
+              <td align="center" style="padding:8px 34px 42px 34px; background-color:#ffffff;">
+                <table role="presentation" cellpadding="0" cellspacing="0" align="center">
+                  <tr>
+                    <td align="center" style="background:#2c3d33; border-radius:8px;">
+                      <a href="${escapeAttr(campaign.bottomCta.url)}" style="display:inline-block; padding:15px 34px; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:12px; line-height:16px; font-weight:700; color:#ffffff; text-transform:uppercase; letter-spacing:1.2px; border-radius:8px;">
+                        ${escapeHtml(campaign.bottomCta.label)}
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="background-color:#102d20; padding:34px;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td class="mobile-center" style="font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:20px; line-height:24px; font-weight:700; color:#ffffff; text-transform:uppercase; letter-spacing:0.08em;">
+                      ${escapeHtml(campaign.footer.brand)}
+                    </td>
+                    <td class="mobile-center" align="right" style="font-family:Arial, sans-serif; font-size:12px; line-height:20px; font-weight:700;">
+                      <a href="${escapeAttr(campaign.footer.instagramUrl)}" style="color:#ffffff;">Instagram</a>
+                      <span style="color:#dff2e6; margin:0 8px;">|</span>
+                      <a href="${escapeAttr(campaign.footer.facebookUrl)}" style="color:#ffffff;">Facebook</a>
+                    </td>
+                  </tr>
+                </table>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:22px;">
+                  <tr>
+                    <td height="1" style="background-color:#2f7a55; line-height:1px; font-size:1px;">&nbsp;</td>
+                  </tr>
+                </table>
+                <p style="margin:18px 0 0 0; font-family:Arial, sans-serif; font-size:11px; line-height:18px; color:#dff2e6;">
+                  ${escapeHtml(campaign.footer.reason)}
+                </p>
+                <p style="margin:8px 0 0 0; font-family:Arial, sans-serif; font-size:11px; line-height:18px; color:#dff2e6;">
+                  Need help? Email us at <a href="mailto:${escapeAttr(campaign.footer.supportEmail)}" style="color:#ffffff; text-decoration:underline;">${escapeHtml(campaign.footer.supportEmail)}</a>.
+                </p>
+                <p style="margin:12px 0 0 0; font-family:Arial, sans-serif; font-size:11px; line-height:18px; font-weight:700;">
+                  <a href="{{ unsubscribe_link }}" style="color:#ffffff; text-decoration:underline;">Unsubscribe</a>
+                  <span style="color:#dff2e6; margin:0 6px;">|</span>
+                  <a href="${escapeAttr(campaign.footer.visitStoreUrl)}" style="color:#ffffff; text-decoration:underline;">Visit store</a>
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </center>
+</body>
+</html>`;
+    }
+
+    function validateHtml(html) {
+      const openTrackingCount = (html.match(/\{\{\s*open_tracking_block\s*\}\}/g) || []).length;
+      const unsubscribeCount = (html.match(/\{\{\s*unsubscribe_link\s*\}\}/g) || []).length;
+      if (openTrackingCount !== 1) throw new Error("open_tracking_block must appear exactly once.");
+      if (unsubscribeCount !== 1) throw new Error("unsubscribe_link must appear exactly once.");
+      if (html.includes("{%")) throw new Error("Messaging HTML must not contain Liquid tags.");
+      if (html.includes("&#9733;") || html.includes("(128)")) throw new Error("Static review stars/counts are still present.");
+    }
+
+    function previewDocument(html) {
+      const baseHref = location.href.replace(/[^/]*$/, "");
+      return html.replace("<head>", `<head>\n  <base href="${baseHref}">`);
+    }
+
+    function renderPreview(html) {
+      byId("previewFrame").srcdoc = previewDocument(html);
+      byId("deviceFrame").className = `device ${state.previewMode}`;
+      document.querySelectorAll("[data-preview-mode]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.previewMode === state.previewMode);
+      });
+    }
+
+    function generate() {
+      try {
+        const campaign = getCampaign();
+        const html = renderEmail(campaign);
+        validateHtml(html);
+        byId("generatedHtml").value = html;
+        renderPreview(html);
+        setStatus(`Generated ${campaign.products.length} products`);
+      } catch (error) {
+        setStatus(error.message);
+      }
+    }
+
+    function renderAll() {
+      renderBannerPresets();
+      renderCatalog();
+      renderSelectedProducts();
+      generate();
+    }
+
+    async function copyHtml() {
+      const html = byId("generatedHtml").value;
+      try {
+        await navigator.clipboard.writeText(html);
+        setStatus("Copied to clipboard");
+      } catch {
+        byId("generatedHtml").focus();
+        byId("generatedHtml").select();
+        setStatus("Selected HTML. Press Ctrl+C");
+      }
+    }
+
+    function downloadHtml() {
+      const html = byId("generatedHtml").value;
+      const blob = new Blob([html], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = "camosignal-email-marketing-template-messaging.html";
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+      setStatus("Downloaded HTML");
+    }
+
+    function resetStudio() {
+      state.catalog = clone(fallbackCatalog);
+      state.selected = clone(fallbackCatalog.slice(0, 6));
+      state.collections = [];
+      state.activeCollection = "";
+      state.previewMode = "desktop";
+      state.activeBanner = defaultCampaign.banner.src;
+      byId("collectionHandle").value = "";
+      renderCollectionSelect();
+      fillCampaignFields();
+      renderAll();
+    }
+
+    byId("copyButton").addEventListener("click", copyHtml);
+    byId("copyButtonSecondary").addEventListener("click", copyHtml);
+    byId("downloadButton").addEventListener("click", downloadHtml);
+    byId("resetButton").addEventListener("click", resetStudio);
+    byId("loadProductsButton").addEventListener("click", () => loadStoreProducts(""));
+    byId("loadCollectionsButton").addEventListener("click", loadStoreCollections);
+    byId("loadCollectionProductsButton").addEventListener("click", () => {
+      loadStoreProducts(byId("collectionHandle").value || byId("collectionSelect").value);
+    });
+    byId("collectionSelect").addEventListener("change", (event) => {
+      loadStoreProducts(event.target.value);
+    });
+    byId("collectionHandle").addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        loadStoreProducts(event.target.value);
+      }
+    });
+    byId("addManualButton").addEventListener("click", addBlankProduct);
+    byId("clearSearchButton").addEventListener("click", () => {
+      byId("productSearch").value = "";
+      renderCatalog();
+    });
+    byId("selectCodeButton").addEventListener("click", () => {
+      byId("generatedHtml").focus();
+      byId("generatedHtml").select();
+    });
+    byId("productSearch").addEventListener("input", renderCatalog);
+    byId("bannerSrc").addEventListener("input", () => {
+      state.activeBanner = byId("bannerSrc").value.trim();
+      byId("bannerPreview").src = state.activeBanner;
+      renderBannerPresets();
+    });
+    byId("bannerFile").addEventListener("change", (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        state.activeBanner = String(reader.result);
+        byId("bannerSrc").value = state.activeBanner;
+        byId("bannerPreview").src = state.activeBanner;
+        renderAll();
+        setStatus("Embedded local banner");
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.addEventListener("click", (event) => {
+      const bannerButton = event.target.closest("[data-banner-src]");
+      if (bannerButton) {
+        state.activeBanner = bannerButton.dataset.bannerSrc;
+        byId("bannerSrc").value = state.activeBanner;
+        byId("bannerPreview").src = state.activeBanner;
+        renderAll();
+        return;
+      }
+
+      const catalogButton = event.target.closest("[data-catalog-key]");
+      if (catalogButton) {
+        toggleCatalogProduct(catalogButton.dataset.catalogKey);
+        return;
+      }
+
+      const removeButton = event.target.closest("[data-remove-selected]");
+      if (removeButton) {
+        syncSelectedInputs();
+        state.selected.splice(Number(removeButton.dataset.removeSelected), 1);
+        renderAll();
+        return;
+      }
+
+      const upButton = event.target.closest("[data-move-up]");
+      if (upButton) {
+        moveSelected(Number(upButton.dataset.moveUp), -1);
+        return;
+      }
+
+      const downButton = event.target.closest("[data-move-down]");
+      if (downButton) {
+        moveSelected(Number(downButton.dataset.moveDown), 1);
+        return;
+      }
+
+      const modeButton = event.target.closest("[data-preview-mode]");
+      if (modeButton) {
+        state.previewMode = modeButton.dataset.previewMode;
+        generate();
+      }
+    });
+
+    document.addEventListener("input", (event) => {
+      if (event.target.matches("[data-selected-field]")) {
+        const imageField = event.target.dataset.selectedField === "image";
+        if (imageField) {
+          const item = event.target.closest(".selected-item");
+          const img = item.querySelector(".thumb img");
+          img.src = event.target.value;
+        }
+      }
+      if (event.target.matches("input, textarea")) {
+        window.clearTimeout(window.__generateTimer);
+        window.__generateTimer = window.setTimeout(generate, 250);
+      }
+    });
+
+    fillCampaignFields();
+    renderCollectionSelect();
+    renderAll();
+  </script>
+</body>
+</html>
