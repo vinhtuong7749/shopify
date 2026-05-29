@@ -26,6 +26,10 @@
       box-sizing: border-box;
     }
 
+    [hidden] {
+      display: none !important;
+    }
+
     html,
     body {
       margin: 0;
@@ -266,6 +270,59 @@
       line-height: 20px;
     }
 
+    .block-editor-empty {
+      margin: 0;
+      padding: 14px;
+      border: 1px dashed var(--green-200);
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 18px;
+      background: var(--surface-soft);
+    }
+
+    .block-editor-label {
+      color: var(--green-500);
+      font-size: 11px;
+      line-height: 15px;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-align: right;
+    }
+
+    .style-actions {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .size-control {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr) 34px auto;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .size-control input[type="range"] {
+      min-height: 34px;
+      padding: 0;
+      border: 0;
+      box-shadow: none;
+      accent-color: var(--green-800);
+    }
+
+    .size-readout {
+      min-width: 48px;
+      color: var(--green-800);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 900;
+      text-align: right;
+    }
+
     .field input:focus,
     .field textarea:focus,
     .field select:focus {
@@ -309,8 +366,10 @@
     .banner-option img {
       display: block;
       width: 100%;
-      aspect-ratio: 5 / 4;
-      object-fit: cover;
+      height: auto;
+      max-height: 150px;
+      object-fit: contain;
+      background: #ffffff;
     }
 
     .searchbar {
@@ -578,6 +637,45 @@
         </div>
         <div class="panel-body">
           <section class="section">
+            <h3 class="section-title">Header</h3>
+            <div class="field-grid">
+              <div class="field full">
+                <label for="headerLogoSrc">Logo image URL</label>
+                <input id="headerLogoSrc" type="text">
+              </div>
+              <div class="field full">
+                <label for="headerLogoFile">Local logo file</label>
+                <input id="headerLogoFile" type="file" accept="image/*">
+              </div>
+              <div class="field">
+                <label for="headerLogoWidth">Size px</label>
+                <input id="headerLogoWidth" type="number" min="32" max="220" step="1">
+              </div>
+              <div class="field">
+                <label for="headerBrandText">Fallback text</label>
+                <input id="headerBrandText" type="text">
+              </div>
+              <div class="field full">
+                <label for="headerLogoSizeRange">Logo/icon size</label>
+                <div class="size-control">
+                  <button class="button small ghost" type="button" data-logo-size-step="-8">-</button>
+                  <input id="headerLogoSizeRange" type="range" min="32" max="220" step="1">
+                  <button class="button small ghost" type="button" data-logo-size-step="8">+</button>
+                  <span class="size-readout" id="headerLogoSizeReadout">96px</span>
+                </div>
+              </div>
+              <div class="field full">
+                <label for="headerHref">Header click URL</label>
+                <input id="headerHref" type="text">
+              </div>
+              <div class="field full">
+                <label for="headerLogoAlt">Logo alt text</label>
+                <input id="headerLogoAlt" type="text">
+              </div>
+            </div>
+          </section>
+
+          <section class="section">
             <h3 class="section-title">Message</h3>
             <div class="field-grid">
               <div class="field full">
@@ -604,6 +702,74 @@
                 <label for="sectionNote">Product note</label>
                 <input id="sectionNote" type="text">
               </div>
+              <div class="field">
+                <label for="productButtonLabel">Product button</label>
+                <input id="productButtonLabel" type="text">
+              </div>
+              <div class="field">
+                <label for="bottomCtaLabel">Bottom button</label>
+                <input id="bottomCtaLabel" type="text">
+              </div>
+            </div>
+          </section>
+
+          <section class="section">
+            <div class="selected-head">
+              <h3 class="section-title">Block Style</h3>
+              <span class="block-editor-label" id="activeBlockName">No block selected</span>
+            </div>
+            <p class="block-editor-empty" id="blockEditorEmpty">Click a text block in the preview to edit content, alignment, font, size, color, and style here.</p>
+            <div class="field-grid" id="blockEditorControls" hidden>
+              <div class="field full">
+                <label for="blockText">Content</label>
+                <textarea id="blockText"></textarea>
+              </div>
+              <div class="field">
+                <label for="blockAlign">Alignment</label>
+                <select id="blockAlign">
+                  <option value="left">Left</option>
+                  <option value="center">Center</option>
+                  <option value="right">Right</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="blockFont">Font</label>
+                <select id="blockFont">
+                  <option value="oswald">Oswald</option>
+                  <option value="arial">Arial</option>
+                  <option value="georgia">Georgia</option>
+                  <option value="verdana">Verdana</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="blockFontSize">Size</label>
+                <input id="blockFontSize" type="number" min="9" max="42" step="1">
+              </div>
+              <div class="field">
+                <label for="blockColor">Color</label>
+                <input id="blockColor" type="color">
+              </div>
+              <div class="field">
+                <label for="blockWeight">Weight</label>
+                <select id="blockWeight">
+                  <option value="400">Regular</option>
+                  <option value="500">Medium</option>
+                  <option value="600">Semibold</option>
+                  <option value="700">Bold</option>
+                  <option value="800">Extra bold</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="blockTransform">Case</label>
+                <select id="blockTransform">
+                  <option value="none">Normal</option>
+                  <option value="uppercase">Uppercase</option>
+                  <option value="capitalize">Capitalize</option>
+                </select>
+              </div>
+              <div class="style-actions">
+                <button class="button small ghost" type="button" id="resetBlockStyleButton">Reset block style</button>
+              </div>
             </div>
           </section>
 
@@ -627,6 +793,60 @@
               <div class="field full">
                 <label for="bannerAlt">Banner alt text</label>
                 <input id="bannerAlt" type="text">
+              </div>
+              <div class="field">
+                <label for="bannerWidth">Output width</label>
+                <input id="bannerWidth" type="number" min="240" max="1200" step="1">
+              </div>
+              <div class="field">
+                <label for="bannerHeight">Output height</label>
+                <input id="bannerHeight" type="number" min="0" max="1600" step="1">
+              </div>
+            </div>
+          </section>
+
+          <section class="section">
+            <h3 class="section-title">Footer</h3>
+            <div class="field-grid">
+              <div class="field">
+                <label for="footerBrand">Footer brand</label>
+                <input id="footerBrand" type="text">
+              </div>
+              <div class="field">
+                <label for="footerSupportEmail">Support email</label>
+                <input id="footerSupportEmail" type="email">
+              </div>
+              <div class="field full">
+                <label for="footerReason">Footer reason</label>
+                <textarea id="footerReason"></textarea>
+              </div>
+              <div class="field full">
+                <label for="footerSupportLabel">Support text</label>
+                <input id="footerSupportLabel" type="text">
+              </div>
+              <div class="field">
+                <label for="footerInstagramLabel">Instagram label</label>
+                <input id="footerInstagramLabel" type="text">
+              </div>
+              <div class="field">
+                <label for="footerInstagramUrl">Instagram URL</label>
+                <input id="footerInstagramUrl" type="text">
+              </div>
+              <div class="field">
+                <label for="footerFacebookLabel">Facebook label</label>
+                <input id="footerFacebookLabel" type="text">
+              </div>
+              <div class="field">
+                <label for="footerFacebookUrl">Facebook URL</label>
+                <input id="footerFacebookUrl" type="text">
+              </div>
+              <div class="field">
+                <label for="footerVisitStoreLabel">Visit store label</label>
+                <input id="footerVisitStoreLabel" type="text">
+              </div>
+              <div class="field">
+                <label for="footerVisitStoreUrl">Visit store URL</label>
+                <input id="footerVisitStoreUrl" type="text">
               </div>
             </div>
           </section>
@@ -707,12 +927,12 @@
   <script>
     const bannerPresets = [
       {
-        label: "Final 5x4",
-        src: "./images/camosignal-email-banner-final-5x4.jpg",
+        label: "Final default",
+        src: "./images/camosignal-email-banner-final-1200.jpg",
       },
       {
-        label: "Final wide",
-        src: "./images/camosignal-email-banner-final-1200.jpg",
+        label: "Final 5x4",
+        src: "./images/camosignal-email-banner-final-5x4.jpg",
       },
       {
         label: "Green wide",
@@ -723,6 +943,29 @@
         src: "./images/camosignal-email-banner-green.png",
       },
     ];
+
+    const fontFamilies = {
+      oswald: "'Oswald', 'Arial Narrow', Arial, sans-serif",
+      arial: "Arial, Helvetica, sans-serif",
+      georgia: "Georgia, 'Times New Roman', Times, serif",
+      verdana: "Verdana, Geneva, sans-serif",
+    };
+
+    const textBlockDefinitions = {
+      offerEyebrow: { label: "Offer label", field: "offerEyebrow", multiline: false },
+      offerHeadline: { label: "Offer headline", field: "offerHeadline", multiline: false },
+      offerBody: { label: "Offer body", field: "offerBody", multiline: true },
+      sectionTitle: { label: "Product heading", field: "sectionTitle", multiline: false },
+      sectionNote: { label: "Product note", field: "sectionNote", multiline: false },
+      productButtonLabel: { label: "Product button", field: "productButtonLabel", multiline: false },
+      bottomCtaLabel: { label: "Bottom button", field: "bottomCtaLabel", multiline: false },
+      footerBrand: { label: "Footer brand", field: "footerBrand", multiline: false },
+      footerReason: { label: "Footer reason", field: "footerReason", multiline: true },
+      footerSupportLabel: { label: "Support text", field: "footerSupportLabel", multiline: false },
+      footerInstagramLabel: { label: "Instagram label", field: "footerInstagramLabel", multiline: false },
+      footerFacebookLabel: { label: "Facebook label", field: "footerFacebookLabel", multiline: false },
+      footerVisitStoreLabel: { label: "Visit store label", field: "footerVisitStoreLabel", multiline: false },
+    };
 
     const fallbackCatalog = [
       {
@@ -783,8 +1026,15 @@
 
     const defaultCampaign = {
       preheader: "CamoSignal Favorites are here. Use code CAMOSIGNAL10 for 10% off your first order.",
+      header: {
+        logoSrc: "https://cdn.shopify.com/s/files/1/0741/7987/0911/files/LOGO_FINAL_WEBSITE.png",
+        logoAlt: "CamoSignal",
+        logoWidth: 96,
+        href: "https://camosignal.com",
+        brandText: "CAMOSIGNAL",
+      },
       banner: {
-        src: "./images/camosignal-email-banner-final-5x4.jpg",
+        src: "./images/camosignal-email-banner-final-1200.jpg",
         href: "https://camosignal.com/collections/all",
         alt: "CamoSignal Favorites - use code CAMOSIGNAL10",
         width: 600,
@@ -802,9 +1052,10 @@
       productGrid: {
         desktopColumns: 3,
         mobileColumns: 2,
-        desktopImageWidth: 166,
-        desktopImageStageHeight: 210,
-        mobileImageWidth: 148,
+        desktopImageWidth: 186,
+        desktopImageStageHeight: 230,
+        mobileImageWidth: 176,
+        buttonLabel: "SHOP NOW",
       },
       bottomCta: {
         label: "View All Products",
@@ -813,10 +1064,29 @@
       footer: {
         brand: "CAMOSIGNAL",
         reason: "You are receiving this email because you joined the CamoSignal community or made a purchase from camosignal.com.",
+        supportLabel: "Need help? Email us at",
         supportEmail: "support.camosignal@gmail.com",
+        instagramLabel: "Instagram",
         instagramUrl: "https://www.instagram.com/camo.signal/",
-        facebookUrl: "https://www.facebook.com/profile.php?id=61575744733042",
+        facebookLabel: "Facebook",
+        facebookUrl: "https://www.facebook.com/people/Camo-Signal/61575744733042/",
+        visitStoreLabel: "Visit store",
         visitStoreUrl: "https://camosignal.com/collections/all",
+      },
+      textStyles: {
+        offerEyebrow: { align: "center", font: "oswald", size: 12, color: "#5a6e5f", weight: "600", transform: "uppercase" },
+        offerHeadline: { align: "center", font: "oswald", size: 26, color: "#2c3d33", weight: "700", transform: "uppercase" },
+        offerBody: { align: "center", font: "arial", size: 13, color: "#2c3d33", weight: "400", transform: "none" },
+        sectionTitle: { align: "left", font: "oswald", size: 30, color: "#2c3d33", weight: "700", transform: "uppercase" },
+        sectionNote: { align: "right", font: "arial", size: 12, color: "#5a6e5f", weight: "700", transform: "none" },
+        productButtonLabel: { align: "center", font: "oswald", size: 10, color: "#faf6ee", weight: "600", transform: "uppercase" },
+        bottomCtaLabel: { align: "center", font: "oswald", size: 12, color: "#ffffff", weight: "700", transform: "uppercase" },
+        footerBrand: { align: "center", font: "oswald", size: 20, color: "#ffffff", weight: "700", transform: "uppercase" },
+        footerReason: { align: "center", font: "arial", size: 11, color: "#dff2e6", weight: "400", transform: "none" },
+        footerSupportLabel: { align: "center", font: "arial", size: 11, color: "#dff2e6", weight: "400", transform: "none" },
+        footerInstagramLabel: { align: "center", font: "arial", size: 12, color: "#ffffff", weight: "700", transform: "none" },
+        footerFacebookLabel: { align: "center", font: "arial", size: 12, color: "#ffffff", weight: "700", transform: "none" },
+        footerVisitStoreLabel: { align: "center", font: "arial", size: 11, color: "#ffffff", weight: "700", transform: "none" },
       },
     };
 
@@ -827,6 +1097,8 @@
       activeCollection: "",
       previewMode: "desktop",
       activeBanner: defaultCampaign.banner.src,
+      selectedBlockKey: "",
+      textStyles: structuredClone(defaultCampaign.textStyles),
     };
 
     const productFields = [
@@ -879,14 +1151,60 @@
 
     function editTextAttr(key, editable) {
       return editable
-        ? ` data-edit-key="${escapeAttr(key)}" contenteditable="plaintext-only" spellcheck="false"`
+        ? ` data-edit-key="${escapeAttr(key)}"`
         : "";
     }
 
     function editProductAttr(index, field, editable) {
       return editable
-        ? ` data-product-index="${index}" data-product-field="${escapeAttr(field)}" contenteditable="plaintext-only" spellcheck="false"`
+        ? ` data-product-index="${index}" data-product-field="${escapeAttr(field)}"`
         : "";
+    }
+
+    function selectedBlockDefinition() {
+      return textBlockDefinitions[state.selectedBlockKey] || null;
+    }
+
+    function normalizedTextStyle(campaign, key) {
+      return {
+        ...defaultCampaign.textStyles[key],
+        ...(state.textStyles[key] || {}),
+        ...((campaign.textStyles || {})[key] || {}),
+      };
+    }
+
+    function textAlign(campaign, key) {
+      const align = normalizedTextStyle(campaign, key).align;
+      return ["left", "center", "right"].includes(align) ? align : "left";
+    }
+
+    function textCss(campaign, key, extra = "") {
+      const style = normalizedTextStyle(campaign, key);
+      const size = Number(style.size) || Number(defaultCampaign.textStyles[key]?.size) || 13;
+      const lineHeight = Math.max(size + 4, Math.round(size * 1.28));
+      const font = fontFamilies[style.font] || fontFamilies.oswald;
+      const transform = style.transform || "none";
+      return `${extra}font-family:${font}; font-size:${size}px; line-height:${lineHeight}px; font-weight:${style.weight || "400"}; color:${style.color || "#2c3d33"}; text-align:${textAlign(campaign, key)}; text-transform:${transform};`;
+    }
+
+    function buttonTextCss(campaign, key, extra = "") {
+      const style = normalizedTextStyle(campaign, key);
+      const size = Number(style.size) || Number(defaultCampaign.textStyles[key]?.size) || 11;
+      const lineHeight = Math.max(size + 3, Math.round(size * 1.25));
+      const font = fontFamilies[style.font] || fontFamilies.oswald;
+      return `${extra}font-family:${font}; font-size:${size}px; line-height:${lineHeight}px; font-weight:${style.weight || "700"}; color:${style.color || "#ffffff"}; text-transform:${style.transform || "uppercase"}; text-align:${textAlign(campaign, key)};`;
+    }
+
+    const socialIconImageUrls = {
+      instagram: "https://vercel-email-studio.vercel.app/images/social-instagram.png",
+      facebook: "https://vercel-email-studio.vercel.app/images/social-facebook.png",
+    };
+
+    function renderSocialIconLink(campaign, key, icon, href, label, editable) {
+      const style = normalizedTextStyle(campaign, key);
+      const iconSize = Math.min(Math.max((Number(style.size) || 12) + 14, 24), 38);
+      const iconSrc = socialIconImageUrls[icon] || socialIconImageUrls.instagram;
+      return `<a${editTextAttr(key, editable)} href="${escapeAttr(href)}" target="_blank" rel="noopener" aria-label="${escapeAttr(label)}" title="${escapeAttr(label)}" style="display:inline-block; text-decoration:none; line-height:1;"><img src="${escapeAttr(iconSrc)}" width="${iconSize}" height="${iconSize}" alt="${escapeAttr(label)}" style="display:block; width:${iconSize}px; height:${iconSize}px; border:0; line-height:100%; outline:none; text-decoration:none;"></a>`;
     }
 
     function resolveEmailAsset(src) {
@@ -903,6 +1221,21 @@
       } catch {
         return raw;
       }
+    }
+
+    function setBannerDimensionsFromImage(src) {
+      const raw = String(src || "").trim();
+      if (!raw) return;
+
+      const image = new Image();
+      image.onload = () => {
+        if (!image.naturalWidth || !image.naturalHeight) return;
+        const outputWidth = Number(byId("bannerWidth").value) || defaultCampaign.banner.width;
+        byId("bannerWidth").value = outputWidth;
+        byId("bannerHeight").value = Math.round((outputWidth * image.naturalHeight) / image.naturalWidth);
+        generate();
+      };
+      image.src = raw;
     }
 
     function chunk(items, size) {
@@ -922,16 +1255,45 @@
       byId("productStatus").textContent = `${state.selected.length} selected`;
     }
 
+    function setHeaderLogoSize(value) {
+      const size = Math.min(Math.max(Number(value) || defaultCampaign.header.logoWidth, 32), 220);
+      byId("headerLogoWidth").value = size;
+      byId("headerLogoSizeRange").value = size;
+      byId("headerLogoSizeReadout").textContent = `${size}px`;
+      return size;
+    }
+
     function fillCampaignFields() {
       byId("preheader").value = defaultCampaign.preheader;
+      byId("headerLogoSrc").value = defaultCampaign.header.logoSrc;
+      byId("headerLogoFile").value = "";
+      setHeaderLogoSize(defaultCampaign.header.logoWidth);
+      byId("headerBrandText").value = defaultCampaign.header.brandText;
+      byId("headerHref").value = defaultCampaign.header.href;
+      byId("headerLogoAlt").value = defaultCampaign.header.logoAlt;
       byId("bannerSrc").value = defaultCampaign.banner.src;
+      byId("bannerFile").value = "";
       byId("bannerHref").value = defaultCampaign.banner.href;
       byId("bannerAlt").value = defaultCampaign.banner.alt;
+      byId("bannerWidth").value = defaultCampaign.banner.width;
+      byId("bannerHeight").value = defaultCampaign.banner.height;
       byId("offerEyebrow").value = defaultCampaign.offer.eyebrow;
       byId("offerHeadline").value = defaultCampaign.offer.headline;
       byId("offerBody").value = defaultCampaign.offer.body;
       byId("sectionTitle").value = defaultCampaign.productsHeader.title;
       byId("sectionNote").value = defaultCampaign.productsHeader.note;
+      byId("productButtonLabel").value = defaultCampaign.productGrid.buttonLabel;
+      byId("bottomCtaLabel").value = defaultCampaign.bottomCta.label;
+      byId("footerBrand").value = defaultCampaign.footer.brand;
+      byId("footerReason").value = defaultCampaign.footer.reason;
+      byId("footerSupportLabel").value = defaultCampaign.footer.supportLabel;
+      byId("footerSupportEmail").value = defaultCampaign.footer.supportEmail;
+      byId("footerInstagramLabel").value = defaultCampaign.footer.instagramLabel;
+      byId("footerInstagramUrl").value = defaultCampaign.footer.instagramUrl;
+      byId("footerFacebookLabel").value = defaultCampaign.footer.facebookLabel;
+      byId("footerFacebookUrl").value = defaultCampaign.footer.facebookUrl;
+      byId("footerVisitStoreLabel").value = defaultCampaign.footer.visitStoreLabel;
+      byId("footerVisitStoreUrl").value = defaultCampaign.footer.visitStoreUrl;
       byId("bannerPreview").src = defaultCampaign.banner.src;
     }
 
@@ -940,11 +1302,21 @@
       return {
         ...clone(defaultCampaign),
         preheader: byId("preheader").value.trim(),
+        header: {
+          ...defaultCampaign.header,
+          logoSrc: byId("headerLogoSrc").value.trim(),
+          logoAlt: byId("headerLogoAlt").value.trim() || defaultCampaign.header.logoAlt,
+          logoWidth: Number(byId("headerLogoWidth").value) || defaultCampaign.header.logoWidth,
+          href: byId("headerHref").value.trim() || defaultCampaign.header.href,
+          brandText: byId("headerBrandText").value.trim() || defaultCampaign.header.brandText,
+        },
         banner: {
           ...defaultCampaign.banner,
           src: byId("bannerSrc").value.trim(),
           href: byId("bannerHref").value.trim(),
           alt: byId("bannerAlt").value.trim(),
+          width: Number(byId("bannerWidth").value) || defaultCampaign.banner.width,
+          height: Number(byId("bannerHeight").value) || "",
         },
         offer: {
           eyebrow: byId("offerEyebrow").value.trim(),
@@ -955,6 +1327,28 @@
           title: byId("sectionTitle").value.trim(),
           note: byId("sectionNote").value.trim(),
         },
+        productGrid: {
+          ...defaultCampaign.productGrid,
+          buttonLabel: byId("productButtonLabel").value.trim() || defaultCampaign.productGrid.buttonLabel,
+        },
+        bottomCta: {
+          ...defaultCampaign.bottomCta,
+          label: byId("bottomCtaLabel").value.trim() || defaultCampaign.bottomCta.label,
+        },
+        footer: {
+          ...defaultCampaign.footer,
+          brand: byId("footerBrand").value.trim() || defaultCampaign.footer.brand,
+          reason: byId("footerReason").value.trim() || defaultCampaign.footer.reason,
+          supportLabel: byId("footerSupportLabel").value.trim() || defaultCampaign.footer.supportLabel,
+          supportEmail: byId("footerSupportEmail").value.trim() || defaultCampaign.footer.supportEmail,
+          instagramLabel: byId("footerInstagramLabel").value.trim() || defaultCampaign.footer.instagramLabel,
+          instagramUrl: byId("footerInstagramUrl").value.trim() || defaultCampaign.footer.instagramUrl,
+          facebookLabel: byId("footerFacebookLabel").value.trim() || defaultCampaign.footer.facebookLabel,
+          facebookUrl: byId("footerFacebookUrl").value.trim() || defaultCampaign.footer.facebookUrl,
+          visitStoreLabel: byId("footerVisitStoreLabel").value.trim() || defaultCampaign.footer.visitStoreLabel,
+          visitStoreUrl: byId("footerVisitStoreUrl").value.trim() || defaultCampaign.footer.visitStoreUrl,
+        },
+        textStyles: clone(state.textStyles),
         products: state.selected.filter((product) => product.title && product.url && product.image),
       };
     }
@@ -1211,40 +1605,26 @@
       setProductStatus();
     }
 
-    function renderBadge(product, mobile = false) {
-      if (!product.badge) return "";
-
-      const style = mobile
-        ? "display:inline-block; min-width:52px; min-height:20px; padding:4px 8px; border-radius:999px; background-color:#e21b23; color:#ffffff; font-family:'Segoe UI', Arial, Helvetica, sans-serif; font-size:11px; line-height:12px; font-weight:500; letter-spacing:0.04em; text-transform:uppercase; text-align:center;"
-        : "display:inline-block; min-width:64px; min-height:24px; padding:6px 12px; border-radius:999px; background-color:#e21b23; color:#ffffff; font-family:'Segoe UI', Arial, Helvetica, sans-serif; font-size:13px; line-height:14px; font-weight:500; letter-spacing:0.04em; text-transform:uppercase; text-align:center;";
-      const padding = mobile ? "0 0 5px 0" : "0 0 6px 0";
-
-      return `
-                            <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
-                              <tr>
-                                <td align="left" style="padding:${padding};">
-                                  <span style="${style}">${escapeHtml(product.badge)}</span>
-                                </td>
-                              </tr>
-                            </table>`;
+    function renderBadge(product, mobile = false, productIndex = 0, editable = false) {
+      return "";
     }
 
-    function renderPrice(product, mobile = false) {
+    function renderPrice(product, mobile = false, productIndex = 0, editable = false) {
       const priceStyle = mobile
         ? "margin:0 0 9px 0; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:12px; line-height:16px; color:#2c3d33; font-weight:700;"
         : "margin:0 0 12px 0; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:13px; line-height:17px; color:#2c3d33; font-weight:700;";
       const compareAt = product.compareAt
-        ? ` <span style="color:#777777; font-weight:400; text-decoration:line-through; margin-left:${mobile ? "3" : "4"}px;">${escapeHtml(product.compareAt)}</span>`
+        ? ` <span${editProductAttr(productIndex, "compareAt", editable)} style="color:#777777; font-weight:400; text-decoration:line-through; margin-left:${mobile ? "3" : "4"}px;">${escapeHtml(product.compareAt)}</span>`
         : "";
-      return `<p style="${priceStyle}"><span style="color:#c0392b; font-weight:700;">${escapeHtml(product.price)}</span>${compareAt}</p>`;
+      return `<p style="${priceStyle}"><span${editProductAttr(productIndex, "price", editable)} style="color:#c0392b; font-weight:700;">${escapeHtml(product.price)}</span>${compareAt}</p>`;
     }
 
-    function renderDesktopProduct(product, config) {
+    function renderDesktopProduct(product, config, productIndex = 0, editable = false) {
       return `
-                    <td width="33.333%" valign="top" style="padding:0 8px 26px 8px;">
+                    <td width="33.333%" valign="top" style="padding:0 6px 28px 6px;">
                       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#ffffff;">
                         <tr>
-                          <td style="padding:0; background-color:#ffffff;">${renderBadge(product)}
+                          <td style="padding:0; background-color:#ffffff;">${renderBadge(product, false, productIndex, editable)}
                             <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                               <tr>
                                 <td align="center" valign="middle" height="${config.desktopImageStageHeight}" style="height:${config.desktopImageStageHeight}px; padding:0; line-height:0;">
@@ -1257,13 +1637,13 @@
                           </td>
                         </tr>
                         <tr>
-                          <td align="left" style="padding:4px 0 0 0; text-align:left;">
-                            <p style="margin:0 0 5px 0; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:11px; line-height:15px; font-weight:700; color:#2c3d33; min-height:18px; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(product.title)}</p>
-                            ${renderPrice(product)}
+                          <td align="left" style="padding:6px 0 0 0; text-align:left;">
+                            <p${editProductAttr(productIndex, "title", editable)} style="margin:0 0 5px 0; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:12px; line-height:16px; font-weight:700; color:#2c3d33; min-height:20px; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(product.title)}</p>
+                            ${renderPrice(product, false, productIndex, editable)}
                             <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
                               <tr>
                                 <td align="center" style="background:#2c3d33; border:0; border-radius:8px;">
-                                  <a class="btn-dark" href="${escapeAttr(product.url)}" style="display:block; padding:14px 15px; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:10px; line-height:13px; font-weight:600; color:#faf6ee; text-transform:uppercase; letter-spacing:1.5px; border-radius:8px;">SHOP NOW</a>
+                                  <a class="btn-dark" href="${escapeAttr(product.url)}" style="${config.desktopButtonStyle}"><span${editTextAttr("productButtonLabel", editable)}>${escapeHtml(config.buttonLabel)}</span></a>
                                 </td>
                               </tr>
                             </table>
@@ -1273,23 +1653,23 @@
                     </td>`;
     }
 
-    function renderMobileProduct(product, config) {
+    function renderMobileProduct(product, config, productIndex = 0, editable = false) {
       return `
-                    <td class="mobile-product-cell" width="50%" valign="top" style="padding:0 6px 22px 6px;">
+                    <td class="mobile-product-cell" width="50%" valign="top" style="padding:0 5px 24px 5px;">
                       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#ffffff;">
                         <tr>
-                          <td style="padding:0; background-color:#ffffff;">${renderBadge(product, true)}
+                          <td style="padding:0; background-color:#ffffff;">${renderBadge(product, true, productIndex, editable)}
                             <a href="${escapeAttr(product.url)}" style="display:block;"><img class="mobile-product-image" src="${escapeAttr(product.image)}" width="${config.mobileImageWidth}" alt="${escapeAttr(product.title)}" style="width:100%; max-width:${config.mobileImageWidth}px; height:auto; margin:0 auto;"></a>
                           </td>
                         </tr>
                         <tr>
-                          <td align="left" style="padding:4px 0 0 0; text-align:left;">
-                            <p class="mobile-title" style="margin:0 0 4px 0; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:10px; line-height:14px; min-height:28px; font-weight:700; color:#2c3d33; text-transform:uppercase; overflow:hidden;">${escapeHtml(product.title)}</p>
-                            ${renderPrice(product, true)}
+                          <td align="left" style="padding:6px 0 0 0; text-align:left;">
+                            <p${editProductAttr(productIndex, "title", editable)} class="mobile-title" style="margin:0 0 4px 0; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:11px; line-height:15px; min-height:30px; font-weight:700; color:#2c3d33; text-transform:uppercase; overflow:hidden;">${escapeHtml(product.title)}</p>
+                            ${renderPrice(product, true, productIndex, editable)}
                             <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
                               <tr>
                                 <td align="center" style="background:#2c3d33; border:0; border-radius:8px;">
-                                  <a class="mobile-button btn-dark" href="${escapeAttr(product.url)}" style="display:block; padding:11px 6px; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:10px; line-height:13px; font-weight:600; color:#faf6ee; text-transform:uppercase; letter-spacing:1.1px; border-radius:8px;">SHOP NOW</a>
+                                  <a class="mobile-button btn-dark" href="${escapeAttr(product.url)}" style="${config.mobileButtonStyle}"><span${editTextAttr("productButtonLabel", editable)}>${escapeHtml(config.buttonLabel)}</span></a>
                                 </td>
                               </tr>
                             </table>
@@ -1301,13 +1681,13 @@
 
     function renderEmptyCell() {
       return `
-                    <td width="33.333%" valign="top" style="padding:0 8px 26px 8px;">&nbsp;</td>`;
+                    <td width="33.333%" valign="top" style="padding:0 6px 28px 6px;">&nbsp;</td>`;
     }
 
-    function renderRows(products, columns, renderProduct, config) {
+    function renderRows(products, columns, renderProduct, config, editable = false) {
       return chunk(products, columns)
-        .map((row) => {
-          const cells = row.map((product) => renderProduct(product, config));
+        .map((row, rowIndex) => {
+          const cells = row.map((product, columnIndex) => renderProduct(product, config, rowIndex * columns + columnIndex, editable));
           while (columns === 3 && cells.length < columns) cells.push(renderEmptyCell());
           return `
                   <tr>${cells.join("")}
@@ -1316,9 +1696,24 @@
         .join("");
     }
 
-    function renderEmail(campaign) {
-      const desktopRows = renderRows(campaign.products, campaign.productGrid.desktopColumns, renderDesktopProduct, campaign.productGrid);
-      const mobileRows = renderRows(campaign.products, campaign.productGrid.mobileColumns, renderMobileProduct, campaign.productGrid);
+    function renderEmail(campaign, options = {}) {
+      const editable = Boolean(options.editable);
+      const headerLogoSrc = resolveEmailAsset(campaign.header.logoSrc);
+      const headerLogoWidth = Math.min(Math.max(Number(campaign.header.logoWidth) || 96, 32), 220);
+      const bannerWidth = Number(campaign.banner.width) || 600;
+      const bannerHeight = Number(campaign.banner.height);
+      const bannerHeightAttr = bannerHeight ? ` height="${bannerHeight}"` : "";
+      const bannerSrc = resolveEmailAsset(campaign.banner.src);
+      const headerLogoHtml = headerLogoSrc
+        ? `<img src="${escapeAttr(headerLogoSrc)}" width="${headerLogoWidth}" alt="${escapeAttr(campaign.header.logoAlt)}" style="width:${headerLogoWidth}px; max-width:${headerLogoWidth}px; height:auto; margin:0 auto; display:block; border:0;">`
+        : `<span style="font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:24px; line-height:30px; font-weight:700; color:#102d20; letter-spacing:0.1em; text-transform:uppercase;">${escapeHtml(campaign.header.brandText)}</span>`;
+      const productGrid = {
+        ...campaign.productGrid,
+        desktopButtonStyle: buttonTextCss(campaign, "productButtonLabel", "display:block; padding:14px 15px; letter-spacing:1.5px; border-radius:8px;"),
+        mobileButtonStyle: buttonTextCss(campaign, "productButtonLabel", "display:block; padding:11px 6px; letter-spacing:1.1px; border-radius:8px;"),
+      };
+      const desktopRows = renderRows(campaign.products, campaign.productGrid.desktopColumns, renderDesktopProduct, productGrid, editable);
+      const mobileRows = renderRows(campaign.products, campaign.productGrid.mobileColumns, renderMobileProduct, productGrid, editable);
 
       return `<!doctype html>
 <!--
@@ -1340,7 +1735,7 @@
       margin: 0 !important;
       padding: 0 !important;
       width: 100% !important;
-      background: #f5fbf7;
+      background: #ffffff;
     }
 
     * {
@@ -1370,6 +1765,12 @@
       text-decoration: none;
     }
 
+    .footer-unsubscribe,
+    .footer-unsubscribe a {
+      color: #ffffff !important;
+      text-decoration: underline !important;
+    }
+
     .btn-dark:hover {
       background-color: #3a4e42 !important;
     }
@@ -1381,8 +1782,13 @@
       }
 
       .mobile-pad {
-        padding-left: 18px !important;
-        padding-right: 18px !important;
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+      }
+
+      .product-grid-pad {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
       }
 
       .mobile-center {
@@ -1410,7 +1816,7 @@
       .mobile-product-cell {
         display: table-cell !important;
         width: 50% !important;
-        padding: 0 5px 22px 5px !important;
+        padding: 0 4px 24px 4px !important;
         vertical-align: top !important;
       }
 
@@ -1420,9 +1826,9 @@
       }
 
       .mobile-title {
-        font-size: 10px !important;
-        line-height: 14px !important;
-        min-height: 28px !important;
+        font-size: 11px !important;
+        line-height: 15px !important;
+        min-height: 30px !important;
       }
 
       .mobile-button {
@@ -1434,38 +1840,46 @@
     }
   </style>
 </head>
-<body style="margin:0; padding:0; background-color:#f5fbf7;">
+<body style="margin:0; padding:0; background-color:#ffffff;">
   <div style="display:none; max-height:0; overflow:hidden; opacity:0; color:transparent; line-height:1px;">
     ${escapeHtml(campaign.preheader)}
   </div>
   {{ open_tracking_block }}
 
-  <center role="article" aria-roledescription="email" lang="en" style="width:100%; background-color:#f5fbf7; padding:20px 0;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width:100%; background-color:#f5fbf7;">
+  <center role="article" aria-roledescription="email" lang="en" style="width:100%; background-color:#ffffff; padding:0;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width:100%; background-color:#ffffff;">
       <tr>
-        <td align="center" style="padding:12px;">
-          <table role="presentation" class="email-shell" width="600" cellpadding="0" cellspacing="0" style="width:600px; max-width:600px; background-color:#ffffff; border:1px solid #d7eadf; border-radius:8px; overflow:hidden;">
+        <td align="center" style="padding:0;">
+          <table role="presentation" class="email-shell" width="600" cellpadding="0" cellspacing="0" style="width:600px; max-width:600px; background-color:#ffffff; border:0; border-radius:0; overflow:hidden;">
 
             <tr>
-              <td style="background-color:#102d20;">
-                <a href="${escapeAttr(campaign.banner.href)}" style="display:block;">
-                  <img src="${escapeAttr(campaign.banner.src)}" width="${campaign.banner.width}" height="${campaign.banner.height}" alt="${escapeAttr(campaign.banner.alt)}" style="width:100%; max-width:${campaign.banner.width}px; height:auto; background-color:#102d20; color:#ffffff; font-family:Arial, sans-serif; font-size:14px; display:block;">
+              <td align="center" style="padding:16px 34px; background-color:#ffffff; border-bottom:1px solid #d7eadf;">
+                <a href="${escapeAttr(campaign.header.href)}" style="display:inline-block; margin:0 auto; text-align:center;">
+                  ${headerLogoHtml}
                 </a>
               </td>
             </tr>
 
             <tr>
-              <td class="mobile-pad" style="padding:24px 34px 10px 34px; background-color:#ffffff;">
+              <td style="background-color:#102d20;">
+                <a href="${escapeAttr(campaign.banner.href)}" style="display:block;">
+                  <img src="${escapeAttr(bannerSrc)}" width="${bannerWidth}"${bannerHeightAttr} alt="${escapeAttr(campaign.banner.alt)}" style="width:100%; max-width:${bannerWidth}px; height:auto; background-color:#102d20; color:#ffffff; font-family:Arial, sans-serif; font-size:14px; display:block;">
+                </a>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding:22px 0 8px 0; background-color:#ffffff;">
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f5fbf7; border:1px solid #d7eadf; border-radius:8px;">
                   <tr>
                     <td align="center" style="padding:20px 18px;">
-                      <p style="margin:0 0 6px 0; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:12px; line-height:16px; font-weight:600; color:#5a6e5f; letter-spacing:0.08em; text-transform:uppercase;">
+                      <p${editTextAttr("offerEyebrow", editable)} style="${textCss(campaign, "offerEyebrow", "margin:0 0 6px 0; letter-spacing:0.08em;")}">
                         ${escapeHtml(campaign.offer.eyebrow)}
                       </p>
-                      <p style="margin:0; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:26px; line-height:32px; font-weight:700; color:#2c3d33; text-transform:uppercase;">
+                      <p${editTextAttr("offerHeadline", editable)} style="${textCss(campaign, "offerHeadline", "margin:0;")}">
                         ${escapeHtml(campaign.offer.headline)}
                       </p>
-                      <p style="margin:6px 0 0 0; font-family:Arial, sans-serif; font-size:13px; line-height:19px; color:#2c3d33;">
+                      <p${editTextAttr("offerBody", editable)} style="${textCss(campaign, "offerBody", "margin:6px 0 0 0;")}">
                         ${escapeHtml(campaign.offer.body)}
                       </p>
                     </td>
@@ -1475,15 +1889,15 @@
             </tr>
 
             <tr>
-              <td class="mobile-pad" style="padding:34px 34px 18px 34px; background-color:#ffffff;">
+              <td style="padding:30px 0 16px 0; background-color:#ffffff;">
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                   <tr>
                     <td>
-                      <h2 style="margin:0; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:30px; line-height:35px; font-weight:700; color:#2c3d33; text-transform:uppercase; letter-spacing:0;">
+                      <h2${editTextAttr("sectionTitle", editable)} style="${textCss(campaign, "sectionTitle", "margin:0; letter-spacing:0;")}">
                         ${escapeHtml(campaign.productsHeader.title)}
                       </h2>
                     </td>
-                    <td class="hide-mobile" align="right" valign="bottom" style="font-family:Arial, sans-serif; font-size:12px; line-height:18px; color:#5a6e5f; font-weight:700;">
+                    <td${editTextAttr("sectionNote", editable)} class="hide-mobile" align="${textAlign(campaign, "sectionNote")}" valign="bottom" style="${textCss(campaign, "sectionNote")}">
                       ${escapeHtml(campaign.productsHeader.note)}
                     </td>
                   </tr>
@@ -1492,7 +1906,7 @@
             </tr>
 
             <tr>
-              <td style="padding:0 26px 8px 26px; background-color:#ffffff;">
+              <td class="product-grid-pad" style="padding:0 14px 8px 14px; background-color:#ffffff;">
                 <table role="presentation" class="desktop-product-grid" width="100%" cellpadding="0" cellspacing="0">${desktopRows}
                 </table>
 
@@ -1506,8 +1920,8 @@
                 <table role="presentation" cellpadding="0" cellspacing="0" align="center">
                   <tr>
                     <td align="center" style="background:#2c3d33; border-radius:8px;">
-                      <a href="${escapeAttr(campaign.bottomCta.url)}" style="display:inline-block; padding:15px 34px; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:12px; line-height:16px; font-weight:700; color:#ffffff; text-transform:uppercase; letter-spacing:1.2px; border-radius:8px;">
-                        ${escapeHtml(campaign.bottomCta.label)}
+                      <a href="${escapeAttr(campaign.bottomCta.url)}" style="${buttonTextCss(campaign, "bottomCtaLabel", "display:inline-block; padding:15px 34px; letter-spacing:1.2px; border-radius:8px;")}">
+                        <span${editTextAttr("bottomCtaLabel", editable)}>${escapeHtml(campaign.bottomCta.label)}</span>
                       </a>
                     </td>
                   </tr>
@@ -1516,16 +1930,25 @@
             </tr>
 
             <tr>
-              <td style="background-color:#102d20; padding:34px;">
+              <td align="center" style="background-color:#102d20; padding:34px; text-align:center;">
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                   <tr>
-                    <td class="mobile-center" style="font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:20px; line-height:24px; font-weight:700; color:#ffffff; text-transform:uppercase; letter-spacing:0.08em;">
+                    <td${editTextAttr("footerBrand", editable)} align="center" style="${textCss(campaign, "footerBrand", "letter-spacing:0.08em;")}">
                       ${escapeHtml(campaign.footer.brand)}
                     </td>
-                    <td class="mobile-center" align="right" style="font-family:Arial, sans-serif; font-size:12px; line-height:20px; font-weight:700;">
-                      <a href="${escapeAttr(campaign.footer.instagramUrl)}" style="color:#ffffff;">Instagram</a>
-                      <span style="color:#dff2e6; margin:0 8px;">|</span>
-                      <a href="${escapeAttr(campaign.footer.facebookUrl)}" style="color:#ffffff;">Facebook</a>
+                  </tr>
+                  <tr>
+                    <td align="center" style="padding-top:12px; text-align:center;">
+                      <table role="presentation" cellpadding="0" cellspacing="0" align="center">
+                        <tr>
+                          <td align="center" style="padding:0 7px;">
+                            ${renderSocialIconLink(campaign, "footerInstagramLabel", "instagram", campaign.footer.instagramUrl, campaign.footer.instagramLabel, editable)}
+                          </td>
+                          <td align="center" style="padding:0 7px;">
+                            ${renderSocialIconLink(campaign, "footerFacebookLabel", "facebook", campaign.footer.facebookUrl, campaign.footer.facebookLabel, editable)}
+                          </td>
+                        </tr>
+                      </table>
                     </td>
                   </tr>
                 </table>
@@ -1534,16 +1957,16 @@
                     <td height="1" style="background-color:#2f7a55; line-height:1px; font-size:1px;">&nbsp;</td>
                   </tr>
                 </table>
-                <p style="margin:18px 0 0 0; font-family:Arial, sans-serif; font-size:11px; line-height:18px; color:#dff2e6;">
+                <p${editTextAttr("footerReason", editable)} style="${textCss(campaign, "footerReason", "margin:18px 0 0 0;")}">
                   ${escapeHtml(campaign.footer.reason)}
                 </p>
-                <p style="margin:8px 0 0 0; font-family:Arial, sans-serif; font-size:11px; line-height:18px; color:#dff2e6;">
-                  Need help? Email us at <a href="mailto:${escapeAttr(campaign.footer.supportEmail)}" style="color:#ffffff; text-decoration:underline;">${escapeHtml(campaign.footer.supportEmail)}</a>.
+                <p style="${textCss(campaign, "footerSupportLabel", "margin:8px 0 0 0;")}">
+                  <span${editTextAttr("footerSupportLabel", editable)}>${escapeHtml(campaign.footer.supportLabel)}</span> <a href="mailto:${escapeAttr(campaign.footer.supportEmail)}" style="color:#ffffff; text-decoration:underline;">${escapeHtml(campaign.footer.supportEmail)}</a>.
                 </p>
-                <p style="margin:12px 0 0 0; font-family:Arial, sans-serif; font-size:11px; line-height:18px; font-weight:700;">
-                  <a href="{{ unsubscribe_link }}" style="color:#ffffff; text-decoration:underline;">Unsubscribe</a>
+                <p style="margin:12px 0 0 0; font-family:Arial, sans-serif; font-size:11px; line-height:18px; font-weight:700; text-align:center;">
+                  <span class="footer-unsubscribe" style="color:#ffffff; text-decoration:underline;">{{ unsubscribe_link }}</span>
                   <span style="color:#dff2e6; margin:0 6px;">|</span>
-                  <a href="${escapeAttr(campaign.footer.visitStoreUrl)}" style="color:#ffffff; text-decoration:underline;">Visit store</a>
+                  <a href="${escapeAttr(campaign.footer.visitStoreUrl)}" style="color:#ffffff; text-decoration:underline;"><span${editTextAttr("footerVisitStoreLabel", editable)} style="${textCss(campaign, "footerVisitStoreLabel")}">${escapeHtml(campaign.footer.visitStoreLabel)}</span></a>
                 </p>
               </td>
             </tr>
@@ -1567,7 +1990,59 @@
 
     function previewDocument(html) {
       const baseHref = location.href.replace(/[^/]*$/, "");
-      return html.replace("<head>", `<head>\n  <base href="${baseHref}">`);
+      const selectedBlockKey = JSON.stringify(state.selectedBlockKey || "");
+      const previewHtml = html
+        .replace(/\{\{\s*unsubscribe_link\s*\}\}/g, '<a href="#" style="color:#ffffff; text-decoration:underline;">Unsubscribe</a>')
+        .replace(/\{\{\s*open_tracking_block\s*\}\}/g, "");
+      const inlineEditor = `
+  <style>
+    [data-edit-key] {
+      cursor: pointer !important;
+      outline: 1px dashed transparent;
+      outline-offset: 2px;
+      transition: outline-color 120ms ease, background-color 120ms ease;
+    }
+
+    [data-edit-key]:hover,
+    [data-edit-key][data-selected-block="true"] {
+      background-color: rgba(79, 127, 97, 0.08) !important;
+      outline-color: #4f7f61 !important;
+    }
+  </style>
+  <script>
+    (() => {
+      const selectedBlockKey = ${selectedBlockKey};
+      const selectableNodes = document.querySelectorAll("[data-edit-key]");
+
+      function markSelected(key) {
+        selectableNodes.forEach((node) => {
+          node.toggleAttribute("data-selected-block", node.dataset.editKey === key);
+        });
+      }
+
+      markSelected(selectedBlockKey);
+
+      selectableNodes.forEach((node) => {
+        node.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          markSelected(node.dataset.editKey || "");
+          parent.postMessage({
+            source: "camosignal-email-block-select",
+            key: node.dataset.editKey || "",
+          }, "*");
+        });
+      });
+
+      document.addEventListener("click", (event) => {
+        if (event.target.closest("[data-edit-key]")) return;
+        if (event.target.closest("a")) event.preventDefault();
+      });
+    })();
+  <\/script>`;
+      return previewHtml
+        .replace("<head>", `<head>\n  <base href="${baseHref}">`)
+        .replace("</body>", `${inlineEditor}\n</body>`);
     }
 
     function renderPreview(html) {
@@ -1582,9 +2057,10 @@
       try {
         const campaign = getCampaign();
         const html = renderEmail(campaign);
+        const previewHtml = renderEmail(campaign, { editable: true });
         validateHtml(html);
         byId("generatedHtml").value = html;
-        renderPreview(html);
+        renderPreview(previewHtml);
         setStatus(`Generated ${campaign.products.length} products`);
       } catch (error) {
         setStatus(error.message);
@@ -1595,6 +2071,7 @@
       renderBannerPresets();
       renderCatalog();
       renderSelectedProducts();
+      renderBlockEditor();
       generate();
     }
 
@@ -1631,10 +2108,75 @@
       state.activeCollection = "";
       state.previewMode = "desktop";
       state.activeBanner = defaultCampaign.banner.src;
+      state.selectedBlockKey = "";
+      state.textStyles = clone(defaultCampaign.textStyles);
       byId("collectionHandle").value = "";
       renderCollectionSelect();
       fillCampaignFields();
       renderAll();
+    }
+
+    function selectBlock(key) {
+      if (!textBlockDefinitions[key]) return;
+      state.selectedBlockKey = key;
+      renderBlockEditor();
+      generate();
+      setStatus(`Selected ${textBlockDefinitions[key].label}`);
+    }
+
+    function renderBlockEditor() {
+      const definition = selectedBlockDefinition();
+      const empty = byId("blockEditorEmpty");
+      const controls = byId("blockEditorControls");
+      const activeName = byId("activeBlockName");
+
+      if (!definition) {
+        empty.hidden = false;
+        controls.hidden = true;
+        activeName.textContent = "No block selected";
+        return;
+      }
+
+      const style = {
+        ...defaultCampaign.textStyles[state.selectedBlockKey],
+        ...(state.textStyles[state.selectedBlockKey] || {}),
+      };
+      empty.hidden = true;
+      controls.hidden = false;
+      activeName.textContent = definition.label;
+      byId("blockText").value = byId(definition.field).value;
+      byId("blockAlign").value = style.align;
+      byId("blockFont").value = style.font;
+      byId("blockFontSize").value = style.size;
+      byId("blockColor").value = style.color;
+      byId("blockWeight").value = style.weight;
+      byId("blockTransform").value = style.transform;
+    }
+
+    function updateSelectedBlockFromControls() {
+      const definition = selectedBlockDefinition();
+      if (!definition) return;
+
+      byId(definition.field).value = byId("blockText").value;
+      state.textStyles[state.selectedBlockKey] = {
+        align: byId("blockAlign").value,
+        font: byId("blockFont").value,
+        size: Number(byId("blockFontSize").value) || defaultCampaign.textStyles[state.selectedBlockKey].size,
+        color: byId("blockColor").value,
+        weight: byId("blockWeight").value,
+        transform: byId("blockTransform").value,
+      };
+      generate();
+      setStatus(`Updated ${definition.label}`);
+    }
+
+    function resetSelectedBlockStyle() {
+      const definition = selectedBlockDefinition();
+      if (!definition) return;
+      state.textStyles[state.selectedBlockKey] = clone(defaultCampaign.textStyles[state.selectedBlockKey]);
+      renderBlockEditor();
+      generate();
+      setStatus(`Reset ${definition.label}`);
     }
 
     byId("copyButton").addEventListener("click", copyHtml);
@@ -1665,9 +2207,28 @@
       byId("generatedHtml").select();
     });
     byId("productSearch").addEventListener("input", renderCatalog);
+    byId("headerLogoWidth").addEventListener("input", (event) => {
+      setHeaderLogoSize(event.target.value);
+    });
+    byId("headerLogoSizeRange").addEventListener("input", (event) => {
+      setHeaderLogoSize(event.target.value);
+    });
+    byId("headerLogoFile").addEventListener("change", (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        byId("headerLogoSrc").value = String(reader.result);
+        renderAll();
+        setStatus("Embedded local logo");
+      };
+      reader.readAsDataURL(file);
+    });
     byId("bannerSrc").addEventListener("input", () => {
       state.activeBanner = byId("bannerSrc").value.trim();
       byId("bannerPreview").src = state.activeBanner;
+      window.clearTimeout(window.__bannerDimensionTimer);
+      window.__bannerDimensionTimer = window.setTimeout(() => setBannerDimensionsFromImage(state.activeBanner), 400);
       renderBannerPresets();
     });
     byId("bannerFile").addEventListener("change", (event) => {
@@ -1678,11 +2239,23 @@
         state.activeBanner = String(reader.result);
         byId("bannerSrc").value = state.activeBanner;
         byId("bannerPreview").src = state.activeBanner;
+        setBannerDimensionsFromImage(state.activeBanner);
         renderAll();
         setStatus("Embedded local banner");
       };
       reader.readAsDataURL(file);
     });
+    byId("bannerWidth").addEventListener("change", () => setBannerDimensionsFromImage(byId("bannerSrc").value));
+    window.addEventListener("message", (event) => {
+      const data = event.data || {};
+      if (data.source === "camosignal-email-block-select") {
+        selectBlock(data.key);
+      }
+    });
+
+    byId("blockEditorControls").addEventListener("input", updateSelectedBlockFromControls);
+    byId("blockEditorControls").addEventListener("change", updateSelectedBlockFromControls);
+    byId("resetBlockStyleButton").addEventListener("click", resetSelectedBlockStyle);
 
     document.addEventListener("click", (event) => {
       const bannerButton = event.target.closest("[data-banner-src]");
@@ -1723,6 +2296,14 @@
       const modeButton = event.target.closest("[data-preview-mode]");
       if (modeButton) {
         state.previewMode = modeButton.dataset.previewMode;
+        generate();
+        return;
+      }
+
+      const logoSizeButton = event.target.closest("[data-logo-size-step]");
+      if (logoSizeButton) {
+        const currentSize = Number(byId("headerLogoWidth").value) || defaultCampaign.header.logoWidth;
+        setHeaderLogoSize(currentSize + Number(logoSizeButton.dataset.logoSizeStep));
         generate();
       }
     });

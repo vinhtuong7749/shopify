@@ -313,6 +313,30 @@
 
 	/* Mobile: move search icon to right side (next to cart) */
 	@media (max-width: 1199px) {
+		html.is-mobile-nav-open .mobile-floating-cart,
+		html.is-mobile-nav-open #ShopifyChat,
+		html.is-mobile-nav-open #shopify-chat,
+		html.is-mobile-nav-open #gorgias-chat-container,
+		html.is-mobile-nav-open #tidio-chat,
+		html.is-mobile-nav-open #intercom-container,
+		html.is-mobile-nav-open [id*="shopify-chat" i],
+		html.is-mobile-nav-open [class*="shopify-chat" i],
+		html.is-mobile-nav-open [id*="gorgias" i],
+		html.is-mobile-nav-open [class*="gorgias" i],
+		html.is-mobile-nav-open .intercom-lightweight-app,
+		html.is-mobile-nav-open .tawk-min-container,
+		html.is-mobile-nav-open iframe#dummy-chat-button-iframe,
+		html.is-mobile-nav-open iframe#tidio-chat-iframe,
+		html.is-mobile-nav-open iframe[title*="chat" i],
+		html.is-mobile-nav-open iframe[src*="shopifychat" i],
+		html.is-mobile-nav-open iframe[src*="inbox.shopify" i],
+		html.is-mobile-nav-open iframe[src*="chat" i] {
+			opacity: 0 !important;
+			visibility: hidden !important;
+			pointer-events: none !important;
+			transform: translateY(120%) !important;
+		}
+
 		/* Hide the search icon from the LEFT side (hamburger area) */
 		.header__mobile-menu-wrapper .header__icon--search-mobile,
 		.header__mobile-menu-wrapper .no-js.header__icon--search-mobile {
@@ -886,6 +910,85 @@
 </script>
 
 {%- render 'adastra' with '/src/scripts/section-header.js' -%}
+
+<script>
+	(function() {
+		var root = document.documentElement;
+		var openClass = 'is-mobile-nav-open';
+		var drawer = null;
+		var toggler = null;
+		var eventBusInstalled = false;
+
+		function resolveElements() {
+			drawer = document.getElementById('headerDrawerMenu');
+			toggler = document.querySelector('.js-mobile-header-main-toggler');
+		}
+
+		function isMenuOpen() {
+			return !!(
+				(drawer && drawer.classList.contains('is-active')) ||
+				(toggler && toggler.classList.contains('is-active')) ||
+				(toggler && toggler.getAttribute('aria-expanded') === 'true')
+			);
+		}
+
+		function syncMobileNavState() {
+			resolveElements();
+			root.classList.toggle(openClass, isMenuOpen());
+		}
+
+		function installMutationObserver() {
+			resolveElements();
+			if (!window.MutationObserver) return;
+
+			[drawer, toggler].forEach(function(element) {
+				if (!element || element.dataset.camoMobileNavObserver === 'true') return;
+
+				element.dataset.camoMobileNavObserver = 'true';
+				new MutationObserver(syncMobileNavState).observe(element, {
+					attributes: true,
+					attributeFilter: ['class', 'aria-expanded']
+				});
+			});
+		}
+
+		function installEventBusListeners() {
+			var eventBus = window.themeCore && window.themeCore.EventBus;
+			if (!eventBus || eventBusInstalled) return false;
+
+			eventBusInstalled = true;
+			eventBus.listen('Toggle:headerToggleMenuDrawer:open', function() {
+				root.classList.add(openClass);
+			});
+			eventBus.listen(['EscEvent:on', 'Overlay:headerToggleMenuDrawer:close', 'Toggle:headerToggleMenuDrawer:close'], function() {
+				root.classList.remove(openClass);
+			});
+			return true;
+		}
+
+		function install() {
+			syncMobileNavState();
+			installMutationObserver();
+
+			if (!installEventBusListeners()) {
+				var attempts = 0;
+				var timer = setInterval(function() {
+					attempts += 1;
+					if (installEventBusListeners() || attempts >= 80) {
+						clearInterval(timer);
+					}
+				}, 100);
+			}
+		}
+
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', install);
+		} else {
+			install();
+		}
+		document.addEventListener('shopify:section:load', install);
+	})();
+</script>
 
 {% schema %}
 {

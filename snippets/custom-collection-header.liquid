@@ -36,6 +36,38 @@
   font-size: 18px;
   font-weight: 600;
 }
+.custom-coll-turkey-row {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-top: 22px;
+  position: relative;
+  z-index: 2;
+}
+.custom-coll-turkey-link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #2c3d33;
+  font-family: 'Oswald', sans-serif;
+  font-size: 18px;
+  font-style: italic;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.custom-coll-turkey-link:hover {
+  opacity: 0.72;
+}
+.custom-coll-turkey-link__arrow {
+  font-size: 1.05em;
+  line-height: 1;
+}
 .custom-sort-inline {
   display: flex;
   align-items: center;
@@ -82,6 +114,11 @@
   pointer-events: none;
   transform: translateY(-65%) rotate(45deg);
 }
+@media (min-width: 1200px) {
+  .custom-coll-turkey-row {
+    transform: translateY(64px);
+  }
+}
 @media (max-width: 989px) {
   .custom-coll-wrap {
     padding: 0 20px;
@@ -117,6 +154,13 @@
     padding-bottom: 0;
   }
   .custom-coll-count {
+    font-size: 16px;
+  }
+  .custom-coll-turkey-row {
+    margin-top: 14px;
+    margin-bottom: 12px;
+  }
+  .custom-coll-turkey-link {
     font-size: 16px;
   }
 
@@ -192,6 +236,15 @@
       <span class="custom-coll-count">{{ real_count | default: 0 }} products</span>
     </div>
   </div>
+  {%- if collection.handle == 'grand-slam-subspecies' -%}
+    {%- assign turkey_collection = collections['turkey'] -%}
+    <div class="custom-coll-turkey-row">
+      <a class="custom-coll-turkey-link" href="{%- if turkey_collection != blank -%}{{ turkey_collection.url }}{%- else -%}/collections/turkey{%- endif -%}">
+        <span>Shop all Turkey</span>
+        <span class="custom-coll-turkey-link__arrow" aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+  {%- endif -%}
 </div>
 
 <script>

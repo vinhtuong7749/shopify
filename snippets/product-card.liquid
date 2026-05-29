@@ -82,6 +82,14 @@
 	{%- assign product_card_show_tag_badges = true -%}
 {%- endif -%}
 
+{%- assign product_card_show_mobile_sale_badge = false -%}
+{%- assign product_card_mobile_sale_percentage_value = 0 -%}
+
+{%- if product_card_show_tag_badges and settings.is_sale_percentage_label_enabled and product != blank and product.available and product.compare_at_price > product.price -%}
+	{%- assign product_card_show_mobile_sale_badge = true -%}
+	{%- assign product_card_mobile_sale_percentage_value = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | floor -%}
+{%- endif -%}
+
 {%- if product != blank and product_card_show_tag_badges -%}
 	{%- for tag in product.tags -%}
 		{%- assign product_tag_handle = tag | handleize -%}
@@ -378,7 +386,7 @@
 	</a>
 {%- endcapture -%}
 
-<div class="product-card js-product-card"
+<div class="product-card js-product-card{% if product_card_show_tag_badges %} product-card--grand-slam-subspecies{% endif %}"
 	{% if product != blank %}
 		data-existing-product
 	{% endif -%}
@@ -549,7 +557,24 @@
 		{%- endif -%}
 
 		<div class="product-card__price" style="font-family: 'Oswald', sans-serif; font-size: 13px; color: #2c3d33; margin-bottom: 12px;">
-			{%- render 'price', product: product, show_unit_price: show_unit_price, currency_code_enabled: currency_code_enabled, hide_from_price: true -%}
+			<div class="product-card__price-row">
+				<div class="product-card__price-value">
+					{%- render 'price', product: product, show_unit_price: show_unit_price, currency_code_enabled: currency_code_enabled, hide_from_price: true -%}
+				</div>
+
+				{%- if product_card_show_mobile_sale_badge -%}
+					<span class="badge badge--sale-percentage product-card__mobile-sale-badge">
+						<span class="visually-hidden">
+							{{- 'products.product.product_label' | t -}}:
+						</span>
+						<span class="badge__sale-visual" aria-hidden="true">
+							<span class="badge__sale-text">
+								-{{- product_card_mobile_sale_percentage_value -}}%
+							</span>
+						</span>
+					</span>
+				{%- endif -%}
+			</div>
 			<!-- Start of Judge.me code -->
       <div style='{{ jm_style }}' class='jdgm-widget jdgm-preview-badge' data-id='{{ product.id }}' data-auto-install='false'>
         {{ product.metafields.judgeme.badge }}
@@ -765,6 +790,10 @@
 		color: #2c3d33 !important;
 	}
 
+	.product-card__mobile-sale-badge {
+		display: none !important;
+	}
+
 	/* Enforce rounded product images everywhere (desktop & mobile) */
 	.product-card__image-wrapper {
 		border-radius: 8px 8px 0 0 !important;
@@ -787,8 +816,6 @@
 		.product-card__image-wrapper {
 			aspect-ratio: 1 / 1 !important;
 			width: 100% !important;
-			background-color: #ffffff !important;
-			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.22) !important;
 			overflow: hidden !important;
 			position: relative !important;
 		}
@@ -848,7 +875,7 @@
 			max-width: 100% !important;
 			min-width: 0 !important; /* CRITICAL for flex/grid blowout */
 			box-sizing: border-box !important;
-			overflow: visible !important;
+			overflow: hidden !important;
 		}
 		.product-card__main {
 			width: 100% !important;
@@ -914,6 +941,53 @@
 			line-height: 1.15 !important;
 		}
 
+		.product-card--grand-slam-subspecies .product-card__main > .product-badges .badge--sale-percentage {
+			display: none !important;
+		}
+
+		.product-card--grand-slam-subspecies .product-card__price-row {
+			display: flex !important;
+			align-items: center !important;
+			justify-content: flex-start !important;
+			gap: 6px !important;
+			width: 100% !important;
+			min-width: 0 !important;
+		}
+
+		.product-card--grand-slam-subspecies .product-card__price-value {
+			flex: 0 1 auto !important;
+			min-width: 0 !important;
+		}
+
+		.product-card--grand-slam-subspecies .product-card__mobile-sale-badge {
+			display: inline-flex !important;
+			flex: 0 0 auto !important;
+			align-items: center !important;
+			justify-content: center !important;
+			min-width: 42px !important;
+			min-height: 20px !important;
+			padding: 4px 8px !important;
+			margin: 0 !important;
+			border: 0 !important;
+			border-radius: 999px !important;
+			background-color: #e21b23 !important;
+			color: #ffffff !important;
+			font-family: "Segoe UI", Arial, Helvetica, sans-serif !important;
+			font-size: 12px !important;
+			font-weight: 600 !important;
+			line-height: 1 !important;
+			letter-spacing: 0.03em !important;
+			text-transform: uppercase !important;
+			white-space: nowrap !important;
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.14) !important;
+		}
+
+		.product-card--grand-slam-subspecies .product-card__mobile-sale-badge * {
+			color: #ffffff !important;
+			font-size: inherit !important;
+			line-height: inherit !important;
+		}
+
 		.product-card__price .price {
 			display: block !important;
 			width: 100% !important;
@@ -968,6 +1042,13 @@
 			text-decoration: line-through !important;
 			overflow: visible !important;
 			text-overflow: clip !important;
+		}
+
+		.product-card--grand-slam-subspecies .product-card__price-value .price,
+		.product-card--grand-slam-subspecies .product-card__price-value .price__container,
+		.product-card--grand-slam-subspecies .product-card__price-value .price__sale {
+			width: auto !important;
+			max-width: none !important;
 		}
 
 		.product-card__price .jdgm-widget,
