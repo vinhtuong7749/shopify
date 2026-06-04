@@ -1,7 +1,7 @@
 {%- comment -%}
 	Mega Menu Collection
 	- SHOP: Gender + Clothing + product cards
-	- COLLECTION: Featured + Independence Day + Hunting + Seasonal
+	- COLLECTION: Featured + Independence Day + Hunting + Fishing
 {%- endcomment -%}
 
 <div
@@ -257,33 +257,37 @@
 			<div class="mega-block mega-block--featured">
 				<h3 class="mega-block__heading">Featured</h3>
 				<ul class="mega-block__list mega-featured-list">
-					{%- assign best_col = collections['best-sellers'] -%}
-					{%- if best_col == blank -%}
-						{%- assign best_col = collections['best-seller'] -%}
-					{%- endif -%}
-					{%- assign best_url = '/collections/best-sellers' -%}
-					{%- if best_col != blank -%}
-						{%- assign best_url = best_col.url -%}
-					{%- endif -%}
-
 					{%- assign new_col = collections['new-arrivals'] -%}
 					{%- assign new_url = '/collections/new-arrivals' -%}
 					{%- if new_col != blank -%}
 						{%- assign new_url = new_col.url -%}
 					{%- endif -%}
 
-					{%- assign ind_feature_col = collections['independence-day'] -%}
-					{%- if ind_feature_col == blank -%}
-						{%- assign ind_feature_col = collections['usa'] -%}
+					{%- assign nation_park_col = collections['nation-park'] -%}
+					{%- if nation_park_col == blank -%}
+						{%- assign nation_park_col = collections['national-park'] -%}
 					{%- endif -%}
-					{%- assign ind_feature_url = '/collections/independence-day' -%}
-					{%- if ind_feature_col != blank -%}
-						{%- assign ind_feature_url = ind_feature_col.url -%}
+					{%- assign nation_park_url = '/collections/nation-park' -%}
+					{%- if nation_park_col != blank -%}
+						{%- assign nation_park_url = nation_park_col.url -%}
 					{%- endif -%}
 
-					<li><a href="{{ best_url }}" class="mega-block__link">Best Seller</a></li>
+					{%- assign world_turkey_slam_col = collections['world-turkey-slam'] -%}
+					{%- assign world_turkey_slam_url = '/collections/world-turkey-slam' -%}
+					{%- if world_turkey_slam_col != blank -%}
+						{%- assign world_turkey_slam_url = world_turkey_slam_col.url -%}
+					{%- endif -%}
+
+					{%- assign grand_slam_col = collections['grand-slam-subspecies'] -%}
+					{%- assign grand_slam_url = '/collections/grand-slam-subspecies' -%}
+					{%- if grand_slam_col != blank -%}
+						{%- assign grand_slam_url = grand_slam_col.url -%}
+					{%- endif -%}
+
+					<li><a href="{{ nation_park_url }}" class="mega-block__link">National Park</a></li>
+					<li><a href="{{ world_turkey_slam_url }}" class="mega-block__link">World Turkey Slam</a></li>
+					<li><a href="{{ grand_slam_url }}" class="mega-block__link">Grand Slam Subspecies</a></li>
 					<li><a href="{{ new_url }}" class="mega-block__link">New Arrivals</a></li>
-					<li><a href="{{ ind_feature_url }}" class="mega-block__link">Independence Day</a></li>
 					<li><a href="/collections/turkey" class="mega-block__link">Turkey</a></li>
 				</ul>
 			</div>
@@ -291,8 +295,8 @@
 			<div class="mega-block mega-block--hunting">
 				<h3 class="mega-block__heading">Hunting</h3>
 				<div class="mega-hunting-list">
-					{%- assign hunting_handles = "turkey,deer,fishing,waterfowl" | split: "," -%}
-					{%- assign hunting_labels = "Turkey,Deer,Fishing,Waterfowl" | split: "," -%}
+					{%- assign hunting_handles = "turkey,deer,waterfowl" | split: "," -%}
+					{%- assign hunting_labels = "Turkey,Deer,Waterfowl" | split: "," -%}
 					{%- for handle in hunting_handles -%}
 						{%- assign h_col = collections[handle] -%}
 						{%- assign h_label = hunting_labels[forloop.index0] -%}
@@ -303,7 +307,7 @@
 						<a href="{%- if h_col != blank -%}{{ h_col.url }}{%- else -%}/collections/{{ handle }}{%- endif -%}" class="mega-hunting-item{% unless h_has_products %} mega-hunting-item--disabled{% endunless %}"{% unless h_has_products %} tabindex="-1"{% endunless %}>
 							<span class="mega-hunting-icon-wrap">
 								{%- if h_col.image != blank -%}
-									<img src="{{ h_col.image | image_url: width: 120, height: 120, crop: 'center' }}" alt="{{ h_label }}" class="mega-hunting-icon" width="120" height="120" loading="lazy">
+									<img src="{{ h_col.image | image_url: width: 120, height: 120, crop: 'center' }}" alt="{{ h_label }}" class="mega-hunting-icon mega-hunting-icon--{{ handle | handleize }}" width="120" height="120" loading="lazy">
 								{%- else -%}
 									<span class="mega-hunting-placeholder">{{ h_label | slice: 0 }}</span>
 								{%- endif -%}
@@ -368,55 +372,29 @@
 				</div>
 			</div>
 
-			<div class="mega-block mega-block--father-day">
-				<h3 class="mega-block__heading">Seasonal</h3>
-				<div class="mega-seasonal-list mega-father-day-list">
-					{%- assign father_col = collections['father-day'] -%}
-					{%- if father_col == blank -%}
-						{%- assign father_col = collections['fathers-day'] -%}
-					{%- endif -%}
-					{%- if father_col == blank -%}
-						{%- assign father_col = collections['father-s-day'] -%}
-					{%- endif -%}
-					{%- assign father_url = '/collections/father-day' -%}
-					{%- if father_col != blank -%}
-						{%- assign father_url = father_col.url -%}
-					{%- endif -%}
-					{%- assign father_img = father_col.image | default: father_col.products.first.featured_image -%}
-
-					<a href="{{ father_url }}" class="mega-seasonal-item mega-father-day-card">
-						<div class="mega-seasonal-img-wrap">
-							{%- if father_img != blank -%}
-								<img src="{{ father_img | image_url: width: 360 }}" alt="Father Day" class="mega-seasonal-img" width="360" height="240" loading="lazy">
-							{%- else -%}
-								<div class="mega-terrain-placeholder mega-father-day-placeholder">FD</div>
-							{%- endif -%}
-						</div>
-						<span class="mega-seasonal-label">Father Day</span>
-					</a>
-
-					{%- assign seasonal_ind_col = collections['usa'] -%}
-					{%- if seasonal_ind_col == blank -%}
-						{%- assign seasonal_ind_col = collections['independence-day'] -%}
-					{%- endif -%}
-					{%- assign seasonal_ind_url = '/collections/usa' -%}
-					{%- assign seasonal_ind_title = 'Independence Day' -%}
-					{%- if seasonal_ind_col != blank -%}
-						{%- assign seasonal_ind_url = seasonal_ind_col.url -%}
-						{%- assign seasonal_ind_title = seasonal_ind_col.title -%}
-					{%- endif -%}
-					{%- assign seasonal_ind_img = seasonal_ind_col.image -%}
-
-					<a href="{{ seasonal_ind_url }}" class="mega-seasonal-item">
-						<div class="mega-seasonal-img-wrap">
-							{%- if seasonal_ind_img != blank -%}
-								<img src="{{ seasonal_ind_img | image_url: width: 360 }}" alt="{{ seasonal_ind_title | escape }}" class="mega-seasonal-img" width="360" height="240" loading="lazy">
-							{%- else -%}
-								<div class="mega-terrain-placeholder mega-seasonal-placeholder">ID</div>
-							{%- endif -%}
-						</div>
-						<span class="mega-seasonal-label">{{ seasonal_ind_title | escape }}</span>
-					</a>
+			<div class="mega-block mega-block--fishing">
+				<h3 class="mega-block__heading">Fishing</h3>
+				<div class="mega-hunting-list mega-fishing-list">
+					{%- assign fishing_handles = "fishing-t-shirt,saltwater-fishing-t-shirt" | split: "," -%}
+					{%- assign fishing_labels = "Freshwater Fishing T-shirt,Saltwater Fishing T-shirt" | split: "," -%}
+					{%- assign fishing_icon_fallbacks = "https://cdn.shopify.com/s/files/1/0741/7987/0911/collections/icon_bass.jpg?v=1780569828,https://cdn.shopify.com/s/files/1/0741/7987/0911/collections/icon_swordfish.jpg?v=1780569816" | split: "," -%}
+					{%- for handle in fishing_handles -%}
+						{%- assign f_col = collections[handle] -%}
+						{%- assign f_label = fishing_labels[forloop.index0] -%}
+						{%- assign f_fallback_icon = fishing_icon_fallbacks[forloop.index0] -%}
+						<a href="{%- if f_col != blank -%}{{ f_col.url }}{%- else -%}/collections/{{ handle }}{%- endif -%}" class="mega-hunting-item mega-fishing-item">
+							<span class="mega-hunting-icon-wrap">
+								{%- if f_col.image != blank -%}
+									<img src="{{ f_col.image | image_url: width: 120, height: 120, crop: 'center' }}" alt="{{ f_label }}" class="mega-hunting-icon mega-hunting-icon--{{ handle | handleize }}" width="120" height="120" loading="lazy">
+								{%- elsif f_fallback_icon != blank -%}
+									<img src="{{ f_fallback_icon }}" alt="{{ f_label }}" class="mega-hunting-icon mega-hunting-icon--{{ handle | handleize }}" width="120" height="120" loading="lazy">
+								{%- else -%}
+									<span class="mega-hunting-placeholder">{{ f_label | slice: 0 }}</span>
+								{%- endif -%}
+							</span>
+							<span class="mega-hunting-label">{{ f_label | upcase }}</span>
+						</a>
+					{%- endfor -%}
 				</div>
 			</div>
 		</div>
@@ -434,7 +412,7 @@
 
 .header-mega-desktop {
 	position: fixed;
-	top: var(--header-offset-bottom, 70px);
+	top: var(--header-offset-bottom, var(--header-height-static, 86px));
 	left: 0;
 	width: 100vw;
 	background: #fff;
@@ -444,7 +422,8 @@
 	visibility: hidden;
 	z-index: 100;
 	transform: translateY(-8px);
-	transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+	transition: top 0.18s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+	will-change: top, opacity, transform;
 	pointer-events: none;
 }
 
@@ -482,7 +461,7 @@
 	order: 3;
 }
 
-.mega-4block .mega-block--father-day {
+.mega-4block .mega-block--fishing {
 	order: 4;
 }
 
@@ -696,9 +675,11 @@
 }
 
 .mega-hunting-item {
-	display: flex;
+	display: grid;
+	grid-template-columns: 52px minmax(0, 1fr);
 	align-items: center;
-	gap: 12px;
+	column-gap: 12px;
+	min-height: 52px;
 	color: #2C3D33;
 	text-decoration: none;
 }
@@ -718,9 +699,35 @@
 }
 
 .mega-hunting-icon {
-	width: 46px;
-	height: 46px;
+	width: 40px;
+	height: 40px;
 	object-fit: contain;
+}
+
+.mega-hunting-icon--turkey {
+	width: 40px;
+	height: 40px;
+}
+
+.mega-hunting-icon--deer {
+	width: 42px;
+	height: 42px;
+}
+
+.mega-hunting-icon--waterfowl {
+	width: 44px;
+	height: 34px;
+}
+
+.mega-hunting-icon--fishing-t-shirt {
+	width: 39px;
+	height: 39px;
+}
+
+.mega-hunting-icon--saltwater-fishing-t-shirt {
+	width: 43px;
+	height: 43px;
+	transform: translate(3px, -2px);
 }
 
 .mega-hunting-placeholder {
@@ -791,8 +798,7 @@
 	text-transform: uppercase;
 }
 
-.mega-terrain-placeholder,
-.mega-father-day-placeholder {
+.mega-terrain-placeholder {
 	width: 100%;
 	height: 100%;
 	min-height: 120px;

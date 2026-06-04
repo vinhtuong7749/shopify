@@ -78,7 +78,11 @@
 {%- assign product_card_has_colorblast_tag = false -%}
 {%- assign product_card_has_trucker_tag = false -%}
 
-{%- if collection.handle == 'grand-slam-subspecies' or request.path contains '/collections/grand-slam-subspecies' -%}
+{%- if collection.handle == 'grand-slam-subspecies'
+	or collection.handle == 'world-turkey-slam'
+	or request.path contains '/collections/grand-slam-subspecies'
+	or request.path contains '/collections/world-turkey-slam'
+-%}
 	{%- assign product_card_show_tag_badges = true -%}
 {%- endif -%}
 

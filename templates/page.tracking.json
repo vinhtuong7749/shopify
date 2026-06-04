@@ -4,20 +4,40 @@
       "type": "page-tracking",
       "settings": {
         "heading": "Track Your Order",
-        "subheading": "Enter your tracking number to open the official carrier tracking page.",
+        "subheading": "Enter your tracking number to see the latest status of your shipment.",
         "placeholder": "Enter tracking number",
-        "button_label": "Find Carrier",
-        "help_text": "<p>For full order details, use the link in your shipping email or sign in to your account.</p>",
-        "tracking_mode": "direct_link",
-        "endpoint_url": "/apps/order-tracking",
-        "request_method": "GET",
+        "button_label": "Track",
+        "tracking_mode": "backend",
+        "endpoint_url": "https://tracking-api-ru28.onrender.com/api/search",
+        "request_method": "POST",
         "bg_color": "#ffffff",
         "text_color": "#2c3d33",
         "accent_color": "#2c3d33"
       }
+    },
+    "best_sellers": {
+      "type": "best-seller-products",
+      "name": "Best Sellers",
+      "settings": {
+        "enable_color_scheme_inheritance": true,
+        "color_scheme": "",
+        "heading": "BEST SELLERS",
+        "collection": "",
+        "hidden_products": [],
+        "container_width": "inherit",
+        "offset_top_desktop": 30,
+        "offset_bottom_desktop": 40,
+        "offset_top_mobile": 18,
+        "offset_bottom_mobile": 28,
+        "inner_offset_top": 20,
+        "inner_offset_bottom": 0,
+        "inner_offset_top_mobile": 12,
+        "inner_offset_bottom_mobile": 0
+      }
     }
   },
   "order": [
-    "tracking"
+    "tracking",
+    "best_sellers"
   ]
 }

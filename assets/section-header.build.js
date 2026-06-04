@@ -438,7 +438,11 @@ const Header = () => {
       headerTopPositionHandler();
       hideOnScrollHeaderHandler();
       updateHeaderVariables();
-      debounceHeaderVariables();
+      if (getActiveElements(headerDropdownMenus).length) {
+        updateHeaderVariablesAfterAnimation();
+      } else {
+        debounceHeaderVariables();
+      }
     });
     on("resize", () => {
       headerTopPositionHandler();
@@ -489,6 +493,8 @@ const Header = () => {
       headerDropdownTogglers.forEach((toggler) => {
         const target = document.getElementById(toggler.dataset.target);
         on(openMenuType, toggler, (event) => {
+          updateHeaderVariables();
+          updateHeaderVariablesAfterAnimation();
           closeAllMenus(getActiveElements(headerDropdownNestedMenus));
           closeAllMenus(headerDropdownMenus.filter((menu) => menu !== target));
           if (openMenuType === "mouseenter") {
@@ -818,7 +824,11 @@ const Header = () => {
     });
   }
   function getHeaderHeight() {
-    return header.getBoundingClientRect().height;
+    const headerRect = header.getBoundingClientRect();
+    if (isHeaderTransparent && headerRect.height <= 0) {
+      return headerInner.getBoundingClientRect().height;
+    }
+    return headerRect.height;
   }
   function getAnnouncementBarHeight() {
     if (window.Shopify.designMode) {
@@ -830,11 +840,13 @@ const Header = () => {
     return announcementBar.getBoundingClientRect().height;
   }
   function getHeaderOffsetTop() {
-    const offsetTop = header.getBoundingClientRect().top;
+    const headerRect = header.getBoundingClientRect();
+    const offsetTop = isHeaderTransparent && headerRect.height <= 0 ? headerInner.getBoundingClientRect().top : headerRect.top;
     return offsetTop > 0 ? offsetTop : 0;
   }
   function getHeaderOffsetBottom() {
-    const offsetBottom = header.getBoundingClientRect().bottom;
+    const headerRect = header.getBoundingClientRect();
+    const offsetBottom = isHeaderTransparent && headerRect.height <= 0 ? headerInner.getBoundingClientRect().bottom : headerRect.bottom;
     return offsetBottom > 0 ? offsetBottom : 0;
   }
   function initDrawers() {

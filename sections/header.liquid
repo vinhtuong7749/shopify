@@ -877,7 +877,10 @@
 
 		const observer = new IntersectionObserver((entries) => {
 			for (const entry of entries) {
-				const bounds = entry.boundingClientRect;
+				const wrapperBounds = entry.boundingClientRect;
+				const bounds = isHeaderTransparent && wrapperBounds.height <= 0
+					? headerInner.getBoundingClientRect()
+					: wrapperBounds;
 
 				changeCssVariable(cssVariables.headerHeight, ` ${bounds.height}px`);
 				changeCssVariable(cssVariables.headerHeightStatic, ` ${bounds.height}px`);

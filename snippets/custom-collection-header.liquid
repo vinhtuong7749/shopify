@@ -236,7 +236,7 @@
       <span class="custom-coll-count">{{ real_count | default: 0 }} products</span>
     </div>
   </div>
-  {%- if collection.handle == 'grand-slam-subspecies' -%}
+  {%- if collection.handle == 'grand-slam-subspecies' or collection.handle == 'world-turkey-slam' -%}
     {%- assign turkey_collection = collections['turkey'] -%}
     <div class="custom-coll-turkey-row">
       <a class="custom-coll-turkey-link" href="{%- if turkey_collection != blank -%}{{ turkey_collection.url }}{%- else -%}/collections/turkey{%- endif -%}">

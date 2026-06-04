@@ -16,29 +16,30 @@
 
 <style>
 .filter-list--swatch {
-	display: flex !important;
-	flex-wrap: wrap !important;
-	gap: 10px !important;
-	padding: 6px 2px 4px !important;
-	flex-direction: row !important;
+	display: grid !important;
+	grid-template-columns: repeat(7, 32px) !important;
+	gap: 14px clamp(8px, calc((100% - 224px) / 6), 16px) !important;
+	justify-content: start !important;
 	align-items: center !important;
+	padding: 6px 0 4px !important;
 	overflow: visible !important;
 }
 
 ul.filter-list--swatch > li.filter-list__item {
 	margin: 0 !important;
-	width: auto !important;
+	width: 32px !important;
+	height: 32px !important;
 	min-width: 0 !important;
 	max-width: none !important;
-	flex: 0 0 auto !important;
-	display: inline-flex !important;
+	display: flex !important;
 	align-items: center !important;
+	justify-content: center !important;
 }
 
 ul.filter-list.filter-list--top-bar.filter-list--swatch > li.filter-list__item:nth-child(n) {
+	grid-row: auto !important;
 	order: 0 !important;
-	width: auto !important;
-	flex: 0 0 auto !important;
+	width: 32px !important;
 }
 
 .custom-color-swatch {

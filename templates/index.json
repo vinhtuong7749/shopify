@@ -401,14 +401,6 @@
             "icon": "none"
           }
         },
-        "waterfowl": {
-          "type": "collection",
-          "settings": {
-            "collection": "waterfowl",
-            "label": "Waterfowl",
-            "icon": "none"
-          }
-        },
         "fishing": {
           "type": "collection",
           "settings": {
@@ -416,13 +408,21 @@
             "label": "Fishing",
             "icon": "none"
           }
+        },
+        "waterfowl": {
+          "type": "collection",
+          "settings": {
+            "collection": "waterfowl",
+            "label": "Waterfowl",
+            "icon": "none"
+          }
         }
       },
       "block_order": [
         "turkey",
         "deer",
-        "waterfowl",
-        "fishing"
+        "fishing",
+        "waterfowl"
       ],
       "settings": {
         "heading": "",
@@ -609,7 +609,7 @@
         "color_scheme": "",
         "heading": "HUNTERS ALSO BOUGHT",
         "link_label": "Shop all Hats",
-        "link_url": "shopify://collections/independence-day",
+        "link_url": "https://camosignal.com/collections/all?filter.p.product_type=Hat&sort_by=best-selling",
         "product_list": [
           "personalized-dad-trucker-hat-with-leather-patch",
           "girl-dad-trucker-hat-with-leather-patch",
