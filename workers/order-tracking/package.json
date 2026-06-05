@@ -1,0 +1,14 @@
+{
+  "name": "camosignal-order-tracking-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "wrangler deploy --dry-run",
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "tail": "wrangler tail camosignal-order-tracking"
+  },
+  "devDependencies": {
+    "wrangler": "latest"
+  }
+}

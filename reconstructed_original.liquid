@@ -1,0 +1,368 @@
+Created At: 2026-06-05T08:09:02Z
+Completed At: 2026-06-05T08:09:02Z
+File Path: `file:///d:/Projects/CamoSignal/CamoSignal/sections/page-tracking.liquid`
+Total Lines: 2096
+Total Bytes: 59096
+Showing lines 1 to 800
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+ {%- comment -%}
+ ------------------------------------------------------------------------------
+ 	Section: Order Tracking page
+ 	- Customer-facing UI only
+ 	- Calls a private backend or Shopify app proxy for multi-carrier tracking data
+ 	- Never store tracking API credentials in Liquid or browser JavaScript
+ ------------------------------------------------------------------------------
+ {%- endcomment -%}
+ 
+ {%- assign heading        = section.settings.heading -%}
+ {%- assign subheading     = section.settings.subheading -%}
+ {%- assign lookup_mode    = section.settings.lookup_mode | default: 'order_lookup' -%}
+ {%- assign email_placeholder = section.settings.email_placeholder | default: 'Email address' -%}
+ {%- assign order_placeholder = section.settings.order_placeholder | default: 'Order number' -%}
+ {%- assign placeholder    = section.settings.placeholder -%}
+ {%- assign button_label   = section.settings.button_label -%}
+ {%- assign tracking_mode  = section.settings.tracking_mode | default: 'backend' -%}
+ {%- assign endpoint_url   = section.settings.endpoint_url | default: 'https://camosignal-order-tracking.camosignal.workers.dev' -%}
+ {%- assign request_method = section.settings.request_method | default: 'POST' -%}
+ {%- assign bg_color       = section.settings.bg_color -%}
+ {%- assign text_color     = section.settings.text_color -%}
+ {%- assign accent_color   = section.settings.accent_color -%}
+ {%- assign is_split_layout = false -%}
+ {%- if lookup_mode == 'split_lookup' or lookup_mode == 'order_look
+<truncated 23111 bytes>
+: 	.cs-result__meta-row {
+ 		display: grid;
+ 		grid-template-columns: 136px minmax(0, 1fr);
+ 		gap: 10px;
+ 	}
+ 
+ 	.cs-result__meta-row[hidden] {
+ 		display: none;
+ 	}
+ 
+ 	.cs-result__meta-row > span {
+ 		opacity: 0.64;
+ 	}
+ 
+ 	.cs-result__meta-row > strong {
+ 		font-weight: 600;
+ 		word-break: break-word;
+ 	}
+ 
+ 	.cs-result__meta-row--delivery {
+ 		grid-template-columns: minmax(0, 1fr);
+ 		gap: 4px;
+ 		margin: 6px 0;
+ 		padding: 12px 14px;
+ 		border: 1px solid rgba(178, 114, 19, 0.18);
+ 		border-radius: 8px;
+ 		background: rgba(178, 114, 19, 0.08);
+ 	}
+ 
+ 	.cs-result__meta-row--delivery > span {
+ 		color: #8a5b17;
+ 		font-size: 11px;
+ 		font-weight: 700;
+ 		letter-spacing: 0;
+ 		line-height: 1.2;
+ 		opacity: 1;
+ 		text-transform: uppercase;
+ 	}
+ 
+ 	.cs-result__meta-row--delivery > strong {
+ 		color: var(--pt-text);
+ 		font-size: 15px;
+ 		font-weight: 800;
+ 		line-height: 1.35;
+ 	}
+ 
+ 	.cs-result__link {
+ 		display: inline-flex;
+ 		align-items: center;
+ 		justify-content: center;
+ 		width: fit-content;
+ 		min-height: 40px;
+ 		margin-top: 10px;
+ 		padding: 10px 16px;
+ 		border: 1.5px solid var(--pt-accent);
+ 		border-radius: 8px;
+ 		background: var(--pt-accent);
+ 		color: #fff;
+ 		font-family: 'Outfit', sans-serif;
+ 		font-size: 14px;
+ 		font-weight: 600;
+ 		line-height: 1.2;
+ 		text-decoration: none;
+ 		text-transform: uppercase;
+ 	}
+ 
+ 	.cs-result__link[hidden] {
+ 		display: none;
+ 	}
+ 
+ 	.cs-result__timeline {
+ 		display: flex;
+ 		flex-direction: column;
+ 		gap: 0;
+ 		margin: 0;
+ 		padding: 24px;
+ 		list-style: none;
+ 	}
+ 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
+Created At: 2026-06-05T08:09:09Z
+Completed At: 2026-06-05T08:09:09Z
+File Path: `file:///d:/Projects/CamoSignal/CamoSignal/sections/page-tracking.liquid`
+Total Lines: 2096
+Total Bytes: 59096
+Showing lines 801 to 1600
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+ 	.cs-event {
+ 		position: relative;
+ 		margin-left: 6px;
+ 		padding: 0 0 24px 28px;
+ 		border-left: 2px solid rgba(44, 61, 51, 0.12);
+ 	}
+ 
+ 	.cs-event:last-child {
+ 		padding-bottom: 0;
+ 		border-left-color: transparent;
+ 	}
+ 
+ 	.cs-event::before {
+ 		position: absolute;
+ 		top: 2px;
+ 		left: -8px;
+ 		width: 14px;
+ 		height: 14px;
+ 		border: 2px solid rgba(44, 61, 51, 0.3);
+ 		border-radius: 50%;
+ 		background: #fff;
+ 		content: "";
+ 	}
+ 
+ 	.cs-event--first::before {
+ 		border-color: var(--pt-accent);
+ 		background: var(--pt-accent);
+ 		box-shadow: 0 0 0 4px rgba(44, 61, 51, 0.12);
+ 	}
+ 
+ 	.cs-event__time {
+ 		margin-bottom: 4px;
+ 		font-size: 12px;
+ 		font-variant-numeric: tabular-nums;
+ 		line-height: 1.35;
+ 		opacity: 0.65;
+ 	}
+ 
+ 	.cs-event__desc {
+ 		font-size: 15px;
+ 		font-weight: 500;
+ 		line-height: 1.45;
+ 	}
+ 
+ 	.cs-event__loc {
+ 		margin-top: 2px;
+ 		font-size: 13px;
+ 		line-height: 1.4;
+ 		opacity: 0.75;
+ 	}
+ 
+ 	@media (min-width: 640px) {
+ 		.cs-result__header {
+ 			grid-template-columns: minmax(0, 1fr) minmax(300px, auto);
+ 			align-items: center;
+ 		}
+ 	}
+ 
+ 	@media (min-width: 768px) {
+ 		.page-tracking__heading {
+ 			font-size: 44px;
+ 		}
+ 	}
+ 
+ 	@media (max-width: 600px) {
+ 		.page-tracking {
+ 			padding: 34px 14px 48px;
+ 		}
+ 
+ 		.page-tracking__heading {
+ 			margi
+<truncated 23524 bytes>
+ge ||
+ 			''
+ 		);
+ 	}
+ 
+ 	function getEvents(item) {
+ 		var events = item.trackingEvents || item.checkpoints || item.events || item.TrackDetail || [];
+ 		if (!Array.isArray(events)) events = [events];
+ 
+ 		return events.map(function (event, index) {
+ 			if (typeof event === 'string') {
+ 				return {
+ 					index: index,
+ 					time: '',
+ 					description: stripTags(event),
+ 					location: '',
+ 					sortTime: 0
+ 				};
+ 			}
+ 
+ 			var time = event.GMTTimestamp ||
+ 				event.eventTimestamp ||
+ 				event.checkpoint_time ||
+ 				compact([event.EventDate, event.EventTime]).join(' ') ||
+ 				event.timestamp ||
+ 				event.time ||
+ 				event.date ||
+ 				'';
+ 			var location = event.location || joinLocation([
+ 				event.eventCity || event.EventCity,
+ 				event.city,
+ 				event.eventState || event.EventState,
+ 				event.state,
+ 				event.eventZIPCode || event.EventZIPCode,
+ 				event.postal_code,
+ 				event.eventCountry || event.EventCountry || event.country_region || event.country_region_name
+ 			]);
+ 			var description = event.eventType ||
+ 				event.Event ||
+ 				event.message ||
+ 				event.subtag_message ||
+ 				event.desc ||
+ 				event.description ||
+ 				event.status ||
+ 				event.tag ||
+ 				event.summary ||
+ 				'';
+ 			var sortTime = time ? new Date(time).getTime() : 0;
+ 
+ 			return {
+ 				index: index,
+ 				time: stripTags(time),
+ 				description: stripTags(description),
+ 				location: stripTags(location),
+ 				sortTime: isNaN(sortTime) ? 0 : sortTime
+ 			};
+ 		}).filter(function (event) {
+ 			return event.description || event.time || event.location;
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
+Created At: 2026-06-05T08:09:19Z
+Completed At: 2026-06-05T08:09:19Z
+File Path: `file:///d:/Projects/CamoSignal/CamoSignal/sections/page-tracking.liquid`
+Total Lines: 2096
+Total Bytes: 59096
+Showing lines 1601 to 2096
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+ 		}).sort(function (a, b) {
+ 			if (a.sortTime && b.sortTime && a.sortTime !== b.sortTime) return b.sortTime - a.sortTime;
+ 			return a.index - b.index;
+ 		});
+ 	}
+ 
+ 	function mapStatus(statusText) {
+ 		var value = stripTags(statusText).toLowerCase();
+ 		if (!value) return 'pending';
+ 		if (value.indexOf('delivered') !== -1) return 'delivered';
+ 		if (value.indexOf('exception') !== -1 || value.indexOf('alert') !== -1 || value.indexOf('return') !== -1 || value.indexOf('fail') !== -1) return 'exception';
+ 		if (value.indexOf('pickup') !== -1 || value.indexOf('available') !== -1) return 'pickup';
+ 		if (value.indexOf('pending') !== -1 || value.indexOf('info') !== -1 || value.indexOf('pre-shipment') !== -1 || value.indexOf('label') !== -1) return 'pending';
+ 		return 'intransit';
+ 	}
+ 
+ 	function formatDate(raw, dateOnly) {
+ 		var value = stripTags(raw);
+ 		if (!value) return '';
+ 
+ 		var date = new Date(value);
+ 		if (isNaN(date.getTime())) return value;
+ 
+ 		if (dateOnly && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+ 			return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: '2-digit' });
+ 		}
+ 
+ 		return date.toLocaleString(undefined, {
+ 			year: 'numeric',
+ 			month: 'short',
+ 			day: '2-digit',
+ 			hour: '2-digit',
+ 			minute: '2-digit'
+ 		});
+ 	}
+ 
+ 	function titleCase(value) {
+ 		return stripTags(value).toLowerCase().replace(/\b[a-z]/g, function (lette
+<truncated 13573 bytes>
+					"label": "Backend/API lookup"
+ 				}
+ 			],
+ 			"info": "Official carrier links work without an app or API key. Backend/API lookup requires a private endpoint such as Cloudflare Workers."
+ 		},
+ 		{
+ 			"type": "header",
+ 			"content": "Tracking backend"
+ 		},
+ 		{
+ 			"type": "paragraph",
+ 			"content": "Use a private backend or Shopify app proxy for email and order number lookup. Do not place Shopify Admin API, 17TRACK, or carrier API credentials in this theme."
+ 		},
+ 		{
+ 			"type": "text",
+ 			"id": "endpoint_url",
+ 			"label": "Lookup endpoint URL",
+ 			"default": "https://camosignal-order-tracking.camosignal.workers.dev",
+ 			"info": "The endpoint should return tracking JSON. Supported URL placeholders: {email}, {orderNumber}, {orderName}, {trackingNumber}."
+ 		},
+ 		{
+ 			"type": "select",
+ 			"id": "request_method",
+ 			"label": "Request method",
+ 			"default": "POST",
+ 			"options": [
+ 				{
+ 					"value": "GET",
+ 					"label": "GET"
+ 				},
+ 				{
+ 					"value": "POST",
+ 					"label": "POST"
+ 				}
+ 			]
+ 		},
+ 		{
+ 			"type": "header",
+ 			"content": "Colors"
+ 		},
+ 		{
+ 			"type": "color",
+ 			"id": "bg_color",
+ 			"label": "Background",
+ 			"default": "#faf6ee"
+ 		},
+ 		{
+ 			"type": "color",
+ 			"id": "text_color",
+ 			"label": "Text",
+ 			"default": "#2c3d33"
+ 		},
+ 		{
+ 			"type": "color",
+ 			"id": "accent_color",
+ 			"label": "Button color",
+ 			"default": "#2c3d33"
+ 		}
+ 	],
+ 	"presets": [
+ 		{
+ 			"name": "Order Tracking",
+ 			"category": "Page"
+ 		}
+ 	]
+ }
+ {% endschema %}
+ 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+

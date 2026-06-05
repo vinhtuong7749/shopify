@@ -24,7 +24,15 @@ Shopify protects order status details. Official docs describe access through shi
 
 ## Upgrade path
 
-When API credentials are available, switch the theme section to `backend` mode and point it at a private endpoint:
+When Shopify Admin API credentials are available, use email + order number lookup:
+
+- `docs/shopify-order-tracking-worker.js`
+- `docs/shopify-order-tracking-setup.md`
+
+The worker verifies the customer's email and order number through Shopify Admin GraphQL, then returns fulfillment tracking info without exposing Admin API credentials to the storefront.
+After it finds the fulfillment tracking number, it automatically calls the configured tracking API, defaulting to the current Render endpoint, and returns the enriched tracking status/timeline when available.
+
+When carrier API credentials are available, switch the theme section to `backend` mode and point it at a private endpoint:
 
 - Cloudflare Worker + 17TRACK API for multi-carrier tracking.
 - Cloudflare Worker + AfterShip API if the plan/API permissions fit.
@@ -32,6 +40,7 @@ When API credentials are available, switch the theme section to `backend` mode a
 
 Existing worker examples:
 
+- `docs/shopify-order-tracking-worker.js`
 - `docs/17track-tracking-worker.js`
 - `docs/aftership-tracking-worker.js`
 - `docs/usps-tracking-worker.js`

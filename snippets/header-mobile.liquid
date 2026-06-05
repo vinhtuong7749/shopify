@@ -324,20 +324,22 @@
 									</button>
 									<ul class="header-mobile__mega-panel">
 								{%- assign mob_fishing_handles = "fishing-t-shirt,saltwater-fishing-t-shirt" | split: "," -%}
-								{%- assign mob_fishing_labels = "Freshwater Fishing T-shirt,Saltwater Fishing T-shirt" | split: "," -%}
 								{%- assign mob_fishing_icon_fallbacks = "https://cdn.shopify.com/s/files/1/0741/7987/0911/collections/icon_bass.jpg?v=1780569828,https://cdn.shopify.com/s/files/1/0741/7987/0911/collections/icon_swordfish.jpg?v=1780569816" | split: "," -%}
 								{%- for mf in mob_fishing_handles -%}
 									{%- assign mf_col = collections[mf] -%}
-									{%- assign mf_label = mob_fishing_labels[forloop.index0] -%}
+									{%- assign mf_label = mf | replace: '-', ' ' -%}
+									{%- if mf_col != blank -%}
+										{%- assign mf_label = mf_col.title -%}
+									{%- endif -%}
 									{%- assign mf_fallback_icon = mob_fishing_icon_fallbacks[forloop.index0] -%}
 									<li class="header-mobile__dropdown-item">
 										<a class="header-mobile__dropdown-link header-mobile__hunt-link" href="{%- if mf_col != blank -%}{{ mf_col.url }}{%- else -%}/collections/{{ mf }}{%- endif -%}">
 											{%- if mf_col.image != blank -%}
-												<img src="{{ mf_col.image | img_url: '80x80', crop: 'center' }}" alt="{{ mf_label }}" width="80" height="80" loading="lazy" class="header-mobile__hunt-icon header-mobile__hunt-icon--{{ mf | handleize }}">
+												<img src="{{ mf_col.image | img_url: '80x80', crop: 'center' }}" alt="{{ mf_label | escape }}" width="80" height="80" loading="lazy" class="header-mobile__hunt-icon header-mobile__hunt-icon--{{ mf | handleize }}">
 											{%- elsif mf_fallback_icon != blank -%}
-												<img src="{{ mf_fallback_icon }}" alt="{{ mf_label }}" width="80" height="80" loading="lazy" class="header-mobile__hunt-icon header-mobile__hunt-icon--{{ mf | handleize }}">
+												<img src="{{ mf_fallback_icon }}" alt="{{ mf_label | escape }}" width="80" height="80" loading="lazy" class="header-mobile__hunt-icon header-mobile__hunt-icon--{{ mf | handleize }}">
 											{%- endif -%}
-											<span>{{ mf_label }}</span>
+											<span>{{ mf_label | escape }}</span>
 										</a>
 									</li>
 								{%- endfor -%}

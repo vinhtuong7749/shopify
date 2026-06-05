@@ -9,14 +9,21 @@
 
 {%- assign heading        = section.settings.heading -%}
 {%- assign subheading     = section.settings.subheading -%}
+{%- assign lookup_mode    = section.settings.lookup_mode | default: 'order_lookup' -%}
+{%- assign email_placeholder = section.settings.email_placeholder | default: 'Email address' -%}
+{%- assign order_placeholder = section.settings.order_placeholder | default: 'Order number' -%}
 {%- assign placeholder    = section.settings.placeholder -%}
 {%- assign button_label   = section.settings.button_label -%}
 {%- assign tracking_mode  = section.settings.tracking_mode | default: 'backend' -%}
-{%- assign endpoint_url   = section.settings.endpoint_url | default: 'https://tracking-api-ru28.onrender.com/api/search' -%}
+{%- assign endpoint_url   = section.settings.endpoint_url | default: 'https://camosignal-order-tracking.camosignal.workers.dev' -%}
 {%- assign request_method = section.settings.request_method | default: 'POST' -%}
 {%- assign bg_color       = section.settings.bg_color -%}
 {%- assign text_color     = section.settings.text_color -%}
 {%- assign accent_color   = section.settings.accent_color -%}
+{%- assign is_split_layout = false -%}
+{%- if lookup_mode == 'split_lookup' or lookup_mode == 'order_lookup' -%}
+	{%- assign is_split_layout = true -%}
+{%- endif -%}
 
 <section
 	id="cs-tracking-{{ section.id }}"
@@ -26,6 +33,7 @@
 		--pt-text: {{ text_color }};
 		--pt-accent: {{ accent_color }};
 	"
+	data-lookup-mode="{{ lookup_mode | escape }}"
 	data-mode="{{ tracking_mode | escape }}"
 	data-endpoint="{{ endpoint_url | escape }}"
 	data-method="{{ request_method | escape }}"
@@ -39,30 +47,150 @@
 			<p class="page-tracking__subheading">{{ subheading | escape }}</p>
 		{%- endif -%}
 
-		<div class="page-tracking__panel">
-			<form class="page-tracking__form" data-track-form novalidate>
-				<label class="page-tracking__field">
-					<span class="page-tracking__field-label">Tracking number</span>
-					<input
-						class="page-tracking__input"
-						type="text"
-						name="trackingNumber"
-						placeholder="{{ placeholder | escape }}"
-						autocomplete="off"
-						autocorrect="off"
-						autocapitalize="characters"
-						spellcheck="false"
-						minlength="4"
-						maxlength="48"
-						required
-						data-track-input
-					/>
-				</label>
-				<button class="page-tracking__button" type="submit" data-track-button>
-					<span class="page-tracking__button-label">{{ button_label | escape }}</span>
-					<span class="page-tracking__spinner" aria-hidden="true"></span>
-				</button>
-			</form>
+		<div class="page-tracking__panel{% if is_split_layout %} page-tracking__panel--split{% endif %}">
+			{%- if is_split_layout -%}
+				<div class="page-tracking__split">
+					<form class="page-tracking__stack-form" data-order-form novalidate>
+						<label class="page-tracking__field page-tracking__field--order">
+							<span class="page-tracking__field-title">Order Number</span>
+							<input
+								class="page-tracking__input"
+								type="text"
+								name="orderNumber"
+								placeholder="{{ order_placeholder | escape }}"
+								autocomplete="off"
+								autocorrect="off"
+								autocapitalize="characters"
+								spellcheck="false"
+								minlength="2"
+								maxlength="32"
+								required
+								data-order-number
+							/>
+						</label>
+						<label class="page-tracking__field page-tracking__field--email">
+							<span class="page-tracking__field-title">Email</span>
+							<input
+								class="page-tracking__input"
+								type="email"
+								name="email"
+								placeholder="{{ email_placeholder | escape }}"
+								autocomplete="email"
+								autocorrect="off"
+								autocapitalize="off"
+								spellcheck="false"
+								maxlength="254"
+								required
+								data-order-email
+							/>
+						</label>
+						<label class="page-tracking__bot-field" aria-hidden="true">
+							<span>Company</span>
+							<input type="text" name="company" tabindex="-1" autocomplete="off" data-track-honeypot />
+						</label>
+						<button class="page-tracking__button" type="submit" data-track-button>
+							<span class="page-tracking__button-label">{{ button_label | escape }}</span>
+							<span class="page-tracking__spinner" aria-hidden="true"></span>
+						</button>
+					</form>
+
+					<div class="page-tracking__divider" aria-hidden="true">
+						<span>OR</span>
+					</div>
+
+					<form class="page-tracking__stack-form" data-tracking-form novalidate>
+						<label class="page-tracking__field">
+							<span class="page-tracking__field-title">Tracking Number</span>
+							<input
+								class="page-tracking__input"
+								type="text"
+								name="trackingNumber"
+								placeholder="{{ placeholder | escape }}"
+								autocomplete="off"
+								autocorrect="off"
+								autocapitalize="characters"
+								spellcheck="false"
+								minlength="4"
+								maxlength="48"
+								required
+								data-track-input
+							/>
+						</label>
+						<label class="page-tracking__bot-field" aria-hidden="true">
+							<span>Company</span>
+							<input type="text" name="company" tabindex="-1" autocomplete="off" data-track-honeypot />
+						</label>
+						<button class="page-tracking__button" type="submit" data-track-button>
+							<span class="page-tracking__button-label">{{ button_label | escape }}</span>
+							<span class="page-tracking__spinner" aria-hidden="true"></span>
+						</button>
+					</form>
+				</div>
+			{%- else -%}
+				<form class="page-tracking__form" data-track-form novalidate>
+					{%- if lookup_mode == 'order_lookup' -%}
+						<label class="page-tracking__field page-tracking__field--email">
+							<span class="page-tracking__field-label">Email address</span>
+							<input
+								class="page-tracking__input"
+								type="email"
+								name="email"
+								placeholder="{{ email_placeholder | escape }}"
+								autocomplete="email"
+								autocorrect="off"
+								autocapitalize="off"
+								spellcheck="false"
+								maxlength="254"
+								required
+								data-order-email
+							/>
+						</label>
+						<label class="page-tracking__field page-tracking__field--order">
+							<span class="page-tracking__field-label">Order number</span>
+							<input
+								class="page-tracking__input"
+								type="text"
+								name="orderNumber"
+								placeholder="{{ order_placeholder | escape }}"
+								autocomplete="off"
+								autocorrect="off"
+								autocapitalize="characters"
+								spellcheck="false"
+								minlength="2"
+								maxlength="32"
+								required
+								data-order-number
+							/>
+						</label>
+					{%- else -%}
+						<label class="page-tracking__field">
+							<span class="page-tracking__field-label">Tracking number</span>
+							<input
+								class="page-tracking__input"
+								type="text"
+								name="trackingNumber"
+								placeholder="{{ placeholder | escape }}"
+								autocomplete="off"
+								autocorrect="off"
+								autocapitalize="characters"
+								spellcheck="false"
+								minlength="4"
+								maxlength="48"
+								required
+								data-track-input
+							/>
+						</label>
+					{%- endif -%}
+					<label class="page-tracking__bot-field" aria-hidden="true">
+						<span>Company</span>
+						<input type="text" name="company" tabindex="-1" autocomplete="off" data-track-honeypot />
+					</label>
+					<button class="page-tracking__button" type="submit" data-track-button>
+						<span class="page-tracking__button-label">{{ button_label | escape }}</span>
+						<span class="page-tracking__spinner" aria-hidden="true"></span>
+					</button>
+				</form>
+			{%- endif -%}
 		</div>
 
 		<div class="page-tracking__error" data-track-error role="alert" hidden></div>
@@ -104,20 +232,20 @@
 	.page-tracking {
 		background: var(--pt-bg, #ffffff);
 		color: var(--pt-text, #2c3d33);
-		padding: 80px 20px 100px;
+		padding: 72px 20px 92px;
 		font-family: 'Outfit', sans-serif;
 	}
 
 	.page-tracking__container {
-		max-width: 960px;
+		max-width: 1080px;
 		margin: 0 auto;
 	}
 
 	.page-tracking__heading {
-		margin: 0 0 16px;
+		margin: 0 0 14px;
 		color: var(--pt-text);
 		font-family: 'Outfit', sans-serif;
-		font-size: 44px;
+		font-size: 46px;
 		font-weight: 700;
 		letter-spacing: 0.5px;
 		line-height: 1.1;
@@ -127,7 +255,7 @@
 
 	.page-tracking__subheading {
 		max-width: 640px;
-		margin: 0 auto 40px;
+		margin: 0 auto 44px;
 		font-size: 18px;
 		line-height: 1.6;
 		text-align: center;
@@ -138,10 +266,30 @@
 		max-width: 860px;
 		margin: 0 auto;
 		padding: 14px;
-		border: 1px solid rgba(44, 61, 51, 0.12);
-		border-radius: 10px;
+		border: 1px solid rgba(44, 61, 51, 0.14);
+		border-radius: 8px;
 		background: #ffffff;
-		box-shadow: 0 12px 30px rgba(21, 32, 27, 0.06), 0 1px 3px rgba(0,0,0,0.03);
+		box-shadow: 0 16px 38px rgba(21, 32, 27, 0.06), 0 1px 2px rgba(0, 0, 0, 0.03);
+	}
+
+	.page-tracking__panel--split {
+		max-width: 1040px;
+		padding: 52px 70px;
+		box-shadow: 0 18px 46px rgba(21, 32, 27, 0.07), 0 1px 2px rgba(0, 0, 0, 0.03);
+	}
+
+	.page-tracking__split {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 76px minmax(0, 1fr);
+		gap: 38px;
+		align-items: start;
+	}
+
+	.page-tracking__stack-form {
+		display: grid;
+		gap: 20px;
+		align-items: start;
+		margin: 0;
 	}
 
 	.page-tracking__form {
@@ -159,6 +307,68 @@
 		margin: 0;
 	}
 
+	.page-tracking__field--email {
+		flex-basis: 320px;
+	}
+
+	.page-tracking__field--order {
+		flex-basis: 220px;
+	}
+
+	.page-tracking__split .page-tracking__field {
+		flex: none;
+	}
+
+	.page-tracking__field-title {
+		display: block;
+		margin: 0 0 8px;
+		color: var(--pt-text);
+		font-size: 13px;
+		font-weight: 700;
+		letter-spacing: 0.5px;
+		line-height: 1.25;
+		text-transform: uppercase;
+	}
+
+	.page-tracking__divider {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 132px;
+		color: rgba(44, 61, 51, 0.76);
+		font-size: 13px;
+		font-weight: 700;
+		letter-spacing: 0.5px;
+		line-height: 1;
+	}
+
+	.page-tracking__divider::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 50%;
+		border-left: 1px dashed rgba(44, 61, 51, 0.24);
+	}
+
+	.page-tracking__divider span {
+		position: relative;
+		z-index: 1;
+		padding: 10px 0;
+		background: #ffffff;
+	}
+
+	.page-tracking__bot-field {
+		position: absolute;
+		left: -10000px;
+		width: 1px;
+		height: 1px;
+		opacity: 0;
+		overflow: hidden;
+		pointer-events: none;
+	}
+
 	.page-tracking__field-label {
 		position: absolute;
 		width: 1px;
@@ -172,10 +382,11 @@
 	}
 
 	.page-tracking__input {
+		box-sizing: border-box;
 		width: 100%;
 		height: 56px;
 		min-width: 0;
-		padding: 0 18px;
+		padding: 0 22px;
 		border: 1px solid rgba(44, 61, 51, 0.16);
 		border-radius: 8px;
 		background: #ffffff;
@@ -192,6 +403,21 @@
 	.page-tracking__input::placeholder {
 		color: rgba(44, 61, 51, 0.48);
 		font-weight: 600;
+	}
+
+	.page-tracking__split .page-tracking__input {
+		height: 48px;
+		padding-inline: 22px;
+		border: 1px solid rgba(44, 61, 51, 0.36);
+		border-radius: 6px;
+		box-shadow: none;
+		font-size: 14px;
+		font-weight: 600;
+	}
+
+	.page-tracking__split .page-tracking__input::placeholder {
+		color: rgba(44, 61, 51, 0.52);
+		font-weight: 500;
 	}
 
 	.page-tracking__input:focus {
@@ -221,6 +447,21 @@
 		box-shadow: 0 4px 12px rgba(44, 61, 51, 0.15);
 	}
 
+	.page-tracking__split .page-tracking__button {
+		width: 132px;
+		min-width: 132px;
+		min-height: 50px;
+		height: 50px;
+		padding: 0 22px;
+		border-radius: 6px;
+		background: var(--pt-accent);
+		box-shadow: 0 8px 18px rgba(44, 61, 51, 0.14);
+		font-size: 13px;
+		font-weight: 700;
+		letter-spacing: 0.6px;
+		text-transform: uppercase;
+	}
+
 	.page-tracking__button:hover {
 		transform: translateY(-2px);
 		box-shadow: 0 8px 24px rgba(44, 61, 51, 0.25);
@@ -236,7 +477,7 @@
 		opacity: 0.72;
 	}
 
-	.page-tracking__button[disabled] .page-tracking__button-label {
+	.page-tracking__button[data-loading="true"] .page-tracking__button-label {
 		visibility: hidden;
 	}
 
@@ -254,7 +495,7 @@
 		animation: csTrackingSpin 0.7s linear infinite;
 	}
 
-	.page-tracking__button[disabled] .page-tracking__spinner {
+	.page-tracking__button[data-loading="true"] .page-tracking__spinner {
 		display: block;
 	}
 
@@ -274,6 +515,10 @@
 		color: #9f1c15;
 		font-size: 14px;
 		line-height: 1.45;
+	}
+
+	.page-tracking__error[hidden] {
+		display: none !important;
 	}
 
 	.page-tracking__widget-shell {
@@ -351,28 +596,38 @@
 	}
 
 	.page-tracking__result {
-		max-width: 880px;
-		margin: 18px auto 0;
+		max-width: 860px;
+		margin: 32px auto 0;
 		overflow: hidden;
-		border: 1px solid rgba(44, 61, 51, 0.12);
-		border-radius: 8px;
-		background: #fff;
-		box-shadow: 0 18px 44px rgba(21, 32, 27, 0.1);
+		border: 1px solid rgba(0, 0, 0, 0.05);
+		border-radius: 20px;
+		background: #ffffff;
+		box-shadow: 0 24px 48px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0,0,0,0.02);
+		animation: csFadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	.page-tracking__result[hidden] {
+		display: none !important;
+	}
+
+	@keyframes csFadeInUp {
+		from { opacity: 0; transform: translateY(20px); }
+		to { opacity: 1; transform: translateY(0); }
 	}
 
 	.cs-result__header {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr);
-		gap: 20px;
-		padding: 24px;
-		border-bottom: 1px solid rgba(44, 61, 51, 0.08);
-		background: linear-gradient(180deg, rgba(44, 61, 51, 0.04), transparent);
+		gap: 24px;
+		padding: 32px;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+		background: #fcfdfc;
 	}
 
 	.cs-result__status {
 		display: flex;
 		align-items: center;
-		gap: 14px;
+		gap: 20px;
 		min-width: 0;
 	}
 
@@ -382,106 +637,84 @@
 		flex: 0 0 auto;
 		align-items: center;
 		justify-content: center;
-		width: 48px;
-		height: 48px;
-		border-radius: 50%;
-		background: rgba(44, 61, 51, 0.1);
+		width: 64px;
+		height: 64px;
+		border-radius: 20px;
+		background: rgba(44, 61, 51, 0.05);
+		transition: all 0.3s ease;
 	}
 
 	.cs-result__status-icon::before {
 		display: block;
-		width: 22px;
-		height: 22px;
+		width: 32px;
+		height: 32px;
 		background: currentColor;
 		content: "";
 		-webkit-mask: center / contain no-repeat;
 		mask: center / contain no-repeat;
 	}
 
-	.cs-result__status-icon[data-status="pending"] {
-		color: #7f8f83;
-	}
-
-	.cs-result__status-icon[data-status="intransit"] {
-		background: rgba(178, 114, 19, 0.12);
-		color: #b27213;
-	}
-
-	.cs-result__status-icon[data-status="delivered"] {
-		background: rgba(44, 138, 74, 0.12);
-		color: #2c8a4a;
-	}
-
-	.cs-result__status-icon[data-status="exception"] {
-		background: rgba(179, 38, 30, 0.12);
-		color: #b3261e;
-	}
-
-	.cs-result__status-icon[data-status="pickup"] {
-		background: rgba(30, 111, 189, 0.12);
-		color: #1e6fbd;
-	}
+	.cs-result__status-icon[data-status="pending"] { color: #6b7280; background: #f3f4f6; }
+	.cs-result__status-icon[data-status="intransit"] { color: #b27213; background: rgba(178, 114, 19, 0.12); box-shadow: 0 0 0 5px rgba(178, 114, 19, 0.08); }
+	.cs-result__status-icon[data-status="delivered"] { color: #059669; background: #d1fae5; box-shadow: 0 0 0 4px rgba(167,243,208,0.4); }
+	.cs-result__status-icon[data-status="exception"] { color: #dc2626; background: #fee2e2; box-shadow: 0 0 0 4px rgba(254,202,202,0.4); }
+	.cs-result__status-icon[data-status="pickup"] { color: #2563eb; background: #dbeafe; box-shadow: 0 0 0 4px rgba(191,219,254,0.4); }
 
 	.cs-result__status-icon[data-status="pending"]::before {
 		-webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23000' d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 5h-2v6l5 3 1-1.7-4-2.3V7Z'/></svg>");
-		mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23000' d='M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 5h-2v6l5 3 1-1.7-4-2.3V7Z'/></svg>");
 	}
-
 	.cs-result__status-icon[data-status="intransit"]::before {
-		-webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23000' d='M3 6h11v8h-2.05a2.5 2.5 0 0 1-4.9 0H5V8h6v4H5V6Zm13 4h2.5l1.5 2v2h-1.55a2.5 2.5 0 0 1-4.9 0H16v-4Zm-7 5a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm9 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z'/></svg>");
-		mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23000' d='M3 6h11v8h-2.05a2.5 2.5 0 0 1-4.9 0H5V8h6v4H5V6Zm13 4h2.5l1.5 2v2h-1.55a2.5 2.5 0 0 1-4.9 0H16v-4Zm-7 5a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm9 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z'/></svg>");
+		width: 27px;
+		height: 27px;
+		-webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'><path d='M3.5 7.5h10v8h-2.1' stroke='%23000' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/><path d='M6.4 15.5H3.5v-5.3' stroke='%23000' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/><path d='M13.5 10h3.8l2.7 3.2v2.3h-2.1' stroke='%23000' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/><path d='M13.5 15.5h1.8' stroke='%23000' stroke-width='1.9' stroke-linecap='round'/><circle cx='8.9' cy='15.5' r='2.1' stroke='%23000' stroke-width='1.9'/><circle cx='17.4' cy='15.5' r='2.1' stroke='%23000' stroke-width='1.9'/><path d='M3.5 10.2h5.2' stroke='%23000' stroke-width='1.9' stroke-linecap='round'/></svg>");
+		mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'><path d='M3.5 7.5h10v8h-2.1' stroke='%23000' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/><path d='M6.4 15.5H3.5v-5.3' stroke='%23000' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/><path d='M13.5 10h3.8l2.7 3.2v2.3h-2.1' stroke='%23000' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/><path d='M13.5 15.5h1.8' stroke='%23000' stroke-width='1.9' stroke-linecap='round'/><circle cx='8.9' cy='15.5' r='2.1' stroke='%23000' stroke-width='1.9'/><circle cx='17.4' cy='15.5' r='2.1' stroke='%23000' stroke-width='1.9'/><path d='M3.5 10.2h5.2' stroke='%23000' stroke-width='1.9' stroke-linecap='round'/></svg>");
 	}
-
 	.cs-result__status-icon[data-status="delivered"]::before {
 		-webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23000' d='m9 16.2-3.5-3.5 1.4-1.4L9 13.4l7.1-7.1 1.4 1.4L9 16.2Z'/></svg>");
-		mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23000' d='m9 16.2-3.5-3.5 1.4-1.4L9 13.4l7.1-7.1 1.4 1.4L9 16.2Z'/></svg>");
 	}
-
 	.cs-result__status-icon[data-status="exception"]::before {
 		-webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23000' d='M12 2 1 21h22L12 2Zm-1 7h2v6h-2V9Zm0 8h2v2h-2v-2Z'/></svg>");
-		mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23000' d='M12 2 1 21h22L12 2Zm-1 7h2v6h-2V9Zm0 8h2v2h-2v-2Z'/></svg>");
 	}
-
 	.cs-result__status-icon[data-status="pickup"]::before {
 		-webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23000' d='M3 4h18v4H3V4Zm2 6h14v10H5V10Zm4 3v2h6v-2H9Z'/></svg>");
-		mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23000' d='M3 4h18v4H3V4Zm2 6h14v10H5V10Zm4 3v2h6v-2H9Z'/></svg>");
 	}
 
 	.cs-result__status-text {
 		display: flex;
 		min-width: 0;
 		flex-direction: column;
-		gap: 4px;
+		gap: 6px;
 	}
 
 	.cs-result__status-label {
 		color: var(--pt-text);
-		font-family: 'Outfit', sans-serif;
-		font-size: 22px;
-		font-weight: 700;
-		letter-spacing: 0.5px;
-		line-height: 1.18;
-		text-transform: uppercase;
+		font-size: 26px;
+		font-weight: 800;
+		letter-spacing: -0.5px;
+		line-height: 1.1;
+		text-transform: capitalize;
 	}
 
 	.cs-result__status-sub {
-		font-size: 13px;
-		line-height: 1.35;
-		opacity: 0.74;
+		font-size: 15px;
+		font-weight: 500;
+		line-height: 1.4;
+		opacity: 0.65;
 	}
 
 	.cs-result__meta {
 		display: flex;
 		flex-direction: column;
-		gap: 4px;
-		font-size: 13px;
-		line-height: 1.35;
+		gap: 12px;
+		font-size: 14px;
+		line-height: 1.4;
 	}
 
 	.cs-result__meta-row {
 		display: grid;
-		grid-template-columns: 136px minmax(0, 1fr);
-		gap: 10px;
+		grid-template-columns: 140px minmax(0, 1fr);
+		gap: 12px;
+		align-items: baseline;
 	}
 
 	.cs-result__meta-row[hidden] {
@@ -489,39 +722,53 @@
 	}
 
 	.cs-result__meta-row > span {
-		opacity: 0.64;
+		color: #6b7280;
+		font-weight: 500;
 	}
 
 	.cs-result__meta-row > strong {
+		color: var(--pt-text);
 		font-weight: 600;
 		word-break: break-word;
 	}
 
 	.cs-result__meta-row--delivery {
 		grid-template-columns: minmax(0, 1fr);
-		gap: 4px;
-		margin: 6px 0;
-		padding: 12px 14px;
-		border: 1px solid rgba(178, 114, 19, 0.18);
-		border-radius: 8px;
-		background: rgba(178, 114, 19, 0.08);
+		gap: 6px;
+		margin: 8px 0;
+		padding: 16px 20px;
+		border-radius: 12px;
+		background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+		border: 1px solid rgba(22, 163, 74, 0.2);
+		position: relative;
+		overflow: hidden;
+	}
+
+	.cs-result__meta-row--delivery::after {
+		content: '';
+		position: absolute;
+		right: -20px;
+		top: -20px;
+		width: 100px;
+		height: 100px;
+		background: radial-gradient(circle, rgba(34,197,94,0.1) 0%, transparent 70%);
+		border-radius: 50%;
 	}
 
 	.cs-result__meta-row--delivery > span {
-		color: #8a5b17;
-		font-size: 11px;
+		color: #166534;
+		font-size: 12px;
 		font-weight: 700;
-		letter-spacing: 0;
-		line-height: 1.2;
-		opacity: 1;
+		letter-spacing: 0.5px;
 		text-transform: uppercase;
+		opacity: 0.9;
 	}
 
 	.cs-result__meta-row--delivery > strong {
-		color: var(--pt-text);
-		font-size: 15px;
+		color: #14532d;
+		font-size: 18px;
 		font-weight: 800;
-		line-height: 1.35;
+		line-height: 1.3;
 	}
 
 	.cs-result__link {
@@ -529,19 +776,24 @@
 		align-items: center;
 		justify-content: center;
 		width: fit-content;
-		min-height: 40px;
-		margin-top: 10px;
-		padding: 10px 16px;
-		border: 1.5px solid var(--pt-accent);
-		border-radius: 8px;
+		min-height: 44px;
+		margin-top: 12px;
+		padding: 0 24px;
+		border-radius: 10px;
 		background: var(--pt-accent);
 		color: #fff;
 		font-family: 'Outfit', sans-serif;
 		font-size: 14px;
 		font-weight: 600;
-		line-height: 1.2;
+		letter-spacing: 0.5px;
 		text-decoration: none;
-		text-transform: uppercase;
+		transition: all 0.3s ease;
+		box-shadow: 0 4px 12px rgba(44, 61, 51, 0.15);
+	}
+	
+	.cs-result__link:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 8px 20px rgba(44, 61, 51, 0.25);
 	}
 
 	.cs-result__link[hidden] {
@@ -551,17 +803,18 @@
 	.cs-result__timeline {
 		display: flex;
 		flex-direction: column;
-		gap: 0;
 		margin: 0;
-		padding: 24px;
+		padding: 32px 40px;
 		list-style: none;
+		background: #ffffff;
 	}
 
 	.cs-event {
 		position: relative;
-		margin-left: 6px;
-		padding: 0 0 24px 28px;
-		border-left: 2px solid rgba(44, 61, 51, 0.12);
+		margin-left: 8px;
+		padding: 0 0 32px 36px;
+		border-left: 2px solid #e5e7eb;
+		transition: all 0.3s ease;
 	}
 
 	.cs-event:last-child {
@@ -571,41 +824,60 @@
 
 	.cs-event::before {
 		position: absolute;
-		top: 2px;
-		left: -8px;
-		width: 14px;
-		height: 14px;
-		border: 2px solid rgba(44, 61, 51, 0.3);
+		top: 0;
+		left: -9px;
+		width: 16px;
+		height: 16px;
+		border: 3px solid #e5e7eb;
 		border-radius: 50%;
 		background: #fff;
 		content: "";
+		transition: all 0.3s ease;
 	}
 
 	.cs-event--first::before {
 		border-color: var(--pt-accent);
-		background: var(--pt-accent);
-		box-shadow: 0 0 0 4px rgba(44, 61, 51, 0.12);
+		background: #fff;
+		box-shadow: 0 0 0 6px rgba(44, 61, 51, 0.1);
+	}
+	
+	.cs-event--first .cs-event__desc {
+		color: var(--pt-accent);
+		font-weight: 700;
 	}
 
 	.cs-event__time {
-		margin-bottom: 4px;
-		font-size: 12px;
-		font-variant-numeric: tabular-nums;
-		line-height: 1.35;
-		opacity: 0.65;
+		margin-bottom: 6px;
+		font-size: 13px;
+		font-weight: 500;
+		color: #6b7280;
 	}
 
 	.cs-event__desc {
-		font-size: 15px;
+		font-size: 16px;
 		font-weight: 500;
-		line-height: 1.45;
+		line-height: 1.5;
+		color: var(--pt-text);
+		margin-bottom: 4px;
 	}
 
 	.cs-event__loc {
-		margin-top: 2px;
-		font-size: 13px;
+		font-size: 14px;
 		line-height: 1.4;
-		opacity: 0.75;
+		color: #9ca3af;
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+	
+	.cs-event__loc::before {
+		content: "";
+		display: inline-block;
+		width: 12px;
+		height: 12px;
+		background-color: currentColor;
+		-webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/></svg>") center / contain no-repeat;
+		mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/></svg>") center / contain no-repeat;
 	}
 
 	@media (min-width: 640px) {
@@ -623,12 +895,12 @@
 
 	@media (max-width: 600px) {
 		.page-tracking {
-			padding: 30px 14px 42px;
+			padding: 34px 14px 48px;
 		}
 
 		.page-tracking__heading {
 			margin-bottom: 10px;
-			font-size: 34px;
+			font-size: 32px;
 		}
 
 		.page-tracking__subheading {
@@ -639,6 +911,40 @@
 
 		.page-tracking__panel {
 			padding: 10px;
+		}
+
+		.page-tracking__panel--split {
+			padding: 22px 18px;
+		}
+
+		.page-tracking__split {
+			grid-template-columns: minmax(0, 1fr);
+			gap: 20px;
+		}
+
+		.page-tracking__divider {
+			min-height: 28px;
+		}
+
+		.page-tracking__divider::before {
+			top: 50%;
+			right: 0;
+			bottom: auto;
+			left: 0;
+			border-top: 1px dashed rgba(44, 61, 51, 0.24);
+			border-left: 0;
+		}
+
+		.page-tracking__divider span {
+			padding: 0 14px;
+		}
+
+		.page-tracking__stack-form {
+			gap: 16px;
+		}
+
+		.page-tracking__field-title {
+			font-size: 12px;
 		}
 
 		.page-tracking__form {
@@ -659,6 +965,11 @@
 		.page-tracking__button {
 			min-width: 0;
 			width: 100%;
+		}
+
+		.page-tracking__split .page-tracking__button {
+			width: 100%;
+			min-width: 0;
 		}
 
 		.page-tracking__error,
@@ -693,17 +1004,23 @@
 	var section = document.getElementById('cs-tracking-{{ section.id }}');
 	if (!section) return;
 
+	var lookupMode = (section.dataset.lookupMode || 'tracking_number').trim();
 	var mode = (section.dataset.mode || 'direct_link').trim();
 	var endpoint = (section.dataset.endpoint || '').trim();
 	var method = (section.dataset.method || 'GET').toUpperCase();
 	var form = section.querySelector('[data-track-form]');
-	var input = section.querySelector('[data-track-input]');
-	var button = section.querySelector('[data-track-button]');
+	var orderForm = section.querySelector('[data-order-form]');
+	var trackingForm = section.querySelector('[data-tracking-form]');
+	var trackingInput = section.querySelector('[data-track-input]');
+	var emailInput = section.querySelector('[data-order-email]');
+	var orderInput = section.querySelector('[data-order-number]');
+	var buttons = Array.prototype.slice.call(section.querySelectorAll('[data-track-button]'));
 	var errEl = section.querySelector('[data-track-error]');
 	var resEl = section.querySelector('[data-track-result]');
 	var widgetShell = section.querySelector('[data-17track-shell]');
 	var widgetContainer = section.querySelector('[data-17track-container]');
 	var yqLoadingPromise = null;
+	var formStartedAt = Date.now();
 
 	function stripTags(value) {
 		if (value === null || value === undefined) return '';
@@ -747,9 +1064,28 @@
 		}, 80);
 	}
 
-	function setLoading(isLoading) {
-		button.disabled = !!isLoading;
-		input.disabled = !!isLoading;
+	function setLoading(isLoading, sourceForm) {
+		var activeButtons = sourceForm ? Array.prototype.slice.call(sourceForm.querySelectorAll('[data-track-button]')) : buttons;
+		var activeFields = sourceForm ?
+			Array.prototype.slice.call(sourceForm.querySelectorAll('[data-track-input], [data-order-email], [data-order-number]')) :
+			[trackingInput, emailInput, orderInput];
+
+		activeButtons.forEach(function (button) {
+			button.disabled = !!isLoading;
+			if (isLoading) {
+				button.setAttribute('data-loading', 'true');
+			} else {
+				button.removeAttribute('data-loading');
+			}
+		});
+		activeFields.forEach(function (field) {
+			if (field) field.disabled = !!isLoading;
+		});
+	}
+
+	function getHoneypotValue(sourceForm) {
+		var field = sourceForm ? sourceForm.querySelector('[data-track-honeypot]') : section.querySelector('[data-track-honeypot]');
+		return field ? field.value : '';
 	}
 
 	function isDisplayableValue(value) {
@@ -791,6 +1127,22 @@
 
 	function isValidTrackingNumber(value) {
 		return /^[A-Z0-9]{4,34}$/.test(value);
+	}
+
+	function normalizeEmail(value) {
+		return String(value || '').trim().toLowerCase();
+	}
+
+	function isValidEmail(value) {
+		return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value.length <= 254;
+	}
+
+	function normalizeOrderNumber(value) {
+		return String(value || '').trim().replace(/\s+/g, '').replace(/^#+/, '').toUpperCase();
+	}
+
+	function isValidOrderNumber(value) {
+		return /^[A-Z0-9-]{2,32}$/.test(value);
 	}
 
 	function detectCarrier(trackingNumber) {
@@ -870,16 +1222,47 @@
 		};
 	}
 
-	function buildEndpointUrl(trackingNumber) {
+	function buildEndpointUrl(inputParams, includeQueryParams) {
 		if (!endpoint) return '';
 
+		var params = typeof inputParams === 'object' && inputParams !== null ? inputParams : { trackingNumber: inputParams };
+		var output = endpoint;
+
 		if (endpoint.indexOf('{trackingNumber}') !== -1) {
-			return endpoint.replace(/\{trackingNumber\}/g, encodeURIComponent(trackingNumber));
+			output = output.replace(/\{trackingNumber\}/g, encodeURIComponent(params.trackingNumber || ''));
 		}
 
-		var url = new URL(endpoint, window.location.origin);
-		if (!url.searchParams.has('trackingNumber') && !url.searchParams.has('tracking')) {
-			url.searchParams.set('trackingNumber', trackingNumber);
+		if (output.indexOf('{email}') !== -1) {
+			output = output.replace(/\{email\}/g, encodeURIComponent(params.email || ''));
+		}
+
+		if (output.indexOf('{orderNumber}') !== -1) {
+			output = output.replace(/\{orderNumber\}/g, encodeURIComponent(params.orderNumber || ''));
+		}
+
+		if (output.indexOf('{orderName}') !== -1) {
+			output = output.replace(/\{orderName\}/g, encodeURIComponent(params.orderName || ''));
+		}
+
+		if (output !== endpoint) {
+			return output;
+		}
+
+		var url = new URL(output, window.location.origin);
+		if (includeQueryParams === false) {
+			return url.toString();
+		}
+
+		if (params.trackingNumber && !url.searchParams.has('trackingNumber') && !url.searchParams.has('tracking')) {
+			url.searchParams.set('trackingNumber', params.trackingNumber);
+		}
+
+		if (params.email && !url.searchParams.has('email')) {
+			url.searchParams.set('email', params.email);
+		}
+
+		if (params.orderNumber && !url.searchParams.has('orderNumber') && !url.searchParams.has('order') && !url.searchParams.has('name')) {
+			url.searchParams.set('orderNumber', params.orderNumber);
 		}
 
 		return url.toString();
@@ -897,9 +1280,9 @@
 	}
 
 	function fallbackHttpMessage(status) {
-		if (status === 400) return 'Please check the tracking number and try again.';
-		if (status === 401 || status === 403) return 'Tracking access is not authorized for this shipment yet.';
-		if (status === 404) return 'Tracking backend is not connected yet. Please configure the /apps/order-tracking app proxy or set the correct endpoint in this section.';
+		if (status === 400) return lookupMode === 'order_lookup' ? 'Please check your email and order number, then try again.' : 'Please check the tracking number and try again.';
+		if (status === 401 || status === 403) return lookupMode === 'order_lookup' ? 'Order tracking access is not authorized yet.' : 'Tracking access is not authorized for this shipment yet.';
+		if (status === 404) return 'No matching order with tracking was found yet. Please check your email and order number.';
 		if (status === 429) return 'Tracking lookup is busy right now. Please try again in a few minutes.';
 		if (status >= 500) return 'Tracking service is temporarily unavailable. Please try again soon.';
 		return 'Could not fetch tracking information. Please try again.';
@@ -925,7 +1308,7 @@
 		});
 	}
 
-	function fetchTracking(trackingNumber) {
+	function fetchTracking(trackingNumber, sourceForm) {
 		var url = buildEndpointUrl(trackingNumber);
 		if (!url) {
 			return Promise.reject(new Error('Tracking endpoint is not configured yet.'));
@@ -941,8 +1324,40 @@
 			options.headers['Content-Type'] = 'application/json';
 			options.body = JSON.stringify({
 				trackingNumber: trackingNumber,
-				trackingNumbers: [trackingNumber]
+				trackingNumbers: [trackingNumber],
+				website: getHoneypotValue(sourceForm),
+				formElapsedMs: Date.now() - formStartedAt
 			});
+		}
+
+		return fetch(url, options).then(parseJsonResponse);
+	}
+
+	function fetchOrderTracking(email, orderNumber, sourceForm) {
+		var orderName = '#' + orderNumber;
+		var payload = {
+			email: email,
+			orderNumber: orderNumber,
+			orderName: orderName,
+			website: getHoneypotValue(sourceForm),
+			formElapsedMs: Date.now() - formStartedAt
+		};
+		var usePost = method === 'POST';
+		var url = buildEndpointUrl(payload, !usePost);
+
+		if (!url) {
+			return Promise.reject(new Error('Order tracking endpoint is not configured yet.'));
+		}
+
+		var options = {
+			method: usePost ? 'POST' : 'GET',
+			headers: { Accept: 'application/json' },
+			credentials: 'same-origin'
+		};
+
+		if (usePost) {
+			options.headers['Content-Type'] = 'application/json';
+			options.body = JSON.stringify(payload);
 		}
 
 		return fetch(url, options).then(parseJsonResponse);
@@ -1037,8 +1452,8 @@
 		}, 30000);
 	}
 
-	function render17TrackWidget(trackingNumber) {
-		setLoading(true);
+	function render17TrackWidget(trackingNumber, sourceForm) {
+		setLoading(true, sourceForm);
 		resEl.hidden = true;
 		errEl.hidden = true;
 		widgetShell.hidden = false;
@@ -1067,7 +1482,7 @@
 				showError(error && error.message ? error.message : 'Could not load tracking widget. Please try again.');
 			})
 			.finally(function () {
-				setLoading(false);
+				setLoading(false, sourceForm);
 			});
 	}
 
@@ -1087,6 +1502,10 @@
 
 	function getTrackingNumber(item, fallback) {
 		return stripTags(item.trackingNumber || item.tracking_number || item.associatedTrackingNumber || item.ID || item['@ID'] || fallback);
+	}
+
+	function getTrackingUrl(item) {
+		return stripTags(item.trackingUrl || item.tracking_url || item.trackingLink || item.tracking_link || item.url || item.URL || '');
 	}
 
 	function getCarrierName(item) {
@@ -1379,11 +1798,19 @@
 		resEl.querySelector('.cs-result__status-label').textContent = statusLabel;
 		resEl.querySelector('.cs-result__status-sub').textContent = statusSub;
 
+		var carrierName = getCarrierName(item);
+		var trackingUrl = '';
+
 		setField('[data-field="number"]', getTrackingNumber(item, requestedNumber));
-		setField('[data-field="carrier"]', getCarrierName(item));
+		setField('[data-field="carrier"]', carrierName);
 		setField('[data-field="service"]', getService(item));
 		setField('[data-field="delivery"]', formatDeliveryEstimate(getDeliveryDate(item)));
 		setField('[data-field="route"]', getRoute(item));
+		setOfficialLink(trackingUrl ? {
+			name: carrierName || 'carrier',
+			url: trackingUrl,
+			linkLabel: 'Open tracking page'
+		} : null);
 
 		timeline.innerHTML = '';
 		if (events.length) {
@@ -1442,7 +1869,7 @@
 		scrollToTrackingOutput(resEl);
 	}
 
-	function track(rawValue) {
+	function track(rawValue, sourceForm) {
 		var trackingNumber = normalizeTrackingNumber(rawValue);
 		clearStates();
 
@@ -1452,7 +1879,7 @@
 		}
 
 		if (mode === 'seventeen_track_widget') {
-			render17TrackWidget(trackingNumber);
+			render17TrackWidget(trackingNumber, sourceForm);
 			return;
 		}
 
@@ -1461,8 +1888,8 @@
 			return;
 		}
 
-		setLoading(true);
-		fetchTracking(trackingNumber)
+		setLoading(true, sourceForm);
+		fetchTracking(trackingNumber, sourceForm)
 			.then(function (payload) {
 				render(payload, trackingNumber);
 			})
@@ -1470,21 +1897,80 @@
 				showError(error && error.message ? error.message : 'Could not fetch tracking information. Please try again.');
 			})
 			.finally(function () {
-				setLoading(false);
+				setLoading(false, sourceForm);
 			});
 	}
 
-	form.addEventListener('submit', function (event) {
-		event.preventDefault();
-		track(input.value);
-	});
+	function trackOrder(rawEmail, rawOrderNumber, sourceForm) {
+		var email = normalizeEmail(rawEmail);
+		var orderNumber = normalizeOrderNumber(rawOrderNumber);
+		clearStates();
+
+		if (!isValidEmail(email)) {
+			showError('Please enter the email address used at checkout.');
+			return;
+		}
+
+		if (!isValidOrderNumber(orderNumber)) {
+			showError('Please enter a valid order number.');
+			return;
+		}
+
+		setLoading(true, sourceForm);
+		fetchOrderTracking(email, orderNumber, sourceForm)
+			.then(function (payload) {
+				render(payload, orderNumber);
+			})
+			.catch(function (error) {
+				showError(error && error.message ? error.message : 'Could not fetch tracking information. Please try again.');
+			})
+			.finally(function () {
+				setLoading(false, sourceForm);
+			});
+	}
+
+	if (orderForm) {
+		orderForm.addEventListener('submit', function (event) {
+			event.preventDefault();
+			trackOrder(emailInput ? emailInput.value : '', orderInput ? orderInput.value : '', orderForm);
+		});
+	}
+
+	if (trackingForm) {
+		trackingForm.addEventListener('submit', function (event) {
+			event.preventDefault();
+			track(trackingInput ? trackingInput.value : '', trackingForm);
+		});
+	}
+
+	if (form) {
+		form.addEventListener('submit', function (event) {
+			event.preventDefault();
+
+			if (lookupMode === 'order_lookup') {
+				trackOrder(emailInput ? emailInput.value : '', orderInput ? orderInput.value : '', form);
+				return;
+			}
+
+			track(trackingInput ? trackingInput.value : '', form);
+		});
+	}
 
 	try {
 		var params = new URLSearchParams(window.location.search);
+		if (lookupMode === 'order_lookup' || lookupMode === 'split_lookup') {
+			var emailPreset = params.get('email');
+			var orderPreset = params.get('orderNumber') || params.get('order') || params.get('name');
+
+			if (emailPreset && emailInput) emailInput.value = emailPreset;
+			if (orderPreset && orderInput) orderInput.value = orderPreset;
+			if (emailPreset && orderPreset) trackOrder(emailPreset, orderPreset, orderForm || form);
+		}
+
 		var preset = params.get('trackingNumber') || params.get('tracking') || params.get('nums') || params.get('tn');
-		if (preset) {
-			input.value = preset;
-			track(preset);
+		if (preset && trackingInput) {
+			trackingInput.value = preset;
+			track(preset, trackingForm || form);
 		}
 	} catch (error) {}
 })();
@@ -1508,19 +1994,52 @@
 			"type": "textarea",
 			"id": "subheading",
 			"label": "Subheading",
-			"default": "Enter your tracking number to open the official carrier tracking page."
+			"default": "Enter the email used at checkout and your order number to see your shipment tracking."
+		},
+		{
+			"type": "select",
+			"id": "lookup_mode",
+			"label": "Lookup method",
+			"default": "split_lookup",
+			"options": [
+				{
+					"value": "split_lookup",
+					"label": "Email/order and tracking number"
+				},
+				{
+					"value": "order_lookup",
+					"label": "Email and order number"
+				},
+				{
+					"value": "tracking_number",
+					"label": "Tracking number"
+				}
+			],
+			"info": "Email and order number requires a private backend or Shopify app proxy. Tracking number can use direct carrier links, 17TRACK widget, or a tracking API endpoint."
+		},
+		{
+			"type": "text",
+			"id": "email_placeholder",
+			"label": "Email placeholder",
+			"default": "Please enter your email"
+		},
+		{
+			"type": "text",
+			"id": "order_placeholder",
+			"label": "Order number placeholder",
+			"default": "Please enter your order number"
 		},
 		{
 			"type": "text",
 			"id": "placeholder",
-			"label": "Input placeholder",
-			"default": "Enter tracking number"
+			"label": "Tracking number placeholder",
+			"default": "Please enter your tracking number"
 		},
 		{
 			"type": "text",
 			"id": "button_label",
 			"label": "Button label",
-			"default": "Find Carrier"
+			"default": "Track"
 		},
 		{
 			"type": "select",
@@ -1549,14 +2068,14 @@
 		},
 		{
 			"type": "paragraph",
-			"content": "Use a private backend or Shopify app proxy that calls your multi-carrier tracking API. Do not place 17TRACK or carrier API keys in this theme."
+			"content": "Use a private backend or Shopify app proxy for email and order number lookup. Do not place Shopify Admin API, 17TRACK, or carrier API credentials in this theme."
 		},
 		{
 			"type": "text",
 			"id": "endpoint_url",
-			"label": "Tracking endpoint URL",
-			"default": "https://tracking-api-ru28.onrender.com/api/search",
-			"info": "The endpoint should return tracking JSON. Use {trackingNumber} in the URL if your endpoint needs path replacement."
+			"label": "Lookup endpoint URL",
+			"default": "https://camosignal-order-tracking.camosignal.workers.dev",
+			"info": "The endpoint should return tracking JSON. Supported URL placeholders: {email}, {orderNumber}, {orderName}, {trackingNumber}."
 		},
 		{
 			"type": "select",

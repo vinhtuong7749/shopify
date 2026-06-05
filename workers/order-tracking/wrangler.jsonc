@@ -1,0 +1,46 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "camosignal-order-tracking",
+  "main": "src/index.js",
+  "compatibility_date": "2026-06-05",
+  "workers_dev": true,
+  "preview_urls": false,
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+  "kv_namespaces": [
+    {
+      "binding": "ORDER_TRACKING_RATE_LIMIT",
+      "id": "a1ef4347e3aa45468b9d4d141797d958"
+    }
+  ],
+  "vars": {
+    "SHOPIFY_SHOP_DOMAIN": "apepsd-ha.myshopify.com",
+    "SHOPIFY_CLIENT_ID": "9f4e64008f3e223c8296dadb4315d642",
+    "SHOPIFY_API_VERSION": "2026-04",
+    "ORDER_LOOKUP_LIMIT": "25",
+    "ALLOWED_ORIGIN": "https://camosignal.com",
+    "TRACKING_LOOKUP_METHOD": "POST",
+    "REQUIRE_STOREFRONT_ORIGIN": "true",
+    "REQUIRE_JSON_POST": "true",
+    "REQUIRE_FORM_TIMING": "true",
+    "MIN_FORM_ELAPSED_MS": "700",
+    "MAX_BODY_BYTES": "2048",
+    "RATE_LIMIT_IP_MAX": "100",
+    "RATE_LIMIT_IP_WINDOW_SECONDS": "300",
+    "RATE_LIMIT_IP_DAY_MAX": "1000",
+    "RATE_LIMIT_IP_DAY_WINDOW_SECONDS": "86400",
+    "RATE_LIMIT_EMAIL_MAX": "200",
+    "RATE_LIMIT_EMAIL_WINDOW_SECONDS": "3600",
+    "RATE_LIMIT_PAIR_MAX": "100",
+    "RATE_LIMIT_PAIR_WINDOW_SECONDS": "3600",
+    "RATE_LIMIT_TRACKING_MAX": "200",
+    "RATE_LIMIT_TRACKING_WINDOW_SECONDS": "3600"
+  },
+  "secrets": {
+    "required": [
+      "SHOPIFY_CLIENT_SECRET"
+    ]
+  }
+}

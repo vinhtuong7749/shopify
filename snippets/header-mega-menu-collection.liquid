@@ -376,23 +376,25 @@
 				<h3 class="mega-block__heading">Fishing</h3>
 				<div class="mega-hunting-list mega-fishing-list">
 					{%- assign fishing_handles = "fishing-t-shirt,saltwater-fishing-t-shirt" | split: "," -%}
-					{%- assign fishing_labels = "Freshwater Fishing T-shirt,Saltwater Fishing T-shirt" | split: "," -%}
 					{%- assign fishing_icon_fallbacks = "https://cdn.shopify.com/s/files/1/0741/7987/0911/collections/icon_bass.jpg?v=1780569828,https://cdn.shopify.com/s/files/1/0741/7987/0911/collections/icon_swordfish.jpg?v=1780569816" | split: "," -%}
 					{%- for handle in fishing_handles -%}
 						{%- assign f_col = collections[handle] -%}
-						{%- assign f_label = fishing_labels[forloop.index0] -%}
+						{%- assign f_label = handle | replace: '-', ' ' -%}
+						{%- if f_col != blank -%}
+							{%- assign f_label = f_col.title -%}
+						{%- endif -%}
 						{%- assign f_fallback_icon = fishing_icon_fallbacks[forloop.index0] -%}
 						<a href="{%- if f_col != blank -%}{{ f_col.url }}{%- else -%}/collections/{{ handle }}{%- endif -%}" class="mega-hunting-item mega-fishing-item">
 							<span class="mega-hunting-icon-wrap">
 								{%- if f_col.image != blank -%}
-									<img src="{{ f_col.image | image_url: width: 120, height: 120, crop: 'center' }}" alt="{{ f_label }}" class="mega-hunting-icon mega-hunting-icon--{{ handle | handleize }}" width="120" height="120" loading="lazy">
+									<img src="{{ f_col.image | image_url: width: 120, height: 120, crop: 'center' }}" alt="{{ f_label | escape }}" class="mega-hunting-icon mega-hunting-icon--{{ handle | handleize }}" width="120" height="120" loading="lazy">
 								{%- elsif f_fallback_icon != blank -%}
-									<img src="{{ f_fallback_icon }}" alt="{{ f_label }}" class="mega-hunting-icon mega-hunting-icon--{{ handle | handleize }}" width="120" height="120" loading="lazy">
+									<img src="{{ f_fallback_icon }}" alt="{{ f_label | escape }}" class="mega-hunting-icon mega-hunting-icon--{{ handle | handleize }}" width="120" height="120" loading="lazy">
 								{%- else -%}
 									<span class="mega-hunting-placeholder">{{ f_label | slice: 0 }}</span>
 								{%- endif -%}
 							</span>
-							<span class="mega-hunting-label">{{ f_label | upcase }}</span>
+							<span class="mega-hunting-label">{{ f_label | escape }}</span>
 						</a>
 					{%- endfor -%}
 				</div>
