@@ -18,6 +18,8 @@
 {%- assign is_show_payment_methods   = section.settings.is_show_payment_methods -%}
 {%- assign show_back_to_top_button	 = section.settings.show_back_to_top_button -%}
 {%- assign show_store_policies_in_footer = section.settings.show_store_policies_in_footer -%}
+{%- assign shipping_policy_page_url = '/pages/shipping-policy' -%}
+{%- assign refund_policy_page_url = '/pages/refund-policy' -%}
 
 {%- assign color_scheme                    = section.settings.color_scheme -%}
 {%- assign enable_color_scheme_inheritance = section.settings.enable_color_scheme_inheritance -%}
@@ -321,7 +323,7 @@
 
 		.footer-custom-top {
 			background-color: #243029;
-			color: #faf6ee;
+			color: #ffffff;
 			padding: 64px 20px 48px;
 			width: 100%;
 		}
@@ -356,7 +358,7 @@
 			letter-spacing: 0;
 			font-size: 15px;
 			line-height: 1.6;
-			color: rgba(250, 246, 238, 0.85);
+			color: #ffffff;
 		}
 		.footer-col-1 .footer-manifesto {
 		}
@@ -368,7 +370,7 @@
 			font-weight: 600;
 			text-transform: uppercase;
 			margin: 0 0 30px 0;
-			color: #faf6ee;
+			color: #ffffff;
 			letter-spacing: 0.05em;
 		}
 
@@ -385,7 +387,7 @@
 			letter-spacing: 0;
 			font-size: 15px;
 			line-height: 1.5;
-			color: rgba(250, 246, 238, 0.85);
+			color: #ffffff;
 		}
 
 		/* Column 3: Newsletter */
@@ -396,7 +398,16 @@
 			letter-spacing: 0;
 			font-size: 15px;
 			line-height: 1.5;
-			color: rgba(250, 246, 238, 0.85);
+			color: #ffffff;
+		}
+
+		.footer-custom-top a,
+		.footer-custom-top .rte,
+		.footer-custom-top .rte a,
+		.footer-newsletter-text,
+		.footer-newsletter-text p,
+		.footer-newsletter-text a {
+			color: #ffffff;
 		}
 
 		/* Newsletter form */
@@ -417,9 +428,9 @@
 		.footer-custom-top .footer-form__input {
 			flex: 1;
 			background: transparent;
-			border: 1px solid rgba(250, 246, 238, 0.3);
+			border: 1px solid rgba(255, 255, 255, 0.45);
 			border-right: none;
-			color: #faf6ee;
+			color: #ffffff;
 			padding: 0 16px;
 			height: 100% !important;
 			min-height: 44px !important;
@@ -434,13 +445,13 @@
 			-webkit-appearance: none;
 		}
 		.footer-custom-top .footer-form__input:focus {
-			border-color: #faf6ee;
+			border-color: #ffffff;
 		}
 		.footer-custom-top .footer-form__input::placeholder {
-			color: rgba(250, 246, 238, 0.45);
+			color: rgba(255, 255, 255, 0.72);
 		}
 		.footer-custom-top .footer-form__button {
-			background: #faf6ee;
+			background: #ffffff;
 			color: #243029;
 			border: none;
 			height: 100% !important;
@@ -462,7 +473,7 @@
 			justify-content: center !important;
 		}
 		.footer-custom-top .footer-form__button:hover {
-			background: #e8e4dc;
+			background: #ffffff;
 		}
 		
 		/* Socials */
@@ -480,10 +491,10 @@
 
 		.footer-custom-bottom {
 			background-color: #243029;
-			color: rgba(250, 246, 238, 0.6);
+			color: #ffffff;
 			padding: 24px 20px;
 			width: 100%;
-			border-top: 1px solid rgba(250, 246, 238, 0.15);
+			border-top: 1px solid rgba(255, 255, 255, 0.22);
 		}
 		.footer-custom-bottom-inner {
 			max-width: 1400px;
@@ -502,13 +513,13 @@
 			letter-spacing: 1px;
 		}
 		.footer-custom-bottom-left a {
-			color: rgba(250, 246, 238, 0.6);
+			color: #ffffff;
 			text-decoration: none;
 			text-transform: uppercase;
 			transition: color 0.3s ease;
 		}
 		.footer-custom-bottom-left a:hover {
-			color: #faf6ee;
+			color: #ffffff;
 		}
 		.footer-custom-bottom-right .footer__payments-container {
 			display: flex;
@@ -627,13 +638,13 @@
 				</ul>
 				
 				<div class="footer-custom-socials mobile-only" style="margin-top: 32px;">
-					<a href="{{ settings.social_facebook_link | default: 'https://www.facebook.com/profile.php?id=61575744733042' }}" target="_blank" style="color: #faf6ee;">
+					<a href="{{ settings.social_facebook_link | default: 'https://www.facebook.com/profile.php?id=61575744733042' }}" target="_blank" style="color: #ffffff;">
 						{% render 'icons-social', icon: 'facebook' %}
 					</a>
-					<a href="{{ settings.social_instagram_link | default: 'https://www.instagram.com/camo.signal/' }}" target="_blank" style="color: #faf6ee;">
+					<a href="{{ settings.social_instagram_link | default: 'https://www.instagram.com/camo.signal/' }}" target="_blank" style="color: #ffffff;">
 						{% render 'icons-social', icon: 'instagram' %}
 					</a>
-					<a href="#" target="_blank" style="color: #faf6ee;">
+					<a href="#" target="_blank" style="color: #ffffff;">
 						{% render 'icons-social', icon: 'tiktok' %}
 					</a>
 				</div>
@@ -664,13 +675,13 @@
 				{%- endform -%}
 				
 				<div class="footer-custom-socials desktop-only" style="margin-top: 20px;">
-					<a href="{{ settings.social_facebook_link | default: 'https://www.facebook.com/profile.php?id=61575744733042' }}" target="_blank" style="color: #faf6ee;">
+					<a href="{{ settings.social_facebook_link | default: 'https://www.facebook.com/profile.php?id=61575744733042' }}" target="_blank" style="color: #ffffff;">
 						{% render 'icons-social', icon: 'facebook' %}
 					</a>
-					<a href="{{ settings.social_instagram_link | default: 'https://www.instagram.com/camo.signal/' }}" target="_blank" style="color: #faf6ee;">
+					<a href="{{ settings.social_instagram_link | default: 'https://www.instagram.com/camo.signal/' }}" target="_blank" style="color: #ffffff;">
 						{% render 'icons-social', icon: 'instagram' %}
 					</a>
-					<a href="#" target="_blank" style="color: #faf6ee;">
+					<a href="#" target="_blank" style="color: #ffffff;">
 						{% render 'icons-social', icon: 'tiktok' %}
 					</a>
 				</div>
@@ -685,13 +696,20 @@
 
 				{%- if section.settings.sub_footer_menu != blank -%}
 					{%- for link in linklists[section.settings.sub_footer_menu].links -%}
-						<a href="{{ link.url }}">{{ link.title | upcase }}</a>
+						{%- assign sub_footer_link_url = link.url -%}
+						{%- if sub_footer_link_url contains 'shipping-policy' -%}
+							{%- assign sub_footer_link_url = shipping_policy_page_url -%}
+						{%- endif -%}
+						{%- if sub_footer_link_url contains 'refund-policy' -%}
+							{%- assign sub_footer_link_url = refund_policy_page_url -%}
+						{%- endif -%}
+						<a href="{{ sub_footer_link_url }}">{{ link.title | upcase }}</a>
 					{%- endfor -%}
 				{%- else -%}
 					<a href="/pages/about-us1">ABOUT US</a>
 					<a href="/pages/contact">CONTACT INFORMATION</a>
-					<a href="/policies/shipping-policy">SHIPPING POLICY</a>
-					<a href="/policies/refund-policy">REFUND POLICY</a>
+					<a href="{{ shipping_policy_page_url }}">SHIPPING POLICY</a>
+					<a href="{{ refund_policy_page_url }}">REFUND POLICY</a>
 					<a href="/policies/privacy-policy">PRIVACY POLICY</a>
 					<a href="/policies/terms-of-service">TERMS OF SERVICE</a>
 				{%- endif -%}

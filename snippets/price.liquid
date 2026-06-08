@@ -164,7 +164,7 @@
 		<div class="price__taxes-included">
 			{{- 'products.product.price.taxes_included' | t -}}
 			{%- if shop.shipping_policy.body != blank %}
-				{{- 'products.product.price.shipping_policy_html' | t: link: shop.shipping_policy.url -}}
+				{{- 'products.product.price.shipping_policy_html' | t: link: '/pages/shipping-policy' -}}
 			{%- endif -%}
 		</div>
 	{%- endif -%}

@@ -1,0 +1,581 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Return, Refund & Cancellation Policy Preview</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;700&display=swap" rel="stylesheet"><style>:root { --base-font-family: 'Oswald', Arial, sans-serif; --heading-font-family: 'Oswald', Arial, sans-serif; --heading-font-weight: 700; --heading-text-transform: uppercase; --color-background: #ffffff; --color-text-primary: #2c3d33; --color-text-heading: #2c3d33; --color-text-secondary: #535353; --color-text-thirdly: #757575; --color-border-secondary: #e9e9e9; } html, body { margin: 0; min-height: 100%; background: #ffffff; overflow-x: hidden; } body { font-family: var(--base-font-family); } 
+	#shopify-section-return-preview {
+		padding-top: 36px;
+		padding-bottom: 48px;
+		background: var(--color-background);
+	}
+
+	#shopify-section-return-preview .policy-page-basic {
+		background: var(--color-background);
+		color: var(--color-text-primary);
+		font-family: var(--base-font-family), var(--heading-font-family), sans-serif;
+	}
+
+	#shopify-section-return-preview .policy-page-basic,
+	#shopify-section-return-preview .policy-page-basic *,
+	#shopify-section-return-preview .policy-page-basic *::before,
+	#shopify-section-return-preview .policy-page-basic *::after {
+		box-sizing: border-box;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__container {
+		width: min(calc(100% - 32px), 1040px);
+		margin: 0 auto;
+		max-width: calc(100vw - 32px);
+		min-width: 0;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__header {
+		max-width: 760px;
+		margin: 0 auto 34px;
+		text-align: center;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__title {
+		margin: 0;
+		color: var(--color-text-heading, var(--color-text-primary));
+		font-family: var(--heading-font-family), var(--base-font-family), sans-serif;
+		font-size: 34px;
+		font-weight: var(--heading-font-weight, 700);
+		line-height: 1.05;
+		letter-spacing: 0;
+		text-transform: var(--heading-text-transform, uppercase);
+	}
+
+	#shopify-section-return-preview .policy-page-basic__intro {
+		margin: 16px 0 0;
+		color: var(--color-text-secondary, #535353);
+		font-size: 15px;
+		font-weight: 300;
+		line-height: 1.7;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__summary {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 0;
+		margin: 0 0 34px;
+		border-top: 1px solid var(--color-border-secondary, #e9e9e9);
+		border-bottom: 1px solid var(--color-border-secondary, #e9e9e9);
+	}
+
+	#shopify-section-return-preview .policy-page-basic__summary-item {
+		display: grid;
+		gap: 4px;
+		padding: 16px 0;
+		border-top: 1px solid var(--color-border-secondary, #e9e9e9);
+		color: inherit;
+		text-decoration: none;
+		cursor: pointer;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__summary-item:hover,
+	#shopify-section-return-preview .policy-page-basic__summary-item:focus-visible {
+		color: var(--color-text-primary);
+	}
+
+	#shopify-section-return-preview .policy-page-basic__summary-item:first-child {
+		border-top: 0;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__summary-item dt,
+	#shopify-section-return-preview .policy-page-basic__summary-item dd {
+		margin: 0;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__label,
+	#shopify-section-return-preview .policy-page-basic__table th {
+		color: var(--color-text-thirdly, #757575);
+		font-size: 12px;
+		font-weight: 700;
+		line-height: 1.35;
+		letter-spacing: 0.5px;
+		text-transform: uppercase;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__value {
+		color: var(--color-text-primary);
+		font-size: 18px;
+		font-weight: 700;
+		line-height: 1.3;
+		text-transform: uppercase;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__toc {
+		margin: 0 0 12px;
+		padding: 16px 0;
+		border-top: 1px solid var(--color-border-secondary, #e9e9e9);
+		border-bottom: 1px solid var(--color-border-secondary, #e9e9e9);
+	}
+
+	#shopify-section-return-preview .policy-page-basic__toc-title {
+		margin: 0 0 10px;
+		color: var(--color-text-primary);
+		font-size: 13px;
+		font-weight: 700;
+		line-height: 1.4;
+		text-transform: uppercase;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__toc-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px 18px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__toc-link {
+		color: var(--color-text-secondary, #535353);
+		font-size: 13px;
+		font-weight: 400;
+		line-height: 1.4;
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__toc-link:hover {
+		color: var(--color-text-primary);
+	}
+
+	#shopify-section-return-preview .policy-page-basic__section {
+		padding: 30px 0;
+		border-top: 1px solid var(--color-border-secondary, #e9e9e9);
+		scroll-margin-top: 90px;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__toc + .policy-page-basic__section {
+		padding-top: 18px;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__section > div {
+		min-width: 0;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__section:last-child {
+		border-bottom: 1px solid var(--color-border-secondary, #e9e9e9);
+	}
+
+	#shopify-section-return-preview .policy-page-basic__section-title {
+		margin: 0 0 14px;
+		color: var(--color-text-heading, var(--color-text-primary));
+		font-family: var(--heading-font-family), var(--base-font-family), sans-serif;
+		font-size: 24px;
+		font-weight: var(--heading-font-weight, 700);
+		line-height: 1.18;
+		letter-spacing: 0;
+		text-transform: var(--heading-text-transform, uppercase);
+		overflow-wrap: anywhere;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__subheading {
+		margin: 22px 0 8px;
+		color: var(--color-text-primary);
+		font-size: 16px;
+		font-weight: 700;
+		line-height: 1.35;
+		text-transform: uppercase;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__text,
+	#shopify-section-return-preview .policy-page-basic__list,
+	#shopify-section-return-preview .policy-page-basic__ordered-list {
+		color: var(--color-text-secondary, #535353);
+		font-size: 15px;
+		font-weight: 300;
+		line-height: 1.75;
+		overflow-wrap: anywhere;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__text {
+		margin: 0 0 12px;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__text:last-child {
+		margin-bottom: 0;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__list,
+	#shopify-section-return-preview .policy-page-basic__ordered-list {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 8px;
+		margin: 0;
+		padding-left: 20px;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__list {
+		list-style: disc;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__ordered-list {
+		list-style: decimal;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__table-wrap {
+		width: 100%;
+		max-width: 100%;
+		margin: 16px 0;
+		overflow-x: auto;
+		border: 1px solid var(--color-border-secondary, #e9e9e9);
+	}
+
+	#shopify-section-return-preview .policy-page-basic__table {
+		width: 100%;
+		min-width: 560px;
+		border-collapse: collapse;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__table th,
+	#shopify-section-return-preview .policy-page-basic__table td {
+		padding: 13px 14px;
+		border-bottom: 1px solid var(--color-border-secondary, #e9e9e9);
+		text-align: left;
+		vertical-align: top;
+		overflow-wrap: anywhere;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__table tr:last-child td {
+		border-bottom: 0;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__table td {
+		color: var(--color-text-secondary, #535353);
+		font-size: 14px;
+		font-weight: 300;
+		line-height: 1.55;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__note {
+		margin: 16px 0 0;
+		padding: 16px 20px;
+		background: #f4f4f4;
+		border-left: 4px solid #243029;
+		border-radius: 0 8px 8px 0;
+		color: #243029;
+		font-size: 14px;
+		font-weight: 300;
+		line-height: 1.65;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__two-col,
+	#shopify-section-return-preview .policy-page-basic__contact {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 20px;
+		margin: 16px 0 0;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__info-block,
+	#shopify-section-return-preview .policy-page-basic__contact-item {
+		padding-top: 14px;
+		border-top: 1px solid var(--color-border-secondary, #e9e9e9);
+	}
+
+	#shopify-section-return-preview .policy-page-basic__info-title {
+		margin: 0 0 6px;
+		color: var(--color-text-primary);
+		font-size: 15px;
+		font-weight: 700;
+		line-height: 1.35;
+		text-transform: uppercase;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__contact-value,
+	#shopify-section-return-preview .policy-page-basic__contact-value a {
+		display: block;
+		margin-top: 4px;
+		color: var(--color-text-primary);
+		font-size: 16px;
+		font-weight: 700;
+		line-height: 1.4;
+		text-decoration: none;
+		overflow-wrap: anywhere;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__contact-value a:hover {
+		text-decoration: underline;
+		text-underline-offset: 4px;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__updated {
+		margin-top: 16px;
+		color: var(--color-text-thirdly, #757575);
+		font-size: 13px;
+		font-weight: 300;
+		line-height: 1.5;
+	}
+
+	@media screen and (min-width: 750px) {
+		#shopify-section-return-preview {
+			padding-top: 64px;
+			padding-bottom: 72px;
+		}
+
+		#shopify-section-return-preview .policy-page-basic__container {
+			width: min(calc(100% - 64px), 1040px);
+		}
+
+		#shopify-section-return-preview .policy-page-basic__title {
+			font-size: 42px;
+		}
+
+		#shopify-section-return-preview .policy-page-basic__summary {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+		}
+
+		#shopify-section-return-preview .policy-page-basic__summary-item {
+			padding: 18px 18px;
+			border-top: 0;
+			border-left: 1px solid var(--color-border-secondary, #e9e9e9);
+		}
+
+		#shopify-section-return-preview .policy-page-basic__summary-item:first-child {
+			padding-left: 0;
+			border-left: 0;
+		}
+
+		#shopify-section-return-preview .policy-page-basic__section {
+			display: grid;
+			grid-template-columns: 240px minmax(0, 1fr);
+			gap: 44px;
+			padding: 36px 0;
+		}
+
+		#shopify-section-return-preview .policy-page-basic__section-title {
+			margin-bottom: 0;
+		}
+
+		#shopify-section-return-preview .policy-page-basic__two-col,
+		#shopify-section-return-preview .policy-page-basic__contact {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media screen and (max-width: 749px) {
+		#shopify-section-return-preview .policy-page-basic__container {
+			width: auto;
+			max-width: calc(100vw - 32px);
+			margin-right: 16px;
+			margin-left: 16px;
+			overflow-x: clip;
+		}
+
+		#shopify-section-return-preview .policy-page-basic__header {
+			text-align: left;
+		}
+
+		#shopify-section-return-preview .policy-page-basic__title {
+			font-size: 32px;
+			line-height: 1.14;
+			overflow-wrap: anywhere;
+		}
+
+		#shopify-section-return-preview .policy-page-basic__intro {
+			max-width: 320px;
+			overflow-wrap: break-word;
+		}
+
+		#shopify-section-return-preview .policy-page-basic__toc-list {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 8px 14px;
+		}
+
+		#shopify-section-return-preview .policy-page-basic__toc-link {
+			font-size: 12px;
+		}
+
+		#shopify-section-return-preview .policy-page-basic__table {
+			min-width: 0;
+			table-layout: fixed;
+		}
+	}
+</style></head><body><div id="shopify-section-return-preview">
+
+<section class="policy-page-basic color-scheme-1" aria-labelledby="return-policy-title-return-preview">
+	<div class="policy-page-basic__container">
+		<header class="policy-page-basic__header">
+			<h1 id="return-policy-title-return-preview" class="policy-page-basic__title">Return, Refund & Cancellation Policy</h1>
+			<p class="policy-page-basic__intro">Review CamoSignal return eligibility, refund timing, buyer change-of-mind rules, seller-error support, and order cancellation conditions.</p>
+		</header>
+
+		<dl class="policy-page-basic__summary" aria-label="Return policy highlights">
+			<a class="policy-page-basic__summary-item" href="#return-eligibility-return-preview">
+				<dt class="policy-page-basic__label">Return window</dt>
+				<dd class="policy-page-basic__value">7 days</dd>
+			</a>
+			<a class="policy-page-basic__summary-item" href="#return-seller-error-return-preview">
+				<dt class="policy-page-basic__label">Review time</dt>
+				<dd class="policy-page-basic__value">1-2 business days</dd>
+			</a>
+			<a class="policy-page-basic__summary-item" href="#return-buyer-error-return-preview">
+				<dt class="policy-page-basic__label">Buyer return fee</dt>
+				<dd class="policy-page-basic__value">See more</dd>
+			</a>
+			<a class="policy-page-basic__summary-item" href="#return-refunds-return-preview">
+				<dt class="policy-page-basic__label">Refund time</dt>
+				<dd class="policy-page-basic__value">3-7 business days</dd>
+			</a>
+		</dl>
+
+		<nav class="policy-page-basic__toc" aria-label="Return policy sections">
+			<p class="policy-page-basic__toc-title">On this page</p>
+			<ol class="policy-page-basic__toc-list">
+				<li><a class="policy-page-basic__toc-link" href="#return-eligibility-return-preview">Eligibility</a></li>
+				<li><a class="policy-page-basic__toc-link" href="#return-buyer-error-return-preview">Buyer error</a></li>
+				<li><a class="policy-page-basic__toc-link" href="#return-seller-error-return-preview">Seller error</a></li>
+				<li><a class="policy-page-basic__toc-link" href="#return-cancellation-return-preview">Cancellation</a></li>
+				<li><a class="policy-page-basic__toc-link" href="#return-exclusions-return-preview">Exclusions</a></li>
+				<li><a class="policy-page-basic__toc-link" href="#return-refunds-return-preview">Refunds</a></li>
+				<li><a class="policy-page-basic__toc-link" href="#return-contact-return-preview">Contact</a></li>
+				<li><a class="policy-page-basic__toc-link" href="#return-other-return-preview">Other terms</a></li>
+			</ol>
+		</nav>
+
+		<article id="return-eligibility-return-preview" class="policy-page-basic__section">
+			<h2 class="policy-page-basic__section-title">Return / Refund Eligibility</h2>
+			<div>
+				<p class="policy-page-basic__text">To be eligible for a return or refund, your request must meet all of the following conditions:</p>
+				<ul class="policy-page-basic__list">
+					<li>The request must be submitted within 7 days from the date the order is marked as delivered.</li>
+					<li>The product must be intact, unused, and free from damage caused by the buyer.</li>
+					<li>Original packaging, labels, accessories, and included gifts must be kept.</li>
+					<li>The buyer must provide the order number and relevant proof, such as photos, videos, or invoice.</li>
+					<li>The product must not fall under non-returnable categories.</li>
+				</ul>
+				<p class="policy-page-basic__note">Requests that do not meet these conditions may be rejected.</p>
+			</div>
+		</article>
+
+		<article id="return-buyer-error-return-preview" class="policy-page-basic__section">
+			<h2 class="policy-page-basic__section-title">Buyer Error / Change of Mind</h2>
+			<div>
+				<p class="policy-page-basic__text">This applies when the buyer requests a return for personal reasons, such as ordering the wrong product, size, or color, changing their mind, or no longer needing the item.</p>
+				<p class="policy-page-basic__text">The buyer is responsible for two-way shipping fees:</p>
+				<div class="policy-page-basic__table-wrap">
+					<table class="policy-page-basic__table">
+						<thead>
+							<tr>
+								<th scope="col">Shipping direction</th>
+								<th scope="col">Fee</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Return shipping: Buyer to Seller</td>
+								<td>$5.45</td>
+							</tr>
+							<tr>
+								<td>Reshipping: Seller to Buyer, if an exchange is requested</td>
+								<td>$5.45</td>
+							</tr>
+							<tr>
+								<td><strong>Total shipping fee</strong></td>
+								<td><strong>$10.90</strong></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<p class="policy-page-basic__note">This amount will be deducted directly from the refund. The remaining balance will be refunded after the process is completed.</p>
+			</div>
+		</article>
+
+		<article id="return-seller-error-return-preview" class="policy-page-basic__section">
+			<h2 class="policy-page-basic__section-title">Seller Error</h2>
+			<div>
+				<p class="policy-page-basic__text">This applies when the issue is caused by the seller, such as wrong product, wrong size/color, technical defect, shipping damage, or product not matching the description.</p>
+				<div class="policy-page-basic__two-col">
+					<div class="policy-page-basic__info-block">
+						<h3 class="policy-page-basic__info-title">Replacement</h3>
+						<p class="policy-page-basic__text">The buyer pays no return or replacement shipping fees. Replacement orders are shipped using the standard shipping timeframe from the date the request is confirmed.</p>
+					</div>
+					<div class="policy-page-basic__info-block">
+						<h3 class="policy-page-basic__info-title">Refund</h3>
+						<p class="policy-page-basic__text">Refunds are issued for 100% of the amount paid, with no shipping fees or other fees deducted.</p>
+					</div>
+				</div>
+				<h3 class="policy-page-basic__subheading">Process</h3>
+				<ol class="policy-page-basic__ordered-list">
+					<li>Take clear photos or videos showing the product issue.</li>
+					<li>Contact us within 7 days from the date of receiving the item, including proof and your order number.</li>
+					<li>Our support team will review and respond within 1-2 business days.</li>
+					<li>Once approved, choose your preferred resolution: replacement or refund.</li>
+					<li>Follow the instructions provided by our support team.</li>
+				</ol>
+				<p class="policy-page-basic__note">The buyer must provide complete information and evidence, and the return must be officially approved before any item is sent back. Returns sent without prior confirmation will not be processed.</p>
+			</div>
+		</article>
+
+		<article id="return-cancellation-return-preview" class="policy-page-basic__section">
+			<h2 class="policy-page-basic__section-title">Order Cancellation</h2>
+			<div>
+				<p class="policy-page-basic__text">Cancellation requests are only accepted if the order has not yet been processed, packed, or handed over to the shipping carrier, and all cancellations require official approval from the seller.</p>
+				<ol class="policy-page-basic__ordered-list">
+					<li>Contact us as soon as possible after placing your order.</li>
+					<li>Provide your order number and reason for cancellation.</li>
+					<li>Wait for official approval and confirmation from our support team.</li>
+					<li>If approved, the order will be canceled and payment will be refunded within 3-7 business days.</li>
+				</ol>
+				<p class="policy-page-basic__note">Orders that have already been processed or are in transit cannot be canceled. In that case, the return/refund policy will apply depending on the situation.</p>
+			</div>
+		</article>
+
+		<article id="return-exclusions-return-preview" class="policy-page-basic__section">
+			<h2 class="policy-page-basic__section-title">Non-Returnable Cases</h2>
+			<div>
+				<ol class="policy-page-basic__ordered-list">
+					<li>The request is submitted more than 7 days after delivery.</li>
+					<li>The product has been used, damaged, scratched, or is missing accessories due to buyer fault.</li>
+					<li>Valid proof cannot be provided for seller-error claims.</li>
+					<li>The product has no invoice, order number, or verification information.</li>
+					<li>The product is a special promotional item or personalized product, if stated on the product page.</li>
+					<li>The buyer sends the item back without official confirmation from us.</li>
+				</ol>
+			</div>
+		</article>
+
+		<article id="return-refunds-return-preview" class="policy-page-basic__section">
+			<h2 class="policy-page-basic__section-title">Refund Method & Time</h2>
+			<div>
+				<h3 class="policy-page-basic__info-title">Refund method</h3>
+				<p class="policy-page-basic__text">Refunds will be issued to the original payment method used for the order.</p>
+				<h3 class="policy-page-basic__subheading">Refund time</h3>
+				<p class="policy-page-basic__text">Refunds are processed within 3-7 business days after the request is approved and the returned item, if applicable, has been inspected. Actual timing may depend on the bank or payment provider.</p>
+			</div>
+		</article>
+
+		<article id="return-contact-return-preview" class="policy-page-basic__section">
+			<h2 class="policy-page-basic__section-title">Contact Support</h2>
+			<div>
+				<p class="policy-page-basic__text">Please include your order number, full name, request reason, and photo/video evidence if applicable.</p>
+				<div class="policy-page-basic__contact">
+					<div class="policy-page-basic__contact-item">
+						<span class="policy-page-basic__label">Email</span>
+						<strong class="policy-page-basic__contact-value"><a href="mailto:support.camosignal@gmail.com">support.camosignal@gmail.com</a></strong>
+					</div>
+					<div class="policy-page-basic__contact-item">
+						<span class="policy-page-basic__label">Business hours</span>
+						<strong class="policy-page-basic__contact-value">Monday-Friday, 8:00 AM-5:00 PM</strong>
+					</div>
+					<div class="policy-page-basic__contact-item">
+						<span class="policy-page-basic__label">Response time</span>
+						<strong class="policy-page-basic__contact-value">Within 24 business hours</strong>
+					</div>
+				</div>
+			</div>
+		</article>
+
+		<article id="return-other-return-preview" class="policy-page-basic__section">
+			<h2 class="policy-page-basic__section-title">Other Terms</h2>
+			<div>
+				<p class="policy-page-basic__text">This policy may be updated over time without prior notice. The latest version will always be published on our official website.</p>
+				<p class="policy-page-basic__text">In the event of a dispute, the final decision belongs to the seller based on the terms published at the time the order was placed.</p>
+				<p class="policy-page-basic__updated">Last updated: May 2026</p>
+			</div>
+		</article>
+	</div>
+</section>
+
+</div></body></html>

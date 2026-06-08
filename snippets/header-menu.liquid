@@ -10,6 +10,9 @@
 	------------------------------------------------------------------------------
 {%- endcomment -%}
 
+{%- assign shipping_policy_page_url = '/pages/shipping-policy' -%}
+{%- assign refund_policy_page_url = '/pages/refund-policy' -%}
+
 <nav class="header-menu" aria-label="{{- "layout.navigation.main_menu" | t | escape -}}">
 	<ul class="header-menu__list header-menu__list--main">
 		{%- if burger_menu.links != blank -%}
@@ -35,6 +38,12 @@
 				{%- assign link_title_down = first_level_link.title | downcase -%}
 				{%- assign header_display_title = first_level_link.title -%}
 				{%- assign header_link_url = first_level_link.url -%}
+				{%- if header_link_url contains 'shipping-policy' -%}
+					{%- assign header_link_url = shipping_policy_page_url -%}
+				{%- endif -%}
+				{%- if header_link_url contains 'refund-policy' -%}
+					{%- assign header_link_url = refund_policy_page_url -%}
+				{%- endif -%}
 				{%- if link_title_down == 'new arrivals' -%}
 					{%- assign header_link_url = '/collections/new-arrivals' -%}
 				{%- endif -%}
@@ -54,8 +63,12 @@
 				{%- if link_title_down == 'support' -%}
 					{%- assign is_support_menu = true -%}
 				{%- endif -%}
+				{%- assign is_fishing_menu = false -%}
+				{%- if link_title_down == 'fishing' -%}
+					{%- assign is_fishing_menu = true -%}
+				{%- endif -%}
 
-				{%- if first_level_link.links != blank or is_mega_menu or is_support_menu -%}
+				{%- if first_level_link.links != blank or is_mega_menu or is_support_menu or is_fishing_menu -%}
 					<a
 						class="button-link header-menu__item{% if first_level_link.active %} header-menu__item--active{% endif %} no-js"
 						href="{{- header_link_url -}}"
@@ -113,8 +126,14 @@
 					{%- endif -%}
 
 					<div class="header-menu__list-nested-wrapper js-header-dropdown-menu-wrapper" data-target-nested-wrapper="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}">
-						{%- if is_mega_menu -%}
-							{%- render 'header-mega-menu-collection', first_level_link: first_level_link, first_level_index: first_level_index, is_shop_menu: is_shop_menu -%}
+						{%- if is_mega_menu or is_fishing_menu -%}
+							{%- render 'header-mega-menu-collection',
+								first_level_link: first_level_link,
+								first_level_index: first_level_index,
+								is_shop_menu: is_shop_menu,
+								is_fishing_menu: is_fishing_menu,
+								header_link_url: header_link_url
+							-%}
 						{%- else -%}
 						<ul
 							id="headerDesktopMenu:{{- first_level_link.title | handleize -}}-{{- first_level_index -}}"
@@ -122,7 +141,6 @@
 						>
 							{%- if is_support_menu -%}
 								{%- comment -%} Custom order: Contact, Shipping, Refund, Privacy, Terms {%- endcomment -%}
-								{%- assign ordered_policies = '' -%}
 								{%- for policy in shop.policies -%}
 									{%- if policy.url contains 'contact-information' -%}
 										{%- assign contact_policy = policy -%}
@@ -158,7 +176,7 @@
 									{%- assign animation_delay = animation_delay | plus: 0.05 -%}
 									<li class="header-menu__item-wrapper" style="--animation-delay: {{ animation_delay }}s">
 										<span class="header-menu__item">
-											<a class="button-link" href="{{ shipping_policy.url }}">
+											<a class="button-link" href="{{ shipping_policy_page_url }}">
 												<span data-text="{{ shipping_policy.title | escape }}"><span>{{ shipping_policy.title | escape }}</span></span>
 											</a>
 										</span>
@@ -169,7 +187,7 @@
 									{%- assign animation_delay = animation_delay | plus: 0.05 -%}
 									<li class="header-menu__item-wrapper" style="--animation-delay: {{ animation_delay }}s">
 										<span class="header-menu__item">
-											<a class="button-link" href="{{ refund_policy.url }}">
+											<a class="button-link" href="{{ refund_policy_page_url }}">
 												<span data-text="{{ refund_policy.title | escape }}"><span>{{ refund_policy.title | escape }}</span></span>
 											</a>
 										</span>
@@ -200,6 +218,13 @@
 							{%- else -%}
 							{%- for second_level_link in first_level_link.links -%}
 								{%- assign animation_delay = animation_delay | plus: 0.05 -%}
+								{%- assign second_level_url = second_level_link.url -%}
+								{%- if second_level_url contains 'shipping-policy' -%}
+									{%- assign second_level_url = shipping_policy_page_url -%}
+								{%- endif -%}
+								{%- if second_level_url contains 'refund-policy' -%}
+									{%- assign second_level_url = refund_policy_page_url -%}
+								{%- endif -%}
 
 								<li
 									class="header-menu__item-wrapper"
@@ -209,7 +234,7 @@
 										<span
 											class="header-menu__item js-header-menu-item-nested{%- if second_level_link.child_active %} header-menu__item--active{% endif %}"
 										>
-											<a href="{{ second_level_link.url }}" class="button-link">
+											<a href="{{ second_level_url }}" class="button-link">
 												<span data-text="{{- second_level_link.title | escape -}}">
 													<span>
 														{{- second_level_link.title | escape -}}
@@ -230,7 +255,7 @@
 										<span class="header-menu__item">
 											<a
 												class="button-link"
-												href="{{- second_level_link.url -}}"
+												href="{{- second_level_url -}}"
 												{% if second_level_link.current %}
 													aria-current="page"
 												{% endif %}
@@ -258,6 +283,13 @@
 								>
 									{%- for third_level_link in second_level_link.links -%}
 										{%- assign animation_delay = animation_delay | plus: 0.05 -%}
+										{%- assign third_level_url = third_level_link.url -%}
+										{%- if third_level_url contains 'shipping-policy' -%}
+											{%- assign third_level_url = shipping_policy_page_url -%}
+										{%- endif -%}
+										{%- if third_level_url contains 'refund-policy' -%}
+											{%- assign third_level_url = refund_policy_page_url -%}
+										{%- endif -%}
 
 										<li
 											class="header-menu__item-wrapper"
@@ -265,7 +297,7 @@
 										>
 											<a
 												class="button button--secondary header-menu__item"
-												href="{{- third_level_link.url -}}"
+												href="{{- third_level_url -}}"
 												{% if third_level_link.current %}
 													aria-current="page"
 												{% endif %}

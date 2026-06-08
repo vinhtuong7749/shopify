@@ -11,6 +11,8 @@
 {%- assign phone_number         = section.settings.phone_number -%}
 {%- assign schedule_information = section.settings.schedule_information -%}
 {%- assign animation_delay      = 0 -%}
+{%- assign shipping_policy_page_url = '/pages/shipping-policy' -%}
+{%- assign refund_policy_page_url = '/pages/refund-policy' -%}
 
 {%- for i in (1..3) -%}
 	{%- assign image_key   = 'media_image_' | append: i -%}
@@ -82,8 +84,15 @@
 				{%- if mobile_top_menu.links != blank -%}
 					<ul class="header-mobile__menu-top">
 						{%- for link in mobile_top_menu.links limit: 3 -%}
+							{%- assign mobile_top_link_url = link.url -%}
+							{%- if mobile_top_link_url contains 'shipping-policy' -%}
+								{%- assign mobile_top_link_url = shipping_policy_page_url -%}
+							{%- endif -%}
+							{%- if mobile_top_link_url contains 'refund-policy' -%}
+								{%- assign mobile_top_link_url = refund_policy_page_url -%}
+							{%- endif -%}
 							<li class="header-mobile__menu-top-item">
-								<a href="{{ link.url }}" class="button-link">
+								<a href="{{ mobile_top_link_url }}" class="button-link">
 									<span data-text="{{ link.title }}">
 										<span>{{ link.title }}</span>
 									</span>
@@ -111,6 +120,12 @@
 								{%- assign link_title_down = first_level_link.title | downcase -%}
 								{%- assign mobile_display_title = first_level_link.title -%}
 								{%- assign dest_url = first_level_link.url -%}
+								{%- if dest_url contains 'shipping-policy' -%}
+									{%- assign dest_url = shipping_policy_page_url -%}
+								{%- endif -%}
+								{%- if dest_url contains 'refund-policy' -%}
+									{%- assign dest_url = refund_policy_page_url -%}
+								{%- endif -%}
 								{%- if link_title_down == 'new arrivals' -%}
 									{%- assign dest_url = '/collections/new-arrivals' -%}
 								{%- endif -%}
@@ -130,8 +145,12 @@
 								{%- if link_title_down == 'support' -%}
 									{%- assign is_support_link = true -%}
 								{%- endif -%}
+								{%- assign is_fishing_link = false -%}
+								{%- if link_title_down == 'fishing' -%}
+									{%- assign is_fishing_link = true -%}
+								{%- endif -%}
 
-								{%- if first_level_link.links != blank or is_collection_link or is_support_link -%}
+								{%- if first_level_link.links != blank or is_collection_link or is_support_link or is_fishing_link -%}
 									{%- comment -%} ==========================================
 									   Menu nesting → accordion (split link and toggle)
 									========================================== {%- endcomment -%}
@@ -141,11 +160,11 @@
 
 									<div class="header-mobile__menu-item-row" style="display: flex; align-items: center; justify-content: flex-start; gap: 6px; width: 100%;">
 										<a
-											class="button-link header-mobile__menu-item header-mobile__menu-item--main{% if is_shop_link %} js-mobile-dropdown-text-toggle{% endif %}"
-											href="{%- if is_shop_link -%}#{%- else -%}{{- dest_url -}}{%- endif -%}"
+											class="button-link header-mobile__menu-item header-mobile__menu-item--main{% if is_shop_link or is_fishing_link %} js-mobile-dropdown-text-toggle{% endif %}"
+											href="{%- if is_shop_link or is_fishing_link -%}#{%- else -%}{{- dest_url -}}{%- endif -%}"
 											style="white-space: nowrap; flex: 0 1 auto; text-align: left;"
-											{% if first_level_link.current and is_shop_link == false %}aria-current="page"{% endif %}
-											{% if is_shop_link %}onclick="event.preventDefault(); event.stopPropagation(); var btn = this.parentElement.querySelector('.js-mobile-dropdown-toggle'); if (btn) { btn.click(); }"{% endif %}
+											{% if first_level_link.current and is_shop_link == false and is_fishing_link == false %}aria-current="page"{% endif %}
+											{% if is_shop_link or is_fishing_link %}onclick="event.preventDefault(); event.stopPropagation(); var btn = this.parentElement.querySelector('.js-mobile-dropdown-toggle'); if (btn) { btn.click(); }"{% endif %}
 										>
 											<span data-text="{{- mobile_display_title | escape -}}">
 												<span>{{- mobile_display_title | escape -}}</span>
@@ -188,6 +207,40 @@
 												</li>
 												<li class="header-mobile__dropdown-item">
 													<a class="header-mobile__dropdown-link" href="/collections/all?filter.p.product_type=Hat"><span>Hats</span></a>
+												</li>
+											{%- elsif is_fishing_link -%}
+												{%- assign mobile_all_fishing_col = collections['fishing'] -%}
+												{%- assign mobile_all_fishing_url = dest_url -%}
+												{%- if mobile_all_fishing_url == blank or mobile_all_fishing_url == '#' -%}
+													{%- assign mobile_all_fishing_url = '/collections/fishing' -%}
+													{%- if mobile_all_fishing_col != blank -%}
+														{%- assign mobile_all_fishing_url = mobile_all_fishing_col.url -%}
+													{%- endif -%}
+												{%- endif -%}
+												{%- assign mobile_freshwater_col = collections['freshwater-fishing'] -%}
+												{%- if mobile_freshwater_col == blank -%}
+													{%- assign mobile_freshwater_col = collections['fishing-t-shirt'] -%}
+												{%- endif -%}
+												{%- assign mobile_freshwater_url = '/collections/freshwater-fishing' -%}
+												{%- if mobile_freshwater_col != blank -%}
+													{%- assign mobile_freshwater_url = mobile_freshwater_col.url -%}
+												{%- endif -%}
+												{%- assign mobile_saltwater_col = collections['saltwater-fishing'] -%}
+												{%- if mobile_saltwater_col == blank -%}
+													{%- assign mobile_saltwater_col = collections['saltwater-fishing-t-shirt'] -%}
+												{%- endif -%}
+												{%- assign mobile_saltwater_url = '/collections/saltwater-fishing' -%}
+												{%- if mobile_saltwater_col != blank -%}
+													{%- assign mobile_saltwater_url = mobile_saltwater_col.url -%}
+												{%- endif -%}
+												<li class="header-mobile__dropdown-item">
+													<a class="header-mobile__dropdown-link" href="{{ mobile_all_fishing_url }}"><span>All Fishing</span></a>
+												</li>
+												<li class="header-mobile__dropdown-item">
+													<a class="header-mobile__dropdown-link" href="{{ mobile_freshwater_url }}"><span>Freshwater Fishing</span></a>
+												</li>
+												<li class="header-mobile__dropdown-item">
+													<a class="header-mobile__dropdown-link" href="{{ mobile_saltwater_url }}"><span>Saltwater Fishing</span></a>
 												</li>
 											{%- elsif is_collection_link -%}
 												{%- assign mob_nation_park_col = collections['nation-park'] -%}
@@ -323,17 +376,25 @@
 										<span class="header-mobile__mega-plus" aria-hidden="true"></span>
 									</button>
 									<ul class="header-mobile__mega-panel">
-								{%- assign mob_fishing_handles = "fishing-t-shirt,saltwater-fishing-t-shirt" | split: "," -%}
-								{%- assign mob_fishing_icon_fallbacks = "https://cdn.shopify.com/s/files/1/0741/7987/0911/collections/icon_bass.jpg?v=1780569828,https://cdn.shopify.com/s/files/1/0741/7987/0911/collections/icon_swordfish.jpg?v=1780569816" | split: "," -%}
+								{%- assign mob_fishing_handles = "fishing,freshwater-fishing,saltwater-fishing" | split: "," -%}
+								{%- assign mob_fishing_fallback_handles = "fishing,fishing-t-shirt,saltwater-fishing-t-shirt" | split: "," -%}
+								{%- assign mob_fishing_labels = "All Fishing,Freshwater Fishing,Saltwater Fishing" | split: "," -%}
+								{%- assign mob_fishing_icon_fallbacks = "https://cdn.shopify.com/s/files/1/0741/7987/0911/collections/icon_bass.jpg?v=1780569828,https://cdn.shopify.com/s/files/1/0741/7987/0911/collections/icon_bass.jpg?v=1780569828,https://cdn.shopify.com/s/files/1/0741/7987/0911/collections/icon_swordfish.jpg?v=1780569816" | split: "," -%}
 								{%- for mf in mob_fishing_handles -%}
 									{%- assign mf_col = collections[mf] -%}
-									{%- assign mf_label = mf | replace: '-', ' ' -%}
+									{%- if mf_col == blank -%}
+										{%- assign mf_fallback_handle = mob_fishing_fallback_handles[forloop.index0] -%}
+										{%- assign mf_col = collections[mf_fallback_handle] -%}
+									{%- endif -%}
+									{%- assign mf_label = mob_fishing_labels[forloop.index0] -%}
 									{%- if mf_col != blank -%}
-										{%- assign mf_label = mf_col.title -%}
+										{%- assign mf_url = mf_col.url -%}
+									{%- else -%}
+										{%- assign mf_url = '/collections/' | append: mf -%}
 									{%- endif -%}
 									{%- assign mf_fallback_icon = mob_fishing_icon_fallbacks[forloop.index0] -%}
 									<li class="header-mobile__dropdown-item">
-										<a class="header-mobile__dropdown-link header-mobile__hunt-link" href="{%- if mf_col != blank -%}{{ mf_col.url }}{%- else -%}/collections/{{ mf }}{%- endif -%}">
+										<a class="header-mobile__dropdown-link header-mobile__hunt-link" href="{{ mf_url }}">
 											{%- if mf_col.image != blank -%}
 												<img src="{{ mf_col.image | img_url: '80x80', crop: 'center' }}" alt="{{ mf_label | escape }}" width="80" height="80" loading="lazy" class="header-mobile__hunt-icon header-mobile__hunt-icon--{{ mf | handleize }}">
 											{%- elsif mf_fallback_icon != blank -%}
@@ -414,12 +475,12 @@
 												{%- endif -%}
 												{%- if m_shipping -%}
 												<li class="header-mobile__dropdown-item">
-													<a class="header-mobile__dropdown-link" href="{{ m_shipping.url }}"><span>{{ m_shipping.title | escape }}</span></a>
+													<a class="header-mobile__dropdown-link" href="{{ shipping_policy_page_url }}"><span>{{ m_shipping.title | escape }}</span></a>
 												</li>
 												{%- endif -%}
 												{%- if m_refund -%}
 												<li class="header-mobile__dropdown-item">
-													<a class="header-mobile__dropdown-link" href="{{ m_refund.url }}"><span>{{ m_refund.title | escape }}</span></a>
+													<a class="header-mobile__dropdown-link" href="{{ refund_policy_page_url }}"><span>{{ m_refund.title | escape }}</span></a>
 												</li>
 												{%- endif -%}
 												{%- if m_privacy -%}
@@ -434,8 +495,15 @@
 												{%- endif -%}
 											{%- elsif first_level_link.links != blank -%}
 												{%- for second_level_link in first_level_link.links -%}
+													{%- assign mobile_second_level_url = second_level_link.url -%}
+													{%- if mobile_second_level_url contains 'shipping-policy' -%}
+														{%- assign mobile_second_level_url = shipping_policy_page_url -%}
+													{%- endif -%}
+													{%- if mobile_second_level_url contains 'refund-policy' -%}
+														{%- assign mobile_second_level_url = refund_policy_page_url -%}
+													{%- endif -%}
 													<li class="header-mobile__dropdown-item">
-														<a class="header-mobile__dropdown-link" href="{{- second_level_link.url -}}">
+														<a class="header-mobile__dropdown-link" href="{{- mobile_second_level_url -}}">
 															<span>{{ second_level_link.title | escape }}</span>
 														</a>
 													</li>
@@ -464,10 +532,17 @@
 					{%- if additional_menu.links != blank -%}
 						{%- for main_link in additional_menu.links -%}
 							{%- assign animation_delay = animation_delay | plus: 0.05 -%}
+							{%- assign additional_link_url = main_link.url -%}
+							{%- if additional_link_url contains 'shipping-policy' -%}
+								{%- assign additional_link_url = shipping_policy_page_url -%}
+							{%- endif -%}
+							{%- if additional_link_url contains 'refund-policy' -%}
+								{%- assign additional_link_url = refund_policy_page_url -%}
+							{%- endif -%}
 							<li class="header-mobile__menu-item-wrapper" style="--animation-delay: {{ animation_delay }}s">
 								<a
 									class="button-link header-mobile__menu-item header-mobile__menu-item--additional"
-									href="{{- main_link.url -}}"
+									href="{{- additional_link_url -}}"
 									{% if main_link.current %}aria-current="page"{% endif %}
 								>
 									<span data-text="{{- main_link.title | escape -}}">

@@ -1,0 +1,1143 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Shipping Policy Preview</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;700&display=swap" rel="stylesheet"><style>:root { --base-font-family: 'Oswald', Arial, sans-serif; --heading-font-family: 'Oswald', Arial, sans-serif; --heading-font-weight: 700; --heading-text-transform: uppercase; --color-background: #ffffff; --color-text-primary: #2c3d33; --color-text-heading: #2c3d33; --color-text-secondary: #535353; --color-text-thirdly: #757575; --color-border-secondary: #e9e9e9; } html, body { margin: 0; min-height: 100%; background: #ffffff; overflow-x: hidden; } body { font-family: var(--base-font-family); } 
+	#shopify-section-shipping-preview {
+		padding-top: 36px;
+		padding-bottom: 48px;
+		background: var(--color-background);
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic {
+		background: var(--color-background);
+		color: var(--color-text-primary);
+		font-family: var(--base-font-family), var(--heading-font-family), sans-serif;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic,
+	#shopify-section-shipping-preview .policy-page-basic *,
+	#shopify-section-shipping-preview .policy-page-basic *::before,
+	#shopify-section-shipping-preview .policy-page-basic *::after {
+		box-sizing: border-box;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__container {
+		width: min(calc(100% - 32px), 1040px);
+		margin: 0 auto;
+		max-width: calc(100vw - 32px);
+		min-width: 0;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__header {
+		max-width: 760px;
+		margin: 0 auto 34px;
+		text-align: center;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__title {
+		margin: 0;
+		color: var(--color-text-heading, var(--color-text-primary));
+		font-family: var(--heading-font-family), var(--base-font-family), sans-serif;
+		font-size: 34px;
+		font-weight: var(--heading-font-weight, 700);
+		line-height: 1.05;
+		letter-spacing: 0;
+		text-transform: var(--heading-text-transform, uppercase);
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__intro {
+		margin: 16px 0 0;
+		color: var(--color-text-secondary, #535353);
+		font-size: 15px;
+		font-weight: 300;
+		line-height: 1.7;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__summary {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 0;
+		margin: 0 0 34px;
+		border-top: 1px solid var(--color-border-secondary, #e9e9e9);
+		border-bottom: 1px solid var(--color-border-secondary, #e9e9e9);
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__summary-item {
+		display: grid;
+		gap: 4px;
+		padding: 16px 0;
+		border-top: 1px solid var(--color-border-secondary, #e9e9e9);
+		color: inherit;
+		text-decoration: none;
+		cursor: pointer;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__summary-item:hover,
+	#shopify-section-shipping-preview .policy-page-basic__summary-item:focus-visible {
+		color: var(--color-text-primary);
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__summary-item:first-child {
+		border-top: 0;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__summary-item dt,
+	#shopify-section-shipping-preview .policy-page-basic__summary-item dd {
+		margin: 0;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__label,
+	#shopify-section-shipping-preview .policy-page-basic__table th {
+		color: var(--color-text-thirdly, #757575);
+		font-size: 12px;
+		font-weight: 700;
+		line-height: 1.35;
+		letter-spacing: 0.5px;
+		text-transform: uppercase;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__value {
+		color: var(--color-text-primary);
+		font-size: 18px;
+		font-weight: 700;
+		line-height: 1.3;
+		text-transform: uppercase;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__toc {
+		margin: 0 0 12px;
+		padding: 16px 0;
+		border-top: 1px solid var(--color-border-secondary, #e9e9e9);
+		border-bottom: 1px solid var(--color-border-secondary, #e9e9e9);
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__toc-title {
+		margin: 0 0 10px;
+		color: var(--color-text-primary);
+		font-size: 13px;
+		font-weight: 700;
+		line-height: 1.4;
+		text-transform: uppercase;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__toc-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px 18px;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__toc-link {
+		color: var(--color-text-secondary, #535353);
+		font-size: 13px;
+		font-weight: 400;
+		line-height: 1.4;
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__toc-link:hover {
+		color: var(--color-text-primary);
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__section {
+		padding: 30px 0;
+		border-top: 1px solid var(--color-border-secondary, #e9e9e9);
+		scroll-margin-top: 90px;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__toc + .policy-page-basic__section {
+		padding-top: 18px;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__section > div {
+		min-width: 0;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__section:last-child {
+		border-bottom: 1px solid var(--color-border-secondary, #e9e9e9);
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__section-title {
+		margin: 0 0 14px;
+		color: var(--color-text-heading, var(--color-text-primary));
+		font-family: var(--heading-font-family), var(--base-font-family), sans-serif;
+		font-size: 24px;
+		font-weight: var(--heading-font-weight, 700);
+		line-height: 1.18;
+		letter-spacing: 0;
+		text-transform: var(--heading-text-transform, uppercase);
+		overflow-wrap: anywhere;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__subheading {
+		margin: 22px 0 8px;
+		color: var(--color-text-primary);
+		font-size: 16px;
+		font-weight: 700;
+		line-height: 1.35;
+		text-transform: uppercase;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__text,
+	#shopify-section-shipping-preview .policy-page-basic__list,
+	#shopify-section-shipping-preview .policy-page-basic__ordered-list {
+		color: var(--color-text-secondary, #535353);
+		font-size: 15px;
+		font-weight: 300;
+		line-height: 1.75;
+		overflow-wrap: anywhere;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__text {
+		margin: 0 0 12px;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__text:last-child {
+		margin-bottom: 0;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__list,
+	#shopify-section-shipping-preview .policy-page-basic__ordered-list {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 8px;
+		margin: 0;
+		padding-left: 20px;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__list {
+		list-style: disc;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__ordered-list {
+		list-style: decimal;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__table-wrap {
+		width: 100%;
+		max-width: 100%;
+		margin: 16px 0;
+		overflow-x: auto;
+		border: 1px solid var(--color-border-secondary, #e9e9e9);
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__table {
+		width: 100%;
+		min-width: 560px;
+		border-collapse: collapse;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__table th,
+	#shopify-section-shipping-preview .policy-page-basic__table td {
+		padding: 13px 14px;
+		border-bottom: 1px solid var(--color-border-secondary, #e9e9e9);
+		text-align: left;
+		vertical-align: top;
+		overflow-wrap: anywhere;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__table tr:last-child td {
+		border-bottom: 0;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__table td {
+		color: var(--color-text-secondary, #535353);
+		font-size: 14px;
+		font-weight: 300;
+		line-height: 1.55;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__note {
+		margin: 16px 0 0;
+		padding: 16px 20px;
+		background: #f4f4f4;
+		border-left: 4px solid #243029;
+		border-radius: 0 8px 8px 0;
+		color: #243029;
+		font-size: 14px;
+		font-weight: 300;
+		line-height: 1.65;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__two-col,
+	#shopify-section-shipping-preview .policy-page-basic__contact {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 20px;
+		margin: 16px 0 0;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__info-block,
+	#shopify-section-shipping-preview .policy-page-basic__contact-item {
+		padding-top: 14px;
+		border-top: 1px solid var(--color-border-secondary, #e9e9e9);
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__info-title {
+		margin: 0 0 6px;
+		color: var(--color-text-primary);
+		font-size: 15px;
+		font-weight: 700;
+		line-height: 1.35;
+		text-transform: uppercase;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-lookup {
+		margin-top: 20px;
+		padding-top: 18px;
+		border-top: 1px solid var(--color-border-secondary, #e9e9e9);
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-form {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 14px;
+		margin-top: 14px;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-field {
+		display: grid;
+		gap: 8px;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-field-label {
+		color: var(--color-text-primary);
+		font-size: 13px;
+		font-weight: 700;
+		line-height: 1.35;
+		text-transform: uppercase;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-divider {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+		gap: 12px;
+		align-items: center;
+		margin: 18px 0;
+		color: var(--color-text-thirdly, #757575);
+		font-size: 12px;
+		font-weight: 700;
+		line-height: 1.2;
+		text-transform: uppercase;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-divider::before,
+	#shopify-section-shipping-preview .policy-page-basic__tracking-divider::after {
+		content: "";
+		height: 1px;
+		background: var(--color-border-secondary, #e9e9e9);
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-input,
+	#shopify-section-shipping-preview .policy-page-basic__tracking-button {
+		min-height: 46px;
+		border-radius: 6px;
+		font-family: var(--base-font-family), var(--heading-font-family), sans-serif;
+		font-size: 15px;
+		line-height: 1.2;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-input {
+		width: 100%;
+		padding: 0 14px;
+		border: 1px solid var(--color-border-secondary, #e9e9e9);
+		background: #ffffff;
+		color: var(--color-text-primary);
+		font-weight: 300;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-input:focus-visible {
+		outline: 2px solid var(--color-text-primary);
+		outline-offset: 2px;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-button {
+		width: 100%;
+		padding: 0 24px;
+		border: 1px solid var(--color-text-primary);
+		background: var(--color-text-primary);
+		color: #ffffff;
+		font-weight: 700;
+		text-transform: uppercase;
+		cursor: pointer;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-button[disabled] {
+		cursor: progress;
+		opacity: 0.74;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-error {
+		margin-top: 14px;
+		padding: 12px 14px;
+		background: #f4f4f4;
+		border-left: 4px solid #243029;
+		border-radius: 0 8px 8px 0;
+		color: #243029;
+		font-size: 14px;
+		font-weight: 300;
+		line-height: 1.5;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-error[hidden],
+	#shopify-section-shipping-preview .policy-page-basic__tracking-result[hidden],
+	#shopify-section-shipping-preview .policy-page-basic__tracking-details[hidden],
+	#shopify-section-shipping-preview .policy-page-basic__tracking-row[hidden],
+	#shopify-section-shipping-preview .policy-page-basic__tracking-link[hidden] {
+		display: none;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-result {
+		margin-top: 18px;
+		overflow: hidden;
+		border: 1px solid var(--color-border-secondary, #e9e9e9);
+		border-radius: 8px;
+		background: #ffffff;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-status,
+	#shopify-section-shipping-preview .policy-page-basic__tracking-meta,
+	#shopify-section-shipping-preview .policy-page-basic__tracking-timeline {
+		padding: 16px;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-status {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		gap: 8px 12px;
+		align-items: start;
+		border-bottom: 1px solid var(--color-border-secondary, #e9e9e9);
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-status-copy {
+		display: grid;
+		gap: 4px;
+		min-width: 0;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-status-label,
+	#shopify-section-shipping-preview .policy-page-basic__tracking-row strong,
+	#shopify-section-shipping-preview .policy-page-basic__tracking-event-desc {
+		color: var(--color-text-primary);
+		font-weight: 700;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-status-label {
+		font-size: 16px;
+		text-transform: uppercase;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-status-sub,
+	#shopify-section-shipping-preview .policy-page-basic__tracking-row,
+	#shopify-section-shipping-preview .policy-page-basic__tracking-event-location {
+		color: var(--color-text-secondary, #535353);
+		font-size: 14px;
+		font-weight: 300;
+		line-height: 1.5;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-toggle {
+		min-height: 34px;
+		padding: 0 12px;
+		border: 1px solid var(--color-border-secondary, #e9e9e9);
+		border-radius: 6px;
+		background: #ffffff;
+		color: var(--color-text-primary);
+		font-family: var(--base-font-family), var(--heading-font-family), sans-serif;
+		font-size: 12px;
+		font-weight: 700;
+		line-height: 1.2;
+		text-transform: uppercase;
+		cursor: pointer;
+		white-space: nowrap;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-meta {
+		display: grid;
+		gap: 8px;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-row {
+		display: grid;
+		grid-template-columns: 112px minmax(0, 1fr);
+		gap: 10px;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-row span,
+	#shopify-section-shipping-preview .policy-page-basic__tracking-event-time {
+		color: var(--color-text-thirdly, #757575);
+		font-size: 12px;
+		font-weight: 700;
+		text-transform: uppercase;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-link {
+		display: inline-flex;
+		width: fit-content;
+		color: var(--color-text-primary);
+		font-size: 14px;
+		font-weight: 700;
+		text-decoration: underline;
+		text-underline-offset: 4px;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-timeline {
+		display: grid;
+		gap: 12px;
+		margin: 0;
+		padding-top: 0;
+		list-style: none;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-event {
+		padding-top: 12px;
+		border-top: 1px solid var(--color-border-secondary, #e9e9e9);
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__tracking-bot-field {
+		position: absolute;
+		left: -9999px;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__contact-value,
+	#shopify-section-shipping-preview .policy-page-basic__contact-value a {
+		display: block;
+		margin-top: 4px;
+		color: var(--color-text-primary);
+		font-size: 16px;
+		font-weight: 700;
+		line-height: 1.4;
+		text-decoration: none;
+		overflow-wrap: anywhere;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__contact-value a:hover {
+		text-decoration: underline;
+		text-underline-offset: 4px;
+	}
+
+	#shopify-section-shipping-preview .policy-page-basic__updated {
+		margin-top: 16px;
+		color: var(--color-text-thirdly, #757575);
+		font-size: 13px;
+		font-weight: 300;
+		line-height: 1.5;
+	}
+
+	@media screen and (min-width: 750px) {
+		#shopify-section-shipping-preview {
+			padding-top: 64px;
+			padding-bottom: 72px;
+		}
+
+		#shopify-section-shipping-preview .policy-page-basic__container {
+			width: min(calc(100% - 64px), 1040px);
+		}
+
+		#shopify-section-shipping-preview .policy-page-basic__title {
+			font-size: 42px;
+		}
+
+		#shopify-section-shipping-preview .policy-page-basic__summary {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+		}
+
+		#shopify-section-shipping-preview .policy-page-basic__summary-item {
+			padding: 18px 18px;
+			border-top: 0;
+			border-left: 1px solid var(--color-border-secondary, #e9e9e9);
+		}
+
+		#shopify-section-shipping-preview .policy-page-basic__summary-item:first-child {
+			padding-left: 0;
+			border-left: 0;
+		}
+
+		#shopify-section-shipping-preview .policy-page-basic__section {
+			display: grid;
+			grid-template-columns: 240px minmax(0, 1fr);
+			gap: 44px;
+			padding: 36px 0;
+		}
+
+		#shopify-section-shipping-preview .policy-page-basic__section-title {
+			margin-bottom: 0;
+		}
+
+		#shopify-section-shipping-preview .policy-page-basic__two-col,
+		#shopify-section-shipping-preview .policy-page-basic__contact {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media screen and (max-width: 749px) {
+		#shopify-section-shipping-preview .policy-page-basic__container {
+			width: auto;
+			max-width: calc(100vw - 32px);
+			margin-right: 16px;
+			margin-left: 16px;
+			overflow-x: clip;
+		}
+
+		#shopify-section-shipping-preview .policy-page-basic__header {
+			text-align: left;
+		}
+
+		#shopify-section-shipping-preview .policy-page-basic__title {
+			font-size: 32px;
+			line-height: 1.14;
+			overflow-wrap: anywhere;
+		}
+
+		#shopify-section-shipping-preview .policy-page-basic__intro {
+			max-width: 320px;
+			overflow-wrap: break-word;
+		}
+
+		#shopify-section-shipping-preview .policy-page-basic__toc-list {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 8px 14px;
+		}
+
+		#shopify-section-shipping-preview .policy-page-basic__toc-link {
+			font-size: 12px;
+		}
+
+		#shopify-section-shipping-preview .policy-page-basic__table {
+			min-width: 0;
+			table-layout: fixed;
+		}
+
+		#shopify-section-shipping-preview .policy-page-basic__tracking-form {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		#shopify-section-shipping-preview .policy-page-basic__tracking-button {
+			width: 100%;
+		}
+
+		#shopify-section-shipping-preview .policy-page-basic__tracking-row {
+			grid-template-columns: minmax(0, 1fr);
+			gap: 2px;
+		}
+
+		#shopify-section-shipping-preview .policy-page-basic__tracking-status {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		#shopify-section-shipping-preview .policy-page-basic__tracking-toggle {
+			width: fit-content;
+		}
+	}
+</style></head><body><div id="shopify-section-shipping-preview">
+
+<section class="policy-page-basic color-scheme-1" aria-labelledby="shipping-policy-title-shipping-preview">
+	<div class="policy-page-basic__container">
+		<header class="policy-page-basic__header">
+			<h1 id="shipping-policy-title-shipping-preview" class="policy-page-basic__title">Shipping Policy</h1>
+			<p class="policy-page-basic__intro">Learn how CamoSignal ships from the United States, processes orders, provides tracking, and estimates delivery times.</p>
+		</header>
+
+		<dl class="policy-page-basic__summary" aria-label="Shipping policy highlights">
+			<a class="policy-page-basic__summary-item" href="#shipping-processing-shipping-preview">
+				<dt class="policy-page-basic__label">Processing</dt>
+				<dd class="policy-page-basic__value">1-3 business days</dd>
+			</a>
+			<a class="policy-page-basic__summary-item" href="#shipping-methods-shipping-preview">
+				<dt class="policy-page-basic__label">Standard shipping</dt>
+				<dd class="policy-page-basic__value">5-7 business days</dd>
+			</a>
+			<a class="policy-page-basic__summary-item" href="#shipping-methods-shipping-preview">
+				<dt class="policy-page-basic__label">Express shipping</dt>
+				<dd class="policy-page-basic__value">3-5 business days</dd>
+			</a>
+			<a class="policy-page-basic__summary-item" href="#shipping-origin-shipping-preview">
+				<dt class="policy-page-basic__label">Shipping origin</dt>
+				<dd class="policy-page-basic__value">United States</dd>
+			</a>
+		</dl>
+
+		<nav class="policy-page-basic__toc" aria-label="Shipping policy sections">
+			<p class="policy-page-basic__toc-title">On this page</p>
+			<ol class="policy-page-basic__toc-list">
+				<li><a class="policy-page-basic__toc-link" href="#shipping-origin-shipping-preview">Shipping origin</a></li>
+				<li><a class="policy-page-basic__toc-link" href="#shipping-processing-shipping-preview">Processing</a></li>
+				<li><a class="policy-page-basic__toc-link" href="#shipping-methods-shipping-preview">Shipping methods</a></li>
+				<li><a class="policy-page-basic__toc-link" href="#shipping-tracking-shipping-preview">Tracking & packages</a></li>
+				<li><a class="policy-page-basic__toc-link" href="#shipping-total-time-shipping-preview">Delivery time</a></li>
+				<li><a class="policy-page-basic__toc-link" href="#shipping-delays-shipping-preview">Delays</a></li>
+				<li><a class="policy-page-basic__toc-link" href="#shipping-contact-shipping-preview">Contact</a></li>
+			</ol>
+		</nav>
+
+		<article id="shipping-origin-shipping-preview" class="policy-page-basic__section">
+			<h2 class="policy-page-basic__section-title">Shipping Origin</h2>
+			<div>
+				<p class="policy-page-basic__text">Orders are shipped directly from the United States.</p>
+			</div>
+		</article>
+
+		<article id="shipping-processing-shipping-preview" class="policy-page-basic__section">
+			<h2 class="policy-page-basic__section-title">Order Processing</h2>
+			<div>
+				<p class="policy-page-basic__text">Orders are processed within 1-3 business days after payment is confirmed.</p>
+				<p class="policy-page-basic__note">Processing time excludes weekends and holidays and may be affected by unexpected delays caused by weather, carrier disruptions, or other force majeure events.</p>
+			</div>
+		</article>
+
+		<article id="shipping-methods-shipping-preview" class="policy-page-basic__section">
+			<h2 class="policy-page-basic__section-title">Shipping Methods</h2>
+			<div>
+				<div class="policy-page-basic__two-col">
+					<div class="policy-page-basic__info-block">
+						<h3 class="policy-page-basic__info-title">Standard Shipping</h3>
+						<p class="policy-page-basic__text">Estimated delivery time: 5-7 business days after the order has been processed.</p>
+						<p class="policy-page-basic__text">No additional fees apply other than the standard shipping fee displayed at checkout.</p>
+					</div>
+					<div class="policy-page-basic__info-block">
+						<h3 class="policy-page-basic__info-title">Express Shipping</h3>
+						<p class="policy-page-basic__text">Estimated delivery time: 3-5 business days after the order has been processed.</p>
+						<p class="policy-page-basic__text">Express shipping may include an additional fee, which will be clearly displayed before payment confirmation.</p>
+					</div>
+				</div>
+			</div>
+		</article>
+
+		<article id="shipping-tracking-shipping-preview" class="policy-page-basic__section">
+			<h2 class="policy-page-basic__section-title">Tracking & Multiple Packages</h2>
+			<div>
+				<div class="policy-page-basic__two-col">
+					<div class="policy-page-basic__info-block">
+						<h3 class="policy-page-basic__info-title">Tracking</h3>
+						<p class="policy-page-basic__text">You will receive a confirmation email with tracking information as soon as your order ships.</p>
+						<div class="policy-page-basic__tracking-lookup">
+							<h3 class="policy-page-basic__info-title">Track Your Order</h3>
+							<p class="policy-page-basic__text">Use your tracking ID, or enter your order number and email to view the latest shipment updates.</p>
+							<form class="policy-page-basic__tracking-form" data-preview-tracking-number-form data-endpoint="https://camosignal-order-tracking.camosignal.workers.dev" data-method="POST" novalidate>
+								<label class="policy-page-basic__tracking-field">
+									<span class="policy-page-basic__tracking-field-label">Tracking ID</span>
+									<input class="policy-page-basic__tracking-input" type="text" name="trackingNumber" placeholder="Please enter your tracking ID" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" minlength="4" maxlength="48" required>
+								</label>
+								<label class="policy-page-basic__tracking-bot-field" aria-hidden="true"><span>Company</span><input type="text" name="company" tabindex="-1" autocomplete="off" data-preview-tracking-honeypot></label>
+								<button class="policy-page-basic__tracking-button" type="submit">Track</button>
+							</form>
+							<div class="policy-page-basic__tracking-divider" aria-hidden="true"><span>OR</span></div>
+							<form class="policy-page-basic__tracking-form" data-preview-order-form data-endpoint="https://camosignal-order-tracking.camosignal.workers.dev" data-method="POST" novalidate>
+								<label class="policy-page-basic__tracking-field">
+									<span class="policy-page-basic__tracking-field-label">Order Number</span>
+									<input class="policy-page-basic__tracking-input" type="text" name="orderNumber" placeholder="Please enter your order number" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" minlength="2" maxlength="32" required>
+								</label>
+								<label class="policy-page-basic__tracking-field">
+									<span class="policy-page-basic__tracking-field-label">Email</span>
+									<input class="policy-page-basic__tracking-input" type="email" name="email" placeholder="Please enter your email" autocomplete="email" autocorrect="off" autocapitalize="off" spellcheck="false" maxlength="254" required>
+								</label>
+								<label class="policy-page-basic__tracking-bot-field" aria-hidden="true"><span>Company</span><input type="text" name="company" tabindex="-1" autocomplete="off" data-preview-tracking-honeypot></label>
+								<button class="policy-page-basic__tracking-button" type="submit">Track</button>
+							</form>
+							<div class="policy-page-basic__tracking-error" data-preview-tracking-error role="alert" hidden></div>
+							<div class="policy-page-basic__tracking-result" data-preview-tracking-result aria-live="polite" hidden>
+								<div class="policy-page-basic__tracking-status">
+									<div class="policy-page-basic__tracking-status-copy">
+										<span class="policy-page-basic__tracking-status-label" data-preview-field="status">Tracking received</span>
+										<span class="policy-page-basic__tracking-status-sub" data-preview-field="summary">Waiting for the latest carrier update.</span>
+									</div>
+									<button class="policy-page-basic__tracking-toggle" type="button" data-preview-tracking-toggle aria-expanded="true">Hide details</button>
+								</div>
+								<div class="policy-page-basic__tracking-details" data-preview-tracking-details>
+									<div class="policy-page-basic__tracking-meta">
+										<div class="policy-page-basic__tracking-row"><span>Tracking #</span><strong data-preview-field="number">-</strong></div>
+										<div class="policy-page-basic__tracking-row"><span>Carrier</span><strong data-preview-field="carrier">-</strong></div>
+										<div class="policy-page-basic__tracking-row"><span>Service</span><strong data-preview-field="service">-</strong></div>
+										<div class="policy-page-basic__tracking-row"><span>Delivery</span><strong data-preview-field="delivery">-</strong></div>
+										<a class="policy-page-basic__tracking-link" href="#" target="_blank" rel="noopener noreferrer" data-preview-field="link" hidden>Open tracking page</a>
+									</div>
+									<ol class="policy-page-basic__tracking-timeline" data-preview-field="timeline"></ol>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="policy-page-basic__info-block">
+						<h3 class="policy-page-basic__info-title">Multiple Packages</h3>
+						<p class="policy-page-basic__text">Items shipped from separate locations may arrive in multiple packages with individual tracking numbers.</p>
+					</div>
+				</div>
+			</div>
+		</article>
+
+		<article id="shipping-total-time-shipping-preview" class="policy-page-basic__section">
+			<h2 class="policy-page-basic__section-title">Delivery Time</h2>
+			<div>
+				<p class="policy-page-basic__text">Total delivery time includes both processing time and shipping time.</p>
+				<div class="policy-page-basic__table-wrap">
+					<table class="policy-page-basic__table">
+						<thead>
+							<tr>
+								<th scope="col">Stage</th>
+								<th scope="col">Timeframe</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Order processing</td>
+								<td>1-3 business days</td>
+							</tr>
+							<tr>
+								<td>Standard shipping</td>
+								<td>5-7 business days after processing</td>
+							</tr>
+							<tr>
+								<td>Express shipping</td>
+								<td>3-5 business days after processing</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</article>
+
+		<article id="shipping-delays-shipping-preview" class="policy-page-basic__section">
+			<h2 class="policy-page-basic__section-title">Shipping Delays</h2>
+			<div>
+				<p class="policy-page-basic__text">Holidays, weekends, severe weather, carrier delays, strikes, or other unexpected events may affect delivery timelines.</p>
+				<p class="policy-page-basic__note">If a significant delay occurs, we will notify customers as soon as possible.</p>
+			</div>
+		</article>
+
+		<article id="shipping-contact-shipping-preview" class="policy-page-basic__section">
+			<h2 class="policy-page-basic__section-title">Contact Support</h2>
+			<div>
+				<p class="policy-page-basic__text">For shipping questions, please contact us:</p>
+				<div class="policy-page-basic__contact">
+					<div class="policy-page-basic__contact-item">
+						<span class="policy-page-basic__label">Email</span>
+						<strong class="policy-page-basic__contact-value"><a href="mailto:support.camosignal@gmail.com">support.camosignal@gmail.com</a></strong>
+					</div>
+					<div class="policy-page-basic__contact-item">
+						<span class="policy-page-basic__label">Business hours</span>
+						<strong class="policy-page-basic__contact-value">Monday-Friday, 8:00 AM-5:00 PM</strong>
+					</div>
+					<div class="policy-page-basic__contact-item">
+						<span class="policy-page-basic__label">Response time</span>
+						<strong class="policy-page-basic__contact-value">Within 24 business hours</strong>
+					</div>
+				</div>
+				<p class="policy-page-basic__updated">Last updated: May 2026</p>
+			</div>
+		</article>
+	</div>
+</section>
+
+<script>
+(function () {
+	var root = document.getElementById('shopify-section-shipping-preview');
+	var trackingNumberForm = root && root.querySelector('[data-preview-tracking-number-form]');
+	var orderForm = root && root.querySelector('[data-preview-order-form]');
+	if (!trackingNumberForm && !orderForm) return;
+
+	var trackingInput = trackingNumberForm ? trackingNumberForm.querySelector('input[name="trackingNumber"]') : null;
+	var orderInput = orderForm ? orderForm.querySelector('input[name="orderNumber"]') : null;
+	var emailInput = orderForm ? orderForm.querySelector('input[name="email"]') : null;
+	var errorEl = root.querySelector('[data-preview-tracking-error]');
+	var resultEl = root.querySelector('[data-preview-tracking-result]');
+	var detailsEl = root.querySelector('[data-preview-tracking-details]');
+	var toggleButton = root.querySelector('[data-preview-tracking-toggle]');
+	var timelineEl = root.querySelector('[data-preview-field="timeline"]');
+	var startedAt = Date.now();
+
+	function stripTags(value) {
+		if (value === null || value === undefined) return '';
+		return String(value).replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+	}
+
+	function normalizeTrackingNumber(value) {
+		return String(value || '').trim().replace(/\s+/g, '').toUpperCase();
+	}
+
+	function isValidTrackingNumber(value) {
+		return /^[A-Z0-9-]{4,48}$/.test(value);
+	}
+
+	function normalizeEmail(value) {
+		return String(value || '').trim().toLowerCase();
+	}
+
+	function isValidEmail(value) {
+		return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value.length <= 254;
+	}
+
+	function normalizeOrderNumber(value) {
+		return String(value || '').trim().replace(/\s+/g, '').replace(/^#+/, '').toUpperCase();
+	}
+
+	function isValidOrderNumber(value) {
+		return /^[A-Z0-9-]{2,32}$/.test(value);
+	}
+
+	function messageFromPayload(payload) {
+		if (!payload) return '';
+		if (typeof payload === 'string') return payload;
+		if (payload.message) return payload.message;
+		if (payload.detail) return payload.detail;
+		if (payload.error) return messageFromPayload(payload.error);
+		if (payload.errors && payload.errors.length) return messageFromPayload(payload.errors[0]);
+		return '';
+	}
+
+	function parseJsonResponse(response) {
+		return response.text().then(function (text) {
+			var payload = null;
+			if (text) {
+				try {
+					payload = JSON.parse(text);
+				} catch (error) {
+					payload = { message: text };
+				}
+			}
+			if (!response.ok) throw new Error(stripTags(messageFromPayload(payload)) || 'Could not fetch tracking information. Please try again.');
+			return payload;
+		});
+	}
+
+	function unwrapPayload(payload) {
+		if (!payload) return null;
+		if (payload.success === false || payload.ok === false) throw new Error(stripTags(messageFromPayload(payload)) || 'Tracking lookup failed.');
+		if (payload.error || (payload.errors && payload.errors.length)) throw new Error(stripTags(messageFromPayload(payload)) || 'Tracking lookup failed.');
+		if (Array.isArray(payload)) return payload[0] || null;
+		if (payload.tracking) return unwrapPayload(payload.tracking);
+		if (payload.track) return unwrapPayload(payload.track);
+		if (payload.result) return unwrapPayload(payload.result);
+		if (payload.results) return unwrapPayload(payload.results);
+		if (payload.data) return unwrapPayload(payload.data);
+		if (payload.TrackResults && payload.TrackResults.TrackInfo) return payload.TrackResults.TrackInfo;
+		return payload;
+	}
+
+	function read(item, keys) {
+		for (var i = 0; i < keys.length; i += 1) {
+			var value = item && item[keys[i]];
+			if (value !== null && value !== undefined && value !== '') return stripTags(value);
+		}
+		return '';
+	}
+
+	function formatDate(raw, dateOnly) {
+		var value = stripTags(raw);
+		if (!value) return '';
+		var date = new Date(value);
+		if (isNaN(date.getTime())) return value;
+		return dateOnly ? date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: '2-digit' }) : date.toLocaleString(undefined, { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+	}
+
+	function getEvents(item) {
+		var events = item.trackingEvents || item.checkpoints || item.events || item.TrackDetail || [];
+		if (!Array.isArray(events)) events = [events];
+		return events.map(function (event, index) {
+			if (typeof event === 'string') return { index: index, time: '', description: stripTags(event), location: '', sortTime: 0 };
+			var time = event.eventTimestamp || event.checkpoint_time || event.timestamp || event.time || event.date || '';
+			var description = event.eventType || event.Event || event.message || event.subtag_message || event.desc || event.description || event.status || event.tag || event.summary || '';
+			var location = event.location || [event.city, event.state, event.country_region || event.country].map(stripTags).filter(Boolean).join(', ');
+			var sortTime = time ? new Date(time).getTime() : 0;
+			return { index: index, time: stripTags(time), description: stripTags(description), location: stripTags(location), sortTime: isNaN(sortTime) ? 0 : sortTime };
+		}).filter(function (event) {
+			return event.description || event.time || event.location;
+		}).sort(function (a, b) {
+			if (a.sortTime && b.sortTime && a.sortTime !== b.sortTime) return b.sortTime - a.sortTime;
+			return a.index - b.index;
+		});
+	}
+
+	function setField(field, value) {
+		var el = root.querySelector('[data-preview-field="' + field + '"]');
+		if (!el) return;
+		var text = stripTags(value);
+		var row = el.closest ? el.closest('.policy-page-basic__tracking-row') : null;
+		el.textContent = text || '-';
+		if (row) row.hidden = !text;
+	}
+
+	function showError(message) {
+		if (resultEl) resultEl.hidden = true;
+		if (errorEl) {
+			errorEl.hidden = false;
+			errorEl.textContent = message;
+		}
+	}
+
+	function setTrackingDetailsOpen(isOpen) {
+		if (!detailsEl || !toggleButton) return;
+		detailsEl.hidden = !isOpen;
+		toggleButton.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+		toggleButton.textContent = isOpen ? 'Hide details' : 'Show details';
+	}
+
+	function clearStates() {
+		if (errorEl) {
+			errorEl.hidden = true;
+			errorEl.textContent = '';
+		}
+		if (resultEl) resultEl.hidden = true;
+		if (timelineEl) timelineEl.innerHTML = '';
+	}
+
+	function appendEvent(event) {
+		if (!timelineEl) return;
+		var li = document.createElement('li');
+		li.className = 'policy-page-basic__tracking-event';
+		if (event.time) {
+			var time = document.createElement('div');
+			time.className = 'policy-page-basic__tracking-event-time';
+			time.textContent = formatDate(event.time, false);
+			li.appendChild(time);
+		}
+		var desc = document.createElement('div');
+		desc.className = 'policy-page-basic__tracking-event-desc';
+		desc.textContent = event.description || 'Tracking update received.';
+		li.appendChild(desc);
+		if (event.location) {
+			var loc = document.createElement('div');
+			loc.className = 'policy-page-basic__tracking-event-location';
+			loc.textContent = event.location;
+			li.appendChild(loc);
+		}
+		timelineEl.appendChild(li);
+	}
+
+	function render(payload, requestedNumber) {
+		var item = unwrapPayload(payload);
+		if (!item) {
+			showError('No tracking record was found for this number yet.');
+			return;
+		}
+		var events = getEvents(item);
+		var summary = read(item, ['statusSummary', 'subtagMessage', 'subtag_message', 'TrackSummary', 'summary', 'message']);
+		var status = read(item, ['status', 'statusCategory', 'tag']) || (events[0] && events[0].description) || 'Tracking received';
+		var delivery = read(item, ['expectedDelivery', 'expectedDeliveryDate', 'estimatedDelivery', 'estimatedDeliveryDate', 'eta']);
+		var link = read(item, ['trackingUrl', 'tracking_url', 'trackingLink', 'tracking_link', 'url', 'URL']);
+		var linkEl = root.querySelector('[data-preview-field="link"]');
+
+		setField('status', status);
+		setField('summary', summary || (events[0] && events[0].description) || 'Waiting for the latest carrier update.');
+		setField('number', read(item, ['trackingNumber', 'tracking_number', 'number', 'associatedTrackingNumber', 'ID']) || requestedNumber);
+		setField('carrier', read(item, ['carrierName', 'courierName', 'carrier', 'slug', 'courier_slug', 'provider']));
+		setField('service', read(item, ['service', 'services', 'mailClass', 'MailClass', 'shipmentType', 'shipment_type', 'status']));
+		setField('delivery', formatDate(delivery, true));
+
+		if (linkEl) {
+			if (link) {
+				linkEl.href = link;
+				linkEl.hidden = false;
+			} else {
+				linkEl.hidden = true;
+				linkEl.removeAttribute('href');
+			}
+		}
+
+		if (timelineEl) timelineEl.innerHTML = '';
+		if (events.length) events.forEach(appendEvent);
+		else appendEvent({ description: summary || 'Tracking has been received. Carrier scan events will appear here when available.' });
+
+		if (errorEl) errorEl.hidden = true;
+		if (resultEl) resultEl.hidden = false;
+		setTrackingDetailsOpen(true);
+	}
+
+	if (toggleButton) {
+		toggleButton.addEventListener('click', function () {
+			setTrackingDetailsOpen(toggleButton.getAttribute('aria-expanded') !== 'true');
+		});
+	}
+
+	function setPreviewLoading(sourceForm, isLoading) {
+		var button = sourceForm ? sourceForm.querySelector('.policy-page-basic__tracking-button') : null;
+		Array.prototype.slice.call(sourceForm ? sourceForm.querySelectorAll('input, button') : []).forEach(function (field) {
+			field.disabled = isLoading;
+		});
+		if (button) {
+			button.disabled = isLoading;
+			button.textContent = isLoading ? 'Tracking...' : 'Track';
+		}
+	}
+
+	function submitPreviewLookup(sourceForm, requestPayload, requestedNumber) {
+		var endpoint = stripTags(sourceForm.dataset.endpoint);
+
+		setPreviewLoading(sourceForm, true);
+
+		fetch(endpoint, {
+			method: 'POST',
+			headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+			credentials: 'same-origin',
+			body: JSON.stringify(requestPayload)
+		})
+			.then(parseJsonResponse)
+			.then(function (payload) {
+				render(payload, requestedNumber || '');
+			})
+			.catch(function (error) {
+				showError(error && error.message ? error.message : 'Could not fetch tracking information. Please try again.');
+			})
+			.finally(function () {
+				setPreviewLoading(sourceForm, false);
+			});
+	}
+
+	if (trackingNumberForm) {
+		trackingNumberForm.addEventListener('submit', function (event) {
+			event.preventDefault();
+
+			var trackingNumber = normalizeTrackingNumber(trackingInput ? trackingInput.value : '');
+			var honeypot = trackingNumberForm.querySelector('[data-preview-tracking-honeypot]');
+
+			clearStates();
+
+			if (!isValidTrackingNumber(trackingNumber)) {
+				showError('Please enter a valid tracking ID.');
+				return;
+			}
+
+			submitPreviewLookup(trackingNumberForm, {
+				trackingNumber: trackingNumber,
+				trackingNumbers: [trackingNumber],
+				website: honeypot ? honeypot.value : '',
+				formElapsedMs: Date.now() - startedAt
+			}, trackingNumber);
+		});
+	}
+
+	if (orderForm) {
+		orderForm.addEventListener('submit', function (event) {
+			event.preventDefault();
+
+			var email = normalizeEmail(emailInput ? emailInput.value : '');
+			var orderNumber = normalizeOrderNumber(orderInput ? orderInput.value : '');
+			var honeypot = orderForm.querySelector('[data-preview-tracking-honeypot]');
+
+			clearStates();
+
+			if (!isValidOrderNumber(orderNumber)) {
+				showError('Please enter a valid order number.');
+				return;
+			}
+
+			if (!isValidEmail(email)) {
+				showError('Please enter the email address used at checkout.');
+				return;
+			}
+
+			submitPreviewLookup(orderForm, {
+				email: email,
+				orderNumber: orderNumber,
+				orderName: '#' + orderNumber,
+				website: honeypot ? honeypot.value : '',
+				formElapsedMs: Date.now() - startedAt
+			}, '');
+		});
+	}
+})();
+</script>
+
+</div></body></html>
