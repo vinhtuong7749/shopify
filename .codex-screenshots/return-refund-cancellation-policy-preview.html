@@ -213,6 +213,18 @@
 		list-style: decimal;
 	}
 
+	#shopify-section-return-preview .policy-page-basic__inline-link {
+		color: var(--color-text-primary);
+		font-weight: 700;
+		text-decoration: underline;
+		text-underline-offset: 4px;
+	}
+
+	#shopify-section-return-preview .policy-page-basic__inline-link:hover,
+	#shopify-section-return-preview .policy-page-basic__inline-link:focus-visible {
+		text-decoration-thickness: 2px;
+	}
+
 	#shopify-section-return-preview .policy-page-basic__table-wrap {
 		width: 100%;
 		max-width: 100%;
@@ -424,10 +436,10 @@
 			<p class="policy-page-basic__toc-title">On this page</p>
 			<ol class="policy-page-basic__toc-list">
 				<li><a class="policy-page-basic__toc-link" href="#return-eligibility-return-preview">Eligibility</a></li>
+				<li><a class="policy-page-basic__toc-link" href="#return-exclusions-return-preview">Exclusions</a></li>
 				<li><a class="policy-page-basic__toc-link" href="#return-buyer-error-return-preview">Buyer error</a></li>
 				<li><a class="policy-page-basic__toc-link" href="#return-seller-error-return-preview">Seller error</a></li>
 				<li><a class="policy-page-basic__toc-link" href="#return-cancellation-return-preview">Cancellation</a></li>
-				<li><a class="policy-page-basic__toc-link" href="#return-exclusions-return-preview">Exclusions</a></li>
 				<li><a class="policy-page-basic__toc-link" href="#return-refunds-return-preview">Refunds</a></li>
 				<li><a class="policy-page-basic__toc-link" href="#return-contact-return-preview">Contact</a></li>
 				<li><a class="policy-page-basic__toc-link" href="#return-other-return-preview">Other terms</a></li>
@@ -438,14 +450,28 @@
 			<h2 class="policy-page-basic__section-title">Return / Refund Eligibility</h2>
 			<div>
 				<p class="policy-page-basic__text">To be eligible for a return or refund, your request must meet all of the following conditions:</p>
-				<ul class="policy-page-basic__list">
+				<ol class="policy-page-basic__ordered-list">
 					<li>The request must be submitted within 7 days from the date the order is marked as delivered.</li>
 					<li>The product must be intact, unused, and free from damage caused by the buyer.</li>
 					<li>Original packaging, labels, accessories, and included gifts must be kept.</li>
 					<li>The buyer must provide the order number and relevant proof, such as photos, videos, or invoice.</li>
-					<li>The product must not fall under non-returnable categories.</li>
-				</ul>
+					<li>The product must not fall under <a class="policy-page-basic__inline-link" href="#return-exclusions-return-preview">Non-Returnable Cases listed below</a>.</li>
+				</ol>
 				<p class="policy-page-basic__note">Requests that do not meet these conditions may be rejected.</p>
+			</div>
+		</article>
+
+		<article id="return-exclusions-return-preview" class="policy-page-basic__section">
+			<h2 class="policy-page-basic__section-title">Non-Returnable Cases</h2>
+			<div>
+				<ol class="policy-page-basic__ordered-list">
+					<li>The request is submitted more than 7 days after delivery.</li>
+					<li>The product has been used, damaged, scratched, or is missing accessories due to buyer fault.</li>
+					<li>Valid proof cannot be provided for seller-error claims.</li>
+					<li>The product has no invoice, order number, or verification information.</li>
+					<li>The product is a special promotional item or personalized product, if stated on the product page.</li>
+					<li>The buyer sends the item back without official confirmation from us.</li>
+				</ol>
 			</div>
 		</article>
 
@@ -453,7 +479,7 @@
 			<h2 class="policy-page-basic__section-title">Buyer Error / Change of Mind</h2>
 			<div>
 				<p class="policy-page-basic__text">This applies when the buyer requests a return for personal reasons, such as ordering the wrong product, size, or color, changing their mind, or no longer needing the item.</p>
-				<p class="policy-page-basic__text">The buyer is responsible for two-way shipping fees:</p>
+				<p class="policy-page-basic__text">For buyer-error or change-of-mind returns, the buyer is responsible for both the original shipping fee used to deliver the first order and the return shipping fee used to send the item back.</p>
 				<div class="policy-page-basic__table-wrap">
 					<table class="policy-page-basic__table">
 						<thead>
@@ -464,11 +490,11 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td>Return shipping: Buyer to Seller</td>
+								<td>Original shipping fee: Seller to buyer</td>
 								<td>$5.45</td>
 							</tr>
 							<tr>
-								<td>Reshipping: Seller to Buyer, if an exchange is requested</td>
+								<td>Return shipping fee: Buyer to seller</td>
 								<td>$5.45</td>
 							</tr>
 							<tr>
@@ -478,7 +504,7 @@
 						</tbody>
 					</table>
 				</div>
-				<p class="policy-page-basic__note">This amount will be deducted directly from the refund. The remaining balance will be refunded after the process is completed.</p>
+				<p class="policy-page-basic__note">The total shipping fee above will be deducted directly from the refund. The remaining balance will be refunded after the process is completed.</p>
 			</div>
 		</article>
 
@@ -519,20 +545,6 @@
 					<li>If approved, the order will be canceled and payment will be refunded within 3-7 business days.</li>
 				</ol>
 				<p class="policy-page-basic__note">Orders that have already been processed or are in transit cannot be canceled. In that case, the return/refund policy will apply depending on the situation.</p>
-			</div>
-		</article>
-
-		<article id="return-exclusions-return-preview" class="policy-page-basic__section">
-			<h2 class="policy-page-basic__section-title">Non-Returnable Cases</h2>
-			<div>
-				<ol class="policy-page-basic__ordered-list">
-					<li>The request is submitted more than 7 days after delivery.</li>
-					<li>The product has been used, damaged, scratched, or is missing accessories due to buyer fault.</li>
-					<li>Valid proof cannot be provided for seller-error claims.</li>
-					<li>The product has no invoice, order number, or verification information.</li>
-					<li>The product is a special promotional item or personalized product, if stated on the product page.</li>
-					<li>The buyer sends the item back without official confirmation from us.</li>
-				</ol>
 			</div>
 		</article>
 

@@ -209,6 +209,19 @@
 		margin-bottom: 8px;
 	}
 
+	.shipping-policy-modern__inline-link {
+		color: var(--color-text-primary);
+		font-weight: 700;
+		text-decoration: underline;
+		text-underline-offset: 4px;
+	}
+
+	.shipping-policy-modern__inline-link:hover,
+	.shipping-policy-modern__inline-link:focus-visible {
+		color: var(--color-text-primary);
+		text-decoration-thickness: 2px;
+	}
+
 	/* Tables */
 	.shipping-policy-modern__table-wrap {
 		overflow-x: auto;
@@ -412,10 +425,10 @@
 				<h4 class="shipping-policy-modern__toc-title">On this page</h4>
 				<ul class="shipping-policy-modern__toc-list">
 					<li><a class="shipping-policy-modern__toc-link" href="#return-eligibility">Eligibility</a></li>
+					<li><a class="shipping-policy-modern__toc-link" href="#return-exclusions">Non-Returnable Cases</a></li>
 					<li><a class="shipping-policy-modern__toc-link" href="#return-buyer-error">Buyer Error / Change of Mind</a></li>
 					<li><a class="shipping-policy-modern__toc-link" href="#return-seller-error">Seller Error</a></li>
 					<li><a class="shipping-policy-modern__toc-link" href="#return-cancellation">Order Cancellation</a></li>
-					<li><a class="shipping-policy-modern__toc-link" href="#return-exclusions">Non-Returnable Cases</a></li>
 					<li><a class="shipping-policy-modern__toc-link" href="#return-refunds">Refunds</a></li>
 					<li><a class="shipping-policy-modern__toc-link" href="#return-contact">Contact Support</a></li>
 				</ul>
@@ -426,19 +439,32 @@
 				<article id="return-eligibility" class="shipping-policy-modern__section">
 					<h2 class="shipping-policy-modern__section-title">Return / Refund Eligibility</h2>
 					<p class="shipping-policy-modern__text">To be eligible for a return or refund, your request must meet all of the following conditions:</p>
-					<ul class="shipping-policy-modern__list">
+					<ol class="shipping-policy-modern__list" style="list-style-type: decimal;">
 						<li>The request must be submitted within <strong>7 days</strong> from the date the order is marked as delivered.</li>
 						<li>The product must be intact, unused, and free from damage caused by the buyer.</li>
 						<li>Original packaging, labels, accessories, and included gifts, if any, must be kept.</li>
 						<li>The buyer must provide the order number and relevant proof, such as product photos / videos, invoice, etc.</li>
-						<li>The product must not fall under the excluded categories listed below.</li>
-					</ul>
+						<li>The product must not fall under the <a class="shipping-policy-modern__inline-link" href="#return-exclusions">Non-Returnable Cases listed below</a>.</li>
+					</ol>
 					<div class="shipping-policy-modern__note">Requests that do not meet the above conditions may be rejected.</div>
+				</article>
+
+				<article id="return-exclusions" class="shipping-policy-modern__section">
+					<h2 class="shipping-policy-modern__section-title">Non-Returnable Cases</h2>
+					<ol class="shipping-policy-modern__list" style="list-style-type: decimal;">
+						<li>The request is submitted more than 7 days after delivery.</li>
+						<li>The product has been used, damaged, scratched, or is missing accessories due to buyer fault.</li>
+						<li>Valid proof cannot be provided for seller-error claims.</li>
+						<li>The product has no invoice, order number, or verification information.</li>
+						<li>The product is a special promotional item or personalized product, if stated on the product page.</li>
+						<li>The buyer sends the item back without official confirmation from us.</li>
+					</ol>
 				</article>
 
 				<article id="return-buyer-error" class="shipping-policy-modern__section">
 					<h2 class="shipping-policy-modern__section-title">Buyer Error / Change of Mind</h2>
 					<p class="shipping-policy-modern__text">This applies when the buyer voluntarily requests a return for personal reasons, such as ordering the wrong product / size / color, changing their mind, no longer needing the product, etc.</p>
+					<p class="shipping-policy-modern__text">For buyer-error or change-of-mind returns, the buyer is responsible for both the original shipping fee used to deliver the first order and the return shipping fee used to send the item back.</p>
 					
 					<div class="shipping-policy-modern__table-wrap">
 						<table class="shipping-policy-modern__table">
@@ -450,21 +476,21 @@
 							</thead>
 							<tbody>
 								<tr>
-									<td>Return shipping: Buyer to Seller</td>
+									<td>Original shipping fee: Seller to buyer</td>
 									<td>$5.45</td>
 								</tr>
 								<tr>
-									<td>Reshipping: Seller to Buyer (if an exchange is requested)</td>
+									<td>Return shipping fee: Buyer to seller</td>
 									<td>$5.45</td>
 								</tr>
 								<tr>
-									<td><strong>Total fee</strong></td>
+									<td><strong>Total shipping fee</strong></td>
 									<td><strong>$10.90</strong></td>
 								</tr>
 							</tbody>
 						</table>
 					</div>
-					<p class="shipping-policy-modern__text">This amount will be deducted directly from the refund. The remaining balance will be refunded after the process is completed.</p>
+					<p class="shipping-policy-modern__text">The total shipping fee above will be deducted directly from the refund. The remaining balance will be refunded after the process is completed.</p>
 					
 					<h3 class="shipping-policy-modern__subheading">Return process</h3>
 					<ol class="shipping-policy-modern__list" style="list-style-type: decimal;">
@@ -520,18 +546,6 @@
 					<div class="shipping-policy-modern__note">Orders that have already been processed or are in transit cannot be canceled. In that case, the return/refund policy will apply depending on the situation.</div>
 				</article>
 				
-				<article id="return-exclusions" class="shipping-policy-modern__section">
-					<h2 class="shipping-policy-modern__section-title">Non-Returnable Cases</h2>
-					<ol class="shipping-policy-modern__list" style="list-style-type: decimal;">
-						<li>The request is submitted more than 7 days after delivery.</li>
-						<li>The product has been used, damaged, scratched, or is missing accessories due to buyer fault.</li>
-						<li>Valid proof cannot be provided for seller-error claims.</li>
-						<li>The product has no invoice, order number, or verification information.</li>
-						<li>The product is a special promotional item or personalized product, if stated on the product page.</li>
-						<li>The buyer sends the item back without official confirmation from us.</li>
-					</ol>
-				</article>
-
 				<article id="return-refunds" class="shipping-policy-modern__section">
 					<h2 class="shipping-policy-modern__section-title">Refunds</h2>
 					<div class="shipping-policy-modern__grid">
