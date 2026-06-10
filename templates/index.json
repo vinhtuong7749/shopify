@@ -9,8 +9,56 @@
  */
 {
   "sections": {
+    "camo_hero_slider_ELY97M": {
+      "type": "camo-hero-slider",
+      "blocks": {
+        "slide_jEKzQV": {
+          "type": "slide",
+          "settings": {
+            "image_desktop": "shopify://shop_images/Untitled_design_4.jpg",
+            "image_mobile": "shopify://shop_images/banner-mobile-4.jpg",
+            "eyebrow": "",
+            "heading": "",
+            "accent_text": "",
+            "subheading": "",
+            "button_label": "",
+            "button_link": "shopify://collections/wild-turkey",
+            "full_slide_link": ""
+          }
+        },
+        "slide_ryx8LC": {
+          "type": "slide",
+          "settings": {
+            "image_desktop": "shopify://shop_images/Untitled_design_5.jpg",
+            "image_mobile": "shopify://shop_images/banner-mobile-3.jpg",
+            "eyebrow": "",
+            "heading": "",
+            "accent_text": "",
+            "subheading": "",
+            "button_label": "",
+            "button_link": "shopify://collections/saltwater-fishing-t-shirt",
+            "full_slide_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "slide_jEKzQV",
+        "slide_ryx8LC"
+      ],
+      "name": "Banner slider",
+      "settings": {
+        "enable_autoplay": true,
+        "autoplay_delay": 5,
+        "height_desktop": 620,
+        "height_mobile": 560,
+        "show_content": false,
+        "enable_overlay": false,
+        "overlay_opacity": 0
+      }
+    },
     "banner_HXA8gf": {
       "type": "banner",
+      "disabled": true,
       "name": "Banner",
       "settings": {
         "desktop_image_height": "auto",
@@ -25,7 +73,7 @@
         "button_link_2": "",
         "button_aria_label_2": "",
         "banner_link": "https://camosignal.com/collections/all?filter.p.m.custom.seasonal=INDEPENDENCE+DAY&sort_by=best-selling",
-        "image_desktop": "shopify://shop_images/banner_4th_of_july_d531b0da-14a5-42ed-90fc-b4530285e60c.jpg",
+        "image_desktop": "shopify://shop_images/Marlin_fishing_banner.png",
         "image_mobile": "shopify://shop_images/banner_4th_of_july_mobile2.jpg",
         "show_breadcrumbs": false,
         "enable_timer": false,
@@ -678,6 +726,7 @@
     }
   },
   "order": [
+    "camo_hero_slider_ELY97M",
     "banner_HXA8gf",
     "177503541480b98d44",
     "177493990334c4d3df",

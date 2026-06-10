@@ -1,0 +1,4235 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="shopify-disabled-features" content="fetch, auto-redirect">
+  <meta name="shopify-api-key" content="19c7298a511c9995152c2aa32a923535">
+  <title>CamoSignal - POD Insight Engine</title>
+  <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js"></script>
+  <style>
+    :root {
+      --page: #f8fafc;
+      --ink: #000000;
+      --muted: #111827;
+      --line: #e2e8f0;
+      --surface: #ffffff;
+      --surface-soft: #f1f5f9;
+      --green: #059669;
+      --green-weak: #d1fae5;
+      --blue: #2563eb;
+      --blue-weak: #dbeafe;
+      --amber: #d97706;
+      --amber-weak: #fef3c7;
+      --red: #dc2626;
+      --red-weak: #fee2e2;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      font-family: Roboto, Arial, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button,
+    a.button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .shell {
+      width: min(1480px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 16px 0 28px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: minmax(260px, 0.8fr) minmax(0, 2fr);
+      gap: 16px;
+      align-items: center;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      border-radius: 8px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .mark {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 40px;
+      border-radius: 8px;
+      background: #15251c;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 19px;
+      line-height: 24px;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 18px;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+      min-width: 0;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--ink);
+      font-weight: 700;
+      font-size: 13px;
+      text-decoration: none;
+    }
+
+    .control {
+      min-height: 38px;
+      width: 112px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .control.key {
+      width: 150px;
+    }
+
+    .control.metric-input {
+      width: 136px;
+    }
+
+    .control.date-control {
+      width: 148px;
+    }
+
+    .button.primary {
+      border-color: #1d513a;
+      background: #1d513a;
+      color: #ffffff;
+    }
+
+    .file-button {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .file-button input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 390px;
+      gap: 16px;
+      margin-top: 16px;
+      align-items: start;
+    }
+
+    .main,
+    .side {
+      display: grid;
+      gap: 16px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-title {
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .panel-meta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+      text-align: right;
+    }
+
+    .summary {
+      padding: 18px 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .summary h2 {
+      max-width: 920px;
+      font-size: clamp(22px, 2vw, 32px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .summary p {
+      max-width: 960px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 21px;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+    }
+
+    .metric {
+      min-height: 122px;
+      padding: 14px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      align-content: space-between;
+      gap: 12px;
+      background: var(--surface);
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .metric-value {
+      font-size: 24px;
+      line-height: 28px;
+      font-weight: 850;
+      letter-spacing: 0;
+    }
+
+    .delta {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 800;
+      color: var(--green);
+      background: var(--green-weak);
+    }
+
+    .delta.down {
+      color: var(--red);
+      background: var(--red-weak);
+    }
+
+    .chart-wrap {
+      padding: 16px;
+    }
+
+    .range-panel {
+      display: grid;
+      gap: 14px;
+      padding: 16px;
+    }
+
+    .range-tools {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .range-button {
+      min-width: 70px;
+    }
+
+    .range-button.active {
+      border-color: #1d513a;
+      background: var(--green-weak);
+      color: #173e2c;
+    }
+
+    .calendar-weekdays,
+    .calendar-days {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .calendar-weekdays {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 15px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .calendar-day,
+    .calendar-blank {
+      min-height: 82px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+
+    .calendar-day {
+      display: grid;
+      gap: 5px;
+      align-content: space-between;
+      padding: 8px;
+      color: var(--ink);
+      text-align: left;
+    }
+
+    .calendar-day:hover,
+    .calendar-day:focus-visible {
+      border-color: #1d513a;
+      outline: 2px solid rgba(47, 106, 78, 0.16);
+      outline-offset: 0;
+    }
+
+    .calendar-day.heat-0 {
+      background: #fbfcfa;
+    }
+
+    .calendar-day.heat-1 {
+      background: #edf5ef;
+    }
+
+    .calendar-day.heat-2 {
+      background: #d8ebde;
+    }
+
+    .calendar-day.heat-3 {
+      background: #bedcc8;
+    }
+
+    .calendar-day.heat-4 {
+      background: #91c2a5;
+    }
+
+    .calendar-day-number {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 800;
+    }
+
+    .calendar-day strong {
+      display: block;
+      font-size: 14px;
+      line-height: 18px;
+    }
+
+    .calendar-day small {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 15px;
+    }
+
+    .calendar-insight {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .pod-command {
+      display: grid;
+      gap: 16px;
+      padding: 16px;
+    }
+
+    .pod-overview {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .pod-decision-grid {
+      display: grid;
+      grid-template-columns: minmax(280px, 1fr) minmax(260px, 0.95fr) minmax(260px, 0.95fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .pod-block {
+      display: grid;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .pod-block-title {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .pod-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .pod-action,
+    .pod-mix-row {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fafbf8;
+      padding: 10px;
+    }
+
+    .pod-action {
+      display: grid;
+      gap: 7px;
+    }
+
+    .pod-action-head,
+    .pod-mix-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .pod-action h3,
+    .pod-mix-row h3 {
+      margin: 0;
+      font-size: 14px;
+      line-height: 19px;
+    }
+
+    .pod-action p,
+    .pod-mix-row p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    .pod-type {
+      padding: 3px 7px;
+      border-radius: 999px;
+      color: var(--blue);
+      background: var(--blue-weak);
+      font-size: 11px;
+      line-height: 15px;
+      font-weight: 850;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .pod-type.scale {
+      color: var(--green);
+      background: var(--green-weak);
+    }
+
+    .pod-type.fix, .pod-type.cut {
+      color: var(--red);
+      background: var(--red-weak);
+    }
+
+    .pod-type.new-design,
+    .pod-type.blank,
+    .pod-type.wait {
+      color: var(--amber);
+      background: var(--amber-weak);
+    }
+
+    .pod-mix-bar {
+      height: 9px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: var(--surface-soft);
+    }
+
+    .pod-mix-fill {
+      display: block;
+      height: 100%;
+      min-width: 2px;
+      border-radius: inherit;
+      background: var(--green);
+    }
+
+    .pod-mix-row.theme .pod-mix-fill {
+      background: var(--blue);
+    }
+
+    .pod-mix-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 15px;
+    }
+
+    .pod-mix-meta span {
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: #eef1ec;
+      font-weight: 750;
+    }
+
+    .insight-tile,
+    .coverage-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: #fafbf8;
+    }
+
+    .insight-tile span,
+    .coverage-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 15px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .insight-tile strong,
+    .coverage-item strong {
+      display: block;
+      margin-top: 5px;
+      font-size: 16px;
+      line-height: 21px;
+    }
+
+    .coverage-list {
+      display: grid;
+      gap: 8px;
+      padding: 14px 16px;
+    }
+
+    .coverage-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .coverage-pill {
+      padding: 3px 7px;
+      border-radius: 999px;
+      color: var(--green);
+      background: var(--green-weak);
+      font-size: 11px;
+      line-height: 15px;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    .coverage-pill.manual {
+      color: var(--blue);
+      background: var(--blue-weak);
+    }
+
+    .coverage-pill.modeled {
+      color: #315b86;
+      background: #e8f1fb;
+    }
+
+    .coverage-pill.missing,
+    .coverage-pill.empty {
+      color: var(--amber);
+      background: var(--amber-weak);
+    }
+
+    .season-overview {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding: 16px 16px 0;
+    }
+
+    .season-card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      padding: 16px;
+    }
+
+    .season-card {
+      display: grid;
+      gap: 8px;
+      min-height: 150px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fafbf8;
+    }
+
+    .season-card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .season-card h3 {
+      margin: 0;
+      font-size: 16px;
+      line-height: 21px;
+    }
+
+    .season-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 19px;
+    }
+
+    .season-pill {
+      flex: 0 0 auto;
+      border-radius: 999px;
+      padding: 4px 8px;
+      color: var(--muted);
+      background: #eef1ec;
+      font-size: 11px;
+      line-height: 15px;
+      font-weight: 850;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .season-pill.active {
+      color: var(--green);
+      background: var(--green-weak);
+    }
+
+    .season-pill.preseason,
+    .season-pill.upcoming {
+      color: var(--amber);
+      background: var(--amber-weak);
+    }
+
+    .season-pill.postseason {
+      color: var(--blue);
+      background: var(--blue-weak);
+    }
+
+    .season-meta-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .season-meta-row span {
+      border-top: 1px solid var(--line);
+      padding-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 17px;
+    }
+
+    .matrix-wrap {
+      padding: 16px;
+      overflow-x: auto;
+    }
+
+    .matrix {
+      display: grid;
+      gap: 6px;
+      min-width: 760px;
+    }
+
+    .matrix-row {
+      display: grid;
+      grid-template-columns: 190px repeat(var(--matrix-days, 7), minmax(78px, 1fr));
+      gap: 6px;
+      align-items: stretch;
+    }
+
+    .matrix-label,
+    .matrix-cell,
+    .matrix-head {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px;
+      background: #fafbf8;
+      min-height: 58px;
+    }
+
+    .matrix-head {
+      min-height: 34px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 15px;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    .matrix-label {
+      display: grid;
+      align-content: center;
+      gap: 3px;
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 800;
+    }
+
+    .matrix-label small {
+      color: var(--muted);
+      font-weight: 650;
+    }
+
+    .matrix-cell {
+      display: grid;
+      align-content: center;
+      gap: 3px;
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    .matrix-cell strong {
+      font-size: 13px;
+      line-height: 17px;
+    }
+
+    .heat-0 {
+      background: #fbfcfa;
+    }
+
+    .heat-1 {
+      background: #edf5ef;
+    }
+
+    .heat-2 {
+      background: #d8ebde;
+    }
+
+    .heat-3 {
+      background: #bedcc8;
+    }
+
+    .heat-4 {
+      background: #91c2a5;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 92px minmax(0, 1fr) 96px;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 18px;
+    }
+
+    .bar-track {
+      height: 16px;
+      position: relative;
+      border-radius: 999px;
+      background: var(--surface-soft);
+      overflow: hidden;
+    }
+
+    .bar {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      min-width: 2px;
+      border-radius: 999px;
+      background: var(--green);
+    }
+
+    .bar.negative {
+      left: auto;
+      right: 50%;
+      background: var(--red);
+    }
+
+    .trend {
+      width: 100%;
+      height: 240px;
+      display: block;
+    }
+
+    .trend-point {
+      cursor: crosshair;
+    }
+
+    .trend-value-label {
+      fill: #0b1f17;
+      font-size: 11px;
+      font-weight: 800;
+      paint-order: stroke;
+      stroke: #ffffff;
+      stroke-width: 3px;
+      stroke-linejoin: round;
+    }
+
+    .axis-label {
+      fill: #647068;
+      font-size: 11px;
+    }
+
+    .chart-tooltip {
+      position: fixed;
+      z-index: 100;
+      max-width: 280px;
+      pointer-events: none;
+      border: 1px solid rgba(29, 81, 58, 0.18);
+      border-radius: 8px;
+      padding: 9px 10px;
+      background: rgba(250, 251, 248, 0.98);
+      box-shadow: 0 12px 32px rgba(14, 26, 18, 0.18);
+      color: var(--ink);
+      font-size: 12px;
+      line-height: 18px;
+      opacity: 0;
+      transform: translate(10px, 10px);
+      transition: opacity 120ms ease;
+    }
+
+    .chart-tooltip.visible {
+      opacity: 1;
+    }
+
+    .chart-tooltip strong {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 13px;
+      line-height: 18px;
+    }
+
+    .issue-list {
+      display: grid;
+      gap: 0;
+    }
+
+    .issue {
+      display: grid;
+      gap: 8px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .issue:last-child {
+      border-bottom: 0;
+    }
+
+    .issue-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .issue h3 {
+      font-size: 14px;
+      line-height: 19px;
+    }
+
+    .issue p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 19px;
+    }
+
+    .severity {
+      padding: 3px 7px;
+      border-radius: 999px;
+      font-size: 11px;
+      line-height: 15px;
+      font-weight: 850;
+      text-transform: uppercase;
+      color: var(--blue);
+      background: var(--blue-weak);
+    }
+
+    .severity.critical,
+    .severity.high {
+      color: var(--red);
+      background: var(--red-weak);
+    }
+
+    .severity.medium {
+      color: var(--amber);
+      background: var(--amber-weak);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th,
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 15px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      background: #fafbf8;
+    }
+
+    td:first-child,
+    th:first-child {
+      white-space: normal;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+    }
+
+    .status-line {
+      min-height: 18px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    .empty {
+      padding: 18px 16px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 19px;
+    }
+
+    .empty.compact {
+      padding: 8px 0;
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    /* Decision-first dashboard polish */
+    :root {
+      --page: #f3f6f1;
+      --ink: #000000;
+      --muted: #111827;
+      --line: #dce4dc;
+      --surface: #ffffff;
+      --surface-soft: #f6f8f3;
+      --green: #155f42;
+      --green-strong: #0f5138;
+      --green-weak: #e1f2e8;
+      --blue: #2f5f9c;
+      --blue-weak: #e8f0ff;
+      --amber: #a96108;
+      --amber-weak: #fbefd4;
+      --red: #b83232;
+      --red-weak: #f8dddd;
+      --shadow: 0 1px 2px rgba(16, 32, 24, 0.05), 0 14px 34px rgba(16, 32, 24, 0.08);
+      --shadow-soft: 0 8px 24px rgba(16, 32, 24, 0.06);
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 12% -10%, rgba(21, 95, 66, 0.08), transparent 28rem),
+        linear-gradient(180deg, #f8faf6 0%, var(--page) 52%, #f7f9f5 100%);
+      color: #000000;
+    }
+
+    .shell {
+      width: min(1540px, calc(100vw - 40px));
+      padding: 18px 0 36px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 10px;
+      z-index: 20;
+      grid-template-columns: minmax(250px, 0.74fr) minmax(0, 2.4fr);
+      gap: 18px;
+      border-color: rgba(21, 95, 66, 0.14);
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .mark {
+      background: linear-gradient(135deg, #0d2419, #1c6848);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 120px repeat(4, minmax(118px, 1fr)) auto auto auto auto;
+      justify-content: stretch;
+      align-items: stretch;
+    }
+
+    .button,
+    .control {
+      width: auto;
+      min-height: 40px;
+      border-color: #d8e1d8;
+      background: #ffffff;
+      box-shadow: 0 1px 0 rgba(16, 32, 24, 0.03);
+      transition: border-color 140ms ease, background 140ms ease, color 140ms ease, transform 140ms ease, box-shadow 140ms ease;
+    }
+
+    .button:hover,
+    .control:hover,
+    .button:focus-visible,
+    .control:focus-visible {
+      border-color: rgba(21, 95, 66, 0.45);
+      box-shadow: 0 0 0 3px rgba(21, 95, 66, 0.10);
+      outline: none;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+    }
+
+    .button.primary {
+      border-color: var(--green-strong);
+      background: var(--green-strong);
+      box-shadow: 0 9px 18px rgba(15, 81, 56, 0.16);
+    }
+
+    .grid {
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 18px;
+    }
+
+    .main,
+    .side {
+      gap: 18px;
+    }
+
+    .side {
+      position: sticky;
+      top: 96px;
+      max-height: calc(100vh - 112px);
+      overflow: auto;
+      padding-right: 2px;
+    }
+
+    .panel {
+      border-color: rgba(21, 95, 66, 0.14);
+      border-radius: 10px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .main > .panel:first-child {
+      position: relative;
+      overflow: hidden;
+      border-color: rgba(21, 95, 66, 0.22);
+      background: linear-gradient(135deg, #ffffff 0%, #fbfdf9 62%, #eef7ef 100%);
+    }
+
+    .main > .panel:first-child::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 5px;
+      background: linear-gradient(180deg, var(--green), #91c2a5);
+    }
+
+    .summary {
+      position: relative;
+      padding: 22px 24px 18px;
+    }
+
+    .summary h2 {
+      max-width: 880px;
+      font-size: clamp(26px, 2.35vw, 38px);
+      line-height: 1.04;
+    }
+
+    .summary p {
+      max-width: 1040px;
+      font-size: 14px;
+      line-height: 22px;
+    }
+
+    .status-line {
+      display: inline-flex;
+      width: fit-content;
+      max-width: 100%;
+      align-items: center;
+      padding: 6px 9px;
+      border: 1px solid rgba(21, 95, 66, 0.12);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.72);
+      color: #111827;
+    }
+
+    .metric-grid {
+      gap: 10px;
+      padding: 0 16px 16px 24px;
+      border-top: 0;
+      border-left: 0;
+    }
+
+    .metric {
+      position: relative;
+      min-height: 112px;
+      overflow: hidden;
+      border: 1px solid rgba(21, 95, 66, 0.12);
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: 0 1px 0 rgba(16, 32, 24, 0.03);
+    }
+
+    .metric::after {
+      content: "";
+      position: absolute;
+      right: -26px;
+      top: -26px;
+      width: 70px;
+      height: 70px;
+      border-radius: 999px;
+      background: rgba(21, 95, 66, 0.06);
+    }
+
+    .metric:nth-child(3)::after,
+    .metric:nth-child(4)::after,
+    .metric:nth-child(8)::after {
+      background: rgba(169, 97, 8, 0.08);
+    }
+
+    .metric-label {
+      color: #111827;
+      font-size: 11px;
+      letter-spacing: 0.055em;
+    }
+
+    .metric-value {
+      margin-top: 2px;
+      font-size: clamp(22px, 2vw, 30px);
+      line-height: 1.02;
+      font-weight: 900;
+    }
+
+    .delta {
+      border: 1px solid rgba(21, 95, 66, 0.10);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.36);
+    }
+
+    .panel-header {
+      padding: 14px 16px;
+      background: linear-gradient(180deg, #ffffff, #fbfcfa);
+    }
+
+    .panel-title {
+      font-size: 15px;
+    }
+
+    .pod-command,
+    .range-panel,
+    .chart-wrap,
+    .matrix-wrap {
+      background: linear-gradient(180deg, #ffffff 0%, #fbfcfa 100%);
+    }
+
+    .pod-overview {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .pod-decision-grid {
+      grid-template-columns: minmax(330px, 1.2fr) repeat(2, minmax(250px, 0.9fr));
+    }
+
+    .pod-block {
+      padding: 12px;
+      border: 1px solid rgba(21, 95, 66, 0.10);
+      border-radius: 10px;
+      background: #ffffff;
+    }
+
+    .pod-action,
+    .pod-mix-row,
+    .insight-tile,
+    .coverage-item,
+    .season-card,
+    .matrix-label,
+    .matrix-cell,
+    .matrix-head {
+      border-color: rgba(21, 95, 66, 0.12);
+      background: #ffffff;
+      box-shadow: 0 1px 0 rgba(16, 32, 24, 0.03);
+    }
+
+    .pod-action {
+      position: relative;
+      padding-left: 13px;
+    }
+
+    .pod-action::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 10px;
+      bottom: 10px;
+      width: 4px;
+      border-radius: 999px;
+      background: var(--blue);
+    }
+
+    .pod-action:has(.pod-type.scale)::before {
+      background: var(--green);
+    }
+
+    .pod-action:has(.pod-type.fix),
+    .pod-action:has(.pod-type.cut) {
+      background: #fffafa;
+    }
+
+    .pod-action:has(.pod-type.fix)::before,
+    .pod-action:has(.pod-type.cut)::before {
+      background: var(--red);
+    }
+
+    .pod-action:has(.pod-type.wait)::before,
+    .pod-action:has(.pod-type.new-design)::before {
+      background: var(--amber);
+    }
+
+    .range-tools {
+      padding: 10px;
+      border: 1px solid rgba(21, 95, 66, 0.10);
+      border-radius: 10px;
+      background: #ffffff;
+    }
+
+    .range-button.active {
+      border-color: rgba(21, 95, 66, 0.55);
+      background: var(--green-weak);
+      color: var(--green-strong);
+      box-shadow: inset 0 0 0 1px rgba(21, 95, 66, 0.08);
+    }
+
+    .calendar-weekdays {
+      padding: 0 2px;
+    }
+
+    .calendar-day,
+    .calendar-blank {
+      min-height: 92px;
+      border-color: rgba(21, 95, 66, 0.14);
+      box-shadow: 0 1px 0 rgba(16, 32, 24, 0.03);
+    }
+
+    .calendar-day {
+      transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+    }
+
+    .calendar-day:hover,
+    .calendar-day:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(16, 32, 24, 0.10);
+    }
+
+    .heat-1,
+    .calendar-day.heat-1 {
+      background: #edf6ee;
+    }
+
+    .heat-2,
+    .calendar-day.heat-2 {
+      background: #dcefe2;
+    }
+
+    .heat-3,
+    .calendar-day.heat-3 {
+      background: #b9ddc6;
+    }
+
+    .heat-4,
+    .calendar-day.heat-4 {
+      background: #82bd9a;
+    }
+
+    .bar-track,
+    .pod-mix-bar {
+      background: #e9eee8;
+    }
+
+    .bar-row {
+      padding: 9px 10px;
+      margin-bottom: 8px;
+      border: 1px solid rgba(21, 95, 66, 0.10);
+      border-radius: 9px;
+      background: #ffffff;
+    }
+
+    .trend {
+      height: 280px;
+    }
+
+    .issue:first-child {
+      background: linear-gradient(180deg, #fffafa, #ffffff);
+    }
+
+    .issue h3 {
+      font-size: 15px;
+    }
+
+    .table-scroll {
+      background: #ffffff;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #f7f9f5;
+    }
+
+    tr:hover td {
+      background: #fbfcfa;
+    }
+
+    .chart-tooltip {
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 18px 40px rgba(16, 32, 24, 0.18);
+    }
+
+    /* Reference-style CamoSignal cockpit */
+    .app-frame {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 18px;
+      min-height: 100vh;
+      padding: 10px;
+    }
+
+    .nav-sidebar {
+      position: sticky;
+      top: 10px;
+      height: calc(100vh - 20px);
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 18px;
+      padding: 14px 10px;
+      border: 1px solid rgba(21, 95, 66, 0.12);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 4px 8px;
+    }
+
+    .sidebar-brand h1 {
+      font-size: 21px;
+      line-height: 24px;
+      font-weight: 900;
+    }
+
+    .sidebar-brand p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 17px;
+    }
+
+    .sidebar-nav {
+      display: grid;
+      align-content: start;
+      gap: 7px;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 39px;
+      padding: 9px 11px;
+      border-radius: 9px;
+      color: #000000;
+      font-size: 14px;
+      line-height: 18px;
+      font-weight: 650;
+      text-decoration: none;
+    }
+
+    .sidebar-nav a span {
+      width: 18px;
+      color: #111827;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .sidebar-nav a.active,
+    .sidebar-nav a:hover {
+      background: #eff7f0;
+      color: var(--green-strong);
+    }
+
+    .sidebar-nav a.active span,
+    .sidebar-nav a:hover span {
+      color: var(--green-strong);
+    }
+
+    .sidebar-footer {
+      display: grid;
+      gap: 10px;
+    }
+
+    .sidebar-footer > div {
+      padding: 12px;
+      border: 1px solid rgba(21, 95, 66, 0.10);
+      border-radius: 9px;
+      background: #fbfcfa;
+    }
+
+    .sidebar-footer span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    .sidebar-footer strong {
+      display: block;
+      margin-top: 3px;
+      font-size: 13px;
+      line-height: 18px;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: none;
+      padding: 0 0 22px;
+    }
+
+    .topbar {
+      grid-template-columns: minmax(340px, 0.9fr) minmax(420px, 1fr);
+      align-items: stretch;
+      padding: 12px;
+      top: 10px;
+      border-radius: 10px;
+    }
+
+    .range-context {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .range-primary {
+      display: grid;
+      grid-template-columns: 136px minmax(0, 1fr);
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .range-primary .subtitle {
+      margin: 0;
+      overflow: hidden;
+      color: #000000;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .icon-button {
+      width: 42px;
+      min-width: 42px;
+      padding: 0;
+      font-size: 18px;
+    }
+
+    .source-bar {
+      display: grid;
+      grid-template-columns: 132px minmax(210px, 1fr) 150px;
+      align-items: center;
+      gap: 16px;
+      justify-self: end;
+      min-width: 0;
+    }
+
+    .source-card {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 10px;
+      border: 1px solid rgba(21, 95, 66, 0.12);
+      border-radius: 10px;
+      background: #fbfdf9;
+    }
+
+    .source-icon {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 7px;
+      background: #96d3a5;
+      color: #ffffff;
+      font-weight: 900;
+    }
+
+    .source-card strong,
+    .source-stack strong {
+      display: block;
+      font-size: 13px;
+      line-height: 17px;
+    }
+
+    .source-card span:not(.source-icon),
+    .source-stack span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    .source-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .source-pills b {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--green-weak);
+      color: var(--green-strong);
+      font-size: 12px;
+      line-height: 14px;
+    }
+
+    .source-pills b.warn {
+      background: var(--amber-weak);
+      color: var(--amber);
+    }
+
+    .update-stack {
+      padding-left: 16px;
+      border-left: 1px solid var(--line);
+    }
+
+    .actions {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 130px repeat(4, minmax(112px, 1fr)) auto auto auto auto;
+      gap: 8px;
+    }
+
+    .actions .button,
+    .actions .control {
+      min-height: 34px;
+      font-size: 12px;
+    }
+
+    .grid {
+      grid-template-columns: minmax(0, 1fr) 390px;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .main {
+      gap: 10px;
+    }
+
+    .side {
+      top: 106px;
+      gap: 10px;
+      max-height: calc(100vh - 122px);
+    }
+
+    .main > .panel:nth-of-type(2) {
+      order: 1;
+    }
+
+    .main > .panel:nth-of-type(1) {
+      order: 2;
+    }
+
+    .main > .data-alert {
+      order: 3;
+    }
+
+    .main > .panel:nth-of-type(3) {
+      order: 4;
+    }
+
+    .main > .panel:nth-of-type(4),
+    .main > .panel:nth-of-type(5),
+    .main > .panel:nth-of-type(6),
+    .main > .panel:nth-of-type(7),
+    .main > .panel:nth-of-type(8),
+    .main > .panel:nth-of-type(9),
+    .main > .panel:nth-of-type(10),
+    .main > .panel:nth-of-type(11),
+    .main > .panel:nth-of-type(12) {
+      order: 10;
+    }
+
+    .main > .panel:first-of-type {
+      background: #ffffff;
+    }
+
+    .main > .panel:first-of-type::before {
+      display: none;
+    }
+
+    .main > .panel:first-of-type .summary {
+      padding: 12px 16px 8px;
+    }
+
+    .main > .panel:first-of-type .summary h2 {
+      max-width: none;
+      font-size: 17px;
+      line-height: 22px;
+    }
+
+    .main > .panel:first-of-type .summary p {
+      font-size: 13px;
+      line-height: 19px;
+    }
+
+    .metric-grid {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      padding: 10px;
+      gap: 10px;
+    }
+
+    .metric {
+      min-height: 124px;
+      padding: 14px 14px 12px 58px;
+      border-radius: 10px;
+    }
+
+    .metric::before {
+      content: "$";
+      position: absolute;
+      left: 14px;
+      top: 18px;
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: var(--green-weak);
+      color: var(--green-strong);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .metric:nth-child(2)::before {
+      content: "#";
+    }
+
+    .metric:nth-child(3)::before {
+      content: "T";
+      background: #eef2f1;
+      color: #111827;
+    }
+
+    .metric:nth-child(4)::before {
+      content: "%";
+      background: #eef2f1;
+      color: #111827;
+    }
+
+    .metric:nth-child(5)::before {
+      content: "A";
+      background: var(--green-weak);
+    }
+
+    .metric:nth-child(6)::before {
+      content: "R";
+      background: #eef2f1;
+      color: #111827;
+    }
+
+    .metric:nth-child(n + 7) {
+      display: none;
+    }
+
+    .metric-value {
+      font-size: 24px;
+    }
+
+    .data-alert {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid #f1d79d;
+      border-radius: 10px;
+      background: #fff8e8;
+      color: #000000;
+      font-size: 13px;
+      line-height: 18px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .data-alert .alert-icon {
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border-radius: 999px;
+      border: 1px solid #e2b653;
+      color: var(--amber);
+      font-weight: 900;
+    }
+
+    .data-alert .button {
+      min-height: 28px;
+      margin-left: auto;
+      padding: 5px 10px;
+      border-color: #edc16f;
+      color: #9a5b0a;
+      font-size: 12px;
+    }
+
+    .data-alert .button + .button {
+      margin-left: 0;
+      color: #ffffff;
+      border-color: #d98528;
+      background: #d98528;
+    }
+
+    .pod-command {
+      gap: 12px;
+      padding: 14px;
+    }
+
+    .pod-overview {
+      display: none;
+    }
+
+    .pod-decision-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .pod-block:first-child {
+      grid-column: 1 / -1;
+    }
+
+    .pod-block:first-child .pod-block-title {
+      padding-bottom: 2px;
+    }
+
+    .action-lanes {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .action-lane {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid rgba(21, 95, 66, 0.12);
+      border-radius: 10px;
+      background: #ffffff;
+    }
+
+    .lane-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .lane-head > div {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .lane-head strong {
+      font-size: 15px;
+      line-height: 20px;
+    }
+
+    .lane-head b {
+      padding: 5px 8px;
+      border-radius: 8px;
+      background: var(--green-weak);
+      color: var(--green-strong);
+      font-size: 11px;
+      line-height: 14px;
+    }
+
+    .action-lane.watch .lane-head b {
+      background: var(--amber-weak);
+      color: var(--amber);
+    }
+
+    .action-lane.cut .lane-head b {
+      background: var(--red-weak);
+      color: var(--red);
+    }
+
+    .lane-dot {
+      width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: var(--green-weak);
+    }
+
+    .lane-dot::before {
+      content: "↑";
+      color: var(--green-strong);
+      font-weight: 900;
+    }
+
+    .action-lane.watch .lane-dot {
+      background: var(--amber-weak);
+    }
+
+    .action-lane.watch .lane-dot::before {
+      content: "◷";
+      color: var(--amber);
+    }
+
+    .action-lane.cut .lane-dot {
+      background: var(--red-weak);
+    }
+
+    .action-lane.cut .lane-dot::before {
+      content: "↓";
+      color: var(--red);
+    }
+
+    .lane-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .pod-action {
+      grid-template-columns: 58px minmax(0, 1fr);
+      align-items: start;
+      gap: 9px;
+      padding: 0;
+      border: 0;
+      box-shadow: none;
+      background: transparent;
+    }
+
+    .pod-action::before {
+      display: none;
+    }
+
+    .product-thumb {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(21, 95, 66, 0.12);
+      border-radius: 8px;
+      background: linear-gradient(135deg, #20352a, #8fa28e);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .product-image {
+      width: 54px;
+      height: 54px;
+      display: block;
+      object-fit: contain;
+      padding: 3px;
+      border: 1px solid rgba(21, 95, 66, 0.12);
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .product-cell,
+    .matrix-label.with-thumb {
+      display: grid;
+      grid-template-columns: 62px minmax(0, 1fr);
+      align-items: center;
+      gap: 10px;
+      min-width: 240px;
+    }
+
+    .product-cell strong,
+    .product-cell h3,
+    .matrix-label.with-thumb span {
+      display: block;
+      overflow-wrap: anywhere;
+    }
+
+    .product-cell h3 {
+      font-size: 13px;
+      line-height: 17px;
+    }
+
+    .product-cell .subtitle,
+    .matrix-label.with-thumb small {
+      display: block;
+      margin-top: 2px;
+    }
+
+    .pod-action-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .pod-action h3 {
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    .pod-action p {
+      margin-top: 2px;
+      display: -webkit-box;
+      overflow: hidden;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      font-size: 11px;
+      line-height: 15px;
+    }
+
+    .pod-type {
+      padding: 4px 7px;
+      border-radius: 7px;
+      font-size: 10px;
+      text-transform: none;
+    }
+
+    .lane-link {
+      color: var(--green-strong);
+      font-size: 12px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .performance-list {
+      display: grid;
+      padding: 10px 16px 12px;
+    }
+
+    .performance-row {
+      display: grid;
+      grid-template-columns: minmax(86px, 1fr) 82px 54px 64px;
+      align-items: center;
+      gap: 8px;
+      min-height: 48px;
+      border-bottom: 1px solid var(--line);
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    .performance-row:last-child {
+      border-bottom: 0;
+    }
+
+    .performance-row span {
+      font-weight: 750;
+    }
+
+    .performance-row strong {
+      font-size: 15px;
+      line-height: 19px;
+    }
+
+    .performance-row em {
+      font-style: normal;
+      font-weight: 850;
+      text-align: right;
+    }
+
+    .performance-row em.up {
+      color: var(--green);
+    }
+
+    .performance-row em.down,
+    .sparkline.down {
+      color: var(--red);
+    }
+
+    .performance-row em.missing {
+      color: var(--amber);
+      font-size: 11px;
+    }
+
+    .sparkline {
+      width: 58px;
+      height: 26px;
+      color: var(--green);
+    }
+
+    .missing-line {
+      height: 2px;
+      border-radius: 999px;
+      background: #e7d5ae;
+    }
+
+    .calendar-day,
+    .calendar-blank {
+      min-height: 76px;
+    }
+
+    .range-panel {
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .range-tools {
+      padding: 0;
+      border: 0;
+      background: transparent;
+    }
+
+    .calendar-insight {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    @media (max-width: 1120px) {
+      .app-frame {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-sidebar {
+        position: static;
+        height: auto;
+      }
+
+      .sidebar-nav {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      }
+
+      .sidebar-footer {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .topbar,
+      .source-bar,
+      .actions {
+        grid-template-columns: 1fr;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .side {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        position: static;
+        max-height: none;
+        overflow: visible;
+      }
+
+      .pod-decision-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        grid-template-columns: repeat(3, minmax(120px, 1fr));
+      }
+
+      .action-lanes,
+      .metric-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .pod-overview {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app-frame {
+        padding: 8px;
+      }
+
+      .sidebar-nav {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .sidebar-footer {
+        grid-template-columns: 1fr;
+      }
+
+      .shell {
+        width: min(100vw - 20px, 1480px);
+        padding-top: 10px;
+      }
+
+      .topbar {
+        grid-template-columns: 1fr;
+        position: static;
+      }
+
+      .actions {
+        display: flex;
+        justify-content: stretch;
+      }
+
+      .button,
+      .file-button,
+      .control {
+        flex: 1 1 auto;
+      }
+
+      .metric-grid,
+      .side,
+      .calendar-insight,
+      .pod-overview,
+      .pod-decision-grid,
+      .action-lanes,
+      .season-overview,
+      .season-card-grid,
+      .season-meta-row {
+        grid-template-columns: 1fr;
+      }
+
+      .metric {
+        padding-left: 52px;
+      }
+
+      .data-alert {
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .data-alert .button {
+        margin-left: 0;
+      }
+
+      .metric {
+        min-height: 104px;
+      }
+
+      .calendar-day,
+      .calendar-blank {
+        min-height: 68px;
+      }
+
+      .calendar-day {
+        padding: 6px;
+      }
+
+      .calendar-day strong {
+        font-size: 12px;
+        line-height: 16px;
+      }
+
+      .calendar-day small {
+        font-size: 10px;
+        line-height: 13px;
+      }
+
+      .bar-row {
+        grid-template-columns: 78px minmax(0, 1fr);
+      }
+
+      .bar-row strong {
+        grid-column: 1 / -1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-frame">
+    <aside class="nav-sidebar" aria-label="Điều hướng CamoSignal">
+      <div class="sidebar-brand">
+        <div class="mark">CS</div>
+        <div>
+          <h1>CamoSignal</h1>
+          <p>Insight Engine</p>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a class="active" href="#overview" data-nav-view="overview"><span>⌂</span>Tổng quan</a>
+        <a href="#revenue" data-nav-view="revenue"><span>↗</span>Doanh thu</a>
+        <a href="#products" data-nav-view="products"><span>□</span>Sản phẩm</a>
+        <a href="#collections" data-nav-view="collections"><span>◇</span>Bộ sưu tập</a>
+        <a href="#season" data-nav-view="season"><span>◌</span>Mùa vụ</a>
+        <a href="#ads" data-nav-view="ads"><span>△</span>Quảng cáo</a>
+        <a href="#blanks" data-nav-view="blanks"><span>▣</span>Blanks & Biến thể</a>
+        <a href="#opportunities" data-nav-view="opportunities"><span>◎</span>Cơ hội</a>
+        <a href="#reports" data-nav-view="reports"><span>▤</span>Báo cáo</a>
+        <a href="#settings" data-nav-view="settings"><span>⚙</span>Cấu hình</a>
+      </nav>
+      <div class="sidebar-footer">
+        <div>
+          <span>Cửa hàng</span>
+          <strong>camosignal.com</strong>
+        </div>
+        <div>
+          <span>Trợ giúp</span>
+          <strong>Hướng dẫn & FAQ</strong>
+        </div>
+      </div>
+    </aside>
+
+    <main class="shell" id="overview">
+      <header class="topbar">
+        <div class="range-context">
+          <div class="range-primary">
+            <select class="control" id="liveDays" aria-label="Khoảng thời gian dữ liệu Shopify">
+              <option value="7">7 ngày</option>
+              <option value="14">14 ngày</option>
+              <option value="30">30 ngày</option>
+            </select>
+            <p class="subtitle" id="periodLabel">Đang tải phân tích...</p>
+          </div>
+          <button class="button icon-button" type="button" aria-label="Bộ lọc dữ liệu">⇄</button>
+        </div>
+        <div class="source-bar">
+          <div class="source-card shopify-source">
+            <span class="source-icon">S</span>
+            <div>
+              <strong>Shopify</strong>
+              <span>Đã kết nối</span>
+            </div>
+          </div>
+          <div class="source-stack">
+            <span>Nguồn dữ liệu</span>
+            <div class="source-pills">
+              <b>Shopify</b>
+              <b class="warn">Meta Ads</b>
+            </div>
+          </div>
+          <div class="source-stack update-stack">
+            <span>Cập nhật lần cuối</span>
+            <strong>Live</strong>
+          </div>
+        </div>
+        <div class="actions">
+          <input class="control key" id="accessKey" type="password" placeholder="Khóa truy cập" autocomplete="off" aria-label="Khóa truy cập phân tích">
+          <input class="control metric-input" id="currentSessions" type="number" min="0" step="1" placeholder="Phiên hiện tại" aria-label="Phiên truy cập hiện tại">
+          <input class="control metric-input" id="previousSessions" type="number" min="0" step="1" placeholder="Phiên kỳ trước" aria-label="Phiên truy cập kỳ trước">
+          <input class="control metric-input" id="currentAdSpend" type="number" min="0" step="0.01" placeholder="Ads hiện tại" aria-label="Chi tiêu quảng cáo hiện tại">
+          <input class="control metric-input" id="previousAdSpend" type="number" min="0" step="0.01" placeholder="Ads kỳ trước" aria-label="Chi tiêu quảng cáo kỳ trước">
+          <a class="button" id="connectShopify" href="https://shopify-insight-engine.vercel.app/api/auth/start" target="_top">Kết nối Shopify</a>
+          <button class="button primary" id="loadLive" type="button">Tải dữ liệu</button>
+          <label class="button file-button">
+            Nhập file
+            <input id="fileInput" type="file" accept=".json,.csv,application/json,text/csv">
+          </label>
+          <button class="button" id="downloadSample" type="button">JSON mẫu</button>
+          <button class="button" id="refreshDemo" type="button">Demo</button>
+        </div>
+      </header>
+
+    <div class="grid">
+      <section class="main">
+        <section class="panel" data-view-section="overview revenue reports">
+          <div class="summary">
+            <h2 id="headline">Đang tải...</h2>
+            <p id="narrative"></p>
+            <div class="status-line" id="statusLine"></div>
+          </div>
+          <div class="metric-grid" id="metricGrid"></div>
+        </section>
+
+        <div class="data-alert" data-view-section="overview ads settings reports">
+          <span class="alert-icon">!</span>
+          <strong>Thiếu dữ liệu để tính chính xác:</strong>
+          <span>Nhập CSV hoặc kết nối Meta Ads để xem chi tiêu, ROAS, CPA và quyết định scale/tắt quảng cáo.</span>
+          <button class="button" type="button">Hướng dẫn Meta Ads</button>
+          <button class="button primary" type="button">Nhập / Kết nối Meta</button>
+        </div>
+
+        <section class="panel" id="opportunities" data-view-section="overview opportunities products">
+          <div class="panel-header">
+            <h2 class="panel-title">Trung tâm quyết định POD</h2>
+            <div class="panel-meta">Áo in, blank và theme hunting/fishing</div>
+          </div>
+          <div class="pod-command">
+            <div class="pod-overview" id="podOverview"></div>
+            <div class="pod-decision-grid">
+              <div class="pod-block">
+                <div class="pod-block-title">
+                  <span>Việc nên làm hôm nay</span>
+                  <span>Đẩy / Theo dõi / Giảm</span>
+                </div>
+                <div class="pod-list" id="podOpportunities"></div>
+              </div>
+              <div class="pod-block">
+                <div class="pod-block-title">
+                  <span>Blank đang bán</span>
+                  <span>Doanh thu theo loại áo</span>
+                </div>
+                <div class="pod-list" id="blankMix"></div>
+              </div>
+              <div class="pod-block">
+                <div class="pod-block-title">
+                  <span>Theme đang chạy</span>
+                  <span>Hunting / fishing / lifestyle</span>
+                </div>
+                <div class="pod-list" id="themeMix"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="calendar" data-view-section="overview revenue reports">
+          <div class="panel-header">
+            <h2 class="panel-title">Lịch doanh thu</h2>
+            <div class="panel-meta" id="rangeMeta">Khoảng hiện tại</div>
+          </div>
+          <div class="range-panel">
+            <div class="range-tools">
+              <button class="button range-button" type="button" data-quick-range="today">Hôm nay</button>
+              <button class="button range-button" type="button" data-quick-range="yesterday">Hôm qua</button>
+              <button class="button range-button active" type="button" data-days="7">7 ngày</button>
+              <button class="button range-button" type="button" data-days="14">14 ngày</button>
+              <button class="button range-button" type="button" data-days="30">30 ngày</button>
+              <input class="control date-control" id="startDate" type="date" aria-label="Ngày bắt đầu">
+              <input class="control date-control" id="endDate" type="date" aria-label="Ngày kết thúc">
+              <button class="button primary" id="applyRange" type="button">Áp dụng</button>
+            </div>
+            <div class="calendar-weekdays" aria-hidden="true">
+              <span>CN</span><span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span>
+            </div>
+            <div class="calendar-days" id="calendarDays"></div>
+            <div class="calendar-insight" id="rangeInsight"></div>
+          </div>
+        </section>
+
+        <section class="panel" id="revenue" data-view-section="overview revenue reports">
+          <div class="panel-header">
+            <h2 class="panel-title">Động lực Doanh thu</h2>
+            <div class="panel-meta">Kỳ hiện tại so với kỳ so sánh</div>
+          </div>
+          <div class="chart-wrap" id="decomposition"></div>
+        </section>
+
+        <section class="panel" id="season" data-view-section="overview season collections reports">
+          <div class="panel-header">
+            <h2 class="panel-title">Radar mùa săn và mùa câu</h2>
+            <div class="panel-meta" id="seasonMeta">Mô hình mùa vụ bán lẻ</div>
+          </div>
+          <div class="season-overview" id="seasonOverview"></div>
+          <div class="season-card-grid" id="seasonCards"></div>
+        </section>
+
+        <section class="panel" data-view-section="season collections products">
+          <div class="panel-header">
+            <h2 class="panel-title">Sản phẩm theo mùa vụ</h2>
+            <div class="panel-meta">Phân loại sản phẩm theo mùa săn/câu</div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Sản phẩm</th>
+                  <th>Mùa liên quan</th>
+                  <th>Doanh thu</th>
+                  <th>Thay đổi</th>
+                  <th>Tồn kho</th>
+                  <th>Gợi ý</th>
+                </tr>
+              </thead>
+              <tbody id="seasonProductRows"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel" data-view-section="overview revenue reports">
+          <div class="panel-header">
+            <h2 class="panel-title">Xu hướng doanh thu</h2>
+            <div class="panel-meta">Doanh thu thuần theo ngày</div>
+          </div>
+          <div class="chart-wrap">
+            <svg class="trend" id="trendChart" role="img" aria-label="Xu hướng doanh thu thuần theo ngày"></svg>
+          </div>
+        </section>
+
+        <section class="panel" data-view-section="revenue reports">
+          <div class="panel-header">
+            <h2 class="panel-title">Chi tiết từng ngày</h2>
+            <div class="panel-meta">Doanh thu, đơn hàng, giá trị đơn, giảm giá, hoàn tiền</div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Ngày</th>
+                  <th>Doanh thu</th>
+                  <th>Đơn (Unique)</th>
+                  <th>Số lượng bán (Units)</th>
+                  <th>Giá trị đơn</th>
+                  <th>Giảm giá</th>
+                  <th>Hoàn tiền</th>
+                </tr>
+              </thead>
+              <tbody id="dailyRows"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel" id="products" data-view-section="products reports">
+          <div class="panel-header">
+            <h2 class="panel-title">Sản phẩm theo ngày</h2>
+            <div class="panel-meta">Top sản phẩm theo doanh thu</div>
+          </div>
+          <div class="matrix-wrap" id="productHeatmap"></div>
+        </section>
+
+        <section class="panel" id="blanks" data-view-section="blanks products reports">
+          <div class="panel-header">
+            <h2 class="panel-title">Blank theo ngày</h2>
+            <div class="panel-meta">Doanh thu theo hoodie, Gildan, Comfort Colors, Bella Canvas, tank, mũ</div>
+          </div>
+          <div class="matrix-wrap" id="apparelHeatmap"></div>
+        </section>
+
+        <section class="panel" id="collections" data-view-section="collections season reports">
+          <div class="panel-header">
+            <h2 class="panel-title">Theme hunting/fishing theo ngày</h2>
+            <div class="panel-meta">Deer, turkey, duck, bass, fishing, lifestyle</div>
+          </div>
+          <div class="matrix-wrap" id="themeHeatmap"></div>
+        </section>
+
+        <section class="panel" id="ads" data-view-section="ads revenue reports">
+          <div class="panel-header">
+            <h2 class="panel-title">Kênh theo ngày</h2>
+            <div class="panel-meta">Doanh thu theo nguồn đơn hàng</div>
+          </div>
+          <div class="matrix-wrap" id="channelHeatmap"></div>
+        </section>
+
+        <section class="panel" data-view-section="ads reports">
+          <div class="panel-header">
+            <h2 class="panel-title">Hiệu quả theo kênh</h2>
+            <div class="panel-meta">Doanh thu, chuyển đổi, ROAS</div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Kênh</th>
+                  <th>Doanh thu</th>
+                  <th>Thay đổi</th>
+                  <th>CVR</th>
+                  <th>ROAS</th>
+                  <th>Chi tiêu</th>
+                </tr>
+              </thead>
+              <tbody id="channelRows"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel" data-view-section="products opportunities reports">
+          <div class="panel-header">
+            <h2 class="panel-title">Sản phẩm cần theo dõi</h2>
+            <div class="panel-meta">Sản phẩm ảnh hưởng doanh thu và số ngày còn hàng</div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Sản phẩm</th>
+                  <th>Loại áo</th>
+                  <th>Theme</th>
+                  <th>Doanh thu</th>
+                  <th>Thay đổi</th>
+                  <th>Đã bán</th>
+                  <th>Tồn kho</th>
+                  <th>Ngày còn hàng</th>
+                </tr>
+              </thead>
+              <tbody id="productRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <aside class="side">
+        <section class="panel performance-panel" data-view-section="overview revenue products collections season ads blanks opportunities reports">
+          <div class="panel-header">
+            <h2 class="panel-title">Hiệu suất tổng quan</h2>
+            <div class="panel-meta">Kỳ so sánh</div>
+          </div>
+          <div class="performance-list" id="performanceList"></div>
+        </section>
+
+        <section class="panel" data-view-section="overview opportunities products ads">
+          <div class="panel-header">
+            <h2 class="panel-title">Vấn đề ưu tiên</h2>
+            <div class="panel-meta" id="issueCount"></div>
+          </div>
+          <div class="issue-list" id="issueList"></div>
+        </section>
+
+        <section class="panel" data-view-section="overview settings reports ads">
+          <div class="panel-header">
+            <h2 class="panel-title">Mức đầy đủ dữ liệu</h2>
+            <div class="panel-meta">Mức tin cậy</div>
+          </div>
+          <div class="coverage-list" id="coverageList"></div>
+        </section>
+
+        <section class="panel" data-view-section="settings reports">
+          <div class="panel-header">
+            <h2 class="panel-title">Đủ dữ liệu ra quyết định?</h2>
+            <div class="panel-meta">Đánh giá nhanh</div>
+          </div>
+          <div class="coverage-list">
+            <div class="coverage-item">
+              <div>
+                <span>Có thể dùng ngay</span>
+                <strong>Doanh thu, đơn hàng, sản phẩm kéo giảm, ngày bán mạnh/yếu</strong>
+              </div>
+              <div class="coverage-pill live">Ổn</div>
+            </div>
+            <div class="coverage-item">
+              <div>
+                <span>Cần bổ sung</span>
+                <strong>Chi quảng cáo, ROAS, CPA, biên lợi nhuận và lý do hoàn tiền</strong>
+              </div>
+              <div class="coverage-pill missing">Thiếu</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" data-view-section="ads reports">
+          <div class="panel-header">
+            <h2 class="panel-title">Hiệu quả theo thiết bị</h2>
+            <div class="panel-meta">Chất lượng lưu lượng truy cập</div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Thiết bị</th>
+                  <th>Phiên</th>
+                  <th>CVR</th>
+                  <th>Doanh thu</th>
+                </tr>
+              </thead>
+              <tbody id="deviceRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </aside>
+    </div>
+    </main>
+  </div>
+  <div class="chart-tooltip" id="chartTooltip" role="tooltip" aria-hidden="true"></div>
+
+  <script>
+    const nodes = {
+      periodLabel: document.getElementById("periodLabel"),
+      headline: document.getElementById("headline"),
+      narrative: document.getElementById("narrative"),
+      statusLine: document.getElementById("statusLine"),
+      metricGrid: document.getElementById("metricGrid"),
+      performanceList: document.getElementById("performanceList"),
+      podOverview: document.getElementById("podOverview"),
+      podOpportunities: document.getElementById("podOpportunities"),
+      blankMix: document.getElementById("blankMix"),
+      themeMix: document.getElementById("themeMix"),
+      decomposition: document.getElementById("decomposition"),
+      trendChart: document.getElementById("trendChart"),
+      issueList: document.getElementById("issueList"),
+      issueCount: document.getElementById("issueCount"),
+      seasonMeta: document.getElementById("seasonMeta"),
+      seasonOverview: document.getElementById("seasonOverview"),
+      seasonCards: document.getElementById("seasonCards"),
+      seasonProductRows: document.getElementById("seasonProductRows"),
+      dailyRows: document.getElementById("dailyRows"),
+      productHeatmap: document.getElementById("productHeatmap"),
+      apparelHeatmap: document.getElementById("apparelHeatmap"),
+      themeHeatmap: document.getElementById("themeHeatmap"),
+      channelHeatmap: document.getElementById("channelHeatmap"),
+      channelRows: document.getElementById("channelRows"),
+      productRows: document.getElementById("productRows"),
+      deviceRows: document.getElementById("deviceRows"),
+      rangeMeta: document.getElementById("rangeMeta"),
+      rangeInsight: document.getElementById("rangeInsight"),
+      calendarDays: document.getElementById("calendarDays"),
+      chartTooltip: document.getElementById("chartTooltip"),
+      startDate: document.getElementById("startDate"),
+      endDate: document.getElementById("endDate"),
+      applyRange: document.getElementById("applyRange"),
+      rangeButtons: [...document.querySelectorAll("[data-days]")],
+      quickRangeButtons: [...document.querySelectorAll("[data-quick-range]")],
+      coverageList: document.getElementById("coverageList"),
+      fileInput: document.getElementById("fileInput"),
+      refreshDemo: document.getElementById("refreshDemo"),
+      downloadSample: document.getElementById("downloadSample"),
+      loadLive: document.getElementById("loadLive"),
+      liveDays: document.getElementById("liveDays"),
+      accessKey: document.getElementById("accessKey"),
+      currentSessions: document.getElementById("currentSessions"),
+      previousSessions: document.getElementById("previousSessions"),
+      currentAdSpend: document.getElementById("currentAdSpend"),
+      previousAdSpend: document.getElementById("previousAdSpend"),
+      connectShopify: document.getElementById("connectShopify"),
+      navLinks: [...document.querySelectorAll("[data-nav-view]")],
+      viewSections: [...document.querySelectorAll("[data-view-section]")],
+    };
+
+    let lastSample = null;
+    let activeDataSource = "demo";
+    let shopifyConnected = false;
+    let rangeMode = sessionStorage.getItem("camosignalRangeMode") || "preset";
+    let activeTimeZone = sessionStorage.getItem("camosignalTimeZone") || "America/New_York";
+    let activeView = sessionStorage.getItem("camosignalActiveView") || "overview";
+
+    function viewTitle(view) {
+      return nodes.navLinks.find((link) => link.dataset.navView === view)?.textContent?.trim() || "Tổng quan";
+    }
+
+    function applyActiveView(view = "overview", options = {}) {
+      const validView = nodes.navLinks.some((link) => link.dataset.navView === view) ? view : "overview";
+      activeView = validView;
+      document.body.dataset.activeView = validView;
+      nodes.navLinks.forEach((link) => {
+        const active = link.dataset.navView === validView;
+        link.classList.toggle("active", active);
+        link.setAttribute("aria-current", active ? "page" : "false");
+      });
+      nodes.viewSections.forEach((section) => {
+        const views = String(section.dataset.viewSection || "")
+          .split(/\s+/)
+          .filter(Boolean);
+        section.hidden = !views.includes(validView);
+      });
+      sessionStorage.setItem("camosignalActiveView", validView);
+      if (options.updateHash !== false) {
+        history.replaceState(null, "", `#${validView}`);
+      }
+      if (options.scroll !== false) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      document.title = `CamoSignal | ${viewTitle(validView)}`;
+    }
+
+    function formatCurrency(value, currency = "USD") {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency,
+        maximumFractionDigits: 0,
+      }).format(Number(value) || 0);
+    }
+
+    function formatNumber(value, digits = 0) {
+      return new Intl.NumberFormat("en-US", {
+        maximumFractionDigits: digits,
+      }).format(Number(value) || 0);
+    }
+
+    function formatPercent(value, digits = 1) {
+      return `${formatNumber((Number(value) || 0) * 100, digits)}%`;
+    }
+
+    function pluralDay(value) {
+      return `${formatNumber(value)} ngày`;
+    }
+
+    function parseIsoDate(value) {
+      const date = new Date(`${value}T00:00:00.000Z`);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    function formatShortDate(value) {
+      const date = parseIsoDate(value);
+      if (!date) return value || "-";
+      return new Intl.DateTimeFormat("vi-VN", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        timeZone: "UTC",
+      }).format(date);
+    }
+
+    function dateDiffDays(start, end) {
+      const startDate = parseIsoDate(start);
+      const endDate = parseIsoDate(end);
+      if (!startDate || !endDate) return 0;
+      return Math.max(1, Math.round((endDate - startDate) / 86400000) + 1);
+    }
+
+    function addDaysToDateKey(dateKey, days) {
+      const date = parseIsoDate(dateKey);
+      if (!date) return "";
+      date.setUTCDate(date.getUTCDate() + days);
+      return date.toISOString().slice(0, 10);
+    }
+
+    function dateKeyInTimeZone(date, timeZone = activeTimeZone) {
+      const parts = new Intl.DateTimeFormat("en-US", {
+        timeZone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).formatToParts(date);
+      const map = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+      return `${map.year}-${map.month}-${map.day}`;
+    }
+
+    function relativeStoreDate(daysOffset) {
+      return addDaysToDateKey(dateKeyInTimeZone(new Date(), activeTimeZone), daysOffset);
+    }
+
+    function updateQuickRangeState() {
+      const today = relativeStoreDate(0);
+      const yesterday = relativeStoreDate(-1);
+      nodes.quickRangeButtons.forEach((button) => {
+        const expected = button.dataset.quickRange === "today" ? today : yesterday;
+        const active = rangeMode === "custom"
+          && nodes.startDate.value === expected
+          && nodes.endDate.value === expected;
+        button.classList.toggle("active", active);
+      });
+    }
+
+    function setRangeButtonState(days) {
+      nodes.rangeButtons.forEach((button) => {
+        button.classList.toggle("active", rangeMode === "preset" && button.dataset.days === String(days));
+      });
+      updateQuickRangeState();
+    }
+
+    function formatMetric(value, format, currency) {
+      if (format === "currency") return formatCurrency(value, currency);
+      if (format === "percent") return formatPercent(value, 2);
+      return formatNumber(value, format === "number" ? 0 : 2);
+    }
+
+    function deltaHtml(deltaPct) {
+      const down = Number(deltaPct) < 0;
+      const label = `${down ? "" : "+"}${formatPercent(deltaPct, 1)}`;
+      return `<span class="delta ${down ? "down" : ""}">${down ? "Giảm" : "Tăng"} ${label}</span>`;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function formatCollections(collections) {
+      if (!Array.isArray(collections) || !collections.length) return "";
+      return collections
+        .map((collection) => collection?.title || collection?.handle || "")
+        .filter(Boolean)
+        .slice(0, 4)
+        .join(", ");
+    }
+
+    function productInitial(label) {
+      const text = String(label || "?").trim();
+      return escapeHtml((text[0] || "?").toUpperCase());
+    }
+
+    function productImageHtml(row = {}, label = "") {
+      const url = String(row.imageUrl || row.image?.url || row.featuredImage?.url || "").trim();
+      const name = label || row.name || row.title || row.label || row.sku || "Sản phẩm";
+      const alt = row.imageAlt || row.image?.altText || row.featuredImage?.altText || name;
+      if (!url) {
+        return `<div class="product-thumb" aria-hidden="true">${productInitial(name)}</div>`;
+      }
+      return `<img class="product-image" src="${escapeHtml(url)}" alt="${escapeHtml(alt)}" loading="lazy" decoding="async">`;
+    }
+
+    function productCellHtml(row = {}, options = {}) {
+      const name = row.name || row.title || row.label || "Sản phẩm chưa rõ";
+      const sku = row.sku || "";
+      const collections = options.showCollections ? formatCollections(row.collections) : "";
+      const subtitle = [
+        sku ? escapeHtml(sku) : "",
+        collections ? `Bộ sưu tập: ${escapeHtml(collections)}` : "",
+      ].filter(Boolean);
+      return `
+        <div class="product-cell">
+          ${productImageHtml(row, name)}
+          <div>
+            <strong>${escapeHtml(name)}</strong>
+            ${subtitle.map((line) => `<span class="subtitle">${line}</span>`).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function showTooltip(html, event) {
+      nodes.chartTooltip.innerHTML = html;
+      nodes.chartTooltip.classList.add("visible");
+      nodes.chartTooltip.setAttribute("aria-hidden", "false");
+      moveTooltip(event);
+    }
+
+    function moveTooltip(event) {
+      const pad = 14;
+      const box = nodes.chartTooltip.getBoundingClientRect();
+      const rect = event.currentTarget?.getBoundingClientRect?.();
+      const x = Number.isFinite(event.clientX) && event.clientX ? event.clientX : (rect ? rect.left + rect.width / 2 : window.innerWidth / 2);
+      const y = Number.isFinite(event.clientY) && event.clientY ? event.clientY : (rect ? rect.top + rect.height / 2 : window.innerHeight / 2);
+      let left = x + 14;
+      let top = y + 14;
+      if (left + box.width + pad > window.innerWidth) left = x - box.width - 14;
+      if (top + box.height + pad > window.innerHeight) top = y - box.height - 14;
+      nodes.chartTooltip.style.left = `${Math.max(pad, left)}px`;
+      nodes.chartTooltip.style.top = `${Math.max(pad, top)}px`;
+    }
+
+    function hideTooltip() {
+      nodes.chartTooltip.classList.remove("visible");
+      nodes.chartTooltip.setAttribute("aria-hidden", "true");
+    }
+
+    function attachTooltips(root = document) {
+      root.querySelectorAll("[data-tooltip]").forEach((element) => {
+        element.onmouseenter = (event) => showTooltip(element.dataset.tooltip, event);
+        element.onmousemove = moveTooltip;
+        element.onmouseleave = hideTooltip;
+        element.onfocus = (event) => showTooltip(element.dataset.tooltip, event);
+        element.onblur = hideTooltip;
+      });
+    }
+
+    function dayTooltip(row, currency) {
+      const orders = Number(row.orders) || 0;
+      const units = Number(row.unitsSold) || 0;
+      const aov = orders ? (Number(row.netSales) || 0) / orders : 0;
+      return `
+        <strong>${escapeHtml(formatShortDate(row.date))}</strong>
+        Doanh thu: ${formatCurrency(row.netSales, currency)}<br>
+        Đơn hàng: ${formatNumber(orders)}<br>
+        Số lượng bán: ${formatNumber(units)}<br>
+        Giá trị đơn TB: ${formatCurrency(aov, currency)}<br>
+        Giảm giá: ${formatCurrency(row.discounts, currency)}<br>
+        Hoàn tiền: ${formatCurrency(row.refunds, currency)}
+      `;
+    }
+
+    function miniSparkline(deltaPct = 0, missing = false) {
+      if (missing) return `<span class="sparkline missing-line"></span>`;
+      const rising = Number(deltaPct) >= 0;
+      const points = rising
+        ? "1,22 9,18 17,20 25,11 33,15 41,7 49,9 57,3"
+        : "1,9 9,12 17,8 25,18 33,14 41,21 49,16 57,22";
+      return `
+        <svg class="sparkline ${rising ? "up" : "down"}" viewBox="0 0 58 26" aria-hidden="true">
+          <polyline points="${points}" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"></polyline>
+        </svg>
+      `;
+    }
+
+    function renderPerformanceList(metrics, currency) {
+      if (!nodes.performanceList) return;
+      const keys = ["netSales", "orders", "aov", "refundRate", "discountRate", "roas"];
+      const rows = keys.map((key) => metrics.find((metric) => metric.key === key)).filter(Boolean);
+      nodes.performanceList.innerHTML = rows.map((metric) => {
+        const missing = Boolean(metric.missing);
+        const value = missing ? "Chưa có dữ liệu" : formatMetric(metric.current, metric.format, currency);
+        return `
+          <div class="performance-row">
+            <span>${escapeHtml(metric.label)}</span>
+            <strong>${value}</strong>
+            <em class="${missing ? "missing" : Number(metric.deltaPct) < 0 ? "down" : "up"}">
+              ${missing ? "Kết nối Ads" : formatPercent(metric.deltaPct, 1)}
+            </em>
+            ${miniSparkline(metric.deltaPct, missing)}
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderMetrics(metrics, currency) {
+      renderPerformanceList(metrics, currency);
+      nodes.metricGrid.innerHTML = metrics.map((metric) => {
+        const tooltip = `
+          <strong>${escapeHtml(metric.label)}</strong>
+          Hiện tại: ${metric.missing ? "Thiếu dữ liệu" : formatMetric(metric.current, metric.format, currency)}<br>
+          Kỳ so sánh: ${metric.missing ? "Thiếu dữ liệu" : formatMetric(metric.previous, metric.format, currency)}<br>
+          Chênh lệch: ${metric.missing ? "Thiếu dữ liệu" : formatMetric(metric.delta, metric.format, currency)}<br>
+          Thay đổi: ${metric.missing ? "Thiếu dữ liệu" : formatPercent(metric.deltaPct, 1)}
+        `;
+        
+        const valueHtml = metric.missing 
+          ? `<div class="metric-value" style="color: var(--amber); font-size: 14px; margin-top: 4px;">Cần Meta Ads/CSV</div>`
+          : `<div class="metric-value">${formatMetric(metric.current, metric.format, currency)}</div>`;
+          
+        const deltaNode = metric.missing
+          ? `<div><span class="delta" style="background: var(--surface-soft); color: var(--muted)">Thiếu</span></div>`
+          : `<div>${deltaHtml(metric.deltaPct)}</div>`;
+
+        return `
+          <article class="metric" data-tooltip="${escapeHtml(tooltip)}" tabindex="0">
+            <div>
+              <div class="metric-label">${escapeHtml(metric.label)}</div>
+              ${valueHtml}
+            </div>
+            ${deltaNode}
+          </article>
+        `;
+      }).join("");
+    }
+
+    function podTypeLabel(type) {
+      if (type === "scale") return "Nên đẩy mạnh";
+      if (type === "fix" || type === "cut") return "Giảm/Tắt traffic";
+      if (type === "new-design" || type === "wait") return "Cần thêm dữ liệu";
+      if (type === "blank") return "Blank bán tốt";
+      return "Theo dõi thêm";
+    }
+
+    function renderPodOverview(pod, currency) {
+      const rows = pod?.overview || [];
+      if (!rows.length) {
+        nodes.podOverview.innerHTML = `<div class="empty">Chưa có dữ liệu POD để đọc theo blank và theme.</div>`;
+        return;
+      }
+
+      nodes.podOverview.innerHTML = rows.map((row) => `
+        <div class="insight-tile">
+          <span>${escapeHtml(row.label)}</span>
+          <strong>${escapeHtml(row.value)}</strong>
+          <p class="subtitle">${escapeHtml(row.detail)}</p>
+        </div>
+      `).join("");
+    }
+
+    function renderPodOpportunities(rows = []) {
+      if (!rows.length) {
+        nodes.podOpportunities.innerHTML = `<div class="empty">Chưa có cơ hội hành động rõ ràng trong kỳ này.</div>`;
+        return;
+      }
+
+      const laneConfig = [
+        {
+          key: "scale",
+          title: "Nên đẩy (Scale)",
+          countLabel: "tín hiệu",
+          types: ["scale", "blank"],
+        },
+        {
+          key: "watch",
+          title: "Theo dõi",
+          countLabel: "tín hiệu",
+          types: ["watch", "wait", "new-design"],
+        },
+        {
+          key: "cut",
+          title: "Giảm / tắt traffic",
+          countLabel: "tín hiệu",
+          types: ["cut", "fix"],
+        },
+      ];
+
+      function laneItems(types) {
+        const selected = rows.filter((row) => types.includes(row.type || "watch"));
+        return (selected.length ? selected : rows.filter((row) => !["cut", "fix", "scale", "blank"].includes(row.type || "watch"))).slice(0, 3);
+      }
+
+      nodes.podOpportunities.innerHTML = `
+        <div class="action-lanes">
+          ${laneConfig.map((lane) => {
+            const items = laneItems(lane.types);
+            return `
+              <section class="action-lane ${escapeHtml(lane.key)}">
+                <div class="lane-head">
+                  <div>
+                    <span class="lane-dot"></span>
+                    <strong>${escapeHtml(lane.title)}</strong>
+                  </div>
+                  <b>${formatNumber(items.length)} ${escapeHtml(lane.countLabel)}</b>
+                </div>
+                <div class="lane-list">
+                  ${items.map((row) => {
+                    const type = row.type || "watch";
+                    const tooltip = `
+                      <strong>${escapeHtml(row.title)}</strong>
+                      ${escapeHtml(row.evidence)}<br>
+                      Nên làm: ${escapeHtml(row.action)}
+                    `;
+                    return `
+                      <article class="pod-action" data-tooltip="${escapeHtml(tooltip)}" tabindex="0">
+                        ${productImageHtml(row, row.imageAlt || row.title)}
+                        <div>
+                          <div class="pod-action-head">
+                            <h3>${escapeHtml(row.title)}</h3>
+                            <span class="pod-type ${escapeHtml(type)}">${escapeHtml(podTypeLabel(type))}</span>
+                          </div>
+                          <p>${escapeHtml(row.evidence)}</p>
+                        </div>
+                      </article>
+                    `;
+                  }).join("") || `<div class="empty compact">Chưa có tín hiệu rõ.</div>`}
+                </div>
+                <a class="lane-link" href="#products">Xem tất cả →</a>
+              </section>
+            `;
+          }).join("")}
+        </div>
+      `;
+    }
+
+    function renderPodMix(container, rows = [], currency, kind = "apparel") {
+      if (!rows.length) {
+        container.innerHTML = `<div class="empty">Chưa có dữ liệu mix để hiển thị.</div>`;
+        return;
+      }
+
+      const max = Math.max(...rows.map((row) => Number(row.currentSales) || 0), 1);
+      container.innerHTML = rows.slice(0, 6).map((row) => {
+        const width = Math.max(3, (Number(row.currentSales) || 0) / max * 100);
+        const tooltip = `
+          <strong>${escapeHtml(row.label)}</strong>
+          Doanh thu: ${formatCurrency(row.currentSales, currency)}<br>
+          Kỳ trước: ${formatCurrency(row.previousSales, currency)}<br>
+          Thay đổi: ${formatPercent(row.deltaPct, 1)}<br>
+          Đã bán: ${formatNumber(row.unitsSold)}<br>
+          Số mẫu: ${formatNumber(row.productCount)}<br>
+          Top mẫu: ${escapeHtml(row.topProduct || "-")}
+        `;
+        return `
+          <article class="pod-mix-row ${escapeHtml(kind)}" data-tooltip="${escapeHtml(tooltip)}" tabindex="0">
+            <div class="pod-mix-head">
+              <div class="product-cell">
+                ${productImageHtml({ imageUrl: row.topProductImageUrl, imageAlt: row.topProductImageAlt }, row.topProduct || row.label)}
+                <div>
+                  <h3>${escapeHtml(row.label)}</h3>
+                  <span class="subtitle">${escapeHtml(row.topProduct || "Top mẫu chưa rõ")}</span>
+                </div>
+              </div>
+              ${deltaHtml(row.deltaPct)}
+            </div>
+            <div class="pod-mix-bar" aria-hidden="true">
+              <span class="pod-mix-fill" style="width:${width}%"></span>
+            </div>
+            <div class="pod-mix-meta">
+              <span>${formatCurrency(row.currentSales, currency)}</span>
+              <span>${formatNumber(row.unitsSold)} đã bán</span>
+              <span>${formatNumber(row.productCount)} mẫu</span>
+            </div>
+            <p>${escapeHtml(row.action || "")}</p>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderDecomposition(rows, currency) {
+      if (!rows.length) {
+        nodes.decomposition.innerHTML = `<div class="empty">Chưa có dữ liệu để phân tích yếu tố ảnh hưởng doanh thu.</div>`;
+        return;
+      }
+
+      const max = Math.max(...rows.map((row) => Math.abs(Number(row.value) || 0)), 1);
+      nodes.decomposition.innerHTML = rows.map((row) => {
+        const value = Number(row.value) || 0;
+        const width = Math.max(2, Math.abs(value) / max * 48);
+        const tooltip = `
+          <strong>${escapeHtml(row.label)}</strong>
+          Tác động ước tính: ${formatCurrency(value, currency)}<br>
+          Tỷ trọng so với yếu tố lớn nhất: ${formatPercent(Math.abs(value) / max, 1)}
+        `;
+        return `
+          <div class="bar-row" data-tooltip="${escapeHtml(tooltip)}" tabindex="0">
+            <span>${escapeHtml(row.label)}</span>
+            <div class="bar-track">
+              <span class="bar ${value < 0 ? "negative" : ""}" style="width:${width}%"></span>
+            </div>
+            <strong>${formatCurrency(value, currency)}</strong>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderTrend(series, currency) {
+      const svg = nodes.trendChart;
+      svg.innerHTML = "";
+
+      if (!series || series.length < 1) {
+        svg.innerHTML = `<text x="20" y="40" class="axis-label">Chưa có dữ liệu xu hướng</text>`;
+        return;
+      }
+
+      const width = 920;
+      const height = 240;
+      const pad = 28;
+      const values = series.map((item) => Number(item.netSales) || 0);
+      const min = Math.min(...values);
+      const max = Math.max(...values);
+      const span = max - min || 1;
+      const points = series.map((item, index) => {
+        const value = values[index];
+        const x = values.length === 1
+          ? width / 2
+          : pad + (index / (values.length - 1)) * (width - pad * 2);
+        const y = height - pad - ((value - min) / span) * (height - pad * 2);
+        return { x, y, value, item };
+      });
+      const path = points.map((point, index) => `${index ? "L" : "M"}${point.x},${point.y}`).join(" ");
+      const labelStep = points.length <= 14 ? 1 : Math.ceil(points.length / 8);
+
+      svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+      svg.innerHTML = `
+        <line x1="${pad}" y1="${height - pad}" x2="${width - pad}" y2="${height - pad}" stroke="#dce2dc"></line>
+        <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${height - pad}" stroke="#dce2dc"></line>
+        ${points.length > 1 ? `<path d="${path}" fill="none" stroke="#2f6a4e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>` : ""}
+        ${points.map((point, index) => {
+          const tooltip = dayTooltip(point.item, currency);
+          const labelY = Math.max(16, point.y - 12);
+          return `
+            <circle class="trend-point" cx="${point.x}" cy="${point.y}" r="6" fill="#ffffff" stroke="#2f6a4e" stroke-width="3" data-tooltip="${escapeHtml(tooltip)}">
+              <title>${escapeHtml(formatShortDate(point.item.date))}: ${formatCurrency(point.value, currency)}</title>
+            </circle>
+            ${index % labelStep === 0 || index === points.length - 1 ? `<text class="trend-value-label" x="${point.x}" y="${labelY}" text-anchor="middle">${formatCurrency(point.value, currency)}</text>` : ""}
+          `;
+        }).join("")}
+        <text x="${pad}" y="${pad - 8}" class="axis-label">${formatCurrency(max, currency)}</text>
+        <text x="${pad}" y="${height - 8}" class="axis-label">${formatCurrency(min, currency)}</text>
+      `;
+    }
+
+    function renderCalendar(series, currency) {
+      if (!series?.length) {
+        nodes.calendarDays.innerHTML = `<div class="empty">Chưa có dữ liệu doanh thu theo ngày.</div>`;
+        return;
+      }
+
+      const max = Math.max(...series.map((item) => Number(item.netSales) || 0), 0);
+      const firstDate = parseIsoDate(series[0].date);
+      const leadingBlanks = firstDate ? firstDate.getUTCDay() : 0;
+      const blanks = Array.from({ length: leadingBlanks }, () => `<div class="calendar-blank" aria-hidden="true"></div>`);
+      const days = series.map((item) => {
+        const sales = Number(item.netSales) || 0;
+        const orders = Number(item.orders) || 0;
+        const heat = max > 0 ? Math.min(4, Math.ceil((sales / max) * 4)) : 0;
+        const date = parseIsoDate(item.date);
+        const dayNumber = date ? date.getUTCDate() : "";
+        const tooltip = dayTooltip(item, currency);
+        return `
+          <button class="calendar-day heat-${heat}" type="button" data-date="${escapeHtml(item.date)}" data-tooltip="${escapeHtml(tooltip)}" title="${escapeHtml(formatShortDate(item.date))}: ${formatCurrency(sales, currency)}">
+            <span class="calendar-day-number">${dayNumber}</span>
+            <span>
+              <strong>${formatCurrency(sales, currency)}</strong>
+              <small>${formatNumber(orders)} đơn</small>
+            </span>
+          </button>
+        `;
+      });
+      nodes.calendarDays.innerHTML = [...blanks, ...days].join("");
+    }
+
+    function renderRangeInsight(analysis, currency) {
+      const source = analysis.source || {};
+      const series = analysis.series || [];
+      const currentRange = source.currentRange || (series.length ? {
+        start: series[0].date,
+        end: series[series.length - 1].date,
+      } : {});
+      const previousRange = source.previousRange || {};
+      const currentOrders = source.orderCount?.current ?? "-";
+      const previousOrders = source.orderCount?.previous ?? "-";
+      const currentExpected = source.orderCount?.currentExpected ?? currentOrders;
+      const previousExpected = source.orderCount?.previousExpected ?? previousOrders;
+      const days = source.days || dateDiffDays(currentRange.start, currentRange.end) || nodes.liveDays.value;
+      if (source.timeZone) {
+        activeTimeZone = source.timeZone;
+        sessionStorage.setItem("camosignalTimeZone", activeTimeZone);
+      }
+      const orderReadLabel = Number.isFinite(Number(currentOrders)) && Number.isFinite(Number(previousOrders))
+        ? `${formatNumber(currentOrders)}/${formatNumber(currentExpected)} so với ${formatNumber(previousOrders)}/${formatNumber(previousExpected)}`
+        : "-";
+
+      if (currentRange.start && currentRange.end) {
+        nodes.startDate.value = currentRange.start;
+        nodes.endDate.value = currentRange.end;
+      }
+      if (source.rangeMode) {
+        rangeMode = source.rangeMode;
+        sessionStorage.setItem("camosignalRangeMode", rangeMode);
+      }
+
+      nodes.rangeMeta.textContent = pluralDay(days);
+      nodes.rangeInsight.innerHTML = `
+        <div class="insight-tile">
+          <span>Hiện tại</span>
+          <strong>${formatShortDate(currentRange.start)} - ${formatShortDate(currentRange.end)}</strong>
+        </div>
+        <div class="insight-tile">
+          <span>Kỳ so sánh</span>
+          <strong>${formatShortDate(previousRange.start)} - ${formatShortDate(previousRange.end)}</strong>
+        </div>
+        <div class="insight-tile">
+          <span>Đơn đã lấy / tổng dự kiến</span>
+          <strong>${orderReadLabel}</strong>
+        </div>
+        <div class="insight-tile">
+          <span>Múi giờ dữ liệu</span>
+          <strong>${escapeHtml(source.timeZone || activeTimeZone)}</strong>
+        </div>
+      `;
+      setRangeButtonState(days);
+      renderCalendar(analysis.series || [], currency);
+    }
+
+    function coverageLabel(status) {
+      if (status === "live") return "Có dữ liệu";
+      if (status === "manual") return "Nhập tay";
+      if (status === "modeled") return "Ước tính";
+      if (status === "empty") return "Trống";
+      return "Thiếu";
+    }
+
+    function renderCoverage(analysis) {
+      const coverage = analysis.coverage || {};
+      const items = [
+        ["Doanh thu", coverage.revenue, "Đơn hàng Shopify"],
+        ["Đơn hàng", coverage.orders, "Đơn hàng Shopify"],
+        ["Sản phẩm", coverage.products, "Sản phẩm và tồn kho"],
+        ["POD model", coverage.podModel, "Blank + theme áo in"],
+        ["Mùa vụ", coverage.seasonality, "Lịch mùa vụ bán lẻ"],
+        ["Lưu lượng", coverage.traffic, "Phiên / CVR"],
+        ["Chi quảng cáo", coverage.paidSpend, "ROAS"],
+      ];
+      nodes.coverageList.innerHTML = items.map(([label, status, detail]) => {
+        const normalized = status || "missing";
+        return `
+          <div class="coverage-item">
+            <div>
+              <span>${escapeHtml(label)}</span>
+              <strong>${escapeHtml(detail)}</strong>
+            </div>
+            <div class="coverage-pill ${escapeHtml(normalized)}">${coverageLabel(normalized)}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderIssues(issues) {
+      nodes.issueCount.textContent = `${issues.length} vấn đề`;
+      if (!issues.length) {
+        nodes.issueList.innerHTML = `<div class="empty">Chưa có vấn đề nào cần ưu tiên ngay.</div>`;
+        return;
+      }
+
+      nodes.issueList.innerHTML = issues.map((issue) => `
+        <article class="issue">
+          <div class="issue-head">
+            <h3>${escapeHtml(issue.title)}</h3>
+            <span class="severity ${escapeHtml(issue.severity)}">${escapeHtml(issue.severity)}</span>
+          </div>
+          <p>${escapeHtml(issue.evidence)}</p>
+          <p><strong>Nên làm:</strong> ${escapeHtml(issue.action)}</p>
+        </article>
+      `).join("");
+    }
+
+    function seasonPhaseClass(phase) {
+      if (phase === "active") return "active";
+      if (phase === "preseason") return "preseason";
+      if (phase === "postseason") return "postseason";
+      if (phase === "upcoming") return "upcoming";
+      return "offseason";
+    }
+
+    function renderSeasonality(seasonality, currency) {
+      if (!seasonality?.seasons?.length) {
+        nodes.seasonMeta.textContent = "Chưa có dữ liệu mùa vụ";
+        nodes.seasonOverview.innerHTML = `<div class="empty">Chưa có dữ liệu để phân tích mùa vụ.</div>`;
+        nodes.seasonCards.innerHTML = "";
+        nodes.seasonProductRows.innerHTML = `<tr><td colspan="6">Chưa có dữ liệu sản phẩm theo mùa vụ.</td></tr>`;
+        return;
+      }
+
+      const active = seasonality.active || [];
+      const upcoming = seasonality.upcoming || [];
+      const categories = seasonality.categories || [];
+      const topCategories = categories
+        .filter((category) => category.productCount > 0)
+        .sort((a, b) => b.currentSales - a.currentSales)
+        .slice(0, 3);
+      const matchedProductCount = new Set((seasonality.products || [])
+        .filter((product) => product.activeFit !== "missing")
+        .map((product) => product.name)).size;
+
+      nodes.seasonMeta.textContent = `${formatShortDate(seasonality.anchorDate)} | ${seasonality.assumption || "Mô hình mùa vụ bán lẻ"}`;
+      nodes.seasonOverview.innerHTML = [
+        ["Mùa cần theo dõi", active.length ? active.map((season) => season.shortLabel).join(", ") : "Không có mùa chính"],
+        ["Sắp tới", upcoming[0] ? `${upcoming[0].shortLabel} trong ${formatNumber(upcoming[0].daysToStart)} ngày` : "Không có trong 120 ngày"],
+        ["Sản phẩm đã phân loại", `${formatNumber(matchedProductCount)} sản phẩm`],
+      ].map(([label, value]) => `
+        <div class="insight-tile">
+          <span>${escapeHtml(label)}</span>
+          <strong>${escapeHtml(value)}</strong>
+        </div>
+      `).join("");
+
+      const visibleSeasons = [...active, ...upcoming].slice(0, 6);
+      nodes.seasonCards.innerHTML = visibleSeasons.length ? visibleSeasons.map((season) => `
+        <article class="season-card">
+          <div class="season-card-head">
+            <h3>${escapeHtml(season.label)}</h3>
+            <span class="season-pill ${escapeHtml(seasonPhaseClass(season.phase))}">${escapeHtml(season.phaseLabel)}</span>
+          </div>
+          <p><strong>Mùa:</strong> ${escapeHtml(season.rangeLabel)} | <strong>Cao điểm:</strong> ${escapeHtml(season.peakLabel)}</p>
+          <p>${escapeHtml(season.focus)}</p>
+          <div class="season-meta-row">
+            <span>${season.daysToStart ? `${formatNumber(season.daysToStart)} ngày nữa bắt đầu` : "Đang ảnh hưởng giai đoạn này"}</span>
+            <span>${escapeHtml(season.activity)}</span>
+          </div>
+        </article>
+      `).join("") : `<div class="empty">Chưa có mùa vụ nào cần theo dõi trong kỳ này.</div>`;
+
+      const productRows = (seasonality.products || []).slice(0, 12);
+      nodes.seasonProductRows.innerHTML = productRows.length ? productRows.map((row) => {
+        const collections = formatCollections(row.collections);
+        const sourceLabel = row.classificationSourceLabel || (collections ? "Theo bộ sưu tập" : "Chưa có collection/tag phù hợp");
+        const evidence = row.classificationEvidence || collections;
+        return `
+          <tr>
+            <td>
+              ${productCellHtml(row, { showCollections: true })}
+            </td>
+            <td>
+              ${(row.seasonLabels || []).map((label) => `<span class="season-pill ${escapeHtml(seasonPhaseClass(row.activeFit))}">${escapeHtml(label)}</span>`).join(" ")}
+              <br><span class="subtitle">${escapeHtml(row.activeFitLabel)}</span>
+              <br><span class="subtitle">${escapeHtml(sourceLabel)}${evidence ? `: ${escapeHtml(evidence)}` : ""}</span>
+            </td>
+            <td>${formatCurrency(row.currentSales, currency)}</td>
+            <td>${deltaHtml(row.deltaPct)}</td>
+            <td>${formatNumber(row.inventory)}<br><span class="subtitle">${row.daysOfCover ? `${formatNumber(row.daysOfCover, 1)} ngày` : "-"}</span></td>
+            <td>${escapeHtml(row.recommendedAction)}</td>
+          </tr>
+        `;
+      }).join("") : `<tr><td colspan="6">Chưa có dữ liệu sản phẩm theo mùa vụ.</td></tr>`;
+
+      if (!topCategories.length && categories.length) {
+        nodes.seasonCards.innerHTML += `
+          <div class="empty">Chưa phân loại được sản phẩm theo mùa vụ. Hãy đưa sản phẩm vào collection đúng như Turkey, Deer, Duck, Fishing, Bass hoặc thêm tag theme/season rõ ràng trong Shopify.</div>
+        `;
+      }
+    }
+
+    function compactCurrency(value, currency) {
+      const amount = Number(value) || 0;
+      if (Math.abs(amount) >= 1000) return `${formatCurrency(amount / 1000, currency)}k`;
+      return formatCurrency(amount, currency);
+    }
+
+    function shortDay(value) {
+      const date = parseIsoDate(value);
+      if (!date) return value || "-";
+      return new Intl.DateTimeFormat("vi-VN", {
+        day: "2-digit",
+        month: "2-digit",
+        timeZone: "UTC",
+      }).format(date);
+    }
+
+    function renderDailyRows(rows, currency) {
+      if (!rows?.length) {
+        nodes.dailyRows.innerHTML = `<tr><td colspan="7">Chưa có dữ liệu theo ngày.</td></tr>`;
+        return;
+      }
+
+      nodes.dailyRows.innerHTML = rows.map((row) => `
+        <tr>
+          <td>${escapeHtml(formatShortDate(row.date))}</td>
+          <td>${formatCurrency(row.netSales, currency)}</td>
+          <td>${formatNumber(row.orders)}</td>
+          <td>${formatNumber(row.unitsSold)}</td>
+          <td>${formatCurrency(row.aov, currency)}</td>
+          <td>${formatCurrency(row.discounts, currency)}<br><span class="subtitle">${formatPercent(row.discountRate, 1)}</span></td>
+          <td>${formatCurrency(row.refunds, currency)}<br><span class="subtitle">${formatPercent(row.refundRate, 1)}</span></td>
+        </tr>
+      `).join("");
+    }
+
+    function renderHeatmapMatrix(container, rows, dates, options) {
+      const {
+        empty,
+        groupKey = "label",
+        groupLabel = "label",
+        groupSub = "sku",
+        metric = "netSales",
+        countField = "orders",
+        countLabel = "đơn",
+        valueLabel = "Doanh thu",
+        currency = "USD",
+      } = options;
+
+      if (!rows?.length || !dates?.length) {
+        container.innerHTML = `<div class="empty">${escapeHtml(empty)}</div>`;
+        return;
+      }
+
+      const visibleDates = dates.slice(-14);
+      const groups = new Map();
+      for (const row of rows) {
+        const key = row[groupKey] || row[groupLabel] || "Không rõ";
+        if (!groups.has(key)) {
+          groups.set(key, {
+            key,
+            label: row[groupLabel] || key,
+            sub: row[groupSub] || "",
+            imageUrl: row.imageUrl || "",
+            imageAlt: row.imageAlt || row[groupLabel] || key,
+            total: 0,
+            byDate: new Map(),
+          });
+        }
+        const group = groups.get(key);
+        if (!group.imageUrl && row.imageUrl) {
+          group.imageUrl = row.imageUrl;
+          group.imageAlt = row.imageAlt || group.label;
+        }
+        const value = Number(row[metric]) || 0;
+        const count = Number(row[countField]) || 0;
+        group.total += value;
+        group.byDate.set(row.date, {
+          value,
+          count,
+        });
+      }
+
+      const topGroups = [...groups.values()]
+        .sort((a, b) => b.total - a.total)
+        .slice(0, 8);
+      const max = Math.max(...topGroups.flatMap((group) => visibleDates.map((date) => group.byDate.get(date)?.value || 0)), 0);
+      const heat = (value) => max > 0 ? Math.min(4, Math.ceil((value / max) * 4)) : 0;
+
+      container.innerHTML = `
+        <div class="matrix" style="--matrix-days:${visibleDates.length}">
+          <div class="matrix-row">
+            <div class="matrix-head">${escapeHtml(valueLabel)}</div>
+            ${visibleDates.map((date) => `<div class="matrix-head">${escapeHtml(shortDay(date))}</div>`).join("")}
+          </div>
+          ${topGroups.map((group) => `
+            <div class="matrix-row">
+              <div class="matrix-label">
+                ${group.imageUrl ? `
+                  <div class="matrix-label with-thumb">
+                    ${productImageHtml(group, group.label)}
+                    <div>
+                      <span>${escapeHtml(group.label)}</span>
+                      <small>${escapeHtml(group.sub)}</small>
+                    </div>
+                  </div>
+                ` : `
+                  <span>${escapeHtml(group.label)}</span>
+                  <small>${escapeHtml(group.sub)}</small>
+                `}
+              </div>
+              ${visibleDates.map((date) => {
+                const cell = group.byDate.get(date) || { value: 0, count: 0 };
+                const tooltip = `
+                  <strong>${escapeHtml(group.label)}</strong>
+                  Ngày: ${escapeHtml(formatShortDate(date))}<br>
+                  Doanh thu: ${formatCurrency(cell.value, currency)}<br>
+                  ${escapeHtml(countLabel)}: ${formatNumber(cell.count)}
+                `;
+                return `
+                  <div class="matrix-cell heat-${heat(cell.value)}" data-tooltip="${escapeHtml(tooltip)}" tabindex="0" title="${escapeHtml(group.label)} | ${escapeHtml(date)} | ${formatCurrency(cell.value, currency)}">
+                    <strong>${compactCurrency(cell.value, currency)}</strong>
+                    <span>${formatNumber(cell.count)} ${escapeHtml(countLabel)}</span>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function renderChannelRows(rows, currency) {
+      nodes.channelRows.innerHTML = rows.map((row) => `
+        <tr>
+          <td>${escapeHtml(row.name)}</td>
+          <td>${formatCurrency(row.currentSales, currency)}</td>
+          <td>${deltaHtml(row.deltaPct)}</td>
+          <td>${formatPercent(row.conversionRate, 2)}</td>
+          <td>${row.roas ? formatNumber(row.roas, 2) : "-"}</td>
+          <td>${row.adSpend ? formatCurrency(row.adSpend, currency) : "-"}</td>
+        </tr>
+      `).join("");
+    }
+
+    function renderProductRows(rows, currency) {
+      nodes.productRows.innerHTML = rows.map((row) => {
+        return `
+          <tr>
+            <td>
+              ${productCellHtml(row, { showCollections: true })}
+            </td>
+            <td>${escapeHtml(row.apparelLabel || "-")}</td>
+            <td>
+              <strong>${escapeHtml(row.themeLabel || "-")}</strong><br>
+              <span class="subtitle">${escapeHtml(row.themeDiscipline || "")}</span>
+            </td>
+            <td>${formatCurrency(row.currentSales, currency)}</td>
+            <td>${deltaHtml(row.deltaPct)}</td>
+            <td>${formatNumber(row.unitsSold)}</td>
+            <td>${formatNumber(row.inventory)}</td>
+            <td>${row.daysOfCover ? `${formatNumber(row.daysOfCover, 1)} ngày` : "-"}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function renderDeviceRows(rows, currency) {
+      nodes.deviceRows.innerHTML = rows.map((row) => `
+        <tr>
+          <td>${escapeHtml(row.name)}</td>
+          <td>${formatNumber(row.sessions)}</td>
+          <td>${formatPercent(row.conversionRate, 2)}</td>
+          <td>${formatCurrency(row.currentSales, currency)}</td>
+        </tr>
+      `).join("");
+    }
+
+    function renderAnalysis(payload, sourceLabel) {
+      const analysis = payload.analysis || payload;
+      const currency = analysis.currency || "USD";
+      const notes = analysis.dataNotes?.length ? ` | Lưu ý: ${analysis.dataNotes.join(" ")}` : "";
+      nodes.periodLabel.textContent = `${analysis.periods.current} so với ${analysis.periods.previous}`;
+      nodes.headline.textContent = analysis.summary.headline;
+      nodes.narrative.textContent = analysis.summary.narrative;
+      nodes.statusLine.textContent = `${sourceLabel} | Cập nhật ${new Date(analysis.generatedAt).toLocaleString("vi-VN")}${notes}`;
+
+      renderMetrics(analysis.metrics || [], currency);
+      renderPodOverview(analysis.pod || {}, currency);
+      renderPodOpportunities(analysis.tables?.podOpportunities || analysis.pod?.opportunities || []);
+      renderPodMix(nodes.blankMix, analysis.tables?.blankMix || analysis.pod?.apparelMix || [], currency, "apparel");
+      renderPodMix(nodes.themeMix, analysis.tables?.trendThemes || analysis.pod?.themeMix || [], currency, "theme");
+      renderDecomposition(analysis.decomposition || [], currency);
+      renderTrend(analysis.series || [], currency);
+      renderRangeInsight(analysis, currency);
+      renderCoverage(analysis);
+      renderIssues(analysis.issues || []);
+      renderSeasonality(analysis.seasonality || {}, currency);
+      renderDailyRows(analysis.tables?.daily || [], currency);
+      renderHeatmapMatrix(nodes.productHeatmap, analysis.tables?.productDaily || [], (analysis.series || []).map((row) => row.date), {
+        empty: "Chưa có dữ liệu sản phẩm theo ngày.",
+        groupKey: "label",
+        groupLabel: "label",
+        groupSub: "sku",
+        metric: "netSales",
+        countField: "unitsSold",
+        countLabel: "đã bán",
+        valueLabel: "Sản phẩm",
+        currency,
+      });
+      renderHeatmapMatrix(nodes.apparelHeatmap, analysis.tables?.apparelDaily || [], (analysis.series || []).map((row) => row.date), {
+        empty: "Chưa có dữ liệu blank theo ngày.",
+        groupKey: "groupKey",
+        groupLabel: "label",
+        groupSub: "sku",
+        metric: "netSales",
+        countField: "unitsSold",
+        countLabel: "đã bán",
+        valueLabel: "Blank",
+        currency,
+      });
+      renderHeatmapMatrix(nodes.themeHeatmap, analysis.tables?.themeDaily || [], (analysis.series || []).map((row) => row.date), {
+        empty: "Chưa có dữ liệu theme theo ngày.",
+        groupKey: "groupKey",
+        groupLabel: "label",
+        groupSub: "sku",
+        metric: "netSales",
+        countField: "unitsSold",
+        countLabel: "đã bán",
+        valueLabel: "Theme",
+        currency,
+      });
+      renderHeatmapMatrix(nodes.channelHeatmap, analysis.tables?.channelDaily || [], (analysis.series || []).map((row) => row.date), {
+        empty: "Chưa có dữ liệu kênh theo ngày.",
+        groupKey: "label",
+        groupLabel: "label",
+        groupSub: "sku",
+        metric: "netSales",
+        countField: "orders",
+        countLabel: "đơn",
+        valueLabel: "Kênh",
+        currency,
+      });
+      renderChannelRows(analysis.tables?.channels || [], currency);
+      renderProductRows(analysis.tables?.products || [], currency);
+      renderDeviceRows(analysis.tables?.devices || [], currency);
+      attachTooltips(document.body);
+
+      if (payload.sample) lastSample = payload.sample;
+    }
+
+    function renderLoadError(title, message) {
+      nodes.periodLabel.textContent = "Dữ liệu Shopify trực tiếp";
+      nodes.headline.textContent = title;
+      nodes.narrative.textContent = message;
+      nodes.statusLine.textContent = message;
+      nodes.metricGrid.innerHTML = "";
+      if (nodes.performanceList) nodes.performanceList.innerHTML = `<div class="empty compact">${escapeHtml(message)}</div>`;
+      nodes.podOverview.innerHTML = `<div class="empty">${escapeHtml(message)}</div>`;
+      nodes.podOpportunities.innerHTML = `<div class="empty">${escapeHtml(message)}</div>`;
+      nodes.blankMix.innerHTML = `<div class="empty">${escapeHtml(message)}</div>`;
+      nodes.themeMix.innerHTML = `<div class="empty">${escapeHtml(message)}</div>`;
+      nodes.decomposition.innerHTML = `<div class="empty">${escapeHtml(message)}</div>`;
+      nodes.trendChart.innerHTML = `<text x="20" y="40" class="axis-label">${escapeHtml(title)}</text>`;
+      nodes.rangeMeta.textContent = "Chưa có khoảng ngày";
+      nodes.rangeInsight.innerHTML = "";
+      nodes.calendarDays.innerHTML = `<div class="empty">${escapeHtml(message)}</div>`;
+      nodes.coverageList.innerHTML = "";
+      nodes.issueCount.textContent = "0 vấn đề";
+      nodes.issueList.innerHTML = `<div class="empty">${escapeHtml(message)}</div>`;
+      nodes.seasonMeta.textContent = "Chưa có dữ liệu mùa vụ";
+      nodes.seasonOverview.innerHTML = `<div class="empty">${escapeHtml(message)}</div>`;
+      nodes.seasonCards.innerHTML = "";
+      nodes.seasonProductRows.innerHTML = "";
+      nodes.dailyRows.innerHTML = "";
+      nodes.productHeatmap.innerHTML = `<div class="empty">${escapeHtml(message)}</div>`;
+      nodes.apparelHeatmap.innerHTML = `<div class="empty">${escapeHtml(message)}</div>`;
+      nodes.themeHeatmap.innerHTML = `<div class="empty">${escapeHtml(message)}</div>`;
+      nodes.channelHeatmap.innerHTML = `<div class="empty">${escapeHtml(message)}</div>`;
+      nodes.channelRows.innerHTML = "";
+      nodes.productRows.innerHTML = "";
+      nodes.deviceRows.innerHTML = "";
+      hideTooltip();
+    }
+
+    function optionalQuery(name, value) {
+      const cleaned = String(value || "").trim();
+      return cleaned ? `&${encodeURIComponent(name)}=${encodeURIComponent(cleaned)}` : "";
+    }
+
+    function shopFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("shop") || window.shopify?.config?.shop || "";
+    }
+
+    function shopifyConnectUrl() {
+      const shop = shopFromUrl();
+      const base = `${window.location.origin}/api/auth/start`;
+      return shop ? `${base}?shop=${encodeURIComponent(shop)}` : base;
+    }
+
+    function cameBackFromShopifyConnect() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("connected") === "1";
+    }
+
+    function cleanConnectedParam() {
+      const params = new URLSearchParams(window.location.search);
+      if (!params.has("connected")) return;
+      params.delete("connected");
+      const query = params.toString();
+      window.history.replaceState({}, "", `${window.location.pathname}${query ? `?${query}` : ""}`);
+    }
+
+    function hasShopifyContext() {
+      const params = new URLSearchParams(window.location.search);
+      return Boolean(shopFromUrl() || params.get("host") || window.shopify?.config?.shop);
+    }
+
+    function isEmbeddedShopifyView() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("embedded") === "1" || window.top !== window.self;
+    }
+
+    function sessionTokenFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const idToken = params.get("id_token") || "";
+      const session = params.get("session") || "";
+      return idToken || (session.split(".").length === 3 ? session : "");
+    }
+
+    async function appBridgeToken(timeoutMs = 1200) {
+      if (!window.shopify?.idToken) return "";
+      return Promise.race([
+        window.shopify.idToken(),
+        new Promise((resolve) => setTimeout(() => resolve(""), timeoutMs)),
+      ]);
+    }
+
+    async function shopifyAuthHeaders(headers = {}) {
+      const nextHeaders = { ...headers };
+      if (!isEmbeddedShopifyView()) return nextHeaders;
+
+      try {
+        const token = await appBridgeToken();
+        if (token) nextHeaders.Authorization = `Bearer ${token}`;
+      } catch {
+        // The app can still run with sample/imported data when no Shopify session is available.
+      }
+
+      return nextHeaders;
+    }
+
+    function removeTokenParams() {
+      const params = new URLSearchParams(window.location.search);
+      if (!params.has("id_token") && !params.has("session")) return;
+      params.delete("id_token");
+      params.delete("session");
+      const query = params.toString();
+      window.history.replaceState({}, "", `${window.location.pathname}${query ? `?${query}` : ""}`);
+    }
+
+    async function exchangeShopifySession(options = {}) {
+      if (!hasShopifyContext()) return false;
+
+      const showStatus = Boolean(options.showStatus);
+      const allowAppBridge = options.allowAppBridge ?? isEmbeddedShopifyView();
+      const shop = shopFromUrl();
+      let token = sessionTokenFromUrl();
+
+      if (!token && allowAppBridge) {
+        try {
+          token = await appBridgeToken();
+        } catch {
+          token = "";
+        }
+      }
+
+      if (!token) {
+      if (showStatus) nodes.statusLine.textContent = "Đang mở trang cấp quyền Shopify...";
+        return false;
+      }
+
+      if (showStatus) nodes.statusLine.textContent = "Đang kết nối phiên Shopify...";
+
+      const headers = { "Content-Type": "application/json" };
+      if (token) headers.Authorization = `Bearer ${token}`;
+
+      const response = await fetch("/api/auth/exchange", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ shop, idToken: token || undefined }),
+      });
+
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        if (showStatus) nodes.statusLine.textContent = payload.error || "Chưa thể kết nối phiên Shopify";
+        return false;
+      }
+
+      removeTokenParams();
+      nodes.connectShopify.textContent = "Đã kết nối Shopify";
+      if (showStatus) nodes.statusLine.textContent = "Đã kết nối Shopify. Bạn có thể tải dữ liệu trực tiếp.";
+      return Boolean(payload.connected);
+    }
+
+    async function loadDemo() {
+      activeDataSource = "demo";
+      nodes.statusLine.textContent = "Đang tải dữ liệu mẫu...";
+      const response = await fetch("/api/insights");
+      if (!response.ok) throw new Error(`Insights API trả về mã ${response.status}`);
+      const payload = await response.json();
+      renderAnalysis(payload, "Dữ liệu mẫu");
+    }
+
+    async function loadLiveShopify() {
+      const key = nodes.accessKey.value.trim();
+      if (key) sessionStorage.setItem("camosignalInsightKey", key);
+
+      const days = nodes.liveDays.value || "7";
+      sessionStorage.setItem("camosignalInsightDays", days);
+      sessionStorage.setItem("camosignalRangeMode", rangeMode);
+      if (nodes.startDate.value) sessionStorage.setItem("camosignalStartDate", nodes.startDate.value);
+      if (nodes.endDate.value) sessionStorage.setItem("camosignalEndDate", nodes.endDate.value);
+
+      const useCustomRange = rangeMode === "custom" && nodes.startDate.value && nodes.endDate.value;
+      const url = `/api/insights?source=shopify&days=${encodeURIComponent(days)}`
+        + (useCustomRange ? optionalQuery("start", nodes.startDate.value) + optionalQuery("end", nodes.endDate.value) : "")
+        + optionalQuery("shop", shopFromUrl())
+        + optionalQuery("currentSessions", nodes.currentSessions.value)
+        + optionalQuery("previousSessions", nodes.previousSessions.value)
+        + optionalQuery("currentAdSpend", nodes.currentAdSpend.value)
+        + optionalQuery("previousAdSpend", nodes.previousAdSpend.value);
+
+      nodes.statusLine.textContent = "Đang tải dữ liệu Shopify trực tiếp...";
+      const response = await fetch(url, {
+        headers: await shopifyAuthHeaders(key ? { "x-insight-key": key } : {}),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        if (payload.authUrl) {
+          connectShopify().catch((error) => {
+            nodes.statusLine.textContent = error instanceof Error ? error.message : String(error);
+          });
+          return;
+        }
+        throw new Error(payload.error || `Yêu cầu dữ liệu Shopify trực tiếp trả về mã ${response.status}`);
+      }
+      activeDataSource = "shopify";
+      shopifyConnected = true;
+      renderAnalysis(payload, "Dữ liệu Shopify trực tiếp");
+    }
+
+    async function connectShopify() {
+      const connected = await exchangeShopifySession({
+        showStatus: true,
+        allowAppBridge: isEmbeddedShopifyView(),
+      });
+      if (connected) {
+        await checkShopifyConnection();
+        return;
+      }
+
+      window.location.href = shopifyConnectUrl();
+    }
+
+    async function checkShopifyConnection() {
+      try {
+        const url = `/api/auth/status${optionalQuery("shop", shopFromUrl()).replace(/^&/, "?")}`;
+        const response = await fetch(url, {
+          headers: await shopifyAuthHeaders(),
+        });
+        const status = await response.json();
+        if (!status.oauthConfigured) {
+          shopifyConnected = false;
+          nodes.connectShopify.setAttribute("aria-disabled", "true");
+          nodes.connectShopify.textContent = "Chưa cấu hình OAuth";
+          return status;
+        }
+        if (status.connected) {
+          shopifyConnected = true;
+          nodes.connectShopify.textContent = "Đã kết nối Shopify";
+        } else {
+          shopifyConnected = false;
+        }
+        try {
+          const insightStatusUrl = `/api/insights?source=status${optionalQuery("shop", shopFromUrl())}`;
+          const insightStatusResponse = await fetch(insightStatusUrl, {
+            headers: await shopifyAuthHeaders(),
+          });
+          const insightStatus = await insightStatusResponse.json();
+          if (insightStatus.timeZone) {
+            activeTimeZone = insightStatus.timeZone;
+            sessionStorage.setItem("camosignalTimeZone", activeTimeZone);
+            updateQuickRangeState();
+          }
+        } catch {
+          // Timezone will be refreshed when live Shopify data loads.
+        }
+        return status;
+      } catch {
+        // Keep the default button state if status cannot be loaded.
+        return null;
+      }
+    }
+
+    function parseCsv(text) {
+      const rows = [];
+      let row = [];
+      let cell = "";
+      let quoted = false;
+
+      for (let index = 0; index < text.length; index += 1) {
+        const char = text[index];
+        const next = text[index + 1];
+        if (char === '"' && quoted && next === '"') {
+          cell += '"';
+          index += 1;
+        } else if (char === '"') {
+          quoted = !quoted;
+        } else if (char === "," && !quoted) {
+          row.push(cell);
+          cell = "";
+        } else if ((char === "\n" || char === "\r") && !quoted) {
+          if (char === "\r" && next === "\n") index += 1;
+          row.push(cell);
+          if (row.some((value) => value.trim())) rows.push(row);
+          row = [];
+          cell = "";
+        } else {
+          cell += char;
+        }
+      }
+
+      row.push(cell);
+      if (row.some((value) => value.trim())) rows.push(row);
+      return rows;
+    }
+
+    function normalizeKey(value) {
+      return String(value || "").trim().toLowerCase().replace(/[^a-z0-9]+/g, "");
+    }
+
+    function cleanNumber(value) {
+      return Number(String(value || "").replace(/[$,%\s]/g, "").replace(/,/g, "")) || 0;
+    }
+
+    function rowsToObjects(rows) {
+      const [headers, ...body] = rows;
+      const keys = headers.map(normalizeKey);
+      return body.map((row) => Object.fromEntries(keys.map((key, index) => [key, row[index] || ""])));
+    }
+
+    function rowValue(row, names) {
+      for (const name of names) {
+        const key = normalizeKey(name);
+        if (row[key] !== undefined) return row[key];
+      }
+      return "";
+    }
+
+    function sumRows(rows) {
+      return rows.reduce((total, row) => ({
+        netSales: total.netSales + cleanNumber(rowValue(row, ["net sales", "net_sales", "sales", "revenue"])),
+        grossSales: total.grossSales + cleanNumber(rowValue(row, ["gross sales", "gross_sales"])),
+        orders: total.orders + cleanNumber(rowValue(row, ["orders", "total orders"])),
+        sessions: total.sessions + cleanNumber(rowValue(row, ["sessions", "visits"])),
+        refunds: total.refunds + cleanNumber(rowValue(row, ["refunds", "returns"])),
+        discounts: total.discounts + cleanNumber(rowValue(row, ["discounts", "discount"])),
+        unitsSold: total.unitsSold + cleanNumber(rowValue(row, ["units sold", "units_sold", "items sold"])),
+        adSpend: total.adSpend + cleanNumber(rowValue(row, ["ad spend", "ad_spend", "spend"])),
+      }), {
+        netSales: 0,
+        grossSales: 0,
+        orders: 0,
+        sessions: 0,
+        refunds: 0,
+        discounts: 0,
+        unitsSold: 0,
+        adSpend: 0,
+      });
+    }
+
+    function csvToSnapshot(text) {
+      const objects = rowsToObjects(parseCsv(text));
+      if (!objects.length) throw new Error("CSV không có dòng dữ liệu");
+
+      const metricColumn = Object.keys(objects[0]).includes("metric");
+      const currentColumn = Object.keys(objects[0]).includes("current");
+      const previousColumn = Object.keys(objects[0]).includes("previous");
+
+      if (metricColumn && currentColumn && previousColumn) {
+        const current = {};
+        const previous = {};
+        const map = {
+          netsales: "netSales",
+          grosssales: "grossSales",
+          orders: "orders",
+          sessions: "sessions",
+          refunds: "refunds",
+          returns: "refunds",
+          discounts: "discounts",
+          unitssold: "unitsSold",
+          itemssold: "unitsSold",
+          adspend: "adSpend",
+          spend: "adSpend",
+        };
+
+        for (const row of objects) {
+          const key = map[normalizeKey(row.metric)];
+          if (key) {
+            current[key] = cleanNumber(row.current);
+            previous[key] = cleanNumber(row.previous);
+          }
+        }
+
+        return {
+          generatedAt: new Date().toISOString(),
+          currency: "USD",
+          current: { label: "Kỳ hiện tại đã nhập", ...current },
+          previous: { label: "Kỳ so sánh đã nhập", ...previous },
+          channels: [],
+          devices: [],
+          products: [],
+          series: [],
+        };
+      }
+
+      const sorted = objects.slice().sort((a, b) => String(rowValue(a, ["date", "day"])).localeCompare(String(rowValue(b, ["date", "day"]))));
+      const currentRows = sorted.filter((row) => normalizeKey(rowValue(row, ["period"])) === "current");
+      const previousRows = sorted.filter((row) => normalizeKey(rowValue(row, ["period"])) === "previous");
+      const hasPeriod = currentRows.length && previousRows.length;
+      const splitIndex = Math.floor(sorted.length / 2);
+      const previousSet = hasPeriod ? previousRows : sorted.slice(0, splitIndex);
+      const currentSet = hasPeriod ? currentRows : sorted.slice(splitIndex);
+
+      return {
+        generatedAt: new Date().toISOString(),
+        currency: "USD",
+        current: { label: "Kỳ hiện tại đã nhập", ...sumRows(currentSet) },
+        previous: { label: "Kỳ so sánh đã nhập", ...sumRows(previousSet) },
+        channels: [],
+        devices: [],
+        products: [],
+        series: currentSet.map((row) => ({
+          date: rowValue(row, ["date", "day"]),
+          netSales: cleanNumber(rowValue(row, ["net sales", "sales", "revenue"])),
+          orders: cleanNumber(rowValue(row, ["orders"])),
+          sessions: cleanNumber(rowValue(row, ["sessions", "visits"])),
+        })),
+      };
+    }
+
+    async function analyzeSnapshot(snapshot, sourceLabel) {
+      const response = await fetch("/api/insights", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ snapshot }),
+      });
+
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || `Insights API trả về mã ${response.status}`);
+      renderAnalysis(payload, sourceLabel);
+    }
+
+    async function handleFile(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      try {
+        nodes.statusLine.textContent = `Đang đọc ${file.name}...`;
+        const text = await file.text();
+        const snapshot = file.name.toLowerCase().endsWith(".csv") ? csvToSnapshot(text) : JSON.parse(text);
+        await analyzeSnapshot(snapshot.snapshot || snapshot, file.name);
+      } catch (error) {
+        nodes.statusLine.textContent = error instanceof Error ? error.message : String(error);
+      } finally {
+        event.target.value = "";
+      }
+    }
+
+    function downloadSample() {
+      if (!lastSample) return;
+      const blob = new Blob([JSON.stringify(lastSample, null, 2)], { type: "application/json" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "camosignal-insight-sample.json";
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+
+    function loadRangeAfterSelection(label) {
+      if (shopifyConnected || activeDataSource === "shopify") {
+        loadLiveShopify().catch((error) => {
+          nodes.statusLine.textContent = error instanceof Error ? error.message : String(error);
+        });
+        return;
+      }
+      nodes.statusLine.textContent = `Đã chọn ${label}. Bấm Tải dữ liệu Shopify để xem dữ liệu trực tiếp.`;
+    }
+
+    function applyCustomRange(start, end, label) {
+      rangeMode = "custom";
+      nodes.startDate.value = start;
+      nodes.endDate.value = end;
+      sessionStorage.setItem("camosignalRangeMode", rangeMode);
+      sessionStorage.setItem("camosignalStartDate", start);
+      sessionStorage.setItem("camosignalEndDate", end);
+      setRangeButtonState(nodes.liveDays.value || "7");
+      loadRangeAfterSelection(label);
+    }
+
+    nodes.navLinks.forEach((link) => {
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        applyActiveView(link.dataset.navView || "overview");
+      });
+    });
+
+    window.addEventListener("hashchange", () => {
+      const hashView = window.location.hash.replace(/^#/, "");
+      if (hashView) applyActiveView(hashView, { updateHash: false, scroll: false });
+    });
+
+    nodes.fileInput.addEventListener("change", handleFile);
+    nodes.refreshDemo.addEventListener("click", () => loadDemo().catch((error) => {
+      nodes.statusLine.textContent = error instanceof Error ? error.message : String(error);
+    }));
+    nodes.downloadSample.addEventListener("click", downloadSample);
+    nodes.loadLive.addEventListener("click", () => loadLiveShopify().catch((error) => {
+      nodes.statusLine.textContent = error instanceof Error ? error.message : String(error);
+    }));
+    nodes.liveDays.addEventListener("change", () => {
+      rangeMode = "preset";
+      sessionStorage.setItem("camosignalInsightDays", nodes.liveDays.value || "7");
+      sessionStorage.setItem("camosignalRangeMode", rangeMode);
+      setRangeButtonState(nodes.liveDays.value || "7");
+      if (shopifyConnected || activeDataSource === "shopify") {
+        loadLiveShopify().catch((error) => {
+          nodes.statusLine.textContent = error instanceof Error ? error.message : String(error);
+        });
+      }
+    });
+    nodes.rangeButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        rangeMode = "preset";
+        nodes.liveDays.value = button.dataset.days || "7";
+        sessionStorage.setItem("camosignalInsightDays", nodes.liveDays.value);
+        sessionStorage.setItem("camosignalRangeMode", rangeMode);
+        setRangeButtonState(nodes.liveDays.value);
+        if (shopifyConnected || activeDataSource === "shopify") {
+          loadLiveShopify().catch((error) => {
+            nodes.statusLine.textContent = error instanceof Error ? error.message : String(error);
+          });
+        }
+      });
+    });
+    nodes.quickRangeButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const quickRange = button.dataset.quickRange;
+        const day = quickRange === "yesterday" ? relativeStoreDate(-1) : relativeStoreDate(0);
+        applyCustomRange(day, day, quickRange === "yesterday" ? "hôm qua" : "hôm nay");
+      });
+    });
+    nodes.applyRange.addEventListener("click", () => {
+      if (!nodes.startDate.value || !nodes.endDate.value) {
+        nodes.statusLine.textContent = "Hãy chọn cả ngày bắt đầu và ngày kết thúc.";
+        return;
+      }
+      rangeMode = "custom";
+      sessionStorage.setItem("camosignalRangeMode", rangeMode);
+      sessionStorage.setItem("camosignalStartDate", nodes.startDate.value);
+      sessionStorage.setItem("camosignalEndDate", nodes.endDate.value);
+      setRangeButtonState(nodes.liveDays.value || "7");
+      const label = nodes.startDate.value === nodes.endDate.value
+        ? formatShortDate(nodes.startDate.value)
+        : `${formatShortDate(nodes.startDate.value)} - ${formatShortDate(nodes.endDate.value)}`;
+      loadRangeAfterSelection(label);
+    });
+    [nodes.startDate, nodes.endDate].forEach((input) => {
+      input.addEventListener("change", () => {
+        rangeMode = "custom";
+        sessionStorage.setItem("camosignalRangeMode", rangeMode);
+        if (nodes.startDate.value) sessionStorage.setItem("camosignalStartDate", nodes.startDate.value);
+        if (nodes.endDate.value) sessionStorage.setItem("camosignalEndDate", nodes.endDate.value);
+        setRangeButtonState(nodes.liveDays.value || "7");
+      });
+    });
+    nodes.calendarDays.addEventListener("click", (event) => {
+      const day = event.target.closest("[data-date]")?.dataset.date;
+      if (!day) return;
+      applyCustomRange(day, day, formatShortDate(day));
+    });
+    const savedKey = sessionStorage.getItem("camosignalInsightKey");
+    if (savedKey) nodes.accessKey.value = savedKey;
+    const requestedDays = new URLSearchParams(window.location.search).get("days")
+      || sessionStorage.getItem("camosignalInsightDays");
+    if (["7", "14", "30"].includes(requestedDays)) nodes.liveDays.value = requestedDays;
+    const params = new URLSearchParams(window.location.search);
+    const savedStart = params.get("start") || sessionStorage.getItem("camosignalStartDate");
+    const savedEnd = params.get("end") || sessionStorage.getItem("camosignalEndDate");
+    if (savedStart) nodes.startDate.value = savedStart;
+    if (savedEnd) nodes.endDate.value = savedEnd;
+    if (params.get("start") && params.get("end")) {
+      rangeMode = "custom";
+    }
+    setRangeButtonState(nodes.liveDays.value || "7");
+    nodes.connectShopify.href = shopifyConnectUrl();
+    applyActiveView(params.get("view") || window.location.hash.replace(/^#/, "") || activeView, {
+      updateHash: false,
+      scroll: false,
+    });
+
+    async function initDashboard() {
+      const status = await checkShopifyConnection();
+      if (cameBackFromShopifyConnect() || status?.connected) {
+        try {
+          await loadLiveShopify();
+          cleanConnectedParam();
+          return;
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          renderLoadError("Chưa tải được dữ liệu Shopify trực tiếp", message);
+          return;
+        }
+      }
+
+      await loadDemo();
+    }
+
+    initDashboard().catch((error) => {
+      nodes.headline.textContent = "Insights API chưa khả dụng";
+      nodes.narrative.textContent = "Hãy chạy thư mục này qua Vercel hoặc một dev server hỗ trợ serverless để tải endpoint phân tích.";
+      nodes.statusLine.textContent = error instanceof Error ? error.message : String(error);
+    });
+  </script>
+</body>
+</html>

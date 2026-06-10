@@ -1,0 +1,10 @@
+{
+  "name": "camosignal-shopify-insight-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node dev-server.mjs",
+    "check": "node --check api/insights.js && node --check api/auth/exchange.js && node --check api/auth/status.js && node --check api/lib/shopify-oauth.js && node --check dev-server.mjs"
+  }
+}
