@@ -1035,6 +1035,7 @@
       background: #ffffff;
       cursor: pointer;
       transition: var(--transition);
+      text-align: left;
     }
 
     .banner-option:hover {
@@ -1053,6 +1054,34 @@
       max-height: 60px;
       object-fit: contain;
       background: #ffffff;
+    }
+
+    .banner-option-meta {
+      display: grid;
+      gap: 2px;
+      padding: 6px 7px 7px 7px;
+      border-top: 1px solid var(--green-200);
+      background: #f7fbf8;
+    }
+
+    .banner-option-label {
+      color: var(--green-950);
+      font-size: 9px;
+      line-height: 12px;
+      font-weight: 850;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .banner-option-ratio {
+      color: var(--muted);
+      font-size: 9px;
+      line-height: 12px;
+      font-weight: 750;
+      letter-spacing: 0.02em;
     }
 
     .searchbar {
@@ -1237,6 +1266,64 @@
       border-color: #f0b5b8;
       background: #ffe8e9;
       color: #a3151b;
+    }
+
+    .email-size-alert {
+      flex: 1 1 100%;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 10px;
+      border: 1px solid var(--green-200);
+      border-radius: 8px;
+      background: #f7fbf8;
+      color: var(--green-800);
+      font-size: 11px;
+      line-height: 15px;
+    }
+
+    .email-size-alert strong {
+      display: block;
+      margin-bottom: 2px;
+      color: var(--green-950);
+      font-size: 10px;
+      line-height: 13px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .email-size-alert.warning {
+      border-color: #e4b95f;
+      background: #fff8e6;
+      color: #7a4b00;
+    }
+
+    .email-size-alert.warning strong {
+      color: #5f3b00;
+    }
+
+    .email-size-alert.error {
+      border-color: #f0b5b8;
+      background: #ffe8e9;
+      color: #a3151b;
+    }
+
+    .email-size-alert.error strong {
+      color: #8c1015;
+    }
+
+    .upload-note {
+      display: block;
+      margin-top: 6px;
+      padding: 7px 8px;
+      border: 1px solid #e4b95f;
+      border-radius: 8px;
+      background: #fff8e6;
+      color: #7a4b00;
+      font-size: 10px;
+      line-height: 14px;
+      font-weight: 700;
     }
 
     .device-wrap {
@@ -1758,6 +1845,9 @@
                 <span class="status-pill" id="validationStatus">Not checked</span>
               </div>
             </div>
+            <div class="email-size-alert" id="emailSizeWarning">
+              <span><strong>Email HTML size</strong><span id="emailSizeWarningText">Standard target: under 90 KB. Gmail may clip near 102 KB.</span></span>
+            </div>
             <div class="row-actions">
               <button class="button small ghost" type="button" id="selectCodeButton">Select code</button>
               <button class="button small primary" type="button" id="copyButtonSecondary">Copy HTML</button>
@@ -1947,18 +2037,26 @@
       {
         label: "Final default",
         src: "./images/camosignal-email-banner-final-1200.jpg",
+        width: 1200,
+        height: 520,
       },
       {
         label: "Final 5x4",
         src: "./images/camosignal-email-banner-final-5x4.jpg",
+        width: 1200,
+        height: 960,
       },
       {
         label: "Green wide",
         src: "./images/camosignal-email-banner-green-1200.jpg",
+        width: 1200,
+        height: 520,
       },
       {
         label: "Green PNG",
         src: "./images/camosignal-email-banner-green.png",
+        width: 1905,
+        height: 825,
       },
     ];
 
@@ -2052,10 +2150,11 @@
         note: "6 campaign picks",
       },
       productGrid: {
-        desktopColumns: 3,
+        productCount: 6,
+        desktopColumns: 4,
         mobileColumns: 2,
-        desktopImageWidth: 186,
-        desktopImageStageHeight: 230,
+        desktopImageWidth: 132,
+        desktopImageStageHeight: 170,
         mobileImageWidth: 176,
         buttonLabel: "SHOP NOW",
       },
@@ -2089,6 +2188,10 @@
         footerInstagramLabel: { align: "center", font: "arial", size: 12, color: "#ffffff", weight: "700", transform: "none" },
         footerFacebookLabel: { align: "center", font: "arial", size: 12, color: "#ffffff", weight: "700", transform: "none" },
         footerVisitStoreLabel: { align: "center", font: "arial", size: 11, color: "#ffffff", weight: "700", transform: "none" },
+        productTitle: { align: "left", font: "oswald", size: 12, color: "#2c3d33", weight: "700", transform: "uppercase" },
+        productPrice: { align: "left", font: "oswald", size: 13, color: "#c0392b", weight: "700", transform: "none" },
+        productCompareAt: { align: "left", font: "oswald", size: 13, color: "#777777", weight: "400", transform: "none" },
+        headerBrand: { align: "center", font: "oswald", size: 24, color: "#102d20", weight: "700", transform: "uppercase" },
       },
     };
 
@@ -2111,6 +2214,7 @@
       previewPreset: "desktop",
       previewMode: "desktop",
       previewColorMode: "light",
+      bannerUploadMaxWidth: 1200,
       activeBanner: defaultCampaign.banner.src,
       campaignGlobal: {
         preheader: defaultCampaign.preheader,
@@ -2137,6 +2241,19 @@
 
     const campaignDraftStorageKey = "camosignal_email_studio_campaign_draft_v1";
     const campaignLibraryStorageKey = "camosignal_email_studio_template_library_v1";
+    const productCountMin = 1;
+    const productCountMax = 24;
+    const maxLocalImageInputBytes = 20 * 1024 * 1024;
+    const maxEmbeddedBannerBytes = 360 * 1024;
+    const maxSafePreviewHtmlBytes = 1024 * 1024;
+    const maxStoredCampaignBytes = 3.5 * 1024 * 1024;
+    const maxHistorySnapshotBytes = 1.5 * 1024 * 1024;
+    const bannerOptimizerMaxWidth = 1200;
+    const bannerOptimizerMaxHeight = 1600;
+    const bannerUploadMinWidth = 400;
+    const bannerUploadDefaultMaxWidth = 1200;
+    const emailHtmlTargetBytes = 90 * 1024;
+    const emailHtmlClipLimitBytes = 102 * 1024;
 
     function byId(id) {
       return document.getElementById(id);
@@ -2185,6 +2302,174 @@
 
     function productKey(product) {
       return product.handle || product.url || product.title;
+    }
+
+    function greatestCommonDivisor(a, b) {
+      let x = Math.abs(Number(a) || 0);
+      let y = Math.abs(Number(b) || 0);
+      while (y) {
+        const next = x % y;
+        x = y;
+        y = next;
+      }
+      return x || 1;
+    }
+
+    function simplifyRatio(width, height) {
+      const safeWidth = Math.round(Number(width) || 0);
+      const safeHeight = Math.round(Number(height) || 0);
+      if (!safeWidth || !safeHeight) return "";
+      const divisor = greatestCommonDivisor(safeWidth, safeHeight);
+      return `${safeWidth / divisor}:${safeHeight / divisor}`;
+    }
+
+    function clampProductCount(value, fallback = 6) {
+      const count = Math.round(Number(value));
+      return Math.min(Math.max(Number.isFinite(count) && count > 0 ? count : fallback, productCountMin), productCountMax);
+    }
+
+    function normalizeBannerUploadMaxWidth(value) {
+      const width = Math.round(Number(value));
+      return Math.min(Math.max(Number.isFinite(width) && width > 0 ? width : bannerUploadDefaultMaxWidth, bannerUploadMinWidth), bannerOptimizerMaxWidth);
+    }
+
+    function createManualProductSlot(index) {
+      return {
+        title: `Product ${index + 1}`,
+        handle: `manual-${Date.now()}-${index}`,
+        url: `https://${state.storeDomain || "camosignal.com"}/products/`,
+        image: "",
+        price: "$24.95",
+        compareAt: "$34.95",
+        badge: "28% OFF"
+      };
+    }
+
+    function nextProductForSection(section) {
+      const usedKeys = new Set((section.products || []).map(productKey));
+      const sources = [...(state.catalog || []), ...fallbackCatalog];
+      const nextProduct = sources.find((product) => !usedKeys.has(productKey(product)));
+      return nextProduct ? clone(nextProduct) : createManualProductSlot(section.products.length);
+    }
+
+    function syncProductCount(section) {
+      if (!section || section.type !== "products") return 0;
+      if (!Array.isArray(section.products)) section.products = [];
+      const fallback = section.products.length || Number(section.productCount) || 6;
+      const count = clampProductCount(section.productCount, fallback);
+      section.productCount = count;
+
+      while (section.products.length < count) {
+        section.products.push(nextProductForSection(section));
+      }
+
+      if (section.products.length > count) {
+        section.products = section.products.slice(0, count);
+      }
+
+      return count;
+    }
+
+    function updateProductCountControl(section) {
+      const input = byId("productCountInput");
+      if (input && section && input.dataset.sectionId === section.id) {
+        input.value = clampProductCount(section.productCount, (section.products || []).length || 6);
+      }
+    }
+
+    function byteSize(value) {
+      return new Blob([String(value ?? "")]).size;
+    }
+
+    function formatFileSize(bytes) {
+      const size = Number(bytes) || 0;
+      if (size >= 1024 * 1024) return `${(size / 1024 / 1024).toFixed(size >= 10 * 1024 * 1024 ? 0 : 1)} MB`;
+      return `${Math.max(1, Math.round(size / 1024))} KB`;
+    }
+
+    function readBlobAsDataUrl(blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ""));
+        reader.onerror = () => reject(new Error("Could not read optimized image."));
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    function loadImageFromFile(file) {
+      return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const image = new Image();
+        image.onload = () => {
+          URL.revokeObjectURL(url);
+          resolve(image);
+        };
+        image.onerror = () => {
+          URL.revokeObjectURL(url);
+          reject(new Error("Could not read this image. Try a JPG or PNG file."));
+        };
+        image.src = url;
+      });
+    }
+
+    function canvasToBlob(canvas, type, quality) {
+      return new Promise((resolve, reject) => {
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error("Could not optimize this image."));
+        }, type, quality);
+      });
+    }
+
+    async function optimizeBannerFile(file, options = {}) {
+      if (!file || !file.type.startsWith("image/")) {
+        throw new Error("Please choose an image file.");
+      }
+      if (/svg/i.test(file.type)) {
+        throw new Error("SVG banners should be hosted and pasted as an Image URL.");
+      }
+      if (file.size > maxLocalImageInputBytes) {
+        throw new Error(`Image is ${formatFileSize(file.size)}. Please use an image under ${formatFileSize(maxLocalImageInputBytes)}.`);
+      }
+
+      const image = await loadImageFromFile(file);
+      const sourceWidth = image.naturalWidth || image.width;
+      const sourceHeight = image.naturalHeight || image.height;
+      if (!sourceWidth || !sourceHeight) {
+        throw new Error("Could not detect image dimensions.");
+      }
+
+      const maxWidth = normalizeBannerUploadMaxWidth(options.maxWidth);
+      const scale = Math.min(1, maxWidth / sourceWidth, bannerOptimizerMaxHeight / sourceHeight);
+      const width = Math.max(1, Math.round(sourceWidth * scale));
+      const height = Math.max(1, Math.round(sourceHeight * scale));
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d", { alpha: false });
+      if (!ctx) throw new Error("Could not prepare image optimizer.");
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, width, height);
+      ctx.drawImage(image, 0, 0, width, height);
+
+      const qualities = [0.82, 0.74, 0.66, 0.58, 0.5];
+      let bestBlob = null;
+      for (const quality of qualities) {
+        const blob = await canvasToBlob(canvas, "image/jpeg", quality);
+        bestBlob = blob;
+        if (blob.size <= maxEmbeddedBannerBytes) break;
+      }
+
+      const dataUrl = await readBlobAsDataUrl(bestBlob);
+      return {
+        dataUrl,
+        width,
+        height,
+        outputBytes: byteSize(dataUrl),
+        blobBytes: bestBlob.size,
+        originalBytes: file.size,
+        maxWidth
+      };
     }
 
     function escapeHtml(value) {
@@ -2320,7 +2605,7 @@
     /* Shopify / Email Client HTML Renderers */
     function renderDesktopProduct(product, config, productIndex = 0, editable = false) {
       const compareAtHtml = product.compareAt
-        ? ` <span ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_compareAt"` : ""} style="color:#777777; font-weight:400; text-decoration:line-through; margin-left:4px;">${escapeHtml(product.compareAt)}</span>`
+        ? ` <span ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_compareAt"` : ""} style="${config.compareAtStyle} text-decoration:line-through; margin-left:4px;">${escapeHtml(product.compareAt)}</span>`
         : "";
       const displayTitle = truncateText(product.title, config.desktopTitleMaxChars || 52);
 
@@ -2336,9 +2621,9 @@
             </tr>
             <tr>
               <td align="left" style="padding:6px 0 0 0; text-align:left;">
-                <p class="product-title-line" title="${escapeAttr(product.title)}" ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_title"` : ""} style="display:-webkit-box; width:100%; max-width:100%; height:32px; min-height:32px; margin:0 0 5px 0; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:12px; line-height:16px; mso-line-height-rule:exactly; font-weight:700; color:#2c3d33; text-transform:uppercase; white-space:normal; overflow:hidden; text-overflow:ellipsis; -webkit-line-clamp:2; -webkit-box-orient:vertical; word-break:normal; overflow-wrap:break-word;">${escapeHtml(displayTitle)}</p>
-                <p style="margin:0 0 12px 0; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:13px; line-height:17px; color:#2c3d33; font-weight:700;">
-                  <span ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_price"` : ""} style="color:#c0392b; font-weight:700;">${escapeHtml(product.price)}</span>${compareAtHtml}
+                <p class="product-title-line" title="${escapeAttr(product.title)}" ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_title"` : ""} style="${config.productTitleStyle}">${escapeHtml(displayTitle)}</p>
+                <p style="${config.productPriceRowStyle}">
+                  <span ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_price"` : ""} style="${config.productPriceStyle}">${escapeHtml(product.price)}</span>${compareAtHtml}
                 </p>
                 <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
                   <tr>
@@ -2355,7 +2640,7 @@
 
     function renderMobileProduct(product, config, productIndex = 0, editable = false) {
       const compareAtHtml = product.compareAt
-        ? ` <span ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_compareAt"` : ""} style="color:#777777; font-weight:400; text-decoration:line-through; margin-left:3px;">${escapeHtml(product.compareAt)}</span>`
+        ? ` <span ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_compareAt"` : ""} style="${config.mobileCompareAtStyle} text-decoration:line-through; margin-left:3px;">${escapeHtml(product.compareAt)}</span>`
         : "";
       const displayTitle = truncateText(product.title, config.mobileTitleMaxChars || 46);
 
@@ -2371,9 +2656,9 @@
             </tr>
             <tr>
               <td align="left" style="padding:6px 0 0 0; text-align:left;">
-                <p class="product-title-line mobile-title" title="${escapeAttr(product.title)}" ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_title"` : ""} style="display:-webkit-box; width:100%; max-width:100%; height:30px; min-height:30px; margin:0 0 4px 0; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:11px; line-height:15px; mso-line-height-rule:exactly; font-weight:700; color:#2c3d33; text-transform:uppercase; white-space:normal; overflow:hidden; text-overflow:ellipsis; -webkit-line-clamp:2; -webkit-box-orient:vertical; word-break:normal; overflow-wrap:break-word;">${escapeHtml(displayTitle)}</p>
-                <p style="margin:0 0 9px 0; font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:12px; line-height:16px; color:#2c3d33; font-weight:700;">
-                  <span ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_price"` : ""} style="color:#c0392b; font-weight:700;">${escapeHtml(product.price)}</span>${compareAtHtml}
+                <p class="product-title-line mobile-title" title="${escapeAttr(product.title)}" ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_title"` : ""} style="${config.mobileProductTitleStyle}">${escapeHtml(displayTitle)}</p>
+                <p style="${config.mobileProductPriceRowStyle}">
+                  <span ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_price"` : ""} style="${config.mobileProductPriceStyle}">${escapeHtml(product.price)}</span>${compareAtHtml}
                 </p>
                 <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
                   <tr>
@@ -2395,6 +2680,25 @@
     function renderRows(products, columns, renderProduct, config, editable = false) {
       return chunk(products, columns)
         .map((row, rowIndex) => {
+          const isDesktopProductGrid = renderProduct === renderDesktopProduct;
+
+          if (isDesktopProductGrid && row.length > 0 && row.length < columns) {
+            const centeredWidth = (row.length / columns) * 100;
+            const centeredConfig = {
+              ...config,
+              desktopCellWidth: 100 / row.length,
+            };
+            const centeredCells = row.map((product, columnIndex) => renderProduct(product, centeredConfig, rowIndex * columns + columnIndex, editable));
+            return `
+              <tr>
+                <td colspan="${columns}" align="center" style="padding:0;">
+                  <table role="presentation" align="center" width="${centeredWidth}%" cellpadding="0" cellspacing="0" style="width:${centeredWidth}%; table-layout:fixed; margin:0 auto;">
+                    <tr>${centeredCells.join("")}</tr>
+                  </table>
+                </td>
+              </tr>`;
+          }
+
           const cells = row.map((product, columnIndex) => renderProduct(product, config, rowIndex * columns + columnIndex, editable));
           const emptyConfig = renderProduct === renderMobileProduct
             ? { ...config, productGapX: config.mobileGapX, productGapBottom: config.mobileGapBottom }
@@ -2414,9 +2718,10 @@
       const bgColor = logoOnly ? (state.campaignGlobal.contentBg || "#ffffff") : (section.bgColor || state.campaignGlobal.contentBg || "#ffffff");
       const borderBottomWidth = logoOnly ? 0 : (Number.isFinite(Number(section.borderBottomWidth)) ? Number(section.borderBottomWidth) : 1);
       const borderBottomStyle = borderBottomWidth > 0 ? `border-bottom:${borderBottomWidth}px solid ${section.borderBottomColor || "#d7eadf"};` : "";
+      const brandTextStyle = textCssForSection(section.brandTextStyle, "headerBrand", "letter-spacing:0.1em;");
       const logoHtml = logoSrc
         ? `<img src="${escapeAttr(logoSrc)}" width="${logoWidth}" alt="${escapeAttr(section.logoAlt)}" style="width:${logoWidth}px; max-width:${logoWidth}px; height:auto; margin:0 auto; display:block; border:0;">`
-        : `<span style="font-family:'Oswald', 'Arial Narrow', Arial, sans-serif; font-size:24px; line-height:30px; font-weight:700; color:#102d20; letter-spacing:0.1em; text-transform:uppercase;">${escapeHtml(section.brandText)}</span>`;
+        : `<span style="${brandTextStyle}">${escapeHtml(section.brandText)}</span>`;
 
       return `
         <tr${sectionPreviewAttr(section, editable)}>
@@ -2661,18 +2966,24 @@
       const bgColor = section.bgColor || state.campaignGlobal.contentBg || "#ffffff";
       const headerPadding = section.headerPadding || "30px 0 16px 0";
       const gridPadding = section.gridPadding || "0 14px 8px 14px";
-      const desktopColumns = 3;
+      const productCount = syncProductCount(section);
+      const products = (section.products || []).slice(0, productCount);
+      const desktopColumns = Math.min(Math.max(Number(section.desktopColumns) || 4, 2), 4);
       const mobileColumns = Math.min(Math.max(Number(section.mobileColumns) || 2, 1), 2);
       const buttonRadius = Number(section.buttonRadius) || 8;
       const desktopButtonPaddingY = Number(section.desktopButtonPaddingY) || 14;
       const desktopButtonPaddingX = Number(section.desktopButtonPaddingX) || 15;
       const mobileButtonPaddingY = Number(section.mobileButtonPaddingY) || 11;
       const mobileButtonPaddingX = Number(section.mobileButtonPaddingX) || 6;
+      const productTitleSize = Number(section.productTitleStyle?.size) || defaultCampaign.textStyles.productTitle.size;
+      const productTitleLineHeight = Math.max(productTitleSize + 4, Math.round(productTitleSize * 1.28));
+      const desktopTitleHeight = productTitleLineHeight * 2;
+      const mobileTitleHeight = Math.max(30, desktopTitleHeight);
       
       const productGridConfig = {
         sectionId: section.id,
-        desktopImageWidth: Math.min(Math.max(Number(section.desktopImageWidth) || 186, 120), 260),
-        desktopImageStageHeight: Math.min(Math.max(Number(section.desktopImageStageHeight) || 230, 140), 340),
+        desktopImageWidth: Math.min(Math.max(Number(section.desktopImageWidth) || 132, 120), 260),
+        desktopImageStageHeight: Math.min(Math.max(Number(section.desktopImageStageHeight) || 170, 140), 340),
         mobileImageWidth: Math.min(Math.max(Number(section.mobileImageWidth) || 176, 120), 240),
         desktopCellWidth: 100 / desktopColumns,
         mobileCellWidth: 100 / mobileColumns,
@@ -2682,12 +2993,20 @@
         mobileGapBottom: Math.min(Math.max(Number(section.mobileGapBottom) || 24, 10), 60),
         buttonRadius,
         buttonLabel: buttonLabel,
+        productTitleStyle: textCssForSection(section.productTitleStyle, "productTitle", `display:-webkit-box; width:100%; max-width:100%; height:${desktopTitleHeight}px; min-height:${desktopTitleHeight}px; margin:0 0 5px 0; mso-line-height-rule:exactly; white-space:normal; overflow:hidden; text-overflow:ellipsis; -webkit-line-clamp:2; -webkit-box-orient:vertical; word-break:normal; overflow-wrap:break-word;`),
+        mobileProductTitleStyle: textCssForSection(section.productTitleStyle, "productTitle", `display:-webkit-box; width:100%; max-width:100%; height:${mobileTitleHeight}px; min-height:${mobileTitleHeight}px; margin:0 0 4px 0; mso-line-height-rule:exactly; white-space:normal; overflow:hidden; text-overflow:ellipsis; -webkit-line-clamp:2; -webkit-box-orient:vertical; word-break:normal; overflow-wrap:break-word;`),
+        productPriceRowStyle: textCssForSection(section.productPriceStyle, "productPrice", "margin:0 0 12px 0;"),
+        mobileProductPriceRowStyle: textCssForSection(section.productPriceStyle, "productPrice", "margin:0 0 9px 0;"),
+        productPriceStyle: textCssForSection(section.productPriceStyle, "productPrice", "display:inline;"),
+        mobileProductPriceStyle: textCssForSection(section.productPriceStyle, "productPrice", "display:inline;"),
+        compareAtStyle: textCssForSection(section.productCompareAtStyle, "productCompareAt", "display:inline;"),
+        mobileCompareAtStyle: textCssForSection(section.productCompareAtStyle, "productCompareAt", "display:inline;"),
         buttonStyle: buttonTextCssForSection(section.buttonStyle, "productButtonLabel", `display:block; padding:${desktopButtonPaddingY}px ${desktopButtonPaddingX}px; letter-spacing:1.5px; border-radius:${buttonRadius}px;`),
         mobileButtonStyle: buttonTextCssForSection(section.buttonStyle, "productButtonLabel", `display:block; padding:${mobileButtonPaddingY}px ${mobileButtonPaddingX}px; letter-spacing:1.1px; border-radius:${buttonRadius}px;`),
       };
       
-      const desktopRows = renderRows(section.products || [], desktopColumns, renderDesktopProduct, productGridConfig, editable);
-      const mobileRows = renderRows(section.products || [], mobileColumns, renderMobileProduct, productGridConfig, editable);
+      const desktopRows = renderRows(products, desktopColumns, renderDesktopProduct, productGridConfig, editable);
+      const mobileRows = renderRows(products, mobileColumns, renderMobileProduct, productGridConfig, editable);
       
       return `
         <tr${sectionPreviewAttr(section, editable)}>
@@ -3216,7 +3535,8 @@ ${darkModeCss}
 
     function collectEmailValidationIssues(html) {
       const issues = [];
-      const sizeKb = new Blob([html]).size / 1024;
+      const htmlBytes = byteSize(html);
+      const sizeKb = htmlBytes / 1024;
       const openTrackingCount = (html.match(/\{\{\s*open_tracking_block\s*\}\}/g) || []).length;
       const unsubscribeCount = (html.match(/\{\{\s*unsubscribe_link\s*\}\}/g) || []).length;
       const dataImageBytes = (html.match(/src="data:image[^"]+"/g) || []).reduce((total, match) => total + match.length, 0);
@@ -3231,10 +3551,37 @@ ${darkModeCss}
       if (/file:\/\//i.test(html)) issues.push({ level: "error", message: "Export HTML contains local file URLs." });
       if (/src="\s*"/i.test(html)) issues.push({ level: "warning", message: "Some image src values are empty." });
       if (/href="#"/i.test(html)) issues.push({ level: "warning", message: "Some links still use # placeholders." });
-      if (sizeKb > 100) issues.push({ level: "warning", message: `HTML is ${Math.round(sizeKb)}KB. Gmail may clip long emails near 102KB.` });
-      if (dataImageBytes > 90000) issues.push({ level: "warning", message: "Embedded data images are large. Hosted image URLs are safer for email." });
+      if (htmlBytes > maxSafePreviewHtmlBytes) {
+        issues.push({ level: "error", message: `HTML is ${formatFileSize(htmlBytes)}. Use hosted image URLs or a smaller banner before preview/export.` });
+      } else if (htmlBytes >= emailHtmlClipLimitBytes) {
+        issues.push({ level: "warning", message: `HTML is ${Math.round(sizeKb)}KB. Gmail may clip long emails near 102KB.` });
+      } else if (htmlBytes >= emailHtmlTargetBytes) {
+        issues.push({ level: "warning", message: `HTML is ${Math.round(sizeKb)}KB, close to the 102KB Gmail clip limit.` });
+      }
+      if (dataImageBytes > maxEmbeddedBannerBytes) issues.push({ level: "warning", message: `Embedded data images are ${formatFileSize(dataImageBytes)}. Hosted image URLs are safer for email.` });
 
       return issues;
+    }
+
+    function updateEmailSizeWarning(sizeBytes) {
+      const alert = byId("emailSizeWarning");
+      const text = byId("emailSizeWarningText");
+      if (!alert || !text) return;
+
+      alert.classList.remove("warning", "error");
+      const sizeLabel = formatFileSize(sizeBytes);
+      const targetLabel = formatFileSize(emailHtmlTargetBytes);
+      const clipLabel = formatFileSize(emailHtmlClipLimitBytes);
+
+      if (sizeBytes >= emailHtmlClipLimitBytes) {
+        alert.classList.add("error");
+        text.textContent = `${sizeLabel} HTML. Over the ${clipLabel} Gmail clipping limit. Reduce content or use hosted images before sending.`;
+      } else if (sizeBytes >= emailHtmlTargetBytes) {
+        alert.classList.add("warning");
+        text.textContent = `${sizeLabel} HTML. Near the ${clipLabel} Gmail clipping limit. Keep standard emails under ${targetLabel}.`;
+      } else {
+        text.textContent = `${sizeLabel} HTML. Safe target: under ${targetLabel}; Gmail may clip near ${clipLabel}.`;
+      }
     }
 
     function updateValidationStatus(issues = []) {
@@ -3605,28 +3952,31 @@ ${darkModeCss}
       const contentSections = state.sections.filter((section) => !["header", "footer"].includes(section.type));
       const productCount = state.sections.reduce((total, section) => total + ((section.products || []).length), 0);
       const selectedSection = state.sections.find((section) => section.id === state.selectedSectionId);
-      const sizeKb = Math.max(1, Math.round(new Blob([html]).size / 1024));
+      const sizeBytes = byteSize(html);
+      const sizeKb = Math.max(1, Math.round(sizeBytes / 1024));
 
       if (byId("sectionCountStat")) byId("sectionCountStat").textContent = String(contentSections.length);
       if (byId("productCountStat")) byId("productCountStat").textContent = String(productCount);
       if (byId("activeSectionStat")) byId("activeSectionStat").textContent = selectedSection ? (selectedSection.type || "Block") : "Global";
       if (byId("htmlSizeStat")) {
         byId("htmlSizeStat").textContent = `${sizeKb} KB`;
-        byId("htmlSizeStat").classList.toggle("warning", sizeKb >= 90);
-        byId("htmlSizeStat").classList.toggle("error", sizeKb >= 102);
+        byId("htmlSizeStat").classList.toggle("warning", sizeBytes >= emailHtmlTargetBytes && sizeBytes < emailHtmlClipLimitBytes);
+        byId("htmlSizeStat").classList.toggle("error", sizeBytes >= emailHtmlClipLimitBytes);
       }
+      updateEmailSizeWarning(sizeBytes);
       if (byId("htmlDrawerMeta")) byId("htmlDrawerMeta").textContent = `${sizeKb} KB generated`;
     }
 
     function generate() {
       try {
         const html = renderEmail(state);
-        const previewHtml = renderEmail(state, { editable: true });
+        const issues = collectEmailValidationIssues(html);
+        updateStudioStats(html);
+        updateValidationStatus(issues);
         validateHtml(html);
+        const previewHtml = renderEmail(state, { editable: true });
         byId("generatedHtml").value = html;
         renderPreview(previewHtml);
-        updateStudioStats(html);
-        updateValidationStatus(collectEmailValidationIssues(html));
         
         let dynamicCount = state.sections.filter(s => !["header", "footer"].includes(s.type)).length;
         setStatus(`Generated successfully: ${dynamicCount} content sections`);
@@ -3913,10 +4263,16 @@ ${darkModeCss}
             </div>
           </div>
         </section>
+
+        <section class="section">
+          <h3 class="section-title">Header Typography</h3>
+          ${renderTextStyleDetails(section.id, "brandTextStyle", "Fallback Text Style", section.brandTextStyle)}
+        </section>
       `;
     }
 
     function renderBannerEditor(section) {
+      const uploadMaxWidth = normalizeBannerUploadMaxWidth(state.bannerUploadMaxWidth);
       return `
         <section class="section">
           <h3 class="section-title">Banner Image</h3>
@@ -3928,14 +4284,23 @@ ${darkModeCss}
             <div class="field full">
               <label for="bannerFile">Local Banner Upload</label>
               <input type="file" id="bannerFile" accept="image/*">
+              <span class="upload-note">Warning: only local upload is resized/compressed before embedding. Image URL links are kept unchanged.</span>
+            </div>
+            <div class="field">
+              <label for="bannerUploadMaxWidth">Upload Resize Width</label>
+              <select id="bannerUploadMaxWidth">
+                <option value="600" ${uploadMaxWidth === 600 ? "selected" : ""}>600px - smallest</option>
+                <option value="900" ${uploadMaxWidth === 900 ? "selected" : ""}>900px - balanced</option>
+                <option value="1200" ${uploadMaxWidth === 1200 ? "selected" : ""}>1200px - sharper</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Upload Output</label>
+              <input type="text" value="JPEG, auto quality" readonly>
             </div>
             <div class="field full">
               <label for="bannerHref">Click Link URL</label>
               <input type="text" id="bannerHref" data-bind-property="href" data-section-id="${section.id}" value="${escapeAttr(section.href)}">
-            </div>
-            <div class="field full">
-              <label for="bannerAlt">Alt Text</label>
-              <input type="text" id="bannerAlt" data-bind-property="alt" data-section-id="${section.id}" value="${escapeAttr(section.alt)}">
             </div>
             <div class="field full">
               <label for="bannerDisplayMode">Banner Layout</label>
@@ -4294,7 +4659,13 @@ ${darkModeCss}
     }
 
     function renderTextStyleDetails(sectionId, styleKey, label, style) {
-      const s = style || {};
+      const fallbackByStyleKey = {
+        brandTextStyle: defaultCampaign.textStyles.headerBrand,
+        productTitleStyle: defaultCampaign.textStyles.productTitle,
+        productPriceStyle: defaultCampaign.textStyles.productPrice,
+        productCompareAtStyle: defaultCampaign.textStyles.productCompareAt,
+      };
+      const s = { ...(fallbackByStyleKey[styleKey] || {}), ...(style || {}) };
       return `
         <details class="style-details">
           <summary>${label}</summary>
@@ -4348,6 +4719,9 @@ ${darkModeCss}
     }
 
     function renderProductsEditor(section) {
+      const productCount = clampProductCount(section.productCount, (section.products || []).length || 6);
+      const desktopColumns = Math.min(Math.max(Number(section.desktopColumns) || 4, 2), 4);
+
       return `
         <section class="section">
           <h3 class="section-title">Products Header</h3>
@@ -4375,8 +4749,21 @@ ${darkModeCss}
               <input type="color" id="productsBgColor" data-bind-property="bgColor" data-section-id="${section.id}" value="${section.bgColor || "#ffffff"}">
             </div>
             <div class="field">
+              <label for="productCountInput">Product Count</label>
+              <select id="productCountInput" data-bind-property="productCount" data-section-id="${section.id}">
+                ${Array.from({ length: productCountMax - productCountMin + 1 }, (_, index) => {
+                  const value = productCountMin + index;
+                  return `<option value="${value}" ${productCount === value ? "selected" : ""}>${value}</option>`;
+                }).join("")}
+              </select>
+            </div>
+            <div class="field">
               <label>Desktop Columns</label>
-              <input type="number" min="3" max="3" data-bind-property="desktopColumns" data-section-id="${section.id}" value="3" readonly>
+              <select data-bind-property="desktopColumns" data-section-id="${section.id}">
+                <option value="2" ${desktopColumns === 2 ? "selected" : ""}>2</option>
+                <option value="3" ${desktopColumns === 3 ? "selected" : ""}>3</option>
+                <option value="4" ${desktopColumns === 4 ? "selected" : ""}>4</option>
+              </select>
             </div>
             <div class="field">
               <label>Mobile Columns</label>
@@ -4387,11 +4774,11 @@ ${darkModeCss}
             </div>
             <div class="field">
               <label>Desktop Image Width</label>
-              <input type="number" min="120" max="260" data-bind-property="desktopImageWidth" data-section-id="${section.id}" value="${section.desktopImageWidth || 186}">
+              <input type="number" min="120" max="260" data-bind-property="desktopImageWidth" data-section-id="${section.id}" value="${section.desktopImageWidth || 132}">
             </div>
             <div class="field">
               <label>Desktop Image Stage</label>
-              <input type="number" min="140" max="340" data-bind-property="desktopImageStageHeight" data-section-id="${section.id}" value="${section.desktopImageStageHeight || 230}">
+              <input type="number" min="140" max="340" data-bind-property="desktopImageStageHeight" data-section-id="${section.id}" value="${section.desktopImageStageHeight || 170}">
             </div>
             <div class="field">
               <label>Mobile Image Width</label>
@@ -4421,10 +4808,13 @@ ${darkModeCss}
         </section>
 
         <section class="section">
-          <h3 class="section-title">Heading Styles</h3>
+          <h3 class="section-title">Typography</h3>
           ${renderTextStyleDetails(section.id, "titleStyle", "Heading Style", section.titleStyle)}
           ${renderTextStyleDetails(section.id, "noteStyle", "Subheading Style", section.noteStyle)}
           ${renderTextStyleDetails(section.id, "buttonStyle", "Grid Button Style", section.buttonStyle)}
+          ${renderTextStyleDetails(section.id, "productTitleStyle", "Product Title Style", section.productTitleStyle)}
+          ${renderTextStyleDetails(section.id, "productPriceStyle", "Product Price Style", section.productPriceStyle)}
+          ${renderTextStyleDetails(section.id, "productCompareAtStyle", "Compare Price Style", section.productCompareAtStyle)}
         </section>
 
         <section class="section">
@@ -4806,8 +5196,8 @@ ${darkModeCss}
     function addBlankProductToSection(sectionId) {
       const section = state.sections.find(s => s.id === sectionId);
       if (section) {
-        if ((section.products || []).length >= 6) {
-          setStatus("Maximum 6 products per grid");
+        if ((section.products || []).length >= productCountMax) {
+          setStatus(`Maximum ${productCountMax} products per grid`);
           return;
         }
         if (!section.products) section.products = [];
@@ -4820,6 +5210,8 @@ ${darkModeCss}
           compareAt: "$34.95",
           badge: "28% OFF"
         });
+        section.productCount = section.products.length;
+        updateProductCountControl(section);
         renderSelectedProductsList(section);
         generate();
       }
@@ -4829,6 +5221,8 @@ ${darkModeCss}
       const section = state.sections.find(s => s.id === sectionId);
       if (section && section.products) {
         section.products.splice(index, 1);
+        section.productCount = section.products.length;
+        updateProductCountControl(section);
         renderSelectedProductsList(section);
         renderCatalog();
         generate();
@@ -4885,17 +5279,20 @@ ${darkModeCss}
         const existsAt = section.products.findIndex(p => productKey(p) === catalogKey);
         if (existsAt >= 0) {
           section.products.splice(existsAt, 1);
+          section.productCount = section.products.length;
           setStatus(`Removed ${productInCatalog.title}`);
         } else {
-          if (section.products.length >= 6) {
-            setStatus("Maximum 6 products per grid");
+          if (section.products.length >= productCountMax) {
+            setStatus(`Maximum ${productCountMax} products per grid`);
             return;
           }
           section.products.push(clone(productInCatalog));
+          section.productCount = section.products.length;
           setStatus(`Added ${productInCatalog.title}`);
         }
       }
       
+      updateProductCountControl(section);
       renderSelectedProductsList(section);
       renderCatalog();
       generate();
@@ -4907,11 +5304,20 @@ ${darkModeCss}
       if (!presetsContainer) return;
       
       presetsContainer.innerHTML = bannerPresets
-        .map((banner) => `
-          <button class="banner-option ${banner.src === state.activeBanner ? "active" : ""}" type="button" data-preset-src="${escapeAttr(banner.src)}">
+        .map((banner) => {
+          const ratio = banner.width && banner.height ? simplifyRatio(banner.width, banner.height) : "";
+          const size = banner.width && banner.height ? `${banner.width}x${banner.height}` : "";
+          const ratioText = [size, ratio].filter(Boolean).join(" · ");
+          return `
+          <button class="banner-option ${banner.src === state.activeBanner ? "active" : ""}" type="button" data-preset-src="${escapeAttr(banner.src)}" title="${escapeAttr(`${banner.label} ${ratioText}`)}">
             <img src="${escapeAttr(banner.src)}" alt="${escapeAttr(banner.label)}">
+            <span class="banner-option-meta">
+              <span class="banner-option-label">${escapeHtml(banner.label)}</span>
+              <span class="banner-option-ratio">${escapeHtml(ratioText || "Ratio unavailable")}</span>
+            </span>
           </button>
-        `)
+        `;
+        })
         .join("");
     }
 
@@ -5396,10 +5802,11 @@ ${darkModeCss}
           note: "3 items",
           buttonLabel: "SHOP NOW",
           bgColor: "#ffffff",
-          desktopColumns: 3,
+          productCount: 3,
+          desktopColumns: 4,
           mobileColumns: 2,
-          desktopImageWidth: 186,
-          desktopImageStageHeight: 230,
+          desktopImageWidth: 132,
+          desktopImageStageHeight: 170,
           mobileImageWidth: 176,
           productGapX: 6,
           productGapBottom: 28,
@@ -5415,7 +5822,10 @@ ${darkModeCss}
           products: clone(fallbackCatalog.slice(0, 3)),
           titleStyle: clone(defaultCampaign.textStyles.sectionTitle),
           noteStyle: clone(defaultCampaign.textStyles.sectionNote),
-          buttonStyle: clone(defaultCampaign.textStyles.productButtonLabel)
+          buttonStyle: clone(defaultCampaign.textStyles.productButtonLabel),
+          productTitleStyle: clone(defaultCampaign.textStyles.productTitle),
+          productPriceStyle: clone(defaultCampaign.textStyles.productPrice),
+          productCompareAtStyle: clone(defaultCampaign.textStyles.productCompareAt)
         };
       }
 
@@ -5634,6 +6044,17 @@ ${darkModeCss}
     ];
 
     let activePersonalizeTargetId = null;
+
+    function hidePersonalizeDropdown() {
+      const dropdown = byId("personalizeDropdown");
+      if (dropdown) dropdown.style.display = "none";
+      activePersonalizeTargetId = null;
+    }
+
+    function isPersonalizeDropdownOpen() {
+      const dropdown = byId("personalizeDropdown");
+      return Boolean(dropdown && dropdown.style.display === "block");
+    }
 
     function showPersonalizeDropdown(button, targetId) {
       activePersonalizeTargetId = targetId;
@@ -5999,6 +6420,7 @@ ${darkModeCss}
           logoWidth: defaultCampaign.header.logoWidth,
           href: defaultCampaign.header.href,
           brandText: defaultCampaign.header.brandText,
+          brandTextStyle: clone(defaultCampaign.textStyles.headerBrand),
           logoOnly: "true",
           logoOnlyPadding: "8px 0 8px 0",
           padding: "16px 34px",
@@ -6046,10 +6468,11 @@ ${darkModeCss}
           note: defaultCampaign.productsHeader.note,
           buttonLabel: defaultCampaign.productGrid.buttonLabel,
           bgColor: "#ffffff",
-          desktopColumns: 3,
+          productCount: defaultCampaign.productGrid.productCount,
+          desktopColumns: 4,
           mobileColumns: 2,
-          desktopImageWidth: 186,
-          desktopImageStageHeight: 230,
+          desktopImageWidth: 132,
+          desktopImageStageHeight: 170,
           mobileImageWidth: 176,
           productGapX: 6,
           productGapBottom: 28,
@@ -6062,10 +6485,13 @@ ${darkModeCss}
           mobileButtonPaddingY: 11,
           headerPadding: "30px 0 16px 0",
           gridPadding: "0 14px 8px 14px",
-          products: clone(fallbackCatalog.slice(0, 6)),
+          products: clone(fallbackCatalog.slice(0, defaultCampaign.productGrid.productCount)),
           titleStyle: clone(defaultCampaign.textStyles.sectionTitle),
           noteStyle: clone(defaultCampaign.textStyles.sectionNote),
-          buttonStyle: clone(defaultCampaign.textStyles.productButtonLabel)
+          buttonStyle: clone(defaultCampaign.textStyles.productButtonLabel),
+          productTitleStyle: clone(defaultCampaign.textStyles.productTitle),
+          productPriceStyle: clone(defaultCampaign.textStyles.productPrice),
+          productCompareAtStyle: clone(defaultCampaign.textStyles.productCompareAt)
         },
         {
           id: "sec-cta",
@@ -6215,6 +6641,14 @@ ${darkModeCss}
     function commitStateNow() {
       if (state.isRestoring) return;
       const json = stableCampaignJson();
+      if (byteSize(json) > maxHistorySnapshotBytes) {
+        state.history = [];
+        state.historyIndex = -1;
+        saveAutosaveDraft();
+        updateHistoryButtons();
+        return;
+      }
+
       if (state.history[state.historyIndex] === json) {
         saveAutosaveDraft();
         updateHistoryButtons();
@@ -6243,7 +6677,12 @@ ${darkModeCss}
     function saveAutosaveDraft() {
       window.clearTimeout(state.autosaveTimer);
       try {
-        localStorage.setItem(campaignDraftStorageKey, JSON.stringify(campaignSnapshot({ includeExportedAt: false })));
+        const json = JSON.stringify(campaignSnapshot({ includeExportedAt: false }));
+        if (byteSize(json) > maxStoredCampaignBytes) {
+          localStorage.removeItem(campaignDraftStorageKey);
+          return;
+        }
+        localStorage.setItem(campaignDraftStorageKey, json);
       } catch (error) {}
     }
 
@@ -6267,7 +6706,13 @@ ${darkModeCss}
 
     function getCampaignLibrary() {
       try {
-        const parsed = JSON.parse(localStorage.getItem(campaignLibraryStorageKey) || "[]");
+        const raw = localStorage.getItem(campaignLibraryStorageKey) || "[]";
+        if (byteSize(raw) > maxStoredCampaignBytes) {
+          localStorage.removeItem(campaignLibraryStorageKey);
+          setStatus("Template library was too large and has been cleared in this browser.");
+          return [];
+        }
+        const parsed = JSON.parse(raw);
         return Array.isArray(parsed) ? parsed : [];
       } catch {
         return [];
@@ -6275,7 +6720,11 @@ ${darkModeCss}
     }
 
     function saveCampaignLibrary(items) {
-      localStorage.setItem(campaignLibraryStorageKey, JSON.stringify(items));
+      const json = JSON.stringify(items);
+      if (byteSize(json) > maxStoredCampaignBytes) {
+        throw new Error("Template library is too large for browser storage. Use Export JSON instead.");
+      }
+      localStorage.setItem(campaignLibraryStorageKey, json);
     }
 
     function renderCampaignLibraryList() {
@@ -6307,10 +6756,19 @@ ${darkModeCss}
         savedAt: new Date().toLocaleString(),
         snapshot: campaignSnapshot({ includeExportedAt: false })
       };
+      if (byteSize(JSON.stringify(record)) > maxStoredCampaignBytes) {
+        setStatus("Template is too large for browser storage. Use hosted images or Export JSON instead.");
+        return;
+      }
       const existingIndex = items.findIndex(item => item.name.toLowerCase() === name.toLowerCase());
       if (existingIndex >= 0) items[existingIndex] = record;
       else items.unshift(record);
-      saveCampaignLibrary(items.slice(0, 20));
+      try {
+        saveCampaignLibrary(items.slice(0, 20));
+      } catch (error) {
+        setStatus(error.message);
+        return;
+      }
       if (input) input.value = "";
       renderCampaignLibraryList();
       setStatus(`Saved template: ${name}`);
@@ -6332,7 +6790,13 @@ ${darkModeCss}
 
     function saveCampaignDraft() {
       try {
-        localStorage.setItem(campaignDraftStorageKey, JSON.stringify(campaignSnapshot({ includeExportedAt: false })));
+        const json = JSON.stringify(campaignSnapshot({ includeExportedAt: false }));
+        if (byteSize(json) > maxStoredCampaignBytes) {
+          localStorage.removeItem(campaignDraftStorageKey);
+          setStatus("Draft is too large for browser storage. Use hosted images or Export JSON instead.");
+          return;
+        }
+        localStorage.setItem(campaignDraftStorageKey, json);
         setStatus("Draft saved in this browser");
       } catch (error) {
         setStatus("Draft is too large for browser storage. Use Export JSON instead.");
@@ -6343,6 +6807,11 @@ ${darkModeCss}
       const raw = localStorage.getItem(campaignDraftStorageKey);
       if (!raw) {
         setStatus("No saved draft found in this browser");
+        return;
+      }
+      if (byteSize(raw) > maxStoredCampaignBytes) {
+        localStorage.removeItem(campaignDraftStorageKey);
+        setStatus("Saved draft was too large and has been cleared in this browser.");
         return;
       }
 
@@ -6356,6 +6825,11 @@ ${darkModeCss}
     function restoreAutosaveDraftOnStart() {
       const raw = localStorage.getItem(campaignDraftStorageKey);
       if (!raw) return false;
+      if (byteSize(raw) > maxStoredCampaignBytes) {
+        localStorage.removeItem(campaignDraftStorageKey);
+        setStatus("Saved progress was too large and has been cleared in this browser.");
+        return false;
+      }
 
       try {
         applyCampaignSnapshot(JSON.parse(raw), "saved progress", { recordHistory: false });
@@ -6493,6 +6967,10 @@ ${darkModeCss}
       // Handle personalization button click
       const personalizeBtn = e.target.closest(".personalize-btn");
       if (personalizeBtn) {
+        if (isPersonalizeDropdownOpen() && activePersonalizeTargetId === personalizeBtn.dataset.target) {
+          hidePersonalizeDropdown();
+          return;
+        }
         showPersonalizeDropdown(personalizeBtn, personalizeBtn.dataset.target);
         return;
       }
@@ -6513,9 +6991,12 @@ ${darkModeCss}
           const event = new Event("input", { bubbles: true });
           input.dispatchEvent(event);
         }
-        const dropdownMenu = byId("personalizeDropdown");
-        if (dropdownMenu) dropdownMenu.style.display = "none";
+        hidePersonalizeDropdown();
         return;
+      }
+
+      if (isPersonalizeDropdownOpen() && !e.target.closest("#personalizeDropdown")) {
+        hidePersonalizeDropdown();
       }
       
       const option = e.target.closest(".add-section-option");
@@ -6628,6 +7109,7 @@ ${darkModeCss}
 
       if (e.key === "Escape") {
         hideContextMenu();
+        hidePersonalizeDropdown();
       }
     });
 
@@ -6708,6 +7190,13 @@ ${darkModeCss}
               section[parts[0]][parts[1]] = target.value;
             } else {
               section[prop] = target.value;
+
+              if (section.type === "products" && prop === "productCount") {
+                const count = syncProductCount(section);
+                target.value = count;
+                renderSelectedProductsList(section);
+                renderCatalog();
+              }
               
               if (section.type === "banner" && prop === "width") {
                 setBannerDimensionsFromImage(section.src, section.id);
@@ -6752,8 +7241,15 @@ ${darkModeCss}
     });
 
     /* Local File Upload Delegation */
-    document.addEventListener("change", (e) => {
+    document.addEventListener("change", async (e) => {
       const target = e.target;
+      if (target.id === "bannerUploadMaxWidth") {
+        state.bannerUploadMaxWidth = normalizeBannerUploadMaxWidth(target.value);
+        target.value = String(state.bannerUploadMaxWidth);
+        setStatus(`Local banner uploads will resize to ${state.bannerUploadMaxWidth}px wide.`);
+        return;
+      }
+
       if (target.id === "campaignImportFile") {
         importCampaignJsonFile(target.files?.[0]);
         return;
@@ -6779,18 +7275,27 @@ ${darkModeCss}
       if (target.id === "bannerFile") {
         const file = target.files?.[0];
         if (!file) return;
-        const reader = new FileReader();
-        reader.onload = () => {
+        target.disabled = true;
+        const maxWidth = normalizeBannerUploadMaxWidth(state.bannerUploadMaxWidth);
+        setStatus(`Optimizing banner image to ${maxWidth}px wide...`);
+        try {
+          const optimized = await optimizeBannerFile(file, { maxWidth });
           const section = state.sections.find(s => s.id === state.selectedSectionId);
           if (section && section.type === "banner") {
-            section.src = String(reader.result);
+            section.src = optimized.dataUrl;
+            state.activeBanner = section.src;
             const input = byId("bannerSrc");
             if (input) input.value = section.src;
             setBannerDimensionsFromImage(section.src, section.id);
-            setStatus("Embedded local banner successfully!");
+            setStatus(`Optimized banner from ${formatFileSize(optimized.originalBytes)} to ${formatFileSize(optimized.outputBytes)} at ${optimized.width}px wide.`);
           }
-        };
-        reader.readAsDataURL(file);
+        } catch (error) {
+          setStatus(error.message || "Could not optimize banner image.");
+        } finally {
+          target.disabled = false;
+          target.value = "";
+        }
+        return;
       }
 
       if (target.id === "splitImageFile") {
