@@ -1753,7 +1753,7 @@
         </div>
       </div>
       <div class="topbar-meta" aria-label="Studio status">
-        <span class="status-pill">Shopify HTML</span>
+        <span class="status-pill">Shopify Liquid</span>
         <span class="status-pill">Desktop + Mobile</span>
       </div>
       <div class="actions primary-actions">
@@ -1846,7 +1846,7 @@
               </div>
             </div>
             <div class="email-size-alert" id="emailSizeWarning">
-              <span><strong>Email HTML size</strong><span id="emailSizeWarningText">Standard target: under 90 KB. Gmail may clip near 102 KB.</span></span>
+              <span><strong>Email HTML size</strong><span id="emailSizeWarningText">Shopify custom email limit: 500 KB. Gmail may clip near 102 KB.</span></span>
             </div>
             <div class="row-actions">
               <button class="button small ghost" type="button" id="selectCodeButton">Select code</button>
@@ -2252,6 +2252,9 @@
     const bannerOptimizerMaxHeight = 1600;
     const bannerUploadMinWidth = 400;
     const bannerUploadDefaultMaxWidth = 1200;
+    const shopifyCustomEmailLimitBytes = 500 * 1024;
+    const shopifyCustomEmailWarningBytes = 450 * 1024;
+    const emailExportMaxLines = 100;
     const emailHtmlTargetBytes = 90 * 1024;
     const emailHtmlClipLimitBytes = 102 * 1024;
 
@@ -2379,6 +2382,21 @@
 
     function byteSize(value) {
       return new Blob([String(value ?? "")]).size;
+    }
+
+    function countHtmlLines(html) {
+      const text = String(html ?? "");
+      if (!text) return 0;
+      return text.split(/\r\n|\r|\n/).length;
+    }
+
+    function compactExportHtml(html) {
+      return String(html ?? "")
+        .replace(/\r\n?/g, "\n")
+        .replace(/\n+/g, " ")
+        .replace(/[ \t\f\v]{2,}/g, " ")
+        .replace(/>\s+</g, "><")
+        .trim();
     }
 
     function formatFileSize(bytes) {
@@ -3285,7 +3303,7 @@
 
       return `<!doctype html>
 <!--
-  FINAL STATIC HTML FOR SHOPIFY/MESSAGING.
+  FINAL SHOPIFY MESSAGING CUSTOM LIQUID EMAIL.
   Generated from docs/camosignal-email-campaign-editor.html.
 -->
 <html lang="en">
@@ -3510,7 +3528,7 @@ ${darkModeCss}
   <div style="display:none; max-height:0; overflow:hidden; opacity:0; color:transparent; line-height:1px;">
     ${escapeHtml(state.campaignGlobal.preheader)}
   </div>
-  {{ open_tracking_block }}
+  {{ open_tracking }}
 
   <center class="email-bg" role="article" aria-roledescription="email" lang="en" bgcolor="${state.campaignGlobal.emailBg || "#ffffff"}" style="width:100%; background-color:${state.campaignGlobal.emailBg || "#ffffff"}; padding:0; color-scheme:${colorSchemeMeta}; supported-color-schemes:${supportedColorSchemes};">
     <table role="presentation" class="email-bg" width="100%" cellpadding="0" cellspacing="0" bgcolor="${state.campaignGlobal.emailBg || "#ffffff"}" style="width:100%; background-color:${state.campaignGlobal.emailBg || "#ffffff"};">
@@ -3537,13 +3555,18 @@ ${darkModeCss}
       const issues = [];
       const htmlBytes = byteSize(html);
       const sizeKb = htmlBytes / 1024;
-      const openTrackingCount = (html.match(/\{\{\s*open_tracking_block\s*\}\}/g) || []).length;
-      const unsubscribeCount = (html.match(/\{\{\s*unsubscribe_link\s*\}\}/g) || []).length;
+      const lineCount = countHtmlLines(html);
+      const openTrackingCount = (html.match(/\{\{\s*open_tracking\s*\}\}/g) || []).length;
+      const legacyOpenTrackingCount = (html.match(/\{\{\s*open_tracking_block\s*\}\}/g) || []).length;
+      const unsubscribeLinkCount = (html.match(/\{\{\s*unsubscribe_link\s*\}\}/g) || []).length;
+      const unsubscribeUrlCount = (html.match(/\{\{\s*unsubscribe_url\s*\}\}/g) || []).length;
+      const unsubscribeCount = unsubscribeLinkCount + unsubscribeUrlCount;
       const dataImageBytes = (html.match(/src="data:image[^"]+"/g) || []).reduce((total, match) => total + match.length, 0);
 
-      if (openTrackingCount !== 1) issues.push({ level: "error", message: "open_tracking_block must appear exactly once." });
-      if (unsubscribeCount !== 1) issues.push({ level: "error", message: "unsubscribe_link must appear exactly once." });
-      if (html.includes("{%")) issues.push({ level: "error", message: "Messaging HTML must not contain Liquid tags." });
+      if (legacyOpenTrackingCount > 0) issues.push({ level: "error", message: "Use {{ open_tracking }} instead of the legacy {{ open_tracking_block }} variable." });
+      if (openTrackingCount !== 1) issues.push({ level: "error", message: "{{ open_tracking }} must appear exactly once for Shopify Messaging custom emails." });
+      if (unsubscribeCount < 1) issues.push({ level: "error", message: "Shopify custom emails require {{ unsubscribe_link }} or {{ unsubscribe_url }}." });
+      if (unsubscribeCount > 1) issues.push({ level: "warning", message: "Multiple unsubscribe variables found. Shopify only requires one unsubscribe link or URL." });
       if (html.includes("data-section-id") || html.includes("data-edit-key") || html.includes("contenteditable") || html.includes("camosignal-email-section-select")) {
         issues.push({ level: "error", message: "Export HTML still contains editor-only attributes." });
       }
@@ -3551,10 +3574,18 @@ ${darkModeCss}
       if (/file:\/\//i.test(html)) issues.push({ level: "error", message: "Export HTML contains local file URLs." });
       if (/src="\s*"/i.test(html)) issues.push({ level: "warning", message: "Some image src values are empty." });
       if (/href="#"/i.test(html)) issues.push({ level: "warning", message: "Some links still use # placeholders." });
-      if (htmlBytes > maxSafePreviewHtmlBytes) {
-        issues.push({ level: "error", message: `HTML is ${formatFileSize(htmlBytes)}. Use hosted image URLs or a smaller banner before preview/export.` });
+      if (/\{\{\s*(first_name|last_name|email)\s*(\||\}\})/g.test(html)) {
+        issues.push({ level: "warning", message: "Klaviyo-style variables were found. Use Shopify Messaging variables such as {{ customer.first_name }} or {{ customer.email }}." });
+      }
+      if (lineCount > emailExportMaxLines) {
+        issues.push({ level: "error", message: `Export code has ${lineCount} lines. Keep Shopify copy code under ${emailExportMaxLines} lines.` });
+      }
+      if (htmlBytes > shopifyCustomEmailLimitBytes) {
+        issues.push({ level: "error", message: `HTML is ${formatFileSize(htmlBytes)}. Shopify custom-coded Liquid emails are limited to ${formatFileSize(shopifyCustomEmailLimitBytes)}.` });
+      } else if (htmlBytes >= shopifyCustomEmailWarningBytes) {
+        issues.push({ level: "warning", message: `HTML is ${Math.round(sizeKb)}KB, close to Shopify's ${formatFileSize(shopifyCustomEmailLimitBytes)} custom-coded email limit.` });
       } else if (htmlBytes >= emailHtmlClipLimitBytes) {
-        issues.push({ level: "warning", message: `HTML is ${Math.round(sizeKb)}KB. Gmail may clip long emails near 102KB.` });
+        issues.push({ level: "warning", message: `HTML is ${Math.round(sizeKb)}KB. Shopify accepts up to ${formatFileSize(shopifyCustomEmailLimitBytes)}, but Gmail may clip long emails near 102KB.` });
       } else if (htmlBytes >= emailHtmlTargetBytes) {
         issues.push({ level: "warning", message: `HTML is ${Math.round(sizeKb)}KB, close to the 102KB Gmail clip limit.` });
       }
@@ -3570,17 +3601,23 @@ ${darkModeCss}
 
       alert.classList.remove("warning", "error");
       const sizeLabel = formatFileSize(sizeBytes);
-      const targetLabel = formatFileSize(emailHtmlTargetBytes);
+      const shopifyLimitLabel = formatFileSize(shopifyCustomEmailLimitBytes);
       const clipLabel = formatFileSize(emailHtmlClipLimitBytes);
 
-      if (sizeBytes >= emailHtmlClipLimitBytes) {
+      if (sizeBytes > shopifyCustomEmailLimitBytes) {
         alert.classList.add("error");
-        text.textContent = `${sizeLabel} HTML. Over the ${clipLabel} Gmail clipping limit. Reduce content or use hosted images before sending.`;
+        text.textContent = `${sizeLabel} HTML. Over Shopify's ${shopifyLimitLabel} custom-coded email limit. Reduce content or use hosted images before copying to Shopify.`;
+      } else if (sizeBytes >= shopifyCustomEmailWarningBytes) {
+        alert.classList.add("warning");
+        text.textContent = `${sizeLabel} HTML. Near Shopify's ${shopifyLimitLabel} custom-coded email limit. Use hosted image URLs for safer sending.`;
+      } else if (sizeBytes >= emailHtmlClipLimitBytes) {
+        alert.classList.add("warning");
+        text.textContent = `${sizeLabel} HTML. Shopify limit is ${shopifyLimitLabel}; Gmail may clip near ${clipLabel}.`;
       } else if (sizeBytes >= emailHtmlTargetBytes) {
         alert.classList.add("warning");
-        text.textContent = `${sizeLabel} HTML. Near the ${clipLabel} Gmail clipping limit. Keep standard emails under ${targetLabel}.`;
+        text.textContent = `${sizeLabel} HTML. Near the ${clipLabel} Gmail clipping point. Shopify custom email limit is ${shopifyLimitLabel}.`;
       } else {
-        text.textContent = `${sizeLabel} HTML. Safe target: under ${targetLabel}; Gmail may clip near ${clipLabel}.`;
+        text.textContent = `${sizeLabel} HTML. Shopify custom email limit is ${shopifyLimitLabel}; Gmail may clip near ${clipLabel}.`;
       }
     }
 
@@ -3600,7 +3637,7 @@ ${darkModeCss}
     }
 
     function validateCurrentEmail(showDetails = true) {
-      const html = byId("generatedHtml")?.value || renderEmail(state);
+      const html = byId("generatedHtml")?.value || compactExportHtml(renderEmail(state));
       const issues = collectEmailValidationIssues(html);
       updateValidationStatus(issues);
       if (showDetails) {
@@ -3809,6 +3846,8 @@ ${darkModeCss}
       const previewModeStyle = "";
       const previewHtml = html
         .replace(/\{\{\s*unsubscribe_link\s*\}\}/g, '<a href="#" style="color:#ffffff; text-decoration:underline;">Unsubscribe</a>')
+        .replace(/\{\{\s*unsubscribe_url\s*\}\}/g, "#")
+        .replace(/\{\{\s*open_tracking\s*\}\}/g, "")
         .replace(/\{\{\s*open_tracking_block\s*\}\}/g, "");
       
       const inlineEditorScript = `
@@ -3954,28 +3993,29 @@ ${darkModeCss}
       const selectedSection = state.sections.find((section) => section.id === state.selectedSectionId);
       const sizeBytes = byteSize(html);
       const sizeKb = Math.max(1, Math.round(sizeBytes / 1024));
+      const lineCount = countHtmlLines(html);
 
       if (byId("sectionCountStat")) byId("sectionCountStat").textContent = String(contentSections.length);
       if (byId("productCountStat")) byId("productCountStat").textContent = String(productCount);
       if (byId("activeSectionStat")) byId("activeSectionStat").textContent = selectedSection ? (selectedSection.type || "Block") : "Global";
       if (byId("htmlSizeStat")) {
         byId("htmlSizeStat").textContent = `${sizeKb} KB`;
-        byId("htmlSizeStat").classList.toggle("warning", sizeBytes >= emailHtmlTargetBytes && sizeBytes < emailHtmlClipLimitBytes);
-        byId("htmlSizeStat").classList.toggle("error", sizeBytes >= emailHtmlClipLimitBytes);
+        byId("htmlSizeStat").classList.toggle("warning", sizeBytes >= emailHtmlTargetBytes && sizeBytes <= shopifyCustomEmailLimitBytes);
+        byId("htmlSizeStat").classList.toggle("error", sizeBytes > shopifyCustomEmailLimitBytes);
       }
       updateEmailSizeWarning(sizeBytes);
-      if (byId("htmlDrawerMeta")) byId("htmlDrawerMeta").textContent = `${sizeKb} KB generated`;
+      if (byId("htmlDrawerMeta")) byId("htmlDrawerMeta").textContent = `${sizeKb} KB / ${lineCount} line${lineCount === 1 ? "" : "s"} generated`;
     }
 
     function generate() {
       try {
-        const html = renderEmail(state);
+        const html = compactExportHtml(renderEmail(state));
         const issues = collectEmailValidationIssues(html);
         updateStudioStats(html);
         updateValidationStatus(issues);
+        byId("generatedHtml").value = html;
         validateHtml(html);
         const previewHtml = renderEmail(state, { editable: true });
-        byId("generatedHtml").value = html;
         renderPreview(previewHtml);
         
         let dynamicCount = state.sections.filter(s => !["header", "footer"].includes(s.type)).length;
@@ -6035,12 +6075,12 @@ ${darkModeCss}
     const personalizationTags = [
       { category: "Shopify tags", label: "Customer First Name", value: "{{ customer.first_name }}" },
       { category: "Shopify tags", label: "Customer Last Name", value: "{{ customer.last_name }}" },
+      { category: "Shopify tags", label: "Customer Full Name", value: "{{ customer.name }}" },
       { category: "Shopify tags", label: "Customer Email", value: "{{ customer.email }}" },
       { category: "Shopify tags", label: "Shop Name", value: "{{ shop.name }}" },
       { category: "Shopify tags", label: "Shop URL", value: "{{ shop.url }}" },
-      { category: "Klaviyo tags", label: "First Name", value: "{{ first_name|default:'' }}" },
-      { category: "Klaviyo tags", label: "Last Name", value: "{{ last_name|default:'' }}" },
-      { category: "Klaviyo tags", label: "Email", value: "{{ email }}" }
+      { category: "Shopify tags", label: "Email Subject", value: "{{ email.subject }}" },
+      { category: "Shopify tags", label: "Email Preview Text", value: "{{ email.preview_text }}" }
     ];
 
     let activePersonalizeTargetId = null;
@@ -6535,7 +6575,9 @@ ${darkModeCss}
     }
 
     async function copyHtml() {
-      const html = byId("generatedHtml").value;
+      const html = compactExportHtml(byId("generatedHtml").value);
+      byId("generatedHtml").value = html;
+      updateStudioStats(html);
       const issues = validateCurrentEmail(false);
       const errors = issues.filter(issue => issue.level === "error");
       if (errors.length) {
@@ -6553,7 +6595,9 @@ ${darkModeCss}
     }
 
     function downloadHtml() {
-      const html = byId("generatedHtml").value;
+      const html = compactExportHtml(byId("generatedHtml").value);
+      byId("generatedHtml").value = html;
+      updateStudioStats(html);
       const issues = validateCurrentEmail(false);
       const errors = issues.filter(issue => issue.level === "error");
       if (errors.length) {
