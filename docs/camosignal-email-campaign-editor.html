@@ -2129,7 +2129,7 @@
       header: {
         logoSrc: "https://cdn.shopify.com/s/files/1/0741/7987/0911/files/LOGO_FINAL_WEBSITE.png",
         logoAlt: "CamoSignal",
-        logoWidth: 96,
+        logoWidth: 65,
         href: "https://camosignal.com",
         brandText: "CAMOSIGNAL",
       },
@@ -2156,7 +2156,7 @@
         desktopImageWidth: 132,
         desktopImageStageHeight: 170,
         mobileImageWidth: 176,
-        buttonLabel: "SHOP NOW",
+        buttonLabel: "",
       },
       bottomCta: {
         label: "View All Products",
@@ -2178,8 +2178,8 @@
         offerEyebrow: { align: "center", font: "oswald", size: 12, color: "#5a6e5f", weight: "600", transform: "uppercase" },
         offerHeadline: { align: "center", font: "oswald", size: 26, color: "#2c3d33", weight: "700", transform: "uppercase" },
         offerBody: { align: "center", font: "arial", size: 13, color: "#2c3d33", weight: "400", transform: "none" },
-        sectionTitle: { align: "left", font: "oswald", size: 30, color: "#2c3d33", weight: "700", transform: "uppercase" },
-        sectionNote: { align: "right", font: "arial", size: 12, color: "#5a6e5f", weight: "700", transform: "none" },
+        sectionTitle: { align: "center", font: "oswald", size: 30, color: "#2c3d33", weight: "700", transform: "uppercase" },
+        sectionNote: { align: "center", font: "arial", size: 12, color: "#5a6e5f", weight: "700", transform: "none" },
         productButtonLabel: { align: "center", font: "oswald", size: 10, color: "#faf6ee", weight: "600", transform: "uppercase" },
         bottomCtaLabel: { align: "center", font: "oswald", size: 12, color: "#ffffff", weight: "700", transform: "uppercase" },
         footerBrand: { align: "center", font: "oswald", size: 20, color: "#ffffff", weight: "700", transform: "uppercase" },
@@ -2188,9 +2188,9 @@
         footerInstagramLabel: { align: "center", font: "arial", size: 12, color: "#ffffff", weight: "700", transform: "none" },
         footerFacebookLabel: { align: "center", font: "arial", size: 12, color: "#ffffff", weight: "700", transform: "none" },
         footerVisitStoreLabel: { align: "center", font: "arial", size: 11, color: "#ffffff", weight: "700", transform: "none" },
-        productTitle: { align: "left", font: "oswald", size: 12, color: "#2c3d33", weight: "700", transform: "uppercase" },
-        productPrice: { align: "left", font: "oswald", size: 13, color: "#c0392b", weight: "700", transform: "none" },
-        productCompareAt: { align: "left", font: "oswald", size: 13, color: "#777777", weight: "400", transform: "none" },
+        productTitle: { align: "center", font: "oswald", size: 12, color: "#2c3d33", weight: "700", transform: "uppercase" },
+        productPrice: { align: "center", font: "oswald", size: 13, color: "#c0392b", weight: "700", transform: "none" },
+        productCompareAt: { align: "center", font: "oswald", size: 13, color: "#777777", weight: "400", transform: "none" },
         headerBrand: { align: "center", font: "oswald", size: 24, color: "#102d20", weight: "700", transform: "uppercase" },
       },
     };
@@ -2629,27 +2629,20 @@
 
       return `
         <td width="${config.desktopCellWidth}%" valign="top" style="padding:0 ${config.productGapX}px ${config.productGapBottom}px ${config.productGapX}px;">
-          <table role="presentation" class="dark-product-card" width="100%" cellpadding="0" cellspacing="0" style="width:100%; table-layout:fixed; background-color:#ffffff;">
+          <table role="presentation" class="dark-product-card" width="100%" cellpadding="0" cellspacing="0" style="width:100%; table-layout:fixed; background-color:#ffffff; border:1px solid #e7eee9; border-radius:12px; box-shadow:0 10px 24px rgba(16,45,32,0.12); overflow:hidden;">
             <tr>
-              <td class="dark-product-stage" align="center" valign="middle" height="${config.desktopImageStageHeight}" style="height:${config.desktopImageStageHeight}px; padding:0; line-height:0; background-color:#ffffff;">
+              <td class="dark-product-stage" align="center" valign="middle" height="${config.desktopImageStageHeight}" style="height:${config.desktopImageStageHeight}px; padding:12px 8px 0 8px; line-height:0; background-color:#ffffff;">
                 <a href="${escapeAttr(product.url)}" style="display:block;">
                   <img ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_image"` : ""} src="${escapeAttr(product.image)}" width="${config.desktopImageWidth}" alt="${escapeAttr(product.title)}" style="width:100%; max-width:${config.desktopImageWidth}px; height:auto; margin:0 auto; background-color:#ffffff; border:0;">
                 </a>
               </td>
             </tr>
             <tr>
-              <td align="left" style="padding:6px 0 0 0; text-align:left;">
+              <td align="center" style="padding:10px 10px 14px 10px; text-align:center;">
                 <p class="product-title-line" title="${escapeAttr(product.title)}" ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_title"` : ""} style="${config.productTitleStyle}">${escapeHtml(displayTitle)}</p>
                 <p style="${config.productPriceRowStyle}">
                   <span ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_price"` : ""} style="${config.productPriceStyle}">${escapeHtml(product.price)}</span>${compareAtHtml}
                 </p>
-                <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
-                  <tr>
-                    <td class="brand-green-bg" align="center" bgcolor="#2c3d33" style="background:#2c3d33; background-color:#2c3d33; border:0; border-radius:${config.buttonRadius}px;">
-                      <a class="btn-dark" href="${escapeAttr(product.url)}" style="${config.buttonStyle}" ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_button"` : ""}><span ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_button"` : ""}>${escapeHtml(config.buttonLabel)}</span></a>
-                    </td>
-                  </tr>
-                </table>
               </td>
             </tr>
           </table>
@@ -2664,27 +2657,20 @@
 
       return `
         <td class="mobile-product-cell" width="${config.mobileCellWidth}%" valign="top" style="padding:0 ${config.mobileGapX}px ${config.mobileGapBottom}px ${config.mobileGapX}px;">
-          <table role="presentation" class="dark-product-card" width="100%" cellpadding="0" cellspacing="0" style="width:100%; table-layout:fixed; background-color:#ffffff;">
+          <table role="presentation" class="dark-product-card" width="100%" cellpadding="0" cellspacing="0" style="width:100%; table-layout:fixed; background-color:#ffffff; border:1px solid #e7eee9; border-radius:12px; box-shadow:0 10px 24px rgba(16,45,32,0.12); overflow:hidden;">
             <tr>
-              <td class="dark-product-stage" style="padding:0; background-color:#ffffff;">
+              <td class="dark-product-stage" style="padding:10px 7px 0 7px; background-color:#ffffff;">
                 <a href="${escapeAttr(product.url)}" style="display:block;">
                   <img class="mobile-product-image" ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_image"` : ""} src="${escapeAttr(product.image)}" width="${config.mobileImageWidth}" alt="${escapeAttr(product.title)}" style="width:100%; max-width:${config.mobileImageWidth}px; height:auto; margin:0 auto; border:0;">
                 </a>
               </td>
             </tr>
             <tr>
-              <td align="left" style="padding:6px 0 0 0; text-align:left;">
+              <td align="center" style="padding:9px 8px 13px 8px; text-align:center;">
                 <p class="product-title-line mobile-title" title="${escapeAttr(product.title)}" ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_title"` : ""} style="${config.mobileProductTitleStyle}">${escapeHtml(displayTitle)}</p>
                 <p style="${config.mobileProductPriceRowStyle}">
                   <span ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_price"` : ""} style="${config.mobileProductPriceStyle}">${escapeHtml(product.price)}</span>${compareAtHtml}
                 </p>
-                <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
-                  <tr>
-                    <td class="brand-green-bg" align="center" bgcolor="#2c3d33" style="background:#2c3d33; background-color:#2c3d33; border:0; border-radius:${config.buttonRadius}px;">
-                      <a class="mobile-button btn-dark" href="${escapeAttr(product.url)}" style="${config.mobileButtonStyle}" ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_button"` : ""}><span ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_button"` : ""}>${escapeHtml(config.buttonLabel)}</span></a>
-                    </td>
-                  </tr>
-                </table>
               </td>
             </tr>
           </table>
@@ -2978,9 +2964,13 @@
     }
 
     function renderProductsSectionHtml(section, editable) {
-      const buttonLabel = section.buttonLabel || "SHOP NOW";
-      const cssTitle = textCssForSection(section.titleStyle, "sectionTitle", "margin:0; letter-spacing:0;");
-      const cssNote = textCssForSection(section.noteStyle, "sectionNote", "");
+      const centeredTitleStyle = { ...(section.titleStyle || {}), align: "center" };
+      const centeredNoteStyle = { ...(section.noteStyle || {}), align: "center" };
+      const centeredProductTitleStyle = { ...(section.productTitleStyle || {}), align: "center" };
+      const centeredProductPriceStyle = { ...(section.productPriceStyle || {}), align: "center" };
+      const centeredProductCompareAtStyle = { ...(section.productCompareAtStyle || {}), align: "center" };
+      const cssTitle = textCssForSection(centeredTitleStyle, "sectionTitle", "margin:0; letter-spacing:0;");
+      const cssNote = textCssForSection(centeredNoteStyle, "sectionNote", "display:block; margin:6px 0 0 0;");
       const bgColor = section.bgColor || state.campaignGlobal.contentBg || "#ffffff";
       const headerPadding = section.headerPadding || "30px 0 16px 0";
       const gridPadding = section.gridPadding || "0 14px 8px 14px";
@@ -2988,12 +2978,7 @@
       const products = (section.products || []).slice(0, productCount);
       const desktopColumns = Math.min(Math.max(Number(section.desktopColumns) || 4, 2), 4);
       const mobileColumns = Math.min(Math.max(Number(section.mobileColumns) || 2, 1), 2);
-      const buttonRadius = Number(section.buttonRadius) || 8;
-      const desktopButtonPaddingY = Number(section.desktopButtonPaddingY) || 14;
-      const desktopButtonPaddingX = Number(section.desktopButtonPaddingX) || 15;
-      const mobileButtonPaddingY = Number(section.mobileButtonPaddingY) || 11;
-      const mobileButtonPaddingX = Number(section.mobileButtonPaddingX) || 6;
-      const productTitleSize = Number(section.productTitleStyle?.size) || defaultCampaign.textStyles.productTitle.size;
+      const productTitleSize = Number(centeredProductTitleStyle.size) || defaultCampaign.textStyles.productTitle.size;
       const productTitleLineHeight = Math.max(productTitleSize + 4, Math.round(productTitleSize * 1.28));
       const desktopTitleHeight = productTitleLineHeight * 2;
       const mobileTitleHeight = Math.max(30, desktopTitleHeight);
@@ -3009,18 +2994,14 @@
         productGapBottom: Math.min(Math.max(Number(section.productGapBottom) || 28, 10), 70),
         mobileGapX: Math.min(Math.max(Number(section.mobileGapX) || 5, 0), 16),
         mobileGapBottom: Math.min(Math.max(Number(section.mobileGapBottom) || 24, 10), 60),
-        buttonRadius,
-        buttonLabel: buttonLabel,
-        productTitleStyle: textCssForSection(section.productTitleStyle, "productTitle", `display:-webkit-box; width:100%; max-width:100%; height:${desktopTitleHeight}px; min-height:${desktopTitleHeight}px; margin:0 0 5px 0; mso-line-height-rule:exactly; white-space:normal; overflow:hidden; text-overflow:ellipsis; -webkit-line-clamp:2; -webkit-box-orient:vertical; word-break:normal; overflow-wrap:break-word;`),
-        mobileProductTitleStyle: textCssForSection(section.productTitleStyle, "productTitle", `display:-webkit-box; width:100%; max-width:100%; height:${mobileTitleHeight}px; min-height:${mobileTitleHeight}px; margin:0 0 4px 0; mso-line-height-rule:exactly; white-space:normal; overflow:hidden; text-overflow:ellipsis; -webkit-line-clamp:2; -webkit-box-orient:vertical; word-break:normal; overflow-wrap:break-word;`),
-        productPriceRowStyle: textCssForSection(section.productPriceStyle, "productPrice", "margin:0 0 12px 0;"),
-        mobileProductPriceRowStyle: textCssForSection(section.productPriceStyle, "productPrice", "margin:0 0 9px 0;"),
-        productPriceStyle: textCssForSection(section.productPriceStyle, "productPrice", "display:inline;"),
-        mobileProductPriceStyle: textCssForSection(section.productPriceStyle, "productPrice", "display:inline;"),
-        compareAtStyle: textCssForSection(section.productCompareAtStyle, "productCompareAt", "display:inline;"),
-        mobileCompareAtStyle: textCssForSection(section.productCompareAtStyle, "productCompareAt", "display:inline;"),
-        buttonStyle: buttonTextCssForSection(section.buttonStyle, "productButtonLabel", `display:block; padding:${desktopButtonPaddingY}px ${desktopButtonPaddingX}px; letter-spacing:1.5px; border-radius:${buttonRadius}px;`),
-        mobileButtonStyle: buttonTextCssForSection(section.buttonStyle, "productButtonLabel", `display:block; padding:${mobileButtonPaddingY}px ${mobileButtonPaddingX}px; letter-spacing:1.1px; border-radius:${buttonRadius}px;`),
+        productTitleStyle: textCssForSection(centeredProductTitleStyle, "productTitle", `display:-webkit-box; width:100%; max-width:100%; height:${desktopTitleHeight}px; min-height:${desktopTitleHeight}px; margin:0 0 6px 0; mso-line-height-rule:exactly; white-space:normal; overflow:hidden; text-overflow:ellipsis; -webkit-line-clamp:2; -webkit-box-orient:vertical; word-break:normal; overflow-wrap:break-word;`),
+        mobileProductTitleStyle: textCssForSection(centeredProductTitleStyle, "productTitle", `display:-webkit-box; width:100%; max-width:100%; height:${mobileTitleHeight}px; min-height:${mobileTitleHeight}px; margin:0 0 5px 0; mso-line-height-rule:exactly; white-space:normal; overflow:hidden; text-overflow:ellipsis; -webkit-line-clamp:2; -webkit-box-orient:vertical; word-break:normal; overflow-wrap:break-word;`),
+        productPriceRowStyle: textCssForSection(centeredProductPriceStyle, "productPrice", "margin:0;"),
+        mobileProductPriceRowStyle: textCssForSection(centeredProductPriceStyle, "productPrice", "margin:0;"),
+        productPriceStyle: textCssForSection(centeredProductPriceStyle, "productPrice", "display:inline;"),
+        mobileProductPriceStyle: textCssForSection(centeredProductPriceStyle, "productPrice", "display:inline;"),
+        compareAtStyle: textCssForSection(centeredProductCompareAtStyle, "productCompareAt", "display:inline;"),
+        mobileCompareAtStyle: textCssForSection(centeredProductCompareAtStyle, "productCompareAt", "display:inline;"),
       };
       
       const desktopRows = renderRows(products, desktopColumns, renderDesktopProduct, productGridConfig, editable);
@@ -3031,10 +3012,10 @@
           <td class="dark-content-bg" style="padding:${headerPadding}; background-color:${bgColor};">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
               <tr>
-                <td>
+                <td align="center" style="text-align:center;">
                   ${section.title ? `<h2${editTextAttr(section.id + "_title", editable)} style="${cssTitle}">${escapeHtml(section.title)}</h2>` : ""}
+                  ${section.note ? `<span${editTextAttr(section.id + "_note", editable)} style="${cssNote}">${escapeHtml(section.note)}</span>` : ""}
                 </td>
-                ${section.note ? `<td${editTextAttr(section.id + "_note", editable)} class="hide-mobile" align="${section.noteStyle?.align || "right"}" valign="bottom" style="${cssNote}">${escapeHtml(section.note)}</td>` : ""}
               </tr>
             </table>
           </td>
@@ -4774,10 +4755,6 @@ ${darkModeCss}
               ${renderLabel("prodNote", "Subheading Note", true)}
               <input type="text" id="prodNote" data-bind-property="note" data-section-id="${section.id}" value="${escapeAttr(section.note)}">
             </div>
-            <div class="field">
-              <label for="prodBtnLabel">Button Text</label>
-              <input type="text" id="prodBtnLabel" data-bind-property="buttonLabel" data-section-id="${section.id}" value="${escapeAttr(section.buttonLabel)}">
-            </div>
           </div>
         </section>
 
@@ -4832,10 +4809,6 @@ ${darkModeCss}
               <label>Row Gap</label>
               <input type="number" min="10" max="70" data-bind-property="productGapBottom" data-section-id="${section.id}" value="${section.productGapBottom || 28}">
             </div>
-            <div class="field">
-              <label>Button Radius</label>
-              <input type="number" min="0" max="20" data-bind-property="buttonRadius" data-section-id="${section.id}" value="${section.buttonRadius || 8}">
-            </div>
             <div class="field full">
               <label for="productsHeaderPadding">Header Padding</label>
               <input type="text" id="productsHeaderPadding" data-bind-property="headerPadding" data-section-id="${section.id}" value="${escapeAttr(section.headerPadding || "30px 0 16px 0")}">
@@ -4851,7 +4824,6 @@ ${darkModeCss}
           <h3 class="section-title">Typography</h3>
           ${renderTextStyleDetails(section.id, "titleStyle", "Heading Style", section.titleStyle)}
           ${renderTextStyleDetails(section.id, "noteStyle", "Subheading Style", section.noteStyle)}
-          ${renderTextStyleDetails(section.id, "buttonStyle", "Grid Button Style", section.buttonStyle)}
           ${renderTextStyleDetails(section.id, "productTitleStyle", "Product Title Style", section.productTitleStyle)}
           ${renderTextStyleDetails(section.id, "productPriceStyle", "Product Price Style", section.productPriceStyle)}
           ${renderTextStyleDetails(section.id, "productCompareAtStyle", "Compare Price Style", section.productCompareAtStyle)}
@@ -5840,7 +5812,7 @@ ${darkModeCss}
           ...section,
           title: "Featured Products",
           note: "3 items",
-          buttonLabel: "SHOP NOW",
+          buttonLabel: "",
           bgColor: "#ffffff",
           productCount: 3,
           desktopColumns: 4,
