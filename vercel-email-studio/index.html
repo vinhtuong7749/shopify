@@ -2188,8 +2188,8 @@
         footerInstagramLabel: { align: "center", font: "arial", size: 12, color: "#ffffff", weight: "700", transform: "none" },
         footerFacebookLabel: { align: "center", font: "arial", size: 12, color: "#ffffff", weight: "700", transform: "none" },
         footerVisitStoreLabel: { align: "center", font: "arial", size: 11, color: "#ffffff", weight: "700", transform: "none" },
-        productTitle: { align: "center", font: "oswald", size: 12, color: "#2c3d33", weight: "700", transform: "uppercase" },
-        productPrice: { align: "center", font: "oswald", size: 13, color: "#c0392b", weight: "700", transform: "none" },
+        productTitle: { align: "center", font: "oswald", size: 12, color: "#2c3d33", weight: "400", transform: "uppercase" },
+        productPrice: { align: "center", font: "oswald", size: 13, color: "#c0392b", weight: "400", transform: "none" },
         productCompareAt: { align: "center", font: "oswald", size: 13, color: "#777777", weight: "400", transform: "none" },
         headerBrand: { align: "center", font: "oswald", size: 24, color: "#102d20", weight: "700", transform: "uppercase" },
       },
@@ -2629,16 +2629,16 @@
 
       return `
         <td width="${config.desktopCellWidth}%" valign="top" style="padding:0 ${config.productGapX}px ${config.productGapBottom}px ${config.productGapX}px;">
-          <table role="presentation" class="dark-product-card" width="100%" cellpadding="0" cellspacing="0" style="width:100%; table-layout:fixed; background-color:#ffffff; border:1px solid #e7eee9; border-radius:12px; box-shadow:0 10px 24px rgba(16,45,32,0.12); overflow:hidden;">
+          <table role="presentation" class="dark-product-card" width="100%" cellpadding="0" cellspacing="0" style="width:100%; table-layout:fixed; background-color:#ffffff;">
             <tr>
-              <td class="dark-product-stage" align="center" valign="middle" height="${config.desktopImageStageHeight}" style="height:${config.desktopImageStageHeight}px; padding:12px 8px 0 8px; line-height:0; background-color:#ffffff;">
-                <a href="${escapeAttr(product.url)}" style="display:block;">
-                  <img ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_image"` : ""} src="${escapeAttr(product.image)}" width="${config.desktopImageWidth}" alt="${escapeAttr(product.title)}" style="width:100%; max-width:${config.desktopImageWidth}px; height:auto; margin:0 auto; background-color:#ffffff; border:0;">
+              <td class="dark-product-stage" align="center" valign="middle" height="${config.desktopImageStageHeight}" style="height:${config.desktopImageStageHeight}px; padding:0; line-height:0; background-color:#ffffff;">
+                <a href="${escapeAttr(product.url)}" style="display:inline-block; max-width:100%; padding:10px 8px; line-height:0; text-decoration:none; background-color:#ffffff; border:1px solid #e7eee9; border-radius:12px; box-shadow:0 10px 24px rgba(16,45,32,0.12); overflow:hidden;">
+                  <img ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_image"` : ""} src="${escapeAttr(product.image)}" width="${config.desktopImageWidth}" alt="${escapeAttr(product.title)}" style="display:block; width:100%; max-width:${config.desktopImageWidth}px; height:auto; margin:0 auto; background-color:#ffffff; border:0;">
                 </a>
               </td>
             </tr>
             <tr>
-              <td align="center" style="padding:10px 10px 14px 10px; text-align:center;">
+              <td align="center" style="padding:10px 4px 0 4px; text-align:center;">
                 <p class="product-title-line" title="${escapeAttr(product.title)}" ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_title"` : ""} style="${config.productTitleStyle}">${escapeHtml(displayTitle)}</p>
                 <p style="${config.productPriceRowStyle}">
                   <span ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_price"` : ""} style="${config.productPriceStyle}">${escapeHtml(product.price)}</span>${compareAtHtml}
@@ -2657,16 +2657,16 @@
 
       return `
         <td class="mobile-product-cell" width="${config.mobileCellWidth}%" valign="top" style="padding:0 ${config.mobileGapX}px ${config.mobileGapBottom}px ${config.mobileGapX}px;">
-          <table role="presentation" class="dark-product-card" width="100%" cellpadding="0" cellspacing="0" style="width:100%; table-layout:fixed; background-color:#ffffff; border:1px solid #e7eee9; border-radius:12px; box-shadow:0 10px 24px rgba(16,45,32,0.12); overflow:hidden;">
+          <table role="presentation" class="dark-product-card" width="100%" cellpadding="0" cellspacing="0" style="width:100%; table-layout:fixed; background-color:#ffffff;">
             <tr>
-              <td class="dark-product-stage" style="padding:10px 7px 0 7px; background-color:#ffffff;">
-                <a href="${escapeAttr(product.url)}" style="display:block;">
-                  <img class="mobile-product-image" ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_image"` : ""} src="${escapeAttr(product.image)}" width="${config.mobileImageWidth}" alt="${escapeAttr(product.title)}" style="width:100%; max-width:${config.mobileImageWidth}px; height:auto; margin:0 auto; border:0;">
+              <td class="dark-product-stage" align="center" style="padding:0; background-color:#ffffff;">
+                <a href="${escapeAttr(product.url)}" style="display:inline-block; max-width:100%; padding:9px 7px; line-height:0; text-decoration:none; background-color:#ffffff; border:1px solid #e7eee9; border-radius:12px; box-shadow:0 10px 24px rgba(16,45,32,0.12); overflow:hidden;">
+                  <img class="mobile-product-image" ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_image"` : ""} src="${escapeAttr(product.image)}" width="${config.mobileImageWidth}" alt="${escapeAttr(product.title)}" style="display:block; width:100%; max-width:${config.mobileImageWidth}px; height:auto; margin:0 auto; border:0;">
                 </a>
               </td>
             </tr>
             <tr>
-              <td align="center" style="padding:9px 8px 13px 8px; text-align:center;">
+              <td align="center" style="padding:9px 4px 0 4px; text-align:center;">
                 <p class="product-title-line mobile-title" title="${escapeAttr(product.title)}" ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_title"` : ""} style="${config.mobileProductTitleStyle}">${escapeHtml(displayTitle)}</p>
                 <p style="${config.mobileProductPriceRowStyle}">
                   <span ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_price"` : ""} style="${config.mobileProductPriceStyle}">${escapeHtml(product.price)}</span>${compareAtHtml}
@@ -2966,8 +2966,8 @@
     function renderProductsSectionHtml(section, editable) {
       const centeredTitleStyle = { ...(section.titleStyle || {}), align: "center" };
       const centeredNoteStyle = { ...(section.noteStyle || {}), align: "center" };
-      const centeredProductTitleStyle = { ...(section.productTitleStyle || {}), align: "center" };
-      const centeredProductPriceStyle = { ...(section.productPriceStyle || {}), align: "center" };
+      const centeredProductTitleStyle = { ...(section.productTitleStyle || {}), align: "center", weight: "400" };
+      const centeredProductPriceStyle = { ...(section.productPriceStyle || {}), align: "center", weight: "400" };
       const centeredProductCompareAtStyle = { ...(section.productCompareAtStyle || {}), align: "center" };
       const cssTitle = textCssForSection(centeredTitleStyle, "sectionTitle", "margin:0; letter-spacing:0;");
       const cssNote = textCssForSection(centeredNoteStyle, "sectionNote", "display:block; margin:6px 0 0 0;");
