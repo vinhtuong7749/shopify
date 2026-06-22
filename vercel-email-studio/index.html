@@ -2396,6 +2396,7 @@
         .replace(/\n+/g, " ")
         .replace(/[ \t\f\v]{2,}/g, " ")
         .replace(/>\s+</g, "><")
+        .replace(/(<!DOCTYPE html>|<html\b[^>]*>|<head>|<meta\b[^>]*>|<title>.*?<\/title>|<style>)/gi, "$1\n")
         .replace(/(<\/style>|<\/head>|<body\b[^>]*>|<\/body>|<\/html>)/gi, "$1\n")
         .replace(/(<tr\b)/gi, "\n$1")
         .replace(/(<\/tr>)/gi, "$1\n")
@@ -3286,11 +3287,7 @@
       }
     }` : "";
 
-      return `<!doctype html>
-<!--
-  FINAL SHOPIFY MESSAGING CUSTOM LIQUID EMAIL.
-  Generated from docs/camosignal-email-campaign-editor.html.
--->
+      return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -3299,9 +3296,6 @@
   <meta name="color-scheme" content="${colorSchemeMeta}">
   <meta name="supported-color-schemes" content="${supportedColorSchemes}">
   <title>CamoSignal Marketing Email</title>
-  <!--[if !mso]><!-->
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
-  <!--<![endif]-->
   <style>
     :root {
       color-scheme: ${colorSchemeMeta};
@@ -3513,7 +3507,7 @@ ${darkModeCss}
   <div style="display:none; max-height:0; overflow:hidden; opacity:0; color:transparent; line-height:1px;">
     ${escapeHtml(state.campaignGlobal.preheader)}
   </div>
-  {{ open_tracking }}
+  {{ open_tracking_block }}
 
   <center class="email-bg" role="article" aria-roledescription="email" lang="en" bgcolor="${state.campaignGlobal.emailBg || "#ffffff"}" style="width:100%; background-color:${state.campaignGlobal.emailBg || "#ffffff"}; padding:0; color-scheme:${colorSchemeMeta}; supported-color-schemes:${supportedColorSchemes};">
     <table role="presentation" class="email-bg" width="100%" cellpadding="0" cellspacing="0" bgcolor="${state.campaignGlobal.emailBg || "#ffffff"}" style="width:100%; background-color:${state.campaignGlobal.emailBg || "#ffffff"};">
@@ -3541,15 +3535,15 @@ ${darkModeCss}
       const htmlBytes = byteSize(html);
       const sizeKb = htmlBytes / 1024;
       const lineCount = countHtmlLines(html);
-      const openTrackingCount = (html.match(/\{\{\s*open_tracking\s*\}\}/g) || []).length;
-      const legacyOpenTrackingBlockCount = (html.match(/\{\{\s*open_tracking_block\s*\}\}/g) || []).length;
+      const openTrackingBlockCount = (html.match(/\{\{\s*open_tracking_block\s*\}\}/g) || []).length;
+      const legacyOpenTrackingCount = (html.match(/\{\{\s*open_tracking\s*\}\}/g) || []).length;
       const unsubscribeLinkCount = (html.match(/\{\{\s*unsubscribe_link\s*\}\}/g) || []).length;
       const unsubscribeUrlCount = (html.match(/\{\{\s*unsubscribe_url\s*\}\}/g) || []).length;
       const unsubscribeCount = unsubscribeLinkCount + unsubscribeUrlCount;
       const dataImageBytes = (html.match(/src="data:image[^"]+"/g) || []).reduce((total, match) => total + match.length, 0);
 
-      if (legacyOpenTrackingBlockCount > 0) issues.push({ level: "error", message: "Use {{ open_tracking }} instead of {{ open_tracking_block }} for Shopify Messaging custom emails." });
-      if (openTrackingCount !== 1) issues.push({ level: "error", message: "{{ open_tracking }} must appear exactly once for Shopify Messaging custom emails." });
+      if (legacyOpenTrackingCount > 0) issues.push({ level: "error", message: "Use {{ open_tracking_block }} instead of {{ open_tracking }} for Shopify Messaging custom emails." });
+      if (openTrackingBlockCount !== 1) issues.push({ level: "error", message: "{{ open_tracking_block }} must appear exactly once for Shopify Messaging custom emails." });
       if (unsubscribeCount < 1) issues.push({ level: "error", message: "Shopify custom emails require {{ unsubscribe_link }} or {{ unsubscribe_url }}." });
       if (unsubscribeCount > 1) issues.push({ level: "warning", message: "Multiple unsubscribe variables found. Shopify only requires one unsubscribe link or URL." });
       if (html.includes("data-section-id") || html.includes("data-edit-key") || html.includes("contenteditable") || html.includes("camosignal-email-section-select")) {
