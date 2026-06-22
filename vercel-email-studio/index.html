@@ -1398,6 +1398,20 @@
       background: #6f7278;
     }
 
+    .device-shell.gmail-client-preview {
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.24);
+    }
+
+    .device-shell.gmail-client-preview .device-chrome {
+      border-color: #2d2f32;
+      background: #202124;
+      color: #f1f3f4;
+    }
+
+    .device-shell.gmail-client-preview .chrome-dots span {
+      background: #5f6368;
+    }
+
     .device {
       height: 720px;
       border: 1px solid var(--green-200);
@@ -1428,6 +1442,11 @@
 
     .device.iphone,
     .device.iphone-dark {
+      width: 390px;
+      max-width: 100%;
+    }
+
+    .device.gmail-client-preview {
       width: 390px;
       max-width: 100%;
     }
@@ -1836,6 +1855,7 @@
               <div class="preview-presets" aria-label="Preview mode">
                 <button class="button small active" type="button" data-preview-preset="desktop">Desktop</button>
                 <button class="button small" type="button" data-preview-preset="iphone">iPhone</button>
+                <button class="button small" type="button" data-preview-preset="gmail">Gmail</button>
               </div>
               <div class="preview-meta">
                 <span class="light-pill" id="previewViewportLabel">Desktop</span>
@@ -3846,11 +3866,112 @@ ${darkModeCss}
         </style>`;
     }
 
+    function gmailLightPreviewStyleTag() {
+      return `
+        <style id="camosignal-gmail-light-preview-style">
+          html,
+          body,
+          center,
+          .email-bg {
+            width: 100% !important;
+            min-width: 0 !important;
+            background-color: #ffffff !important;
+            background: #ffffff !important;
+            -webkit-text-size-adjust: 100% !important;
+            text-size-adjust: 100% !important;
+          }
+
+          body,
+          table,
+          td,
+          p,
+          span,
+          a {
+            font-family: Arial, Helvetica, sans-serif !important;
+          }
+
+          .email-shell {
+            width: 100% !important;
+            max-width: 390px !important;
+          }
+
+          .desktop-product-grid {
+            display: none !important;
+            max-height: 0 !important;
+            overflow: hidden !important;
+            mso-hide: all !important;
+          }
+
+          .mobile-product-grid {
+            display: table !important;
+            width: 100% !important;
+            max-height: none !important;
+            overflow: visible !important;
+            table-layout: fixed !important;
+          }
+
+          .mobile-product-cell {
+            display: table-cell !important;
+            width: 50% !important;
+            vertical-align: top !important;
+            padding-left: 8px !important;
+            padding-right: 8px !important;
+          }
+
+          .product-grid-pad {
+            padding-left: 22px !important;
+            padding-right: 22px !important;
+          }
+
+          .product-image-shadow {
+            box-shadow: none !important;
+            border: 1px solid #e4ebe6 !important;
+            border-radius: 12px !important;
+            background-color: #ffffff !important;
+          }
+
+          .product-image-shadow-fallback img {
+            display: block !important;
+            height: 13px !important;
+          }
+
+          .mobile-product-image {
+            display: block !important;
+            width: 100% !important;
+            max-width: 176px !important;
+            height: auto !important;
+            margin: 0 auto !important;
+          }
+
+          .mobile-title,
+          .product-title-line {
+            font-size: 12px !important;
+            line-height: 17px !important;
+            height: 34px !important;
+            min-height: 34px !important;
+            font-weight: 400 !important;
+            letter-spacing: 0 !important;
+          }
+
+          .mobile-title {
+            margin-bottom: 6px !important;
+          }
+
+          [style*="color:#c0392b"],
+          [style*="color: #c0392b"] {
+            font-size: 13px !important;
+            line-height: 18px !important;
+            font-weight: 400 !important;
+          }
+        </style>`;
+    }
+
     function previewDocument(html) {
       const baseHref = location.href.replace(/[^/]*$/, "");
       const selectedId = state.selectedSectionId || "";
       const colorMode = state.previewColorMode || "light";
-      const previewModeStyle = "";
+      const previewClient = state.previewPreset === "gmail" ? "gmail" : "web";
+      const previewModeStyle = previewClient === "gmail" ? gmailLightPreviewStyleTag() : "";
       const previewHtml = html
         .replace(/\{\{\s*unsubscribe_link\s*\}\}/g, '<a href="#" style="color:#ffffff; text-decoration:underline;">Unsubscribe</a>')
         .replace(/\{\{\s*unsubscribe_url\s*\}\}/g, "#")
@@ -3951,7 +4072,7 @@ ${darkModeCss}
       `;
 
       return previewHtml
-        .replace("<html", `<html data-camosignal-preview-color="${colorMode}"`)
+        .replace("<html", `<html data-camosignal-preview-color="${colorMode}" data-camosignal-preview-client="${previewClient}"`)
         .replace("<head>", `<head>\n  <base href="${baseHref}">`)
         .replace("</head>", `${previewModeStyle}\n</head>`)
         .replace("</body>", `${inlineEditorScript}\n</body>`);
@@ -3959,7 +4080,7 @@ ${darkModeCss}
 
     function applyPreviewPreset(preset) {
       state.previewPreset = preset;
-      if (preset === "iphone") {
+      if (preset === "iphone" || preset === "gmail") {
         state.previewMode = "mobile";
         state.previewColorMode = "light";
       } else {
@@ -3978,13 +4099,15 @@ ${darkModeCss}
     function renderPreview(html) {
       const preset = state.previewPreset || "desktop";
       const isIphone = preset === "iphone";
+      const isGmail = preset === "gmail";
+      const isMobilePreview = isIphone || isGmail;
       byId("previewFrame").srcdoc = previewDocument(html);
-      byId("deviceFrame").className = `device ${isIphone ? "mobile iphone" : "desktop"} light-preview`;
-      if (byId("deviceShell")) byId("deviceShell").className = "device-shell";
-      const viewportLabel = isIphone ? "iPhone 390px" : "Desktop 640px";
-      const colorLabel = isIphone ? "iPhone light preview" : "Desktop light preview";
-      const exportStrategyLabel = "Light only export";
-      const chromeLabel = isIphone ? "iPhone preview" : "Desktop preview";
+      byId("deviceFrame").className = `device ${isMobilePreview ? "mobile iphone" : "desktop"} ${isGmail ? "gmail-client-preview" : ""} light-preview`;
+      if (byId("deviceShell")) byId("deviceShell").className = `device-shell ${isGmail ? "gmail-client-preview" : ""}`;
+      const viewportLabel = isGmail ? "Gmail 390px" : (isIphone ? "iPhone 390px" : "Desktop 640px");
+      const colorLabel = isGmail ? "Gmail light preview" : (isIphone ? "iPhone light preview" : "Desktop light preview");
+      const exportStrategyLabel = isGmail ? "Gmail-safe estimate" : "Light only export";
+      const chromeLabel = isGmail ? "Gmail iPhone preview" : (isIphone ? "iPhone preview" : "Desktop preview");
       if (byId("previewViewportLabel")) byId("previewViewportLabel").textContent = viewportLabel;
       if (byId("previewColorModeLabel")) byId("previewColorModeLabel").textContent = colorLabel;
       if (byId("previewExportStrategyLabel")) byId("previewExportStrategyLabel").textContent = exportStrategyLabel;
