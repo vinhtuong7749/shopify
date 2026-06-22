@@ -2398,8 +2398,6 @@
         .replace(/>\s+</g, "><")
         .replace(/(<!DOCTYPE html>|<html\b[^>]*>|<head>|<meta\b[^>]*>|<title>.*?<\/title>|<style>)/gi, "$1\n")
         .replace(/(<\/style>|<\/head>|<body\b[^>]*>|<\/body>|<\/html>)/gi, "$1\n")
-        .replace(/(<tr\b)/gi, "\n$1")
-        .replace(/(<\/tr>)/gi, "$1\n")
         .replace(/\n{2,}/g, "\n")
         .trim();
     }
@@ -3993,9 +3991,9 @@ ${darkModeCss}
         updateStudioStats(html);
         updateValidationStatus(issues);
         byId("generatedHtml").value = html;
-        validateHtml(html);
         const previewHtml = renderEmail(state, { editable: true });
         renderPreview(previewHtml);
+        validateHtml(html);
         
         let dynamicCount = state.sections.filter(s => !["header", "footer"].includes(s.type)).length;
         setStatus(`Generated successfully: ${dynamicCount} content sections`);
