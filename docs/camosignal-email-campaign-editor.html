@@ -2624,11 +2624,14 @@
     }
 
     /* Shopify / Email Client HTML Renderers */
+    const PRODUCT_CARD_SHADOW_SRC = "https://vercel-email-studio.vercel.app/images/product-card-shadow.png";
+
     function renderDesktopProduct(product, config, productIndex = 0, editable = false) {
       const compareAtHtml = product.compareAt
         ? ` <span ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_compareAt"` : ""} style="${config.compareAtStyle} text-decoration:line-through; margin-left:4px;">${escapeHtml(product.compareAt)}</span>`
         : "";
       const displayTitle = truncateText(product.title, config.desktopTitleMaxChars || 52);
+      const shadowWidth = Math.min((Number(config.desktopImageWidth) || 132) + 26, 286);
 
       return `
         <td width="${config.desktopCellWidth}%" valign="top" style="padding:0 ${config.productGapX}px ${config.productGapBottom}px ${config.productGapX}px;">
@@ -2641,6 +2644,13 @@
                       <a href="${escapeAttr(product.url)}" style="display:block; max-width:100%; line-height:0; text-decoration:none; background-color:#ffffff;">
                         <img ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_image"` : ""} src="${escapeAttr(product.image)}" width="${config.desktopImageWidth}" alt="${escapeAttr(product.title)}" style="display:block; width:100%; max-width:${config.desktopImageWidth}px; height:auto; margin:0 auto; background-color:#ffffff; border:0;">
                       </a>
+                    </td>
+                  </tr>
+                </table>
+                <table role="presentation" class="product-image-shadow-fallback" align="center" cellpadding="0" cellspacing="0" style="margin:0 auto; border-collapse:collapse;">
+                  <tr>
+                    <td align="center" style="padding:0; line-height:0; font-size:0;">
+                      <img src="${PRODUCT_CARD_SHADOW_SRC}" width="${shadowWidth}" height="18" alt="" aria-hidden="true" style="display:block; width:${shadowWidth}px; max-width:100%; height:18px; margin:0 auto; border:0; line-height:0; outline:none; text-decoration:none;">
                     </td>
                   </tr>
                 </table>
@@ -2663,6 +2673,7 @@
         ? ` <span ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_compareAt"` : ""} style="${config.mobileCompareAtStyle} text-decoration:line-through; margin-left:3px;">${escapeHtml(product.compareAt)}</span>`
         : "";
       const displayTitle = truncateText(product.title, config.mobileTitleMaxChars || 46);
+      const shadowWidth = Math.min((Number(config.mobileImageWidth) || 176) + 24, 280);
 
       return `
         <td class="mobile-product-cell" width="${config.mobileCellWidth}%" valign="top" style="padding:0 ${config.mobileGapX}px ${config.mobileGapBottom}px ${config.mobileGapX}px;">
@@ -2675,6 +2686,13 @@
                       <a href="${escapeAttr(product.url)}" style="display:block; max-width:100%; line-height:0; text-decoration:none; background-color:#ffffff;">
                         <img class="mobile-product-image" ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_image"` : ""} src="${escapeAttr(product.image)}" width="${config.mobileImageWidth}" alt="${escapeAttr(product.title)}" style="display:block; width:100%; max-width:${config.mobileImageWidth}px; height:auto; margin:0 auto; border:0;">
                       </a>
+                    </td>
+                  </tr>
+                </table>
+                <table role="presentation" class="product-image-shadow-fallback" align="center" cellpadding="0" cellspacing="0" style="margin:0 auto; border-collapse:collapse;">
+                  <tr>
+                    <td align="center" style="padding:0; line-height:0; font-size:0;">
+                      <img src="${PRODUCT_CARD_SHADOW_SRC}" width="${shadowWidth}" height="18" alt="" aria-hidden="true" style="display:block; width:${shadowWidth}px; max-width:100%; height:18px; margin:0 auto; border:0; line-height:0; outline:none; text-decoration:none;">
                     </td>
                   </tr>
                 </table>
