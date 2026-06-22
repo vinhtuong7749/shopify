@@ -1239,6 +1239,17 @@
       box-shadow: none;
     }
 
+    .preview-presets-label {
+      padding: 0 5px 0 3px;
+      color: var(--muted);
+      font-size: 9px;
+      line-height: 12px;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
     .light-pill {
       display: inline-flex;
       align-items: center;
@@ -1447,7 +1458,6 @@
     }
 
     .device.gmail-client-preview {
-      width: 390px;
       max-width: 100%;
     }
 
@@ -1852,10 +1862,15 @@
         <div class="preview-body">
           <div class="preview-toolbar">
             <div class="preview-toolbar-main">
-              <div class="preview-presets" aria-label="Preview mode">
+              <div class="preview-presets" aria-label="Preview viewport">
+                <span class="preview-presets-label">View</span>
                 <button class="button small active" type="button" data-preview-preset="desktop">Desktop</button>
                 <button class="button small" type="button" data-preview-preset="iphone">iPhone</button>
-                <button class="button small" type="button" data-preview-preset="gmail">Gmail</button>
+              </div>
+              <div class="preview-presets" aria-label="Email client preview">
+                <span class="preview-presets-label">Client</span>
+                <button class="button small active" type="button" data-preview-client="web">Web</button>
+                <button class="button small" type="button" data-preview-client="gmail">Gmail</button>
               </div>
               <div class="preview-meta">
                 <span class="light-pill" id="previewViewportLabel">Desktop</span>
@@ -2232,6 +2247,7 @@
       collections: [],
       activeCollection: "",
       previewPreset: "desktop",
+      previewClient: "web",
       previewMode: "desktop",
       previewColorMode: "light",
       bannerUploadMaxWidth: 1200,
@@ -3883,30 +3899,9 @@ ${darkModeCss}
         </style>`;
     }
 
-    function gmailLightPreviewStyleTag() {
-      return `
-        <style id="camosignal-gmail-light-preview-style">
-          html,
-          body,
-          center,
-          .email-bg {
-            width: 100% !important;
-            min-width: 0 !important;
-            background-color: #ffffff !important;
-            background: #ffffff !important;
-            -webkit-text-size-adjust: 100% !important;
-            text-size-adjust: 100% !important;
-          }
-
-          body,
-          table,
-          td,
-          p,
-          span,
-          a {
-            font-family: Arial, Helvetica, sans-serif !important;
-          }
-
+    function gmailLightPreviewStyleTag(previewMode = "mobile") {
+      const mobileOnlyCss = previewMode === "mobile"
+        ? `
           .email-shell {
             width: 100% !important;
             max-width: 390px !important;
@@ -3938,18 +3933,6 @@ ${darkModeCss}
           .product-grid-pad {
             padding-left: 22px !important;
             padding-right: 22px !important;
-          }
-
-          .product-image-shadow {
-            box-shadow: none !important;
-            border: 1px solid #e4ebe6 !important;
-            border-radius: 12px !important;
-            background-color: #ffffff !important;
-          }
-
-          .product-image-shadow-fallback img {
-            display: block !important;
-            height: 13px !important;
           }
 
           .mobile-product-image {
@@ -3986,6 +3969,69 @@ ${darkModeCss}
           .mobile-title {
             margin-bottom: 6px !important;
           }
+        `
+        : `
+          .email-shell {
+            width: 600px !important;
+            max-width: 600px !important;
+          }
+
+          .desktop-product-grid {
+            display: table !important;
+            width: 100% !important;
+            max-height: none !important;
+            overflow: visible !important;
+            table-layout: fixed !important;
+          }
+
+          .mobile-product-grid {
+            display: none !important;
+            max-height: 0 !important;
+            overflow: hidden !important;
+            mso-hide: all !important;
+          }
+
+          .product-title-line {
+            text-align: center !important;
+            font-weight: 400 !important;
+            letter-spacing: 0 !important;
+          }
+        `;
+
+      return `
+        <style id="camosignal-gmail-light-preview-style">
+          html,
+          body,
+          center,
+          .email-bg {
+            width: 100% !important;
+            min-width: 0 !important;
+            background-color: #ffffff !important;
+            background: #ffffff !important;
+            -webkit-text-size-adjust: 100% !important;
+            text-size-adjust: 100% !important;
+          }
+
+          body,
+          table,
+          td,
+          p,
+          span,
+          a {
+            font-family: Arial, Helvetica, sans-serif !important;
+          }
+
+          .product-image-shadow {
+            box-shadow: none !important;
+            border: 1px solid #e4ebe6 !important;
+            border-radius: 12px !important;
+            background-color: #ffffff !important;
+          }
+
+          .product-image-shadow-fallback img {
+            display: block !important;
+            height: 13px !important;
+          }
 
           [style*="color:#c0392b"],
           [style*="color: #c0392b"] {
@@ -3993,6 +4039,8 @@ ${darkModeCss}
             line-height: 18px !important;
             font-weight: 400 !important;
           }
+
+          ${mobileOnlyCss}
         </style>`;
     }
 
@@ -4000,8 +4048,9 @@ ${darkModeCss}
       const baseHref = location.href.replace(/[^/]*$/, "");
       const selectedId = state.selectedSectionId || "";
       const colorMode = state.previewColorMode || "light";
-      const previewClient = state.previewPreset === "gmail" ? "gmail" : "web";
-      const previewModeStyle = previewClient === "gmail" ? gmailLightPreviewStyleTag() : "";
+      const previewClient = state.previewClient === "gmail" ? "gmail" : "web";
+      const previewMode = state.previewMode || (state.previewPreset === "iphone" ? "mobile" : "desktop");
+      const previewModeStyle = previewClient === "gmail" ? gmailLightPreviewStyleTag(previewMode) : "";
       const previewHtml = html
         .replace(/\{\{\s*unsubscribe_link\s*\}\}/g, '<a href="#" style="color:#ffffff; text-decoration:underline;">Unsubscribe</a>')
         .replace(/\{\{\s*unsubscribe_url\s*\}\}/g, "#")
@@ -4109,12 +4158,12 @@ ${darkModeCss}
     }
 
     function applyPreviewPreset(preset) {
-      state.previewPreset = preset;
-      if (preset === "iphone" || preset === "gmail") {
+      const normalizedPreset = preset === "iphone" ? "iphone" : "desktop";
+      state.previewPreset = normalizedPreset;
+      if (normalizedPreset === "iphone") {
         state.previewMode = "mobile";
         state.previewColorMode = "light";
       } else {
-        state.previewPreset = "desktop";
         state.previewMode = "desktop";
         state.previewColorMode = "light";
       }
@@ -4126,24 +4175,43 @@ ${darkModeCss}
       scheduleStateCommit();
     }
 
+    function applyPreviewClient(client) {
+      state.previewClient = client === "gmail" ? "gmail" : "web";
+      state.previewColorMode = "light";
+      state.campaignGlobal.darkModeStrategy = "light-only";
+      state.campaignGlobal.darkModeEnabled = "false";
+      renderBlockEditor();
+      generate();
+      scheduleStateCommit();
+    }
+
     function renderPreview(html) {
-      const preset = state.previewPreset || "desktop";
+      if (state.previewPreset === "gmail") {
+        state.previewPreset = "iphone";
+        state.previewMode = "mobile";
+        state.previewClient = "gmail";
+      }
+      const preset = state.previewPreset === "iphone" ? "iphone" : "desktop";
+      const client = state.previewClient === "gmail" ? "gmail" : "web";
       const isIphone = preset === "iphone";
-      const isGmail = preset === "gmail";
-      const isMobilePreview = isIphone || isGmail;
+      const isGmail = client === "gmail";
+      const isMobilePreview = isIphone;
       byId("previewFrame").srcdoc = previewDocument(html);
       byId("deviceFrame").className = `device ${isMobilePreview ? "mobile iphone" : "desktop"} ${isGmail ? "gmail-client-preview" : ""} light-preview`;
       if (byId("deviceShell")) byId("deviceShell").className = `device-shell ${isGmail ? "gmail-client-preview" : ""}`;
-      const viewportLabel = isGmail ? "Gmail 390px" : (isIphone ? "iPhone 390px" : "Desktop 640px");
+      const viewportLabel = isIphone ? `${isGmail ? "Gmail " : ""}iPhone 390px` : `${isGmail ? "Gmail " : ""}Desktop 640px`;
       const colorLabel = isGmail ? "Gmail light preview" : (isIphone ? "iPhone light preview" : "Desktop light preview");
       const exportStrategyLabel = isGmail ? "Gmail-safe estimate" : "Light only export";
-      const chromeLabel = isGmail ? "Gmail iPhone preview" : (isIphone ? "iPhone preview" : "Desktop preview");
+      const chromeLabel = isGmail ? (isIphone ? "Gmail iPhone preview" : "Gmail desktop preview") : (isIphone ? "iPhone preview" : "Desktop preview");
       if (byId("previewViewportLabel")) byId("previewViewportLabel").textContent = viewportLabel;
       if (byId("previewColorModeLabel")) byId("previewColorModeLabel").textContent = colorLabel;
       if (byId("previewExportStrategyLabel")) byId("previewExportStrategyLabel").textContent = exportStrategyLabel;
       if (byId("previewChromeLabel")) byId("previewChromeLabel").textContent = chromeLabel;
       document.querySelectorAll("[data-preview-preset]").forEach((button) => {
         button.classList.toggle("active", button.dataset.previewPreset === preset);
+      });
+      document.querySelectorAll("[data-preview-client]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.previewClient === client);
       });
     }
 
@@ -7208,6 +7276,13 @@ ${darkModeCss}
       const previewPresetBtn = e.target.closest("[data-preview-preset]");
       if (previewPresetBtn) {
         applyPreviewPreset(previewPresetBtn.dataset.previewPreset);
+        setStatus("Preview updated");
+        return;
+      }
+
+      const previewClientBtn = e.target.closest("[data-preview-client]");
+      if (previewClientBtn) {
+        applyPreviewClient(previewClientBtn.dataset.previewClient);
         setStatus("Preview updated");
         return;
       }
