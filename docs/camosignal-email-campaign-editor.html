@@ -2624,14 +2624,14 @@
     }
 
     /* Shopify / Email Client HTML Renderers */
-    const PRODUCT_CARD_SHADOW_SRC = "https://vercel-email-studio.vercel.app/images/product-card-shadow-soft.png";
+    const PRODUCT_CARD_SHADOW_SRC = "https://vercel-email-studio.vercel.app/images/product-card-shadow-balanced.png";
 
     function renderDesktopProduct(product, config, productIndex = 0, editable = false) {
       const compareAtHtml = product.compareAt
         ? ` <span ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_compareAt"` : ""} style="${config.compareAtStyle} text-decoration:line-through; margin-left:4px;">${escapeHtml(product.compareAt)}</span>`
         : "";
       const displayTitle = truncateText(product.title, config.desktopTitleMaxChars || 52);
-      const shadowWidth = Math.min((Number(config.desktopImageWidth) || 132) + 16, 260);
+      const shadowWidth = Math.min((Number(config.desktopImageWidth) || 132) + 18, 264);
 
       return `
         <td width="${config.desktopCellWidth}%" valign="top" style="padding:0 ${config.productGapX}px ${config.productGapBottom}px ${config.productGapX}px;">
@@ -2650,7 +2650,7 @@
                 <table role="presentation" class="product-image-shadow-fallback" align="center" cellpadding="0" cellspacing="0" style="margin:0 auto; border-collapse:collapse;">
                   <tr>
                     <td align="center" style="padding:0; line-height:0; font-size:0;">
-                      <img src="${PRODUCT_CARD_SHADOW_SRC}" width="${shadowWidth}" height="10" alt="" aria-hidden="true" style="display:block; width:${shadowWidth}px; max-width:100%; height:10px; margin:0 auto; border:0; line-height:0; outline:none; text-decoration:none;">
+                      <img src="${PRODUCT_CARD_SHADOW_SRC}" width="${shadowWidth}" height="13" alt="" aria-hidden="true" style="display:block; width:${shadowWidth}px; max-width:100%; height:13px; margin:0 auto; border:0; line-height:0; outline:none; text-decoration:none;">
                     </td>
                   </tr>
                 </table>
@@ -2673,7 +2673,7 @@
         ? ` <span ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_compareAt"` : ""} style="${config.mobileCompareAtStyle} text-decoration:line-through; margin-left:3px;">${escapeHtml(product.compareAt)}</span>`
         : "";
       const displayTitle = truncateText(product.title, config.mobileTitleMaxChars || 46);
-      const shadowWidth = Math.min((Number(config.mobileImageWidth) || 176) + 16, 260);
+      const shadowWidth = Math.min((Number(config.mobileImageWidth) || 176) + 18, 264);
 
       return `
         <td class="mobile-product-cell" width="${config.mobileCellWidth}%" valign="top" style="padding:0 ${config.mobileGapX}px ${config.mobileGapBottom}px ${config.mobileGapX}px;">
@@ -2692,7 +2692,7 @@
                 <table role="presentation" class="product-image-shadow-fallback" align="center" cellpadding="0" cellspacing="0" style="margin:0 auto; border-collapse:collapse;">
                   <tr>
                     <td align="center" style="padding:0; line-height:0; font-size:0;">
-                      <img src="${PRODUCT_CARD_SHADOW_SRC}" width="${shadowWidth}" height="10" alt="" aria-hidden="true" style="display:block; width:${shadowWidth}px; max-width:100%; height:10px; margin:0 auto; border:0; line-height:0; outline:none; text-decoration:none;">
+                      <img src="${PRODUCT_CARD_SHADOW_SRC}" width="${shadowWidth}" height="13" alt="" aria-hidden="true" style="display:block; width:${shadowWidth}px; max-width:100%; height:13px; margin:0 auto; border:0; line-height:0; outline:none; text-decoration:none;">
                     </td>
                   </tr>
                 </table>
