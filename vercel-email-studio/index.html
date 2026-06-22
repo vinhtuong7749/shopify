@@ -2635,9 +2635,15 @@
           <table role="presentation" class="dark-product-card" width="100%" cellpadding="0" cellspacing="0" style="width:100%; table-layout:fixed; background-color:#ffffff;">
             <tr>
               <td class="dark-product-stage" align="center" valign="middle" height="${config.desktopImageStageHeight}" style="height:${config.desktopImageStageHeight}px; padding:0; line-height:0; background-color:#ffffff;">
-                <a href="${escapeAttr(product.url)}" style="display:inline-block; max-width:100%; padding:10px 8px; line-height:0; text-decoration:none; background-color:#ffffff; border:1px solid #e7eee9; border-radius:12px; box-shadow:0 10px 24px rgba(16,45,32,0.12); overflow:hidden;">
-                  <img ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_image"` : ""} src="${escapeAttr(product.image)}" width="${config.desktopImageWidth}" alt="${escapeAttr(product.title)}" style="display:block; width:100%; max-width:${config.desktopImageWidth}px; height:auto; margin:0 auto; background-color:#ffffff; border:0;">
-                </a>
+                <table role="presentation" class="product-image-shadow" align="center" cellpadding="0" cellspacing="0" style="margin:0 auto; background-color:#eef3ef; border-radius:14px;">
+                  <tr>
+                    <td style="padding:0 4px 5px 0; line-height:0; border-radius:14px;">
+                      <a href="${escapeAttr(product.url)}" style="display:block; max-width:100%; padding:10px 8px; line-height:0; text-decoration:none; background-color:#ffffff; border:1px solid #e2e9e4; border-radius:12px; box-shadow:0 10px 24px rgba(16,45,32,0.12); overflow:hidden;">
+                        <img ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_image"` : ""} src="${escapeAttr(product.image)}" width="${config.desktopImageWidth}" alt="${escapeAttr(product.title)}" style="display:block; width:100%; max-width:${config.desktopImageWidth}px; height:auto; margin:0 auto; background-color:#ffffff; border:0;">
+                      </a>
+                    </td>
+                  </tr>
+                </table>
               </td>
             </tr>
             <tr>
@@ -2663,9 +2669,15 @@
           <table role="presentation" class="dark-product-card" width="100%" cellpadding="0" cellspacing="0" style="width:100%; table-layout:fixed; background-color:#ffffff;">
             <tr>
               <td class="dark-product-stage" align="center" style="padding:0; background-color:#ffffff;">
-                <a href="${escapeAttr(product.url)}" style="display:inline-block; max-width:100%; padding:9px 7px; line-height:0; text-decoration:none; background-color:#ffffff; border:1px solid #e7eee9; border-radius:12px; box-shadow:0 10px 24px rgba(16,45,32,0.12); overflow:hidden;">
-                  <img class="mobile-product-image" ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_image"` : ""} src="${escapeAttr(product.image)}" width="${config.mobileImageWidth}" alt="${escapeAttr(product.title)}" style="display:block; width:100%; max-width:${config.mobileImageWidth}px; height:auto; margin:0 auto; border:0;">
-                </a>
+                <table role="presentation" class="product-image-shadow" align="center" cellpadding="0" cellspacing="0" style="margin:0 auto; background-color:#eef3ef; border-radius:14px;">
+                  <tr>
+                    <td style="padding:0 4px 5px 0; line-height:0; border-radius:14px;">
+                      <a href="${escapeAttr(product.url)}" style="display:block; max-width:100%; padding:9px 7px; line-height:0; text-decoration:none; background-color:#ffffff; border:1px solid #e2e9e4; border-radius:12px; box-shadow:0 10px 24px rgba(16,45,32,0.12); overflow:hidden;">
+                        <img class="mobile-product-image" ${editable ? `data-edit-key="${config.sectionId}_product_${productIndex}_image"` : ""} src="${escapeAttr(product.image)}" width="${config.mobileImageWidth}" alt="${escapeAttr(product.title)}" style="display:block; width:100%; max-width:${config.mobileImageWidth}px; height:auto; margin:0 auto; border:0;">
+                      </a>
+                    </td>
+                  </tr>
+                </table>
               </td>
             </tr>
             <tr>
